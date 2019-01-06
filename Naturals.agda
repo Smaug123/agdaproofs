@@ -13,8 +13,6 @@ module Naturals where
 
   {-# BUILTIN NATURAL ℕ #-}
 
-  transitivityN = transitivity {_} {ℕ}
-
   infix 15 _+N_
   infix 100 succ
   _+N_ : ℕ → ℕ → ℕ
@@ -26,13 +24,6 @@ module Naturals where
   zero *N y = zero
   (succ x) *N y = y +N (x *N y)
 
-  data _even : ℕ → Set where
-      zero_is_even : zero even
-      add_two_stays_even : ∀ x → x even → succ (succ x) even
-
-  four_is_even : succ (succ (succ (succ zero))) even
-  four_is_even = add_two_stays_even (succ (succ zero)) (add_two_stays_even zero zero_is_even)
-
   infix 5 _<NLogical_
   _<NLogical_ : ℕ → ℕ → Set
   zero <NLogical zero = False
@@ -42,10 +33,10 @@ module Naturals where
 
   infix 5 _<N_
   record _<N_ (a : ℕ) (b : ℕ) : Set where
-      constructor le
-      field
-        x : ℕ
-        proof : (succ x) +N a ≡ b
+    constructor le
+    field
+      x : ℕ
+      proof : (succ x) +N a ≡ b
 
   infix 5 _≤N_
   _≤N_ : ℕ → ℕ → Set
@@ -56,7 +47,7 @@ module Naturals where
 
   addZeroRight : (x : ℕ) → (x +N zero) ≡ x
   addZeroRight zero = refl
-  addZeroRight (succ x) = applyEquality succ (addZeroRight x)
+  addZeroRight (succ x) rewrite addZeroRight x = refl
 
   succExtracts : (x y : ℕ) → (x +N succ y) ≡ (succ (x +N y))
   succExtracts zero y = refl
@@ -176,13 +167,13 @@ module Naturals where
   multiplicationNIsCommutative : (a b : ℕ) → (a *N b) ≡ (b *N a)
   multiplicationNIsCommutative zero b = transitivity (productZeroIsZeroLeft b) (equalityCommutative (productZeroIsZeroRight b))
   multiplicationNIsCommutative (succ a) zero = multiplicationNIsCommutative a zero
-  multiplicationNIsCommutative (succ a) (succ b) = transitivityN refl
-    (transitivityN (addingPreservesEqualityLeft (succ b) (aSucB a b))
-      (transitivityN {succ b +N (a *N b +N a)} {(a *N b +N a) +N succ b} (additionNIsCommutative (succ b) (a *N b +N a))
-        (transitivityN {(a *N b +N a) +N succ b} {a *N b +N (a +N succ b)} (additionNIsAssociative (a *N b) a (succ b))
-          (transitivityN {a *N b +N (a +N succ b)} {a *N b +N ((succ a) +N b)} (addingPreservesEqualityLeft (a *N b) (succCanMove a b))
-            (transitivityN {a *N b +N ((succ a) +N b)} {a *N b +N (b +N succ a)} (addingPreservesEqualityLeft (a *N b) (additionNIsCommutative (succ a) b))
-              (transitivityN {a *N b +N (b +N succ a)} {(a *N b +N b) +N succ a} (equalityCommutative (additionNIsAssociative (a *N b) b (succ a)))
+  multiplicationNIsCommutative (succ a) (succ b) = transitivity refl
+    (transitivity (addingPreservesEqualityLeft (succ b) (aSucB a b))
+      (transitivity (additionNIsCommutative (succ b) (a *N b +N a))
+        (transitivity (additionNIsAssociative (a *N b) a (succ b))
+          (transitivity (addingPreservesEqualityLeft (a *N b) (succCanMove a b))
+            (transitivity (addingPreservesEqualityLeft (a *N b) (additionNIsCommutative (succ a) b))
+              (transitivity (equalityCommutative (additionNIsAssociative (a *N b) b (succ a)))
                 (transitivity (addingPreservesEqualityRight (succ a) (equalityCommutative (aSucBRight a b)))
                   (transitivity (addingPreservesEqualityRight (succ a) (multiplicationNIsCommutative (succ a) b))
                     (transitivity (additionNIsCommutative (b *N (succ a)) (succ a))

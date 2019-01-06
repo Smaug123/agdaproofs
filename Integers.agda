@@ -7,6 +7,7 @@ open import Rings
 open import Functions
 open import Orders
 open import Setoids
+open import IntegralDomains
 
 module Integers where
     data ℤ : Set where
@@ -1527,6 +1528,29 @@ module Integers where
     Ring.multCommutative ℤRing {a} {b} = multiplicationZIsCommutative a b
     Ring.multDistributes ℤRing {a} {b} {c} = additionZDistributiveMulZ a b c
     Ring.multIdentIsIdent ℤRing {a} = multiplicativeIdentityOneZLeft a
+
+    negsuccTimesNonneg : {a b : ℕ} → (negSucc a *Z nonneg (succ b)) ≡ nonneg 0 → False
+    negsuccTimesNonneg {a} {b} pr with convertZ (negSucc a)
+    negsuccTimesNonneg {a} {b} () | negative a₁ x
+    negsuccTimesNonneg {a} {b} () | positive a₁ x
+    negsuccTimesNonneg {a} {b} () | zZero
+
+    negsuccTimesNegsucc : {a b : ℕ} → (negSucc a *Z negSucc b) ≡ nonneg 0 → False
+    negsuccTimesNegsucc {a} {b} pr with convertZ (negSucc a)
+    negsuccTimesNegsucc {a} {b} () | negative a₁ x
+    negsuccTimesNegsucc {a} {b} () | positive a₁ x
+    negsuccTimesNegsucc {a} {b} () | zZero
+
+    ℤIntDom : IntegralDomain ℤRing
+    IntegralDomain.intDom ℤIntDom {nonneg zero} {nonneg b} pr = inl refl
+    IntegralDomain.intDom ℤIntDom {nonneg (succ a)} {nonneg zero} pr = inr refl
+    IntegralDomain.intDom ℤIntDom {nonneg (succ a)} {nonneg (succ b)} pr = exFalso (naughtE (nonnegInjective (equalityCommutative (transitivity (equalityCommutative (multiplyingNonnegIsHom (succ a) (succ b))) pr))))
+    IntegralDomain.intDom ℤIntDom {nonneg zero} {negSucc b} pr = inl refl
+    IntegralDomain.intDom ℤIntDom {nonneg (succ a)} {negSucc b} pr = exFalso (negsuccTimesNonneg {b} {a} (transitivity (multiplicationZIsCommutative (negSucc b) (nonneg (succ a))) pr))
+    IntegralDomain.intDom ℤIntDom {negSucc a} {nonneg zero} pr = inr refl
+    IntegralDomain.intDom ℤIntDom {negSucc a} {nonneg (succ b)} pr = exFalso (negsuccTimesNonneg {a} {b} pr)
+    IntegralDomain.intDom ℤIntDom {negSucc a} {negSucc b} pr = exFalso (negsuccTimesNegsucc {a} {b} pr)
+    IntegralDomain.nontrivial ℤIntDom = λ ()
 
     ℤOrderedRing : OrderedRing (reflSetoid ℤ) (_+Z_) (_*Z_)
     PartialOrder._<_ (TotalOrder.order (OrderedRing.order ℤOrderedRing)) = _<Z_
