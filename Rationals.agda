@@ -13,5 +13,17 @@ open import FieldOfFractions
 
 module Rationals where
 
-  ℚ : Field'
-  ℚ = encapsulateField (fieldOfFractions ℤIntDom)
+  ℚ : Set
+  ℚ = fieldOfFractionsSet ℤIntDom
+
+  _+Q_ : ℚ → ℚ → ℚ
+  a +Q b = fieldOfFractionsPlus ℤIntDom a b
+
+  _*Q_ : ℚ → ℚ → ℚ
+  a *Q b = fieldOfFractionsTimes ℤIntDom a b
+
+  ℚRing : Ring (fieldOfFractionsSetoid ℤIntDom) _+Q_ _*Q_
+  ℚRing = fieldOfFractionsRing ℤIntDom
+
+  ℚField : Field ℚRing
+  ℚField = fieldOfFractions ℤIntDom
