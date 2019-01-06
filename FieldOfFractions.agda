@@ -193,3 +193,36 @@ module FieldOfFractions where
       pr' : (Ring.0R R) * (Ring.1R R) ∼ (Ring.1R R) * (Ring.1R R)
       pr' = pr
 
+  embedIntoFieldOfFractions : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} (I : IntegralDomain R) → A → fieldOfFractionsSet I
+  embedIntoFieldOfFractions {R = R} I a = a ,, (Ring.1R R , IntegralDomain.nontrivial I)
+
+  homIntoFieldOfFractions : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} (I : IntegralDomain R) → RingHom R (fieldOfFractionsRing I) (embedIntoFieldOfFractions I)
+  RingHom.preserves1 (homIntoFieldOfFractions {S = S} I) = Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+  RingHom.ringHom (homIntoFieldOfFractions {S = S} {R = R} I) {a} {b} = Transitive.transitive (Equivalence.transitiveEq (Setoid.eq S)) (Ring.multWellDefined R (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))) (Ring.multIdentIsIdent R)) (Ring.multCommutative R)
+  GroupHom.groupHom (RingHom.groupHom (homIntoFieldOfFractions {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I)) {x} {y} = need
+    where
+      open Setoid S
+      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      need : ((x + y) * (Ring.1R R * Ring.1R R)) ∼ (Ring.1R R * ((x * Ring.1R R) + (Ring.1R R * y)))
+      need = transitive (transitive (Ring.multWellDefined R reflexive (Ring.multIdentIsIdent R)) (transitive (Ring.multCommutative R) (transitive (Ring.multIdentIsIdent R) (Group.wellDefined (Ring.additiveGroup R) (symmetric (transitive (Ring.multCommutative R) (Ring.multIdentIsIdent R))) (symmetric (Ring.multIdentIsIdent R)))))) (symmetric (Ring.multIdentIsIdent R))
+  GroupHom.wellDefined (RingHom.groupHom (homIntoFieldOfFractions {S = S} {R = R} I)) x=y = transitive (Ring.multCommutative R) (Ring.multWellDefined R reflexive x=y)
+    where
+      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+
+  homIntoFieldOfFractionsIsInj : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} (I : IntegralDomain R) → SetoidInjection S (fieldOfFractionsSetoid I) (embedIntoFieldOfFractions I)
+  SetoidInjection.wellDefined (homIntoFieldOfFractionsIsInj {S = S} {R = R} I) x=y = transitive (Ring.multCommutative R) (Ring.multWellDefined R reflexive x=y)
+    where
+      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+  SetoidInjection.injective (homIntoFieldOfFractionsIsInj {S = S} {R = R} I) x~y = transitive (symmetric multIdentIsIdent) (transitive multCommutative (transitive x~y multIdentIsIdent))
+    where
+      open Ring R
+      open Setoid S
+      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
