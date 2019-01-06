@@ -88,7 +88,7 @@ module GroupsExampleSheet1 where
       open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
 
   {-
-    To make sure we haven't defined something stupid, check that the intersection doesn't care which order the two subgroups came in, and check that the subgroup intersection is isomorphic to the original group in the case that the two were the same.
+    To make sure we haven't defined something stupid, check that the intersection doesn't care which order the two subgroups came in, and check that the subgroup intersection is isomorphic to the original group in the case that the two were the same, and check that the intersection injects into the first subgroup.
   -}
 
   subgroupIntersectionIsomorphic : {a b c d e f : _} {A : Set a} {B : Set b} {C : Set c} {S : Setoid {a} {d} A} {T : Setoid {b} {e} B} {U : Setoid {c} {f} C} {_+_ : A → A → A} {_+H1_ : B → B → B} {_+H2_ : C → C → C} (G : Group S _+_) {H1grp : Group T _+H1_} {H2grp : Group U _+H2_} {h1Inj : B → A} {h2Inj : C → A} {h1Hom : GroupHom H1grp G h1Inj} {h2Hom : GroupHom H2grp G h2Inj} (H1 : Subgroup G H1grp h1Hom) (H2 : Subgroup G H2grp h2Hom) → GroupsIsomorphic (subgroupIntersectionGroup G H1 H2) (subgroupIntersectionGroup G H2 H1)
