@@ -1,16 +1,16 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Groups
-open import Rings
-open import Setoids
+open import Groups.Groups
+open import Rings.RingDefinition
+open import Setoids.Setoids
 open import Orders
-open import IntegralDomains
+open import Rings.IntegralDomains
 open import Functions
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-module Fields where
+module Fields.Fields where
   record Field {m n : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} (R : Ring S _+_ _*_) : Set (lsuc m ⊔ n) where
     open Ring R
     open Group additiveGroup

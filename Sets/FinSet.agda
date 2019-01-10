@@ -3,10 +3,10 @@
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
-open import Naturals
+open import Numbers.Naturals
 open import Orders
 
-module FinSet where
+module Sets.FinSet where
   data FinSet : (n : ℕ) → Set where
     fzero : {n : ℕ} → FinSet (succ n)
     fsucc : {n : ℕ} → FinSet n → FinSet (succ n)

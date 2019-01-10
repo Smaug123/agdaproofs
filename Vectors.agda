@@ -1,7 +1,7 @@
 {-# OPTIONS --warning=error --safe #-}
 
 open import LogicalFormulae
-open import Naturals
+open import Numbers.Naturals
 open import Functions
 
 data Vec {a : _} (X : Set a) : ℕ -> Set a where

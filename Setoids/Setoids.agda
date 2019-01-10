@@ -4,7 +4,7 @@ open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
 
-module Setoids where
+module Setoids.Setoids where
   record Setoid {a} {b} (A : Set a) : Set (a ⊔ lsuc b) where
     infix 1 _∼_
     field
