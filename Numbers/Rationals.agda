@@ -1,17 +1,17 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Naturals
-open import Integers
-open import Groups
-open import Rings
-open import Fields
+open import Numbers.Naturals
+open import Numbers.Integers
+open import Groups.Groups
+open import Rings.RingDefinition
+open import Fields.Fields
 open import PrimeNumbers
-open import Setoids
+open import Setoids.Setoids
 open import Functions
-open import FieldOfFractions
+open import Fields.FieldOfFractions
 
-module Rationals where
+module Numbers.Rationals where
 
   ℚ : Set
   ℚ = fieldOfFractionsSet ℤIntDom
@@ -27,3 +27,6 @@ module Rationals where
 
   ℚField : Field ℚRing
   ℚField = fieldOfFractions ℤIntDom
+
+  ℚField : OrderedRing ℚRing (fieldOfFractionsTotalOrder ℤIntDom ℤOrderedRing)
+  ℚField = fieldOfFractionsOrderedRing ℤIntDom ℤOrderedRing

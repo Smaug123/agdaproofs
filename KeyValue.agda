@@ -6,7 +6,7 @@ open import Maybe
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Vectors
 
-open import Naturals
+open import Numbers.Naturals
 
 module KeyValue where
   record ReducedMap {a b c : _} (keys : Set a) (values : Set b) (keyOrder : TotalOrder {_} {c} keys) (min : keys) : Set (a ⊔ b ⊔ c)

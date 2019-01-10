@@ -1,16 +1,19 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Groups
-open import Rings
-open import IntegralDomains
-open import Fields
+open import Groups.Groups
+open import Groups.GroupsLemmas
+open import Rings.RingDefinition
+open import Rings.RingLemmas
+open import Rings.IntegralDomains
+open import Fields.Fields
 open import Functions
-open import Setoids
+open import Setoids.Setoids
+open import Setoids.Orders
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-module FieldOfFractions where
+module Fields.FieldOfFractions where
   fieldOfFractionsSet : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} → {R : Ring S _+_ _*_} → IntegralDomain R → Set (a ⊔ b)
   fieldOfFractionsSet {A = A} {S = S} {R = R} I = (A && (Sg A (λ a → (Setoid._∼_ S a (Ring.0R R) → False))))
 
@@ -226,3 +229,39 @@ module FieldOfFractions where
       open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
       open Transitive (Equivalence.transitiveEq (Setoid.eq S))
       open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+
+  fieldOfFractionsNonnegDenom : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder pOrder} (I : IntegralDomain R) → (order : OrderedRing R tOrder) → (a1 : fieldOfFractionsSet I) → Sg (fieldOfFractionsSet I) (λ b1 → (Setoid._∼_ (fieldOfFractionsSetoid I) a1 b1) && ((Ring.0R R) < underlying (_&&_.snd b1)))
+  fieldOfFractionsNonnegDenom {R = R} {tOrder = tOrder} I order (num ,, (denom , denom!=0)) with SetoidTotalOrder.totality tOrder (Ring.0R R) denom
+  fieldOfFractionsNonnegDenom {R = R} {tOrder = tOrder} I order (num ,, (denom , denom!=0)) | inl (inl 0<denom) = (num ,, (denom , denom!=0)) , ((Ring.multCommutative R) ,, 0<denom)
+  fieldOfFractionsNonnegDenom {S = S} {R = R} {_<_ = _<_} {pOrder = pOrder} {tOrder = tOrder} I order (num ,, (denom , denom!=0)) | inl (inr denom<0) = ((Group.inverse (Ring.additiveGroup R) num ,, (Group.inverse (Ring.additiveGroup R) denom , λ p → denom!=0 (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (transitive (symmetric (Group.invLeft (Ring.additiveGroup R) {denom})) (transitive (Group.wellDefined (Ring.additiveGroup R) p reflexive) (Group.multIdentLeft (Ring.additiveGroup R)))))))) , (transitive (ringMinusExtracts R) (transitive (inverseWellDefined (Ring.additiveGroup R) (Ring.multCommutative R)) (symmetric (ringMinusExtracts R))) ,, ringMinusFlipsOrder' order (SetoidPartialOrder.wellDefined pOrder (symmetric (invInv (Ring.additiveGroup R))) reflexive denom<0))
+    where
+      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Ring R
+      open Group additiveGroup
+  fieldOfFractionsNonnegDenom {S = S} {R = R} {tOrder = tOrder} I order (num ,, (denom , denom!=0)) | inr 0=denom = exFalso (denom!=0 (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) 0=denom))
+
+  fieldOfFractionsComparison : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder pOrder} (I : IntegralDomain R) → (order : OrderedRing R tOrder) → Rel (fieldOfFractionsSet I)
+  fieldOfFractionsComparison {_*_ = _*_} {R = R} {_<_ = _<_} {tOrder = tOrder} I oring x y with fieldOfFractionsNonnegDenom I oring x
+  fieldOfFractionsComparison {_*_ = _*_} {R} {_<_} {tOrder = tOrder} I oring x y | (numA ,, (denomA , _)) , b with fieldOfFractionsNonnegDenom I oring y
+  fieldOfFractionsComparison {_*_ = _*_} {R} {_<_} {tOrder = tOrder} I oring x y | (numA ,, (denomA , _)) , prA | (numB ,, (denomB , _)) , prB = (numA * denomB) < (numB * denomA)
+
+  fieldOfFractionsOrder : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder pOrder} (I : IntegralDomain R) → (order : OrderedRing R tOrder) → SetoidPartialOrder (fieldOfFractionsSetoid I) (fieldOfFractionsComparison I order)
+  SetoidPartialOrder.wellDefined (fieldOfFractionsOrder {S = S} {_+_ = _+_} {_*_ = _*_} {_<_ = _<_} I order) {w} {x} {y} {z} a~b c~d a<c with fieldOfFractionsNonnegDenom I order x
+  SetoidPartialOrder.wellDefined (fieldOfFractionsOrder {S = S} {_+_} {_*_} {_<_ = _<_} I order) {w} {x} {y} {z} a~b c~d a<c | (numX ,, (denomX , denomX!=0)) , (x~numX/denomX ,, 0<denomX) with fieldOfFractionsNonnegDenom I order z
+  SetoidPartialOrder.wellDefined (fieldOfFractionsOrder {S = S} {_+_} {_*_} {_<_ = _<_} I order) {w} {x} {y} {z} a~b c~d a<c | (numX ,, (denomX , denomX!=0)) , (x~numX/denomX ,, 0<denomX) | (numZ ,, (denomZ , denomZ!=0)) , (numZ/denomZ ,, 0<denomZ) with fieldOfFractionsNonnegDenom I order w
+  SetoidPartialOrder.wellDefined (fieldOfFractionsOrder {S = S} {_+_} {_*_} {_<_ = _<_} I order) {w} {x} {y} {z} a~b c~d a<c | (numX ,, (denomX , denomX!=0)) , (x~numX/denomX ,, 0<denomX) | (numZ ,, (denomZ , denomZ!=0)) , (numZ/denomZ ,, 0<denomZ) | (numW ,, (denomW , denomW!=0)) , (numW/denomW ,, 0<denomW) with fieldOfFractionsNonnegDenom I order y
+  SetoidPartialOrder.wellDefined (fieldOfFractionsOrder {S = S} {_+_} {_*_} {_<_ = _<_} I order) {numW' ,, (denomW' , denomW'!=0)} {numX' ,, (denomX' , denomX'!=0)} {numY' ,, (denomY' , denomY'!=0)} {numZ' ,, (denomZ' , denomZ'!=0)} a~b c~d a<c | (numX ,, (denomX , denomX!=0)) , (x~numX/denomX ,, 0<denomX) | (numZ ,, (denomZ , denomZ!=0)) , (numZ/denomZ ,, 0<denomZ) | (numW ,, (denomW , denomW!=0)) , (numW/denomW ,, 0<denomW) | (numY ,, (denomY , denomY!=0)) , (numY/denomY ,, 0<denomY) = {!!}
+
+  SetoidPartialOrder.irreflexive (fieldOfFractionsOrder {S = S} {R = R} {pOrder = pOrder} {tOrder = tOrder} I oRing) {x} x<x with fieldOfFractionsNonnegDenom I oRing x
+  SetoidPartialOrder.irreflexive (fieldOfFractionsOrder {S = S} {_*_ = _*_} {R = R} {_<_ = _<_} {pOrder = pOrder} {tOrder} I oRing) {x} x<x | (numA ,, (denomA , _)) , pr with fieldOfFractionsNonnegDenom I oRing x
+  SetoidPartialOrder.irreflexive (fieldOfFractionsOrder {S = S} {_*_ = _*_} {R} {_<_} {pOrder} {tOrder} I oRing) {fst₁ ,, (a , a!=0)} x<x | (numA ,, (denomA , _)) , (fst₂ ,, 0<denomA) | (numA' ,, (denomA' , _)) , (fst ,, 0<denomA') = {!!}
+  SetoidPartialOrder.transitive (fieldOfFractionsOrder {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} {_<_ = _<_} {pOrder = pOrder} {tOrder = tOrder} I order) {numA ,, (denomA , _)} {(numB ,, (denomB , _))} {numC ,, (denomC , _)} a<b b<c = {!!}
+
+  fieldOfFractionsTotalOrder : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder pOrder} (I : IntegralDomain R) → (order : OrderedRing R tOrder) → SetoidTotalOrder (fieldOfFractionsOrder I order)
+  fieldOfFractionsTotalOrder I order = {!!}
+
+  fieldOfFractionsOrderedRing : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder pOrder} (I : IntegralDomain R) → (order : OrderedRing R tOrder) → OrderedRing (fieldOfFractionsRing I) (fieldOfFractionsTotalOrder I order)
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing I order) a<b c = {!!}
+  OrderedRing.orderRespectsMultiplication (fieldOfFractionsOrderedRing {_+_ = _+_} {_*_ = _*_} {_<_ = _<_} I order) {numA ,, (denomA , _)} {numB ,, (denomB , _)} 0<a 0<b = {!!}

@@ -1,8 +1,8 @@
 {-# OPTIONS --safe --warning=error #-}
 
-open import Groups
+open import Groups.Groups
 open import Orders
-open import Integers
+open import Numbers.Integers
 open import Setoids
 open import LogicalFormulae
 open import FinSet
@@ -14,7 +14,7 @@ open import PrimeNumbers
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-module Groups2 where
+module Groups.Groups2 where
 
   data GroupHomImageElement {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+A_ : A → A → A} {_+B_ : B → B → B} {G : Group S _+A_} {H : Group T _+B_} {f : A → B} (fHom : GroupHom G H f) : Set (a ⊔ b ⊔ c ⊔ d) where
     ofElt : (x : A) → GroupHomImageElement fHom

@@ -1,15 +1,16 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Naturals
-open import Groups
-open import Rings
+open import Numbers.Naturals
+open import Groups.Groups
+open import Rings.RingDefinition
 open import Functions
 open import Orders
-open import Setoids
-open import IntegralDomains
+open import Setoids.Setoids
+open import Setoids.Orders
+open import Rings.IntegralDomains
 
-module Integers where
+module Numbers.Integers where
     data ℤ : Set where
       nonneg : ℕ → ℤ
       negSucc : ℕ → ℤ
@@ -1552,12 +1553,13 @@ module Integers where
     IntegralDomain.intDom ℤIntDom {negSucc a} {negSucc b} pr = exFalso (negsuccTimesNegsucc {a} {b} pr)
     IntegralDomain.nontrivial ℤIntDom = λ ()
 
-    ℤOrderedRing : OrderedRing (reflSetoid ℤ) (_+Z_) (_*Z_)
-    PartialOrder._<_ (TotalOrder.order (OrderedRing.order ℤOrderedRing)) = _<Z_
-    PartialOrder.irreflexive (TotalOrder.order (OrderedRing.order ℤOrderedRing)) = lessZIrreflexive
-    PartialOrder.transitive (TotalOrder.order (OrderedRing.order ℤOrderedRing)) {a} {b} {c} = lessZTransitive
-    TotalOrder.totality (OrderedRing.order ℤOrderedRing) a b = lessThanTotalZ
-    OrderedRing.ring ℤOrderedRing = ℤRing
+    ℤOrder : TotalOrder ℤ
+    PartialOrder._<_ (TotalOrder.order ℤOrder) = _<Z_
+    TotalOrder.totality ℤOrder a b = lessThanTotalZ {a} {b}
+    PartialOrder.irreflexive (TotalOrder.order ℤOrder) = lessZIrreflexive
+    PartialOrder.transitive (TotalOrder.order ℤOrder) {a} {b} {c} = lessZTransitive
+
+    ℤOrderedRing : OrderedRing ℤRing (totalOrderToSetoidTotalOrder ℤOrder)
     OrderedRing.orderRespectsAddition ℤOrderedRing {a} {b} a<b c = additionZRespectsOrder a b c a<b
     OrderedRing.orderRespectsMultiplication ℤOrderedRing {a} {b} a<b = productOfPositivesIsPositive a b a<b
 

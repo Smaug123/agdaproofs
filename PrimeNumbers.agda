@@ -1,7 +1,7 @@
 {-# OPTIONS --warning=error --safe #-}
 
 open import LogicalFormulae
-open import Naturals
+open import Numbers.Naturals
 open import WellFoundedInduction
 open import KeyValue
 open import KeyValueWithDomain

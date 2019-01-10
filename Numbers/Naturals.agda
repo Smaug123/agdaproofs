@@ -6,7 +6,7 @@ open import WellFoundedInduction
 open import Functions
 open import Orders
 
-module Naturals where
+module Numbers.Naturals where
   data ℕ : Set where
       zero : ℕ
       succ : ℕ → ℕ

@@ -1,16 +1,16 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Groups
-open import Naturals
-open import Orders
-open import Setoids
+open import Groups.Groups
+open import Numbers.Naturals
+open import Setoids.Orders
+open import Setoids.Setoids
 open import Functions
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 -- Following Part IB's course Groups, Rings, and Modules, we take rings to be commutative with one.
-module Rings where
+module Rings.RingDefinition where
   record Ring {n m} {A : Set n} (S : Setoid {n} {m} A) (_+_ : A → A → A) (_*_ : A → A → A) : Set (lsuc n ⊔ m) where
     field
       additiveGroup : Group S _+_
@@ -27,15 +27,10 @@ module Rings where
       multDistributes : {a b c : A} → a * (b + c) ∼ (a * b) + (a * c)
       multIdentIsIdent : {a : A} → 1R * a ∼ a
 
-  record OrderedRing {n m o} {A : Set n} (S : Setoid {n} {m} A) (_+_ : A → A → A) (_*_ : A → A → A) : Set (lsuc n ⊔ m ⊔ lsuc o) where
-    field
-      ring : Ring S _+_ _*_
-    open Ring ring
+  record OrderedRing {n m p} {A : Set n} {S : Setoid {n} {m} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {_} {p} A} {pOrder : SetoidPartialOrder S _<_} (R : Ring S _+_ _*_) (order : SetoidTotalOrder pOrder) : Set (lsuc n ⊔ m ⊔ p) where
+    open Ring R
     open Group additiveGroup
     open Setoid S
-    field
-      order : TotalOrder {_} {o} A
-    _<_ = TotalOrder._<_ order
     field
       orderRespectsAddition : {a b : A} → (a < b) → (c : A) → (a + c) < (b + c)
       orderRespectsMultiplication : {a b : A} → (0R < a) → (0R < b) → (0R < (a * b))
@@ -65,18 +60,3 @@ module Rings where
   --    ringHom : RingHom R S f
   --    bijective : Bijection f
 
-  ringTimesZero : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} (R : Ring S _+_ _*_) → {x : A} → Setoid._∼_ S (x * (Ring.0R R)) (Ring.0R R)
-  ringTimesZero {S = S} {_+_ = _+_} {_*_ = _*_} R {x} = symmetric (transitive blah'' (transitive (Group.multAssoc additiveGroup) (transitive (wellDefined invLeft reflexive) multIdentLeft)))
-    where
-      open Ring R
-      open Group additiveGroup
-      open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      blah : (x * 0R) ∼ (x * 0R) + (x * 0R)
-      blah = transitive (multWellDefined reflexive (symmetric multIdentRight)) multDistributes
-      blah' : (inverse (x * 0R)) + (x * 0R) ∼ (inverse (x * 0R)) + ((x * 0R) + (x * 0R))
-      blah' = wellDefined reflexive blah
-      blah'' : 0R ∼ (inverse (x * 0R)) + ((x * 0R) + (x * 0R))
-      blah'' = transitive (symmetric invLeft) blah'
