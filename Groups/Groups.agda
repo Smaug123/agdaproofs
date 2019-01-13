@@ -6,19 +6,9 @@ open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals
 open import Sets.FinSet
+open import Groups.GroupDefinition
 
 module Groups.Groups where
-    record Group {lvl1 lvl2} {A : Set lvl1} (S : Setoid {lvl1} {lvl2} A) (_·_ : A → A → A) : Set (lsuc lvl1 ⊔ lvl2) where
-      open Setoid S
-      field
-        wellDefined : {m n x y : A} → (m ∼ x) → (n ∼ y) → (m · n) ∼ (x · y)
-        identity : A
-        inverse : A → A
-        multAssoc : {a b c : A} → (a · (b · c)) ∼ (a · b) · c
-        multIdentRight : {a : A} → (a · identity) ∼ a
-        multIdentLeft : {a : A} → (identity · a) ∼ a
-        invLeft : {a : A} → (inverse a) · a ∼ identity
-        invRight : {a : A} → a · (inverse a) ∼ identity
 
     reflGroupWellDefined : {lvl : _} {A : Set lvl} {m n x y : A} {op : A → A → A} → m ≡ x → n ≡ y → (op m n) ≡ (op x y)
     reflGroupWellDefined {lvl} {A} {m} {n} {.m} {.n} {op} refl refl = refl
@@ -185,8 +175,8 @@ module Groups.Groups where
         open Transitive transitiveEq
         open Symmetric symmetricEq
 
-    invContravariant : {a b : _} → {A : Set a} → {S : Setoid {a} {b} A} → {_·_ : A → A → A} → (G : Group S _·_) → (x y : A) → (Setoid._∼_ S (Group.inverse G (x · y)) ((Group.inverse G y) · (Group.inverse G x)))
-    invContravariant {S = S} {_·_} G x y = ans
+    invContravariant : {a b : _} → {A : Set a} → {S : Setoid {a} {b} A} → {_·_ : A → A → A} → (G : Group S _·_) → {x y : A} → (Setoid._∼_ S (Group.inverse G (x · y)) ((Group.inverse G y) · (Group.inverse G x)))
+    invContravariant {S = S} {_·_} G {x} {y} = ans
       where
         open Group G renaming (inverse to _^-1) renaming (identity to e)
         open Setoid S
@@ -361,7 +351,7 @@ module Groups.Groups where
             g : f (Group.inverse G (m ·A Group.inverse G n)) ∼ identity
             g = transitive (homRespectsInverse fHom {m ·A Group.inverse G n}) (transitive (inverseWellDefined H pr) (invIdentity H))
             h : f (Group.inverse G (Group.inverse G n) ·A Group.inverse G m) ∼ identity
-            h = transitive (GroupHom.wellDefined fHom (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (invContravariant G m (Group.inverse G n)))) g
+            h = transitive (GroupHom.wellDefined fHom (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (invContravariant G))) g
             i : f (n ·A Group.inverse G m) ∼ identity
             i = transitive (GroupHom.wellDefined fHom (Group.wellDefined G (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (invTwice G n)) (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))))) h
         Transitive.transitive (Equivalence.transitiveEq (Setoid.eq ansSetoid)) {m} {n} {o} prmn prno = transitive (GroupHom.wellDefined fHom (Group.wellDefined G (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))) (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (Group.multIdentLeft G)))) k
@@ -392,7 +382,7 @@ module Groups.Groups where
         p6 : (f x) ·B (Group.identity H ·B f (Group.inverse G m)) ∼ (f x) ·B f (Group.inverse G m)
         p7 : (f x) ·B f (Group.inverse G m) ∼ f (x ·A (Group.inverse G m))
         p8 : f (x ·A (Group.inverse G m)) ∼ Group.identity H
-        p1 = GroupHom.wellDefined fHom (Group.wellDefined G (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))) (invContravariant G m n))
+        p1 = GroupHom.wellDefined fHom (Group.wellDefined G (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))) (invContravariant G))
         p2 = GroupHom.wellDefined fHom (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (fourWayAssoc G))
         p3 = GroupHom.groupHom fHom
         p4 = Group.wellDefined H (Reflexive.reflexive reflexiveEq) (GroupHom.groupHom fHom)
