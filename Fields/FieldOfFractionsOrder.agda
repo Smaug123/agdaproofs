@@ -599,7 +599,110 @@ module Fields.FieldOfFractionsOrder where
   OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inl 0<dAdC) | inr 0=dBdC with IntegralDomain.intDom I (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) 0=dBdC)
   OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inl 0<dAdC) | inr 0=dBdC | inl x = exFalso (denomB!=0 x)
   OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inl 0<dAdC) | inr 0=dBdC | inr x = exFalso (denomC!=0 x)
-  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) = {!!}
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) with SetoidTotalOrder.totality tOrder (Ring.0R R) (denomB * denomC)
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inl 0<dBdC) with SetoidTotalOrder.totality tOrder (Ring.0R R) denomA
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inl 0<dBdC) | inl (inl 0<dA) with SetoidTotalOrder.totality tOrder (Ring.0R R) denomB
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inl 0<dBdC) | inl (inl 0<dA) | inl (inl 0<dB) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.transitive pOrder 0<dC dC<0))
+    where
+      open Setoid S
+      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Ring R
+      0<dC : 0R < denomC
+      0<dC = ineqLemma I oRing 0<dBdC 0<dB
+      dC<0 : denomC < 0R
+      dC<0 = ineqLemma'' I oRing dAdC<0 0<dA
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inl 0<dBdC) | inl (inl 0<dA) | inl (inr dB<0) = SetoidPartialOrder.wellDefined pOrder (symmetric multAssoc) (symmetric multAssoc) (ringCanMultiplyByNegative oRing dC<0 (SetoidPartialOrder.wellDefined pOrder (transitive (Group.wellDefined additiveGroup (transitive (multWellDefined multCommutative reflexive) (symmetric multAssoc)) multCommutative) (transitive (symmetric multDistributes) multCommutative)) (transitive (Group.wellDefined additiveGroup (transitive (multWellDefined multCommutative reflexive) (symmetric multAssoc)) (transitive (symmetric multAssoc) (multWellDefined reflexive multCommutative))) (transitive (symmetric multDistributes) multCommutative)) have))
+    where
+      open Setoid S
+      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Ring R
+      dC<0 : denomC < 0R
+      dC<0 = ineqLemma'' I oRing dAdC<0 0<dA
+      have : (((numA * denomB) * denomC) + ((denomA * numC) * denomB)) < (((numB * denomA) * denomC) + ((denomA * numC) * denomB))
+      have = OrderedRing.orderRespectsAddition oRing (ringCanMultiplyByNegative oRing dC<0 a<b) _
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inl 0<dBdC) | inl (inl 0<dA) | inr 0=dB = exFalso (denomB!=0 (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) 0=dB))
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inl 0<dBdC) | inl (inr dA<0) with SetoidTotalOrder.totality tOrder (Ring.0R R) denomB
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inl 0<dBdC) | inl (inr dA<0) | inl (inl 0<dB) = SetoidPartialOrder.wellDefined pOrder (symmetric multAssoc) (symmetric multAssoc) (ringCanMultiplyByPositive oRing 0<dC (SetoidPartialOrder.wellDefined pOrder (transitive (Group.wellDefined additiveGroup multCommutative multCommutative) (transitive (transitive (Group.wellDefined additiveGroup (transitive multCommutative (transitive (transitive (symmetric multAssoc) (transitive (multWellDefined reflexive multCommutative) multAssoc)) multCommutative)) (transitive multAssoc (transitive (multWellDefined multCommutative reflexive) (symmetric multAssoc)))) (symmetric multDistributes)) multCommutative)) (transitive (Group.wellDefined additiveGroup multCommutative multCommutative) (transitive (transitive (Group.wellDefined additiveGroup (transitive multCommutative (transitive (multWellDefined multCommutative reflexive) (symmetric multAssoc))) reflexive) (symmetric multDistributes)) multCommutative)) have))
+    where
+      open Setoid S
+      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Ring R
+      0<dC : 0R < denomC
+      0<dC = ineqLemma I oRing 0<dBdC 0<dB
+      have : (((numB * denomA) * denomC) + ((denomA * numC) * denomB)) < (((numA * denomB) * denomC) + ((denomA * numC) * denomB))
+      have = OrderedRing.orderRespectsAddition oRing (ringCanMultiplyByPositive oRing 0<dC a<b) _
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inl 0<dBdC) | inl (inr dA<0) | inl (inr dB<0) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.transitive pOrder 0<dC dC<0))
+    where
+      open Setoid S
+      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Ring R
+      dC<0 : denomC < 0R
+      dC<0 = ineqLemma' I oRing 0<dBdC dB<0
+      0<dC : 0R < denomC
+      0<dC = ineqLemma''' I oRing dAdC<0 dA<0
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inl 0<dBdC) | inl (inr dA<0) | inr 0=dB = exFalso (denomB!=0 (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) 0=dB))
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inl 0<dBdC) | inr 0=dA = exFalso (denomA!=0 (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) 0=dA))
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inr dBdC<0) with SetoidTotalOrder.totality tOrder (Ring.0R R) denomA
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inr dBdC<0) | inl (inl 0<dA) with SetoidTotalOrder.totality tOrder (Ring.0R R) denomB
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inr dBdC<0) | inl (inl 0<dA) | inl (inl 0<dB) = SetoidPartialOrder.wellDefined pOrder (symmetric multAssoc) (symmetric multAssoc) (ringCanMultiplyByNegative oRing dC<0 (SetoidPartialOrder.wellDefined pOrder (transitive (transitive (Group.wellDefined additiveGroup multCommutative multCommutative) (Group.wellDefined additiveGroup (transitive multCommutative (transitive (multWellDefined multCommutative reflexive) (symmetric multAssoc))) reflexive)) (transitive (symmetric multDistributes) multCommutative)) (transitive (transitive (Group.wellDefined additiveGroup multCommutative multCommutative) (Group.wellDefined additiveGroup (transitive (transitive multAssoc (multWellDefined multCommutative reflexive)) multCommutative) (transitive multAssoc (transitive (multWellDefined multCommutative reflexive) (symmetric multAssoc))))) (transitive (symmetric multDistributes) multCommutative)) have))
+    where
+      open Setoid S
+      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Ring R
+      dC<0 : denomC < 0R
+      dC<0 = ineqLemma'' I oRing dAdC<0 0<dA
+      have : (((numB * denomA) * denomC) + ((denomB * numC) * denomA)) < (((numA * denomB) * denomC) + ((denomB * numC) * denomA))
+      have = OrderedRing.orderRespectsAddition oRing (ringCanMultiplyByNegative oRing dC<0 a<b) _
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inr dBdC<0) | inl (inl 0<dA) | inl (inr dB<0) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.transitive pOrder dC<0 0<dC))
+    where
+      open Setoid S
+      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Ring R
+      dC<0 : denomC < 0R
+      dC<0 = ineqLemma'' I oRing dAdC<0 0<dA
+      0<dC : 0R < denomC
+      0<dC = ineqLemma''' I oRing dBdC<0 dB<0
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inr dBdC<0) | inl (inl 0<dA) | inr x = exFalso (denomB!=0 (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) x))
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inr dBdC<0) | inl (inr dA<0) with SetoidTotalOrder.totality tOrder (Ring.0R R) denomB
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inr dBdC<0) | inl (inr dA<0) | inl (inl 0<dB) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.transitive pOrder 0<dC dC<0))
+    where
+      open Setoid S
+      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Ring R
+      0<dC : 0R < denomC
+      0<dC = ineqLemma''' I oRing dAdC<0 dA<0
+      dC<0 : denomC < 0R
+      dC<0 = ineqLemma'' I oRing dBdC<0 0<dB
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inr dBdC<0) | inl (inr dA<0) | inl (inr dB<0) = SetoidPartialOrder.wellDefined pOrder (symmetric multAssoc) (symmetric multAssoc) (ringCanMultiplyByPositive oRing 0<dC (SetoidPartialOrder.wellDefined pOrder (transitive (Group.wellDefined additiveGroup multCommutative multCommutative) (transitive (Group.wellDefined additiveGroup (transitive multCommutative (transitive (multWellDefined multCommutative reflexive) (symmetric multAssoc))) reflexive) (transitive (symmetric multDistributes) multCommutative))) (transitive (Group.wellDefined additiveGroup multCommutative multCommutative) (transitive (transitive (Group.wellDefined additiveGroup (transitive multCommutative (transitive (multWellDefined multCommutative reflexive) (symmetric multAssoc))) (transitive multCommutative (transitive (symmetric multAssoc) (multWellDefined reflexive multCommutative)))) (symmetric multDistributes)) multCommutative)) have))
+    where
+      open Setoid S
+      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Ring R
+      0<dC : 0R < denomC
+      0<dC = ineqLemma''' I oRing dAdC<0 dA<0
+      have : (((numA * denomB) * denomC) + ((denomA * numC) * denomB)) < (((numB * denomA) * denomC) + ((denomA * numC) * denomB))
+      have = OrderedRing.orderRespectsAddition oRing (ringCanMultiplyByPositive oRing 0<dC a<b) _
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inr dBdC<0) | inl (inr dA<0) | inr x = exFalso (denomB!=0 (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) x))
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inl (inr dBdC<0) | inr x = exFalso (denomA!=0 (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) x))
+  OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inr dAdC<0) | inr 0=dBdC with IntegralDomain.intDom I (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) 0=dBdC)
+  ... | inl x = exFalso (denomB!=0 x)
+  ... | inr x = exFalso (denomC!=0 x)
   OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inr (0=dAdC) with IntegralDomain.intDom I (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) 0=dAdC)
   OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inr 0=dAdC | inl x = exFalso (denomA!=0 x)
   OrderedRing.orderRespectsAddition (fieldOfFractionsOrderedRing {S = S} {_+_} {_*_} {R} {_<_} {pOrder} {tOrder} I oRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inr 0=dAdC | inr x = exFalso (denomC!=0 x)
