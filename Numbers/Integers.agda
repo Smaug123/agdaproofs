@@ -3,6 +3,7 @@
 open import LogicalFormulae
 open import Numbers.Naturals
 open import Groups.Groups
+open import Groups.GroupDefinition
 open import Rings.RingDefinition
 open import Functions
 open import Orders

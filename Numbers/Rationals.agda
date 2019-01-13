@@ -10,6 +10,7 @@ open import PrimeNumbers
 open import Setoids.Setoids
 open import Functions
 open import Fields.FieldOfFractions
+open import Fields.FieldOfFractionsOrder
 
 module Numbers.Rationals where
 
@@ -28,5 +29,5 @@ module Numbers.Rationals where
   ℚField : Field ℚRing
   ℚField = fieldOfFractions ℤIntDom
 
-  ℚField : OrderedRing ℚRing (fieldOfFractionsTotalOrder ℤIntDom ℤOrderedRing)
-  ℚField = fieldOfFractionsOrderedRing ℤIntDom ℤOrderedRing
+  ℚOrdered : OrderedRing ℚRing (fieldOfFractionsTotalOrder ℤIntDom ℤOrderedRing)
+  ℚOrdered = fieldOfFractionsOrderedRing ℤIntDom ℤOrderedRing
