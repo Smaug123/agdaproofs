@@ -61,3 +61,9 @@ module Rings.RingDefinition where
   --    ringHom : RingHom R S f
   --    bijective : Bijection f
 
+
+  abs : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} (R : Ring S _+_ _*_) (order : SetoidTotalOrder pOrder) (x : A) → A
+  abs R order x with SetoidTotalOrder.totality order (Ring.0R R) x
+  ... | inl (inl 0<x) = x
+  ... | inl (inr x<0) = Group.inverse (Ring.additiveGroup R) x
+  ... | inr 0=x = Ring.0R R
