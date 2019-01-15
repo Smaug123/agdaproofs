@@ -1,11 +1,12 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Groups
-open import Naturals
+open import Groups.GroupDefinition
+open import Groups.Groups
+open import Numbers.Naturals
 open import PrimeNumbers
-open import Setoids
-open import FinSet
+open import Setoids.Setoids
+open import Sets.FinSet
 open import Functions
 
 module IntegersModN where
