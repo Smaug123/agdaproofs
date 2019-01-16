@@ -5,6 +5,7 @@ open import Numbers.Naturals
 open import Numbers.Integers
 open import Numbers.Rationals
 open import Groups.Groups
+open import Groups.GroupsLemmas
 open import Groups.GroupDefinition
 open import Rings.RingDefinition
 open import Fields.Fields
@@ -211,3 +212,60 @@ module Numbers.RationalsLemmas where
       open Reflexive (Equivalence.reflexiveEq eq)
       open Transitive (Equivalence.transitiveEq eq)
   triangleInequality {a} {b} | inr 0=a | inr 0=b | inr 0=a+b = inr refl
+
+  absNegation : (a : ℚ) → ((absQ a) =Q (absQ (negateQ a)))
+  absNegation a with SetoidTotalOrder.totality ℚTotalOrder 0Q a
+  absNegation a | inl (inl 0<a) with SetoidTotalOrder.totality ℚTotalOrder 0Q (negateQ a)
+  absNegation a | inl (inl 0<a) | inl (inl 0<-a) = exFalso (SetoidPartialOrder.irreflexive (fieldOfFractionsOrder ℤIntDom ℤOrderedRing) {a} (SetoidPartialOrder.transitive (fieldOfFractionsOrder ℤIntDom ℤOrderedRing) {a} {0Q} {a} (ringMinusFlipsOrder''' ℚOrdered {a} 0<-a) 0<a))
+    where
+      open Group (Ring.additiveGroup ℚRing)
+      open Setoid (fieldOfFractionsSetoid ℤIntDom)
+      open Symmetric (Equivalence.symmetricEq eq)
+      open Reflexive (Equivalence.reflexiveEq eq)
+      open Transitive (Equivalence.transitiveEq eq)
+  absNegation a | inl (inl 0<a) | inl (inr _) = symmetric {inverse (inverse a)} {a} (invTwice (Ring.additiveGroup ℚRing) a)
+    where
+      open Group (Ring.additiveGroup ℚRing)
+      open Setoid (fieldOfFractionsSetoid ℤIntDom)
+      open Symmetric (Equivalence.symmetricEq eq)
+      open Reflexive (Equivalence.reflexiveEq eq)
+      open Transitive (Equivalence.transitiveEq eq)
+  absNegation a | inl (inl 0<a) | inr 0=-a = exFalso (SetoidPartialOrder.irreflexive (fieldOfFractionsOrder ℤIntDom ℤOrderedRing) {0Q} (SetoidPartialOrder.wellDefined (fieldOfFractionsOrder ℤIntDom ℤOrderedRing) {0Q} {0Q} {a} {0Q} (reflexive {0Q}) (transitive {a} {inverse 0Q} {0Q} (swapInv (Ring.additiveGroup ℚRing) {a} {0Q} (symmetric {0Q} {inverse a} 0=-a)) (invIdentity (Ring.additiveGroup ℚRing))) 0<a))
+    where
+      open Group (Ring.additiveGroup ℚRing)
+      open Setoid (fieldOfFractionsSetoid ℤIntDom)
+      open Symmetric (Equivalence.symmetricEq eq)
+      open Reflexive (Equivalence.reflexiveEq eq)
+      open Transitive (Equivalence.transitiveEq eq)
+  absNegation a | inl (inr a<0) with SetoidTotalOrder.totality ℚTotalOrder 0Q (negateQ a)
+  absNegation a | inl (inr a<0) | inl (inl _) = Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq (fieldOfFractionsSetoid ℤIntDom))) {Group.inverse (Ring.additiveGroup ℚRing) a}
+  absNegation a | inl (inr a<0) | inl (inr -a<0) = exFalso (SetoidPartialOrder.irreflexive (fieldOfFractionsOrder ℤIntDom ℤOrderedRing) {0Q} (SetoidPartialOrder.transitive (fieldOfFractionsOrder ℤIntDom ℤOrderedRing) {0Q} {a} {0Q} (ringMinusFlipsOrder' ℚOrdered {a} -a<0) a<0))
+    where
+      open Group (Ring.additiveGroup ℚRing)
+      open Setoid (fieldOfFractionsSetoid ℤIntDom)
+      open Symmetric (Equivalence.symmetricEq eq)
+      open Reflexive (Equivalence.reflexiveEq eq)
+      open Transitive (Equivalence.transitiveEq eq)
+  absNegation a | inl (inr a<0) | inr -a=0 = exFalso (SetoidPartialOrder.irreflexive (fieldOfFractionsOrder ℤIntDom ℤOrderedRing) {0Q} (SetoidPartialOrder.wellDefined (fieldOfFractionsOrder ℤIntDom ℤOrderedRing) {a} {0Q} {0Q} {0Q} (transitive {a} {inverse 0Q} {0Q} (swapInv (Ring.additiveGroup ℚRing) {a} {0Q} (symmetric {0Q} {inverse a} -a=0)) (invIdentity (Ring.additiveGroup ℚRing))) (reflexive {0Q}) a<0))
+    where
+      open Group (Ring.additiveGroup ℚRing)
+      open Setoid (fieldOfFractionsSetoid ℤIntDom)
+      open Symmetric (Equivalence.symmetricEq eq)
+      open Reflexive (Equivalence.reflexiveEq eq)
+      open Transitive (Equivalence.transitiveEq eq)
+  absNegation a | inr 0=a with SetoidTotalOrder.totality ℚTotalOrder 0Q (negateQ a)
+  absNegation a | inr 0=a | inl (inl 0<-a) = exFalso (SetoidPartialOrder.irreflexive (fieldOfFractionsOrder ℤIntDom ℤOrderedRing) {0Q} (SetoidPartialOrder.wellDefined (fieldOfFractionsOrder ℤIntDom ℤOrderedRing) {0Q} {0Q} {inverse a} {0Q} (reflexive {0Q}) (transitive {inverse a} {inverse 0Q} {0Q} (symmetric {inverse 0Q} {inverse a} (inverseWellDefined (Ring.additiveGroup ℚRing) {0Q} {a} 0=a)) (invIdentity (Ring.additiveGroup ℚRing))) 0<-a))
+    where
+      open Group (Ring.additiveGroup ℚRing)
+      open Setoid (fieldOfFractionsSetoid ℤIntDom)
+      open Symmetric (Equivalence.symmetricEq eq)
+      open Reflexive (Equivalence.reflexiveEq eq)
+      open Transitive (Equivalence.transitiveEq eq)
+  absNegation a | inr 0=a | inl (inr -a<0) = exFalso (SetoidPartialOrder.irreflexive (fieldOfFractionsOrder ℤIntDom ℤOrderedRing) {0Q} (SetoidPartialOrder.wellDefined (fieldOfFractionsOrder ℤIntDom ℤOrderedRing) {inverse a} {0Q} {0Q} {0Q} (transitive {inverse a} {inverse 0Q} {0Q} (symmetric {inverse 0Q} {inverse a} (inverseWellDefined (Ring.additiveGroup ℚRing) {0Q} {a} 0=a)) (invIdentity (Ring.additiveGroup ℚRing))) (reflexive {0Q}) -a<0))
+    where
+      open Group (Ring.additiveGroup ℚRing)
+      open Setoid (fieldOfFractionsSetoid ℤIntDom)
+      open Symmetric (Equivalence.symmetricEq eq)
+      open Reflexive (Equivalence.reflexiveEq eq)
+      open Transitive (Equivalence.transitiveEq eq)
+  absNegation a | inr 0=a | inr _ = refl

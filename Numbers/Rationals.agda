@@ -40,8 +40,20 @@ module Numbers.Rationals where
   _=Q_ : ℚ → ℚ → Set
   a =Q b = Setoid._∼_ (fieldOfFractionsSetoid ℤIntDom) a b
 
+  reflQ : {x : ℚ} → (x =Q x)
+  reflQ {x} = Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq (fieldOfFractionsSetoid ℤIntDom))) {x}
+
   _≤Q_ : ℚ → ℚ → Set
   a ≤Q b = (a <Q b) || (a =Q b)
+
+  negateQ : ℚ → ℚ
+  negateQ a = Group.inverse (Ring.additiveGroup ℚRing) a
+
+  _-Q_ : ℚ → ℚ → ℚ
+  a -Q b = a +Q negateQ b
+
+  ℚPartialOrder : SetoidPartialOrder (fieldOfFractionsSetoid ℤIntDom) (fieldOfFractionsComparison ℤIntDom ℤOrderedRing)
+  ℚPartialOrder = fieldOfFractionsOrder ℤIntDom ℤOrderedRing
 
   ℚTotalOrder : SetoidTotalOrder (fieldOfFractionsOrder ℤIntDom ℤOrderedRing)
   ℚTotalOrder = fieldOfFractionsTotalOrder ℤIntDom ℤOrderedRing
