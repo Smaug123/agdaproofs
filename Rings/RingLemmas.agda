@@ -88,6 +88,12 @@ module Rings.RingLemmas where
       open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
       open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
 
+  ringMinusFlipsOrder'' : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder pOrder} (oRing : OrderedRing R tOrder) → {x : A} → x < (Ring.0R R) → (Ring.0R R) < Group.inverse (Ring.additiveGroup R) x
+  ringMinusFlipsOrder'' {S = S} {R = R} {pOrder = pOrder} oRing {x} x<0 = ringMinusFlipsOrder' oRing (SetoidPartialOrder.wellDefined pOrder {x} {Group.inverse (Ring.additiveGroup R) (Group.inverse (Ring.additiveGroup R) x)} {Ring.0R R} {Ring.0R R} (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (invInv (Ring.additiveGroup R))) (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))) x<0)
+
+  ringMinusFlipsOrder''' : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder pOrder} (oRing : OrderedRing R tOrder) → {x : A} → (Ring.0R R) < x → (Group.inverse (Ring.additiveGroup R) x) < (Ring.0R R)
+  ringMinusFlipsOrder''' {S = S} {R = R} {pOrder = pOrder} oRing {x} 0<x = ringMinusFlipsOrder oRing 0<x
+
   ringCanMultiplyByPositive : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder pOrder} (oRing : OrderedRing R tOrder) → {x y c : A} → (Ring.0R R) < c → x < y → (x * c) < (y * c)
   ringCanMultiplyByPositive {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} {_<_ = _<_} {pOrder = pOrder} {tOrder = tOrder} oRing {x} {y} {c} 0<c x<y = SetoidPartialOrder.wellDefined pOrder reflexive (Group.multIdentRight additiveGroup) q'
     where
