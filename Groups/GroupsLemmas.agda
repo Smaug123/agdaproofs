@@ -33,3 +33,11 @@ module Groups.GroupsLemmas where
       open Equivalence eq
       open Symmetric symmetricEq
       open Transitive transitiveEq
+
+  identityIsUnique : {a b : _} → {A : Set a} → {S : Setoid {a} {b} A} → {_·_ : A → A → A} → (G : Group S _·_) → (e : A) → ((b : A) → (Setoid._∼_ S (b · e) b)) → (Setoid._∼_ S e (Group.identity G))
+  identityIsUnique {S = S} {_·_} g thing fb = transitive (symmetric multIdentLeft) (fb e)
+    where
+      open Group g renaming (inverse to _^-1) renaming (identity to e)
+      open Setoid S
+      open Transitive (Equivalence.transitiveEq eq)
+      open Symmetric (Equivalence.symmetricEq eq)

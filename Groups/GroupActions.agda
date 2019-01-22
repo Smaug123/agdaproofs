@@ -1,14 +1,16 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Setoids
+open import Setoids.Setoids
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Naturals
-open import FinSet
-open import Groups
+open import Numbers.Naturals
+open import Sets.FinSet
+open import Groups.GroupDefinition
+open import Groups.GroupsLemmas
+open import Groups.Groups
 
-module GroupActions where
+module Groups.GroupActions where
     record GroupAction {m n o p : _} {A : Set m} {S : Setoid {m} {o} A} {_·_ : A → A → A} {B : Set n} (G : Group S _·_) (X : Setoid {n} {p} B) : Set (m ⊔ n ⊔ o ⊔ p) where
       open Group G
       open Setoid S renaming (_∼_ to _∼G_)
@@ -54,7 +56,7 @@ module GroupActions where
         open Symmetric symmetricEq
 
     conjugationAction : {m n : _} {A : Set m} {S : Setoid {m} {n} A} {_·_ : A → A → A} → (G : Group S _·_) → GroupAction G S
-    conjugationAction {S = S} {_·_ = _·_} G = record { action = λ g h → (g · h) · (inverse g) ; actionWellDefined1 = λ gh → wellDefined (wellDefined gh reflexive) (inverseWellDefined G gh) ; actionWellDefined2 = λ x~y → wellDefined (wellDefined reflexive x~y) reflexive ; identityAction = transitive (wellDefined reflexive (invIdentity G)) (transitive multIdentRight multIdentLeft)  ; associativeAction = λ {x} {g} {h} → transitive (wellDefined reflexive (invContravariant G g h)) (transitive multAssoc (wellDefined (fourWayAssoc' G) reflexive)) }
+    conjugationAction {S = S} {_·_ = _·_} G = record { action = λ g h → (g · h) · (inverse g) ; actionWellDefined1 = λ gh → wellDefined (wellDefined gh reflexive) (inverseWellDefined G gh) ; actionWellDefined2 = λ x~y → wellDefined (wellDefined reflexive x~y) reflexive ; identityAction = transitive (wellDefined reflexive (invIdentity G)) (transitive multIdentRight multIdentLeft)  ; associativeAction = λ {x} {g} {h} → transitive (wellDefined reflexive (invContravariant G)) (transitive multAssoc (wellDefined (fourWayAssoc' G) reflexive)) }
       where
         open Group G
         open Setoid S
@@ -88,9 +90,9 @@ module GroupActions where
         input : f (x ·A inverse y) ∼ Group.identity H
         input = x~y
         p1 : Setoid._∼_ S ((g ·A (x ·A inverse g)) ·A inverse (g ·A (y ·A inverse g))) ((g ·A (x ·A inverse g)) ·A (inverse (y ·A (inverse g)) ·A inverse g))
-        p1 = Group.wellDefined G reflexive (invContravariant G g (y ·A inverse g))
+        p1 = Group.wellDefined G reflexive (invContravariant G)
         p2 : Setoid._∼_ S ((g ·A (x ·A inverse g)) ·A (inverse (y ·A (inverse g)) ·A inverse g)) ((g ·A (x ·A inverse g)) ·A ((inverse (inverse g) ·A inverse y) ·A inverse g))
-        p2 = Group.wellDefined G reflexive (Group.wellDefined G (invContravariant G _ _) reflexive)
+        p2 = Group.wellDefined G reflexive (Group.wellDefined G (invContravariant G) reflexive)
         p3 : Setoid._∼_ S ((g ·A (x ·A inverse g)) ·A ((inverse (inverse g) ·A inverse y) ·A inverse g)) (g ·A (((x ·A inverse g) ·A (inverse (inverse g) ·A inverse y)) ·A inverse g))
         p3 = symmetric (fourWayAssoc G)
         p4 : Setoid._∼_ S (g ·A (((x ·A inverse g) ·A (inverse (inverse g) ·A inverse y)) ·A inverse g)) (g ·A ((x ·A ((inverse g ·A inverse (inverse g)) ·A inverse y)) ·A inverse g))
@@ -142,5 +144,5 @@ module GroupActions where
         open Symmetric (Equivalence.symmetricEq (Setoid.eq S)) renaming (symmetric to symmetricG)
         open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
         ans : f (((g ·A h) ·A (x ·A inverse (g ·A h))) ·A inverse ((g ·A ((h ·A (x ·A inverse h)) ·A inverse g)))) ∼T Group.identity H
-        ans = transitiveH (GroupHom.wellDefined fHom (transferToRight'' G (transitiveG (symmetricG multAssoc) (Group.wellDefined G reflexive (transitiveG (wellDefined reflexive (transitiveG (wellDefined reflexive (invContravariant G g h)) multAssoc)) multAssoc))))) (imageOfIdentityIsIdentity fHom)
+        ans = transitiveH (GroupHom.wellDefined fHom (transferToRight'' G (transitiveG (symmetricG multAssoc) (Group.wellDefined G reflexive (transitiveG (wellDefined reflexive (transitiveG (wellDefined reflexive (invContravariant G)) multAssoc)) multAssoc))))) (imageOfIdentityIsIdentity fHom)
 

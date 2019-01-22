@@ -1,35 +1,43 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Setoids
+open import Setoids.Setoids
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Naturals
-open import FinSet
-open import Groups
-open import GroupActions
+open import Numbers.Naturals
+open import Sets.FinSet
+open import Groups.GroupDefinition
+open import Groups.GroupActions
 
-module SymmetryGroups where
+module Groups.SymmetryGroups where
   data SymmetryGroupElements {a b : _} {A : Set a} (S : Setoid {a} {b} A) : Set (a ⊔ b) where
     sym : {f : A → A} → SetoidBijection S S f → SymmetryGroupElements S
 
-  data ExtensionallyEqual {a b : _} {A : Set a} {B : Set b} (f g : A → B) : Set (a ⊔ b) where
-    eq : ({x : A} → (f x) ≡ (g x)) → ExtensionallyEqual f g
+  record WellDefined {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} (f : A → B) : Set (a ⊔ b ⊔ c ⊔ d) where
+    field
+      wd : {r s : A} → Setoid._∼_ S r s → Setoid._∼_ T (f r) (f s)
 
-  extensionallyEqualReflexive : {a b : _} {A : Set a} {B : Set b} (f : A → B) → ExtensionallyEqual f f
-  extensionallyEqualReflexive f = eq (λ {x} → refl)
+  record ExtensionallyEqual {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {f : A → B} {g : A → B} (fWD : WellDefined {S = S} {T = T} f) (gWD : WellDefined {S = S} {T = T} g) : Set (a ⊔ b ⊔ c ⊔ d) where
+    field
+      eq : {x : A} → Setoid._∼_ T (f x) (g x)
 
-  extensionallyEqualSymmetric : {a b : _} {A : Set a} {B : Set b} {f g : A → B} → ExtensionallyEqual f g → ExtensionallyEqual g f
-  extensionallyEqualSymmetric {f} {g} (eq pr) = eq λ {x} → equalityCommutative (pr {x})
+  bijectionWellDefined : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {f : A → A} → SetoidBijection S S f → WellDefined {S = S} {S} f
+  WellDefined.wd (bijectionWellDefined record { inj = record { wellDefined = wellDefined ; injective = injective } ; surj = surj }) {r} {s} r=s = wellDefined {r} {s} r=s
 
-  extensionallyEqualTransitive : {a b : _} {A : Set a} {B : Set b} {f g h : A → B} → ExtensionallyEqual f g → ExtensionallyEqual g h → ExtensionallyEqual f h
-  extensionallyEqualTransitive (eq pr1) (eq pr2) = eq λ {x} → transitivity pr1 pr2
+  extensionallyEqualReflexive : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {f : A → B} → (fWD : WellDefined {S = S} {T = T} f) → ExtensionallyEqual {S = S} {T = T} fWD fWD
+  ExtensionallyEqual.eq (extensionallyEqualReflexive {T = T} f) = Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq T))
+
+  extensionallyEqualSymmetric : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {f g : A → B} → {fWD : WellDefined {S = S} {T = T} f} → {gWD : WellDefined {S = S} {T = T} g} → ExtensionallyEqual fWD gWD → ExtensionallyEqual gWD fWD
+  ExtensionallyEqual.eq (extensionallyEqualSymmetric {T = T} {f} {g} record { eq = eq }) = Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq T)) eq
+
+  extensionallyEqualTransitive : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {f g h : A → B} {fWD : WellDefined {S = S} {T = T} f} {gWD : WellDefined {S = S} {T = T} g} {hWD : WellDefined {S = S} {T = T} h} → ExtensionallyEqual fWD gWD → ExtensionallyEqual gWD hWD → ExtensionallyEqual fWD hWD
+  ExtensionallyEqual.eq (extensionallyEqualTransitive {T = T} record { eq = f=g } record { eq = g=h }) = Transitive.transitive (Equivalence.transitiveEq (Setoid.eq T)) f=g g=h
 
   symmetricSetoid : {a b : _} {A : Set a} (S : Setoid {a} {b} A) → Setoid (SymmetryGroupElements S)
-  Setoid._∼_ (symmetricSetoid A) (sym {f} bijF) (sym {g} bijG) = ExtensionallyEqual f g
-  Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq (symmetricSetoid A))) {sym {f} bijF} = extensionallyEqualReflexive f
-  Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq (symmetricSetoid A))) {sym {f} bijF} {sym {g} bijG} f~g = extensionallyEqualSymmetric f~g
-  Transitive.transitive (Equivalence.transitiveEq (Setoid.eq (symmetricSetoid A))) {sym {f} bijF} {sym {g} bijG} {sym {h} bijH} f~g g~h = extensionallyEqualTransitive f~g g~h
+  (symmetricSetoid S Setoid.∼ sym f) (sym g) = ExtensionallyEqual {S = S} {T = S} (bijectionWellDefined f) (bijectionWellDefined g)
+  Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq (symmetricSetoid S))) {sym f} = extensionallyEqualReflexive (bijectionWellDefined f)
+  Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq (symmetricSetoid S))) {sym b} {sym c} b=c = extensionallyEqualSymmetric b=c
+  Transitive.transitive (Equivalence.transitiveEq (Setoid.eq (symmetricSetoid S))) {sym a} {sym b} {sym c} a=b b=c = extensionallyEqualTransitive a=b b=c
 
   symmetricGroupOp : {a b : _} {A : Set a} {S : Setoid {a} {b} A} (f g : SymmetryGroupElements S) → SymmetryGroupElements S
   symmetricGroupOp (sym {f} bijF) (sym {g} bijG) = sym (setoidBijComp bijF bijG)
@@ -39,23 +47,30 @@ module SymmetryGroups where
   ... | record { inverse = inverse ; inverseWellDefined = iwd ; isLeft = isLeft ; isRight = isRight } = sym (setoidInvertibleImpliesBijective (record { fWellDefined = iwd ; inverse = f ; inverseWellDefined = SetoidInjection.wellDefined (SetoidBijection.inj bijF) ; isLeft = λ b → isRight b ; isRight = λ b → isLeft b }))
 
   symmetricGroupInvIsLeft : {a b : _} {A : Set a} (S : Setoid {a} {b} A) → {x : SymmetryGroupElements S} → Setoid._∼_ (symmetricSetoid S) (symmetricGroupOp (symmetricGroupInv S x) x) (sym setoidIdIsBijective)
-  symmetricGroupInvIsLeft {A = A} S {sym fBij} = ExtensionallyEqual.eq λ {x} → {!ans (sym fBij)!}
+  symmetricGroupInvIsLeft {A = A} S {sym {f} fBij} = record { eq = λ {x} → ans x }
     where
-      ans : (f : A → A) → (bij : SetoidBijection S S f) → f (symmetricGroupInv S (sym fBij) x) ≡ sym fBij
-      ans elt = {!!}
+      ans : (x : A) → Setoid._∼_ S (f (SetoidInvertible.inverse (setoidBijectiveImpliesInvertible fBij) x)) x
+      ans x with SetoidSurjection.surjective (SetoidBijection.surj fBij) {x}
+      ans x | a , b = b
 
   symmetricGroupInvIsRight : {a b : _} {A : Set a} (S : Setoid {a} {b} A) → {x : SymmetryGroupElements S} → Setoid._∼_ (symmetricSetoid S) (symmetricGroupOp x (symmetricGroupInv S x)) (sym setoidIdIsBijective)
-  symmetricGroupInvIsRight S {sym x} = {!!}
+  ExtensionallyEqual.eq (symmetricGroupInvIsRight {A = A} S {sym {f} fBij}) {x} = ans x
+    where
+      ans : (x : A) → Setoid._∼_ S ((SetoidInvertible.inverse (setoidBijectiveImpliesInvertible fBij) (f x))) x
+      ans x with SetoidSurjection.surjective (SetoidBijection.surj fBij) {f x}
+      ans x | a , b = SetoidInjection.injective (SetoidBijection.inj fBij) b
 
   symmetricGroup : {a b : _} {A : Set a} (S : Setoid {a} {b} A) → Group (symmetricSetoid S) (symmetricGroupOp {A = A})
-  Group.wellDefined (symmetricGroup A) {sym {m} bijM} {sym {n} bijN} {sym {x} bijX} {sym {y} bijY} (ExtensionallyEqual.eq m~x) (ExtensionallyEqual.eq n~y) = ExtensionallyEqual.eq λ {z} → transitivity (applyEquality n m~x) n~y
-  Group.identity (symmetricGroup A) = sym setoidIdIsBijective
-  Group.inverse (symmetricGroup S) = symmetricGroupInv S
-  Group.multAssoc (symmetricGroup A) {sym {f} bijF} {sym {g} bijG} {sym {h} bijH} = ExtensionallyEqual.eq λ {x} → refl
-  Group.multIdentRight (symmetricGroup A) {sym {f} bijF} = ExtensionallyEqual.eq λ {x} → refl
-  Group.multIdentLeft (symmetricGroup A) {sym {f} bijF} = ExtensionallyEqual.eq λ {x} → refl
-  Group.invLeft (symmetricGroup S) {x} = symmetricGroupInvIsLeft S {x}
-  Group.invRight (symmetricGroup S) {x} = symmetricGroupInvIsRight S {x}
-
-  actionInducesHom : {a b c d : _} {A : Set a} {S : Setoid {a} {c} A} {_+_ : A → A → A} {G : Group S _+_} {B : Set b} {X : Setoid {b} {d} B} → (GroupAction G X) → SymmetryGroupElements X
-  actionInducesHom = {!!}
+  Group.wellDefined (symmetricGroup {A = A} S) {sym {m} mBij} {sym {n} nBij} {sym {x} xBij} {sym {y} yBij} record { eq = eqMX } record { eq = eqNY } = record { eq = λ {a} → transitive {n (m a)} {n (x a)} {y (x a)} (WellDefined.wd (bijectionWellDefined nBij) eqMX) eqNY }
+    where
+      open Setoid S
+      open Transitive (Equivalence.transitiveEq eq)
+      open Reflexive (Equivalence.reflexiveEq eq)
+      open Symmetric (Equivalence.symmetricEq eq)
+  Group.identity (symmetricGroup A) = sym {f = λ i → i} (setoidIdIsBijective)
+  Group.inverse (symmetricGroup A) = symmetricGroupInv A
+  ExtensionallyEqual.eq (Group.multAssoc (symmetricGroup A) {sym {a} aBij} {sym {b} bBij} {sym {c} cBij}) = Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq A))
+  Group.multIdentRight (symmetricGroup A) {sym {a} aBij} = record { eq = λ {x} → Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq A)) }
+  Group.multIdentLeft (symmetricGroup A) {sym {a} aBij} = record { eq = λ {x} → Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq A)) }
+  Group.invLeft (symmetricGroup A) {x} = symmetricGroupInvIsLeft A {x}
+  Group.invRight (symmetricGroup A) {x} = symmetricGroupInvIsRight A {x}
