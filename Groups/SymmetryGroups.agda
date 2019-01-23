@@ -7,7 +7,6 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals
 open import Sets.FinSet
 open import Groups.GroupDefinition
-open import Groups.GroupActions
 
 module Groups.SymmetryGroups where
   data SymmetryGroupElements {a b : _} {A : Set a} (S : Setoid {a} {b} A) : Set (a ⊔ b) where
@@ -40,7 +39,7 @@ module Groups.SymmetryGroups where
   Transitive.transitive (Equivalence.transitiveEq (Setoid.eq (symmetricSetoid S))) {sym a} {sym b} {sym c} a=b b=c = extensionallyEqualTransitive a=b b=c
 
   symmetricGroupOp : {a b : _} {A : Set a} {S : Setoid {a} {b} A} (f g : SymmetryGroupElements S) → SymmetryGroupElements S
-  symmetricGroupOp (sym {f} bijF) (sym {g} bijG) = sym (setoidBijComp bijF bijG)
+  symmetricGroupOp (sym {f} bijF) (sym {g} bijG) = sym (setoidBijComp bijG bijF)
 
   symmetricGroupInv : {a b : _} {A : Set a} (S : Setoid {a} {b} A) → SymmetryGroupElements S → SymmetryGroupElements S
   symmetricGroupInv S (sym {f} bijF) with setoidBijectiveImpliesInvertible bijF
@@ -49,19 +48,19 @@ module Groups.SymmetryGroups where
   symmetricGroupInvIsLeft : {a b : _} {A : Set a} (S : Setoid {a} {b} A) → {x : SymmetryGroupElements S} → Setoid._∼_ (symmetricSetoid S) (symmetricGroupOp (symmetricGroupInv S x) x) (sym setoidIdIsBijective)
   symmetricGroupInvIsLeft {A = A} S {sym {f} fBij} = record { eq = λ {x} → ans x }
     where
-      ans : (x : A) → Setoid._∼_ S (f (SetoidInvertible.inverse (setoidBijectiveImpliesInvertible fBij) x)) x
-      ans x with SetoidSurjection.surjective (SetoidBijection.surj fBij) {x}
-      ans x | a , b = b
-
-  symmetricGroupInvIsRight : {a b : _} {A : Set a} (S : Setoid {a} {b} A) → {x : SymmetryGroupElements S} → Setoid._∼_ (symmetricSetoid S) (symmetricGroupOp x (symmetricGroupInv S x)) (sym setoidIdIsBijective)
-  ExtensionallyEqual.eq (symmetricGroupInvIsRight {A = A} S {sym {f} fBij}) {x} = ans x
-    where
       ans : (x : A) → Setoid._∼_ S ((SetoidInvertible.inverse (setoidBijectiveImpliesInvertible fBij) (f x))) x
       ans x with SetoidSurjection.surjective (SetoidBijection.surj fBij) {f x}
       ans x | a , b = SetoidInjection.injective (SetoidBijection.inj fBij) b
 
+  symmetricGroupInvIsRight : {a b : _} {A : Set a} (S : Setoid {a} {b} A) → {x : SymmetryGroupElements S} → Setoid._∼_ (symmetricSetoid S) (symmetricGroupOp x (symmetricGroupInv S x)) (sym setoidIdIsBijective)
+  ExtensionallyEqual.eq (symmetricGroupInvIsRight {A = A} S {sym {f} fBij}) {x} = ans x
+    where
+      ans : (x : A) → Setoid._∼_ S (f (SetoidInvertible.inverse (setoidBijectiveImpliesInvertible fBij) x)) x
+      ans x with SetoidSurjection.surjective (SetoidBijection.surj fBij) {x}
+      ans x | a , b = b
+
   symmetricGroup : {a b : _} {A : Set a} (S : Setoid {a} {b} A) → Group (symmetricSetoid S) (symmetricGroupOp {A = A})
-  Group.wellDefined (symmetricGroup {A = A} S) {sym {m} mBij} {sym {n} nBij} {sym {x} xBij} {sym {y} yBij} record { eq = eqMX } record { eq = eqNY } = record { eq = λ {a} → transitive {n (m a)} {n (x a)} {y (x a)} (WellDefined.wd (bijectionWellDefined nBij) eqMX) eqNY }
+  Group.wellDefined (symmetricGroup {A = A} S) {sym {m} mBij} {sym {n} nBij} {sym {x} xBij} {sym {y} yBij} record { eq = eqMX } record { eq = eqNY } = record { eq = λ {a} → transitive ((WellDefined.wd (bijectionWellDefined mBij)) eqNY) eqMX }
     where
       open Setoid S
       open Transitive (Equivalence.transitiveEq eq)
