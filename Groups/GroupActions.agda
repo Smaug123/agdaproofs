@@ -310,3 +310,25 @@ module Groups.GroupActions where
         p = GroupAction.actionWellDefined2 action have
         need : (GroupAction.action action ((inverse h) + g) x) ∼ x
         need = transitive (GroupAction.associativeAction action) (transitive p (transitive (symmetric (GroupAction.associativeAction action)) (transitive (GroupAction.actionWellDefined1 action (Group.invLeft G)) (GroupAction.identityAction action))))
+
+    data Orbit {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+_ : A → A → A} {G : Group S _+_} (action : GroupAction G T) (x : B) : Set (a ⊔ b ⊔ c ⊔ d) where
+      orbitElt : (g : A) → Orbit action x
+
+    orbitSetoid : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+_ : A → A → A} {G : Group S _+_} (action : GroupAction G T) (x : B) → Setoid (Orbit action x)
+    Setoid._∼_ (orbitSetoid {T = T} action x) (orbitElt a) (orbitElt b) = Setoid._∼_ T (GroupAction.action action a x) (GroupAction.action action b x)
+    Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq (orbitSetoid {T = T} action x))) {orbitElt g} = Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq T))
+    Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq (orbitSetoid {T = T} action x))) {orbitElt g} {orbitElt h} = Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq T))
+    Transitive.transitive (Equivalence.transitiveEq (Setoid.eq (orbitSetoid {T = T} action x))) {orbitElt g} {orbitElt h} {orbitElt i} = Transitive.transitive (Equivalence.transitiveEq (Setoid.eq T))
+
+    orbitStabiliserBijection : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+_ : A → A → A} {G : Group S _+_} (action : GroupAction G T) (x : B) → A → ((Stabiliser action x) && Orbit action x)
+    orbitStabiliserBijection action x g = stab {!g!} {!!} ,, orbitElt g
+
+    osBijWellDefined : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+_ : A → A → A} {G : Group S _+_} (action : GroupAction G T) (x : B) → {r s : A} → (Setoid._∼_ S r s) → Setoid._∼_ (directSumSetoid (stabiliserSetoid action x) (orbitSetoid action x)) (orbitStabiliserBijection action x r) (orbitStabiliserBijection action x s)
+    _&&_.fst (osBijWellDefined action x r~s) = {!!}
+    _&&_.snd (osBijWellDefined action x r~s) = GroupAction.actionWellDefined1 action r~s
+
+    orbitStabiliserTheorem : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+_ : A → A → A} {G : Group S _+_} (action : GroupAction G T) (x : B) → SetoidBijection S (directSumSetoid (stabiliserSetoid action x) (orbitSetoid action x)) (orbitStabiliserBijection action x)
+    SetoidInjection.wellDefined (SetoidBijection.inj (orbitStabiliserTheorem {S = S} action x)) = osBijWellDefined action x
+    SetoidInjection.injective (SetoidBijection.inj (orbitStabiliserTheorem {S = S} action x)) {g} {h} (fst ,, gx=hx) = {!!}
+    SetoidSurjection.wellDefined (SetoidBijection.surj (orbitStabiliserTheorem action x)) = osBijWellDefined action x
+    SetoidSurjection.surjective (SetoidBijection.surj (orbitStabiliserTheorem action x)) {stab g gx=x ,, orbitElt h} = h , ({!!} ,, {!!})
