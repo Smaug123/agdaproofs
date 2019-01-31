@@ -100,8 +100,8 @@ module Groups.FreeGroups where
   badPrepend' {decA = decA} {x} (wordEnding pr ()) | inl x₂
   badPrepend' {decA = decA} {x} (wordEnding pr x₁) | inr pr2 = pr2 refl
 
-  freeGroupGeneratorsSubgroupHom : {a : _} (A : Set a) (decA : DecidableSet A) (w : FreeGroupGenerators A) → SymmetryGroupElements (reflSetoid (ReducedWord decA))
-  freeGroupGeneratorsSubgroupHom A decA (χ x) = sym {f = f} bij
+  freeGroupGenerators : {a : _} (A : Set a) (decA : DecidableSet A) (w : FreeGroupGenerators A) → SymmetryGroupElements (reflSetoid (ReducedWord decA))
+  freeGroupGenerators A decA (χ x) = sym {f = f} bij
     where
       open DecidableSet.DecidableSet decA
       f : ReducedWord decA → ReducedWord decA

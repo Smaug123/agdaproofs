@@ -12,6 +12,9 @@ data _≡_ {a} {A : Set a} (x : A) : A → Set a where
 
 data False : Set where
 
+data False' {a : _} : Set a where
+record True' {a : _} : Set a where
+
 record True : Set where
 record Unit : Set where
 
