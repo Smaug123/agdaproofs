@@ -169,3 +169,29 @@ toSteps empty = []
 toSteps {axiomsSubset = axiomsSubset} (nextStep n pr (axiom x)) = (IsSubset.ofElt axiomsSubset x) ,- toSteps pr
 toSteps {givensSubset = givensSubset} (nextStep n pr (given x)) = IsSubset.ofElt givensSubset x ,- toSteps pr
 toSteps (nextStep n pr (modusPonens implication argument conclusion x)) = conclusion ,- toSteps pr
+
+record Proves {a b c : _} {A : Set a} {axioms : Set b} (axiomsSubset : IsSubset axioms (Propositions A)) {givens : Set c} (givensSubset : IsSubset givens (Propositions A)) (P : Propositions A) : Set (a ⊔ b ⊔ c) where
+  field
+    n : ℕ
+    proof : Proof axiomsSubset givensSubset (succ n)
+    ofStatement : vecIndex (toSteps proof) 0 (succIsPositive n) ≡ P
+
+addSingletonSet : {a : _} → Set a → Set a
+addSingletonSet A = True || A
+
+interpretSingletonSet : {a b c : _} {A : Set a} {B : Set b} {C : Set c} → IsSubset A B → (c : C) → (addSingletonSet A) → C || B
+interpretSingletonSet A<B c (inl x) = inl c
+interpretSingletonSet A<B _ (inr x) = inr (IsSubset.ofElt A<B x)
+
+inrInjective : {a b : _} {A : Set a} {B : Set b} {b1 b2 : B} → inr {a = a} {A = A} b1 ≡ inr b2 → b1 ≡ b2
+inrInjective refl = refl
+
+singletonSubset : {a b c : _} {A : Set a} {B : Set b} {C : Set c} → IsSubset A B → (c : C) → IsSubset (addSingletonSet A) (C || B)
+IsSubset.ofElt (singletonSubset subs c) = interpretSingletonSet subs c
+Injection.property (IsSubset.inj (singletonSubset subs c)) {inl record {}} {inl record {}} px=py = refl
+Injection.property (IsSubset.inj (singletonSubset subs c)) {inl record {}} {inr y} ()
+Injection.property (IsSubset.inj (singletonSubset subs c)) {inr x} {inl record {}} ()
+Injection.property (IsSubset.inj (singletonSubset subs c)) {inr x} {inr y} px=py rewrite Injection.property (IsSubset.inj subs) {x} {y} (inrInjective px=py) = refl
+
+deductionTheorem' : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} → {P Q : Propositions A} → Proves axiomsSubset {givens = addSingletonSet givens} {!singletonSubset givensSubset ?!} Q → Proves axiomsSubset givensSubset (implies P Q)
+deductionTheorem' = {!!}
