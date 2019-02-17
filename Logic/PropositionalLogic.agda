@@ -83,7 +83,6 @@ record Tautology {a : _} {pr : Set a} (prop : Propositions pr) : Set a where
 record IsSubset {a b : _} (sub : Set a) (super : Set b) : Set (a ⊔ b) where
   field
     ofElt : sub → super
-    inj : Injection ofElt
 
 mapProp : {a b : _} {pr1 : Set a} {pr2 : Set b} → (pr1 → pr2) → Propositions pr1 → Propositions pr2
 mapProp f (ofPrimitive x) = ofPrimitive (f x)
@@ -122,28 +121,6 @@ propositionalAxioms : {a : _} {A : Set a} → IsSubset (indexPropositionalAxioms
 IsSubset.ofElt propositionalAxioms (One , (p ,, q)) = implies p (implies q p)
 IsSubset.ofElt propositionalAxioms (Two , record { one = p ; two = q ; three = r }) = implies (implies p (implies q r)) (implies (implies p q) (implies p r))
 IsSubset.ofElt propositionalAxioms (Three , p) = implies (prNot (prNot p)) p
-Injection.property (IsSubset.inj propositionalAxioms) {One , (p ,, q)} {One , (a ,, b)} pr with impliesInjective pr
-Injection.property (IsSubset.inj propositionalAxioms) {One , (p ,, q)} {One , (a ,, b)} pr | fst ,, snd with impliesInjective snd
-Injection.property (IsSubset.inj propositionalAxioms) {One , (p ,, q)} {One , (a ,, b)} pr | p=a ,, _ | q=b ,, _ rewrite p=a | q=b = refl
-Injection.property (IsSubset.inj propositionalAxioms) {One , (p ,, q)} {Two , record { one = a ; two = b ; three = c }} pr with impliesInjective pr
-Injection.property (IsSubset.inj propositionalAxioms) {One , (p ,, q)} {Two , record { one = a ; two = b ; three = c }} pr | fst ,, snd with impliesInjective snd
-Injection.property (IsSubset.inj propositionalAxioms) {One , (p ,, q)} {Two , record { one = a ; two = b ; three = c }} pr | p=a-b-c ,, _ | q=a-b ,, p=a-c with impliesInjective (transitivity (equalityCommutative p=a-c) p=a-b-c)
-Injection.property (IsSubset.inj propositionalAxioms) {One , (p ,, q)} {Two , record { one = a ; two = b ; three = c }} pr | p=a-b-c ,, _ | q=a-b ,, p=a-c | _ ,, c=b->c = exFalso (impliesIsBigger c=b->c)
-Injection.property (IsSubset.inj propositionalAxioms) {One , (p ,, q)} {Three , b} pr with impliesInjective pr
-Injection.property (IsSubset.inj propositionalAxioms) {One , (p ,, q)} {Three , b} pr | p=nnb ,, q-p=b rewrite equalityCommutative q-p=b = exFalso (d pr)
-  where
-    d : _ → _
-    d ()
-Injection.property (IsSubset.inj propositionalAxioms) {Two , record { one = p ; two = q ; three = r }} {One , (fst ,, snd)} ()
-Injection.property (IsSubset.inj propositionalAxioms) {Two , record { one = p ; two = q ; three = r }} {Two , record { one = one ; two = two ; three = three }} pr with impliesInjective pr
-Injection.property (IsSubset.inj propositionalAxioms) {Two , record { one = p ; two = q ; three = r }} {Two , record { one = one ; two = two ; three = three }} pr | fst ,, snd with impliesInjective fst
-Injection.property (IsSubset.inj propositionalAxioms) {Two , record { one = p ; two = q ; three = r }} {Two , record { one = one ; two = two ; three = three }} pr | _ ,, snd | p=one ,, snd1 with impliesInjective snd1
-Injection.property (IsSubset.inj propositionalAxioms) {Two , record { one = p ; two = q ; three = r }} {Two , record { one = one ; two = two ; three = three }} pr | _ ,, snd | p=one ,, _ | q=two ,, r=three rewrite p=one | q=two | r=three = refl
-Injection.property (IsSubset.inj propositionalAxioms) {Two , record { one = p ; two = q ; three = r }} {Three , b} ()
-Injection.property (IsSubset.inj propositionalAxioms) {Three , p} {One , (a ,, b)} pr with impliesInjective pr
-Injection.property (IsSubset.inj propositionalAxioms) {Three , p} {One , (a ,, b)} () | nnp=a ,, p=b-a
-Injection.property (IsSubset.inj propositionalAxioms) {Three , p} {Two , record { one = a ; two = b ; three = c }} ()
-Injection.property (IsSubset.inj propositionalAxioms) {Three , p} {Three , b} pr rewrite _&&_.snd (impliesInjective pr) = refl
 
 record Selection {a : _} {A : Set a} {n : ℕ} (l : Vec A n) : Set a where
   field
@@ -188,10 +165,83 @@ inrInjective refl = refl
 
 singletonSubset : {a b c : _} {A : Set a} {B : Set b} {C : Set c} → IsSubset A B → (c : C) → IsSubset (addSingletonSet A) (C || B)
 IsSubset.ofElt (singletonSubset subs c) = interpretSingletonSet subs c
-Injection.property (IsSubset.inj (singletonSubset subs c)) {inl record {}} {inl record {}} px=py = refl
-Injection.property (IsSubset.inj (singletonSubset subs c)) {inl record {}} {inr y} ()
-Injection.property (IsSubset.inj (singletonSubset subs c)) {inr x} {inl record {}} ()
-Injection.property (IsSubset.inj (singletonSubset subs c)) {inr x} {inr y} px=py rewrite Injection.property (IsSubset.inj subs) {x} {y} (inrInjective px=py) = refl
 
-deductionTheorem' : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} → {P Q : Propositions A} → Proves axiomsSubset {givens = addSingletonSet givens} {!singletonSubset givensSubset ?!} Q → Proves axiomsSubset givensSubset (implies P Q)
-deductionTheorem' = {!!}
+adjoinGiven : {a b : _} {A : Set a} {givens : Set b} (givensSubset : IsSubset givens A) (P : A) → IsSubset (addSingletonSet givens) A
+IsSubset.ofElt (adjoinGiven record { ofElt = ofElt } P) (inl x) = P
+IsSubset.ofElt (adjoinGiven record { ofElt = ofElt } _) (inr x) = ofElt x
+
+proofRemainsValidOnAddingGivens : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} → {Q : Propositions A} → Proof axiomsSubset givensSubset n → Proof axiomsSubset (adjoinGiven givensSubset Q) n
+pr' : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} → {Q : Propositions A} → (pr : Proof axiomsSubset givensSubset n) → toSteps pr ≡ toSteps (proofRemainsValidOnAddingGivens {Q = Q} pr)
+
+proofRemainsValidOnAddingGivens {Q = Q} empty = empty
+proofRemainsValidOnAddingGivens {Q = Q} (nextStep n pr (axiom x)) = nextStep n (proofRemainsValidOnAddingGivens pr) (axiom x)
+proofRemainsValidOnAddingGivens {Q = Q} (nextStep n pr (given x)) = nextStep n (proofRemainsValidOnAddingGivens pr) (given (inr x))
+proofRemainsValidOnAddingGivens {A = A} {axiomsSubset = axiomsSubset} {givensSubset = givensSubset} {Q = Q} (nextStep n pr (modusPonens implication argument conclusion x)) = nextStep n (proofRemainsValidOnAddingGivens pr) (modusPonens (record { element = Selection.element implication ; position = Selection.position implication ; pos<N = Selection.pos<N implication ; elementIsAt = lemma implication }) (record { element = Selection.element argument ; position = Selection.position argument ; pos<N = Selection.pos<N argument ; elementIsAt = lemma argument }) conclusion x)
+  where
+    lemma : (sel : Selection (toSteps pr)) → vecIndex (toSteps (proofRemainsValidOnAddingGivens pr)) (Selection.position sel) (Selection.pos<N sel) ≡ Selection.element sel
+    lemma sel = {!!}
+
+pr' empty = refl
+pr' (nextStep n pr (axiom x)) rewrite pr' pr = refl
+pr' (nextStep n pr (given x)) rewrite pr' pr = refl
+pr' (nextStep n pr (modusPonens implication argument conclusion x)) rewrite pr' pr = refl
+
+vecIndexRefl : {a : _} {A : Set a} {n : ℕ} {v1 v2 : Vec A n} → {pos : ℕ} → {pos<N1 pos<N2 : pos <N n} → v1 ≡ v2 → vecIndex v1 pos pos<N1 ≡ vecIndex v2 pos pos<N2
+vecIndexRefl {v1 = v1} {.v1} {pos} {pos<N1} {pos<N2} refl rewrite <NRefl pos<N1 pos<N2 = refl
+
+proofImpliesProves : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} (0<n : 0 <N n) → (p : Proof axiomsSubset givensSubset n) → (pr : Propositions A) → vecIndex (toSteps p) 0 0<n ≡ pr → Proves axiomsSubset givensSubset pr
+proofImpliesProves {n = zero} () p pr x
+proofImpliesProves {n = succ n} _ p pr x = record { n = n ; proof = p ; ofStatement = transitivity (vecIndexRefl {v1 = toSteps p} refl) x }
+
+deductionTheorem' : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} → {P Q : Propositions A} → Proves axiomsSubset givensSubset (implies P Q) → Proves axiomsSubset {givens = addSingletonSet givens} (adjoinGiven givensSubset P) Q
+Proves.n (deductionTheorem' record { n = n ; proof = proof ; ofStatement = ofStatement }) = succ (succ n)
+Proves.proof (deductionTheorem' {P = P} {Q = Q} record { n = n ; proof = proof ; ofStatement = ofStatement }) = nextStep (succ (succ n)) (nextStep (succ n) (proofRemainsValidOnAddingGivens proof) (given (inl record {}))) (modusPonens (record { element = implies P Q ; position = 1 ; pos<N = succPreservesInequality (succIsPositive _) ; elementIsAt = transitivity (equalityCommutative (vecIndexRefl (pr' proof))) ofStatement }) (record { element = P ; position = 0 ; pos<N = succIsPositive _ ; elementIsAt = refl }) Q refl)
+Proves.ofStatement (deductionTheorem' record { n = n ; proof = proof ; ofStatement = ofStatement }) = refl
+
+deductionTheorem : {a b c : _} {A : Set a} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} → {P Q : Propositions A} → Proves propositionalAxioms {givens = addSingletonSet givens} (adjoinGiven givensSubset P) Q → Proves propositionalAxioms givensSubset (implies P Q)
+deductionTheorem {P = P} {Q} record { n = n ; proof = (nextStep .n proof (axiom x)) ; ofStatement = ofStatement } = {!!}
+--... | bl = record { n = {!!} ; proof = nextStep (succ (succ (succ n))) (nextStep (succ (succ n)) (nextStep (succ n) {!deductionTheorem proof!} (axiom x)) (axiom (One , (Q ,, P)))) (modusPonens (record { element = implies Q (implies P Q) ; position = 0 ; pos<N = succIsPositive _ ; elementIsAt = refl }) (record { element = Q ; position = 1 ; pos<N = succPreservesInequality (succIsPositive _) ; elementIsAt = ofStatement }) (implies P Q) refl) ; ofStatement = {!!} }
+deductionTheorem {P = P} {Q} record { n = n ; proof = (nextStep .n proof (given x)) ; ofStatement = ofStatement } = {!!}
+deductionTheorem {P = P} {Q} record { n = n ; proof = (nextStep .n proof (modusPonens implication argument conclusion x)) ; ofStatement = ofStatement } = {!!}
+{-
+Proves.n (deductionTheorem {P = P} {Q} record { n = n ; proof = (nextStep .n proof (axiom x)) ; ofStatement = ofStatement }) = succ (succ (succ n))
+Proves.proof (deductionTheorem {P = P} {Q} record { n = n ; proof = (nextStep .n proof (axiom x)) ; ofStatement = ofStatement }) = nextStep (succ (succ (succ n))) (nextStep (succ (succ n)) (nextStep (succ n) {!!} (axiom x)) (axiom (One , (Q ,, P)))) (modusPonens (record { element = implies Q (implies P Q) ; position = 0 ; pos<N = succIsPositive _ ; elementIsAt = refl }) (record { element = Q ; position = 1 ; pos<N = succPreservesInequality (succIsPositive _) ; elementIsAt = ofStatement }) (implies P Q) refl)
+Proves.ofStatement (deductionTheorem {P = P} {Q} record { n = n ; proof = (nextStep .n proof (axiom x)) ; ofStatement = ofStatement }) = {!!}
+deductionTheorem {P = P} {Q} record { n = n ; proof = (nextStep .n proof (given x)) ; ofStatement = ofStatement } = {!!}
+deductionTheorem {P = P} {Q} record { n = n ; proof = (nextStep .n proof (modusPonens implication argument conclusion x)) ; ofStatement = ofStatement } = {!!}
+
+-}
+
+axiomKTaut : {a : _} {A : Set a} {P Q : Propositions A} → Tautology (implies P (implies Q P))
+Tautology.isTaut (axiomKTaut {P = P} {Q}) {v = v} with inspect (Valuation.v v P)
+Tautology.isTaut (axiomKTaut {P = P} {Q}) {v} | BoolTrue with≡ pT with inspect (Valuation.v v Q)
+Tautology.isTaut (axiomKTaut {P = P} {Q}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT = Valuation.vImplicationT v (Valuation.vImplicationT v pT)
+Tautology.isTaut (axiomKTaut {P = P} {Q}) {v} | BoolTrue with≡ pT | BoolFalse with≡ qF = Valuation.vImplicationT v (Valuation.vImplicationVacuous v qF)
+Tautology.isTaut (axiomKTaut {P = P} {Q}) {v} | BoolFalse with≡ pF = Valuation.vImplicationVacuous v pF
+
+excludedMiddleTaut : {a : _} {A : Set a} {P : Propositions A} → Tautology (implies (prNot (prNot P)) P)
+Tautology.isTaut (excludedMiddleTaut {P = P}) {v} with inspect (Valuation.v v P)
+Tautology.isTaut (excludedMiddleTaut {P = P}) {v} | BoolTrue with≡ pT = Valuation.vImplicationT v pT
+Tautology.isTaut (excludedMiddleTaut {P = P}) {v} | BoolFalse with≡ pF = Valuation.vImplicationVacuous v (Valuation.vImplicationF v (Valuation.vImplicationVacuous v pF) (Valuation.vFalse v))
+
+axiomSTaut : {a : _} {A : Set a} {P Q R : Propositions A} → Tautology (implies (implies P (implies Q R)) (implies (implies P Q) (implies P R)))
+Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} with inspect (Valuation.v v P)
+Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT with inspect (Valuation.v v Q)
+Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT with inspect (Valuation.v v R)
+Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT | BoolTrue with≡ rT = Valuation.vImplicationT v (Valuation.vImplicationT v (Valuation.vImplicationT v rT))
+Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT | BoolFalse with≡ rF = Valuation.vImplicationVacuous v (Valuation.vImplicationF v pT (Valuation.vImplicationF v qT rF))
+Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolFalse with≡ qF = Valuation.vImplicationT v (Valuation.vImplicationVacuous v (Valuation.vImplicationF v pT qF))
+Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolFalse with≡ pF = Valuation.vImplicationT v (Valuation.vImplicationT v (Valuation.vImplicationVacuous v pF))
+
+
+propositionalAxiomsTautology : {a : _} {A : Set a} (x : Sg ThreeElements (indexAxiom A)) → Tautology (IsSubset.ofElt propositionalAxioms x)
+propositionalAxiomsTautology (One , (fst ,, snd)) = axiomKTaut
+propositionalAxiomsTautology (Two , record { one = one ; two = two ; three = three }) = axiomSTaut
+propositionalAxiomsTautology (Three , b) = excludedMiddleTaut
+
+propositionalLogicSound : {a b c : _} {A : Set a} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} → {P : Propositions A} → Proves propositionalAxioms givensSubset P → Entails givensSubset P
+Entails.entails (propositionalLogicSound {P = .(IsSubset.ofElt propositionalAxioms x)} record { n = .0 ; proof = (nextStep .0 empty (axiom x)) ; ofStatement = refl }) {v} values = Tautology.isTaut (propositionalAxiomsTautology x) {v}
+Entails.entails (propositionalLogicSound {P = P} record { n = .0 ; proof = (nextStep .0 empty (given x)) ; ofStatement = ofStatement }) {v} values rewrite equalityCommutative ofStatement = values {x}
+Entails.entails (propositionalLogicSound {P = P} record { n = .0 ; proof = (nextStep .0 empty (modusPonens record { element = element ; position = zero ; pos<N = (le x₁ ()) ; elementIsAt = elementIsAt } argument conclusion x)) ; ofStatement = ofStatement }) {v} values
+Entails.entails (propositionalLogicSound {P = P} record { n = .0 ; proof = (nextStep .0 empty (modusPonens record { element = element ; position = (succ position) ; pos<N = (le x₁ ()) ; elementIsAt = elementIsAt } argument conclusion x)) ; ofStatement = ofStatement }) {v} values
+Entails.entails (propositionalLogicSound {P = P} record { n = .(succ n) ; proof = (nextStep .(succ n) (nextStep n proof y) x) ; ofStatement = ofStatement }) {v} values = {!!}
