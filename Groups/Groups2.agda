@@ -1,15 +1,16 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import Groups.Groups
+open import Groups.GroupDefinition
 open import Orders
 open import Numbers.Integers
-open import Setoids
+open import Setoids.Setoids
 open import LogicalFormulae
-open import FinSet
+open import Sets.FinSet
 open import Functions
-open import Naturals
+open import Numbers.Naturals
 open import IntegersModN
-open import RingExamples
+open import Rings.RingExamples
 open import PrimeNumbers
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)

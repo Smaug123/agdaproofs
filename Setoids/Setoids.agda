@@ -67,6 +67,8 @@ module Setoids.Setoids where
     field
       inj : SetoidInjection S T f
       surj : SetoidSurjection S T f
+    wellDefined : {x y : A} → Setoid._∼_ S x y → Setoid._∼_ T (f x) (f y)
+    wellDefined = SetoidInjection.wellDefined inj
 
   record SetoidsBiject {a b c d : _} {A : Set a} {B : Set b} (S : Setoid {a} {c} A) (T : Setoid {b} {d} B) : Set (a ⊔ b ⊔ c ⊔ d) where
     field
