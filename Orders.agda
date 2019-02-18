@@ -18,6 +18,8 @@ module Orders where
       order : PartialOrder {a} {b} carrier
     _<_ : Rel carrier
     _<_ = PartialOrder._<_ order
+    _≤_ : Rel carrier
+    _≤_ a b = (a < b) || (a ≡ b)
     field
       totality : (a b : carrier) → ((a < b) || (b < a)) || (a ≡ b)
     min : carrier → carrier → carrier
