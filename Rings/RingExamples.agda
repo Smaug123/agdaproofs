@@ -1,15 +1,15 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Groups
+open import Groups.Groups
 open import Functions
-open import Naturals
-open import Integers
+open import Numbers.Naturals
+open import Numbers.Integers
 open import IntegersModN
-open import RingExamplesProofs
+open import Rings.RingExamplesProofs
 open import PrimeNumbers
 
-module RingExamples where
+module Rings.RingExamples where
 
   nToZn : (n : ℕ) (pr : 0 <N n) (x : ℕ) → ℤn n pr
   nToZn n pr x = nToZn' n pr x

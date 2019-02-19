@@ -11,11 +11,10 @@ data _≡_ {a} {A : Set a} (x : A) : A → Set a where
 {-# BUILTIN EQUALITY _≡_ #-}
 
 data False : Set where
-
 data False' {a : _} : Set a where
-record True' {a : _} : Set a where
 
 record True : Set where
+record True' {a : _} : Set a where
 record Unit : Set where
 
 infix 10 _||_
@@ -87,6 +86,10 @@ if BoolFalse then tr else fls = fls
 not : Bool → Bool
 not BoolTrue = BoolFalse
 not BoolFalse = BoolTrue
+
+boolAnd : Bool → Bool → Bool
+boolAnd BoolTrue y = y
+boolAnd BoolFalse y = BoolFalse
 
 typeCast : {a : _} {A : Set a} {B : Set a} (el : A) (pr : A ≡ B) → B
 typeCast {a} {A} {.A} elt refl = elt

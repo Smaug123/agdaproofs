@@ -10,6 +10,7 @@ open import Groups.GroupDefinition
 open import Groups.GroupsLemmas
 open import Groups.Groups
 open import Groups.SymmetryGroups
+open import Groups.Groups2
 
 module Groups.GroupActions where
     record GroupAction {m n o p : _} {A : Set m} {S : Setoid {m} {o} A} {_·_ : A → A → A} {B : Set n} (G : Group S _·_) (X : Setoid {n} {p} B) : Set (m ⊔ n ⊔ o ⊔ p) where
@@ -26,9 +27,8 @@ module Groups.GroupActions where
     trivialAction : {m n o p : _} {A : Set m} {S : Setoid {m} {o} A} {_·_ : A → A → A} {B : Set n} (G : Group S _·_) (X : Setoid {n} {p} B) → GroupAction G X
     trivialAction G X = record { action = λ _ x → x ; actionWellDefined1 = λ _ → reflexive ; actionWellDefined2 = λ wd1 → wd1 ; identityAction = reflexive ; associativeAction = reflexive }
       where
-        open Setoid X
-        open Equivalence eq
-        open Reflexive reflexiveEq
+        open Setoid X renaming (eq to setoidEq)
+        open Reflexive (Equivalence.reflexiveEq (Setoid.eq X))
 
     leftRegularAction : {m n : _} {A : Set m} {S : Setoid {m} {n} A} {_·_ : A → A → A} (G : Group S _·_) → GroupAction G S
     GroupAction.action (leftRegularAction {_·_ = _·_} G) g h = g · h
@@ -37,15 +37,14 @@ module Groups.GroupActions where
     GroupAction.actionWellDefined1 (leftRegularAction {S = S} G) eq1 = wellDefined eq1 reflexive
       where
         open Group G
-        open Setoid S
-        open Equivalence eq
-        open Reflexive reflexiveEq
+        open Setoid S renaming (eq to setoidEq)
+        open Equivalence setoidEq
+        open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
     GroupAction.actionWellDefined2 (leftRegularAction {S = S} G) {g} {x} {y} eq1 = wellDefined reflexive eq1
       where
         open Group G
         open Setoid S
-        open Equivalence eq
-        open Reflexive reflexiveEq
+        open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
     GroupAction.identityAction (leftRegularAction G) = multIdentLeft
       where
         open Group G
@@ -53,17 +52,15 @@ module Groups.GroupActions where
       where
         open Group G
         open Setoid S
-        open Equivalence eq
-        open Symmetric symmetricEq
+        open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
 
     conjugationAction : {m n : _} {A : Set m} {S : Setoid {m} {n} A} {_·_ : A → A → A} → (G : Group S _·_) → GroupAction G S
     conjugationAction {S = S} {_·_ = _·_} G = record { action = λ g h → (g · h) · (inverse g) ; actionWellDefined1 = λ gh → wellDefined (wellDefined gh reflexive) (inverseWellDefined G gh) ; actionWellDefined2 = λ x~y → wellDefined (wellDefined reflexive x~y) reflexive ; identityAction = transitive (wellDefined reflexive (invIdentity G)) (transitive multIdentRight multIdentLeft)  ; associativeAction = λ {x} {g} {h} → transitive (wellDefined reflexive (invContravariant G)) (transitive multAssoc (wellDefined (fourWayAssoc' G) reflexive)) }
       where
         open Group G
         open Setoid S
-        open Equivalence eq
-        open Reflexive reflexiveEq
-        open Transitive transitiveEq
+        open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+        open Transitive (Equivalence.transitiveEq (Setoid.eq S))
 
     conjugationNormalSubgroupAction : {m n o p : _} {A : Set m} {B : Set o} {S : Setoid {m} {n} A} {T : Setoid {o} {p} B} {_·A_ : A → A → A} {_·B_ : B → B → B} → (G : Group S _·A_) → (H : Group T _·B_) → {underF : A → B} (f : GroupHom G H underF) → GroupAction G (quotientGroupSetoid G f)
     GroupAction.action (conjugationNormalSubgroupAction {_·A_ = _·A_} G H {f} fHom) a b = a ·A (b ·A (Group.inverse G a))
@@ -71,9 +68,8 @@ module Groups.GroupActions where
       where
         open Group G
         open Setoid T
-        open Equivalence (Setoid.eq T)
-        open Transitive transitiveEq
-        open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+        open Transitive (Equivalence.transitiveEq (Setoid.eq T))
+        open Symmetric (Equivalence.symmetricEq (Setoid.eq T))
         open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
         ans : f ((g ·A (x ·A (inverse g))) ·A inverse (h ·A (x ·A inverse h))) ∼ Group.identity H
         ans = transitive (GroupHom.wellDefined fHom (transferToRight'' G (Group.wellDefined G g~h (Group.wellDefined G reflexive (inverseWellDefined G g~h))))) (imageOfIdentityIsIdentity fHom)
@@ -81,8 +77,7 @@ module Groups.GroupActions where
       where
         open Group G
         open Setoid T
-        open Equivalence (Setoid.eq T)
-        open Transitive transitiveEq
+        open Transitive (Equivalence.transitiveEq (Setoid.eq T))
         open Transitive (Equivalence.transitiveEq (Setoid.eq S)) renaming (transitive to transitiveG)
         open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
         open Symmetric (Equivalence.symmetricEq (Setoid.eq T)) renaming (symmetric to symmetricH)
@@ -125,8 +120,7 @@ module Groups.GroupActions where
         open Group G
         open Setoid S
         open Setoid T renaming (_∼_ to _∼T_)
-        open Equivalence (Setoid.eq T)
-        open Transitive transitiveEq
+        open Transitive (Equivalence.transitiveEq (Setoid.eq T))
         i : Setoid._∼_ S (x ·A inverse identity) x
         i = Transitive.transitive (Equivalence.transitiveEq (Setoid.eq S)) (wellDefined (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))) (invIdentity G)) multIdentRight
         h : identity ·A (x ·A inverse identity) ∼ x
@@ -151,9 +145,9 @@ module Groups.GroupActions where
     actionPermutation {B = B} {T = T} {_+_ = _+_} {G = G} action g = sym {f = λ x → (GroupAction.action action g x)} (record { inj = record { injective = inj ; wellDefined = GroupAction.actionWellDefined2 action } ; surj = record { surjective = surj ; wellDefined = GroupAction.actionWellDefined2 action } })
       where
         open Setoid T
-        open Reflexive (Equivalence.reflexiveEq eq)
-        open Symmetric (Equivalence.symmetricEq eq)
-        open Transitive (Equivalence.transitiveEq eq)
+        open Reflexive (Equivalence.reflexiveEq (Setoid.eq T))
+        open Symmetric (Equivalence.symmetricEq (Setoid.eq T))
+        open Transitive (Equivalence.transitiveEq (Setoid.eq T))
         open Group G
         inj : {x y : B} → (Setoid._∼_ T (GroupAction.action action g x) (GroupAction.action action g y)) → Setoid._∼_ T x y
         inj {x} {y} gx=gy = transitive (symmetric (GroupAction.identityAction action)) (transitive (transitive (symmetric (GroupAction.actionWellDefined1 action (invLeft {g}))) (transitive (transitive (GroupAction.associativeAction action) (transitive (GroupAction.actionWellDefined2 action gx=gy) (symmetric (GroupAction.associativeAction action)))) (GroupAction.actionWellDefined1 action (invLeft {g})))) (GroupAction.identityAction action))
@@ -161,13 +155,13 @@ module Groups.GroupActions where
         surj {x} = GroupAction.action action (inverse g) x , transitive (symmetric (GroupAction.associativeAction action)) (transitive (GroupAction.actionWellDefined1 action invRight) (GroupAction.identityAction action))
 
     actionPermutationMapIsHom : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+_ : A → A → A} {G : Group S _+_} (action : GroupAction G T) → GroupHom G (symmetricGroup T) (actionPermutation action)
-    GroupHom.groupHom (actionPermutationMapIsHom {T = T} action) = record { eq = λ {z} → GroupAction.associativeAction action }
+    GroupHom.groupHom (actionPermutationMapIsHom {T = T} action) = ExtensionallyEqual.eq λ {z} → GroupAction.associativeAction action
       where
         open Setoid T
-        open Reflexive (Equivalence.reflexiveEq eq)
-        open Symmetric (Equivalence.symmetricEq eq)
-        open Transitive (Equivalence.transitiveEq eq)
-    GroupHom.wellDefined (actionPermutationMapIsHom action) x=y = record { eq = λ {z} → GroupAction.actionWellDefined1 action x=y }
+        open Reflexive (Equivalence.reflexiveEq (Setoid.eq T))
+        open Symmetric (Equivalence.symmetricEq (Setoid.eq T))
+        open Transitive (Equivalence.transitiveEq (Setoid.eq T))
+    GroupHom.wellDefined (actionPermutationMapIsHom action) x=y = ExtensionallyEqual.eq λ {z} → GroupAction.actionWellDefined1 action x=y
 
     data Stabiliser {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+_ : A → A → A} {G : Group S _+_} (action : GroupAction G T) (x : B) : Set (a ⊔ b ⊔ c ⊔ d) where
       stab : (g : A) → Setoid._∼_ T (GroupAction.action action g x) x → Stabiliser action x
@@ -182,25 +176,25 @@ module Groups.GroupActions where
     stabiliserGroupOp {T = T} {_+_ = _+_} action (stab p px=x) (stab q qx=x) = stab (p + q) (transitive (GroupAction.associativeAction action) (transitive (GroupAction.actionWellDefined2 action qx=x) px=x))
       where
         open Setoid T
-        open Reflexive (Equivalence.reflexiveEq eq)
-        open Symmetric (Equivalence.symmetricEq eq)
-        open Transitive (Equivalence.transitiveEq eq)
+        open Reflexive (Equivalence.reflexiveEq (Setoid.eq T))
+        open Symmetric (Equivalence.symmetricEq (Setoid.eq T))
+        open Transitive (Equivalence.transitiveEq (Setoid.eq T))
 
     stabiliserGroup : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+_ : A → A → A} {G : Group S _+_} (action : GroupAction G T) {x : B} → Group (stabiliserSetoid action x) (stabiliserGroupOp action)
     Group.wellDefined (stabiliserGroup {T = T} {G = G} action {x}) {stab m mx=x} {stab n nx=x} {stab r rx=x} {stab s sx=x} m=r n=s = Group.wellDefined G m=r n=s
       where
         open Setoid T
-        open Reflexive (Equivalence.reflexiveEq eq)
-        open Symmetric (Equivalence.symmetricEq eq)
-        open Transitive (Equivalence.transitiveEq eq)
+        open Reflexive (Equivalence.reflexiveEq (Setoid.eq T))
+        open Symmetric (Equivalence.symmetricEq (Setoid.eq T))
+        open Transitive (Equivalence.transitiveEq (Setoid.eq T))
     Group.identity (stabiliserGroup {G = G} action) = stab (Group.identity G) (GroupAction.identityAction action)
     Group.inverse (stabiliserGroup {T = T} {_+_ = _+_} {G = G} action {x}) (stab g gx=x) = stab (Group.inverse G g) (transitive {_} {GroupAction.action action ((inverse g) + g) x} (symmetric (transitive (GroupAction.associativeAction action) (GroupAction.actionWellDefined2 action gx=x))) (transitive (GroupAction.actionWellDefined1 action invLeft) (GroupAction.identityAction action)))
       where
         open Group G
         open Setoid T
-        open Reflexive (Equivalence.reflexiveEq eq)
-        open Symmetric (Equivalence.symmetricEq eq)
-        open Transitive (Equivalence.transitiveEq eq)
+        open Reflexive (Equivalence.reflexiveEq (Setoid.eq T))
+        open Symmetric (Equivalence.symmetricEq (Setoid.eq T))
+        open Transitive (Equivalence.transitiveEq (Setoid.eq T))
     Group.multAssoc (stabiliserGroup {G = G} action) {stab m mx=x} {stab n nx=x} {stab o ox=x} = Group.multAssoc G
     Group.multIdentRight (stabiliserGroup {G = G} action) {stab m mx=x} = Group.multIdentRight G
     Group.multIdentLeft (stabiliserGroup {G = G} action) {stab m mx=x }= Group.multIdentLeft G

@@ -2,15 +2,16 @@
 
 open import LogicalFormulae
 open import Functions
-open import Groups
+open import Groups.Groups
+open import Groups.GroupDefinition
 open import Orders
-open import Rings
-open import Naturals
-open import Integers
+open import Rings.RingDefinition
+open import Numbers.Naturals
+open import Numbers.Integers
 open import PrimeNumbers
 open import IntegersModN
 
-module RingExamplesProofs where
+module Rings.RingExamplesProofs where
   nToZn' : (n : ℕ) (pr : 0 <N n) (x : ℕ) → ℤn n pr
   nToZn' 0 ()
   nToZn' (succ n) pr x with divisionAlg (succ n) x
