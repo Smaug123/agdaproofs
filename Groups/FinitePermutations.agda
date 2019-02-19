@@ -4,6 +4,9 @@ open import LogicalFormulae
 open import Numbers.Naturals -- for length
 open import Lists.Lists
 open import Functions
+open import Groups.SymmetryGroups
+open import Sets.FinSet
+open import Setoids.Setoids
 
 module Groups.FinitePermutations where
   allInsertions : {a : _} {A : Set a} (x : A) (l : List A) → List (List A)
@@ -57,3 +60,34 @@ module Groups.FinitePermutations where
       lemma = allTrueEqual (λ a → succ (length a)) (succ (length l)) (permutations l) (allTrueExtension (λ z → length z ≡ length l) (λ i → succ (length i) ≡ succ (length l)) (permutations l) (λ pr → applyEquality succ pr) (permsAllSameLength l))
       ans : length (permutations l) +N length l *N length (permutations l) ≡ factorial (length l) +N length l *N factorial (length l)
       ans rewrite permsLen l = refl
+
+{- TODO: show that symmetricGroup acts in the obvious way on permutations FinSet
+  listElements : {a : _} {A : Set a} (l : List A) → Set
+  listElements [] = False
+  listElements (x :: l) = True || listElements l
+
+  listElement : {a : _} {A : Set a} {l : List A} (elt : listElements l) → A
+  listElement {l = []} ()
+  listElement {l = x :: l} (inl record {}) = x
+  listElement {l = x :: l} (inr elt) = listElement {l = l} elt
+
+  backwardRange : ℕ → List ℕ
+  backwardRange zero = []
+  backwardRange (succ n) = n :: backwardRange n
+
+  backwardRangeLength : {n : ℕ} → length (backwardRange n) ≡ n
+  backwardRangeLength {zero} = refl
+  backwardRangeLength {succ n} rewrite backwardRangeLength {n} = refl
+
+  applyPermutation : {n : ℕ} → (f : FinSet n → FinSet n) → listElements (permutations (backwardRange n)) → listElements (permutations (backwardRange n))
+  applyPermutation {zero} f (inl record {}) = inl (record {})
+  applyPermutation {zero} f (inr ())
+  applyPermutation {succ n} f elt = {!!}
+
+  finitePermutations : (n : ℕ) → SetoidToSet (symmetricSetoid (reflSetoid (FinSet n))) (listElements (permutations (backwardRange n)))
+  SetoidToSet.project (finitePermutations n) (sym {f} fBij) = {!!}
+  SetoidToSet.wellDefined (finitePermutations n) = {!!}
+  SetoidToSet.surj (finitePermutations n) = {!!}
+  SetoidToSet.inj (finitePermutations n) = {!!}
+
+-}
