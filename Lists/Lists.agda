@@ -151,3 +151,7 @@ module Lists.Lists where
   head : {a : _} {A : Set a} (l : List A) (pr : 0 <N length l) → A
   head [] (le x ())
   head (x :: l) pr = x
+
+  lengthRev : {a : _} {A : Set a} (l : List A) → length (rev l) ≡ length l
+  lengthRev [] = refl
+  lengthRev (x :: l) rewrite lengthConcat (rev l) (x :: []) | lengthRev l | additionNIsCommutative (length l) 1 = refl
