@@ -170,6 +170,7 @@ adjoinGiven : {a b : _} {A : Set a} {givens : Set b} (givensSubset : IsSubset gi
 IsSubset.ofElt (adjoinGiven record { ofElt = ofElt } P) (inl x) = P
 IsSubset.ofElt (adjoinGiven record { ofElt = ofElt } _) (inr x) = ofElt x
 
+{-
 proofRemainsValidOnAddingGivens : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} → {Q : Propositions A} → Proof axiomsSubset givensSubset n → Proof axiomsSubset (adjoinGiven givensSubset Q) n
 pr' : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} → {Q : Propositions A} → (pr : Proof axiomsSubset givensSubset n) → toSteps pr ≡ toSteps (proofRemainsValidOnAddingGivens {Q = Q} pr)
 
@@ -245,3 +246,5 @@ Entails.entails (propositionalLogicSound {P = P} record { n = .0 ; proof = (next
 Entails.entails (propositionalLogicSound {P = P} record { n = .0 ; proof = (nextStep .0 empty (modusPonens record { element = element ; position = zero ; pos<N = (le x₁ ()) ; elementIsAt = elementIsAt } argument conclusion x)) ; ofStatement = ofStatement }) {v} values
 Entails.entails (propositionalLogicSound {P = P} record { n = .0 ; proof = (nextStep .0 empty (modusPonens record { element = element ; position = (succ position) ; pos<N = (le x₁ ()) ; elementIsAt = elementIsAt } argument conclusion x)) ; ofStatement = ofStatement }) {v} values
 Entails.entails (propositionalLogicSound {P = P} record { n = .(succ n) ; proof = (nextStep .(succ n) (nextStep n proof y) x) ; ofStatement = ofStatement }) {v} values = {!!}
+
+-}

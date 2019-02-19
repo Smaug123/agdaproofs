@@ -58,14 +58,6 @@ module Groups.Groups where
       m : y ∼ z · e
       m = transitive l (wellDefined ~refl invRight)
 
-    identityIsUnique : {a b : _} → {A : Set a} → {S : Setoid {a} {b} A} → {_·_ : A → A → A} → (G : Group S _·_) → (e : A) → ((b : A) → (Setoid._∼_ S (b · e) b)) → (Setoid._∼_ S e (Group.identity G))
-    identityIsUnique {S = S} {_·_} g thing fb = transitive (symmetric multIdentLeft) (fb e)
-      where
-        open Group g renaming (inverse to _^-1) renaming (identity to e)
-        open Setoid S
-        open Transitive (Equivalence.transitiveEq eq)
-        open Symmetric (Equivalence.symmetricEq eq)
-
     replaceGroupOp : {l m : _} {A : Set l} {S : Setoid {l} {m} A} {_·_ : A → A → A} → (G : Group S _·_) → {a b c d w x y z : A} → (Setoid._∼_ S a c) → (Setoid._∼_ S b d) → (Setoid._∼_ S w y) → (Setoid._∼_ S x z) → Setoid._∼_ S (a · b) (w · x) → Setoid._∼_ S (c · d) (y · z)
     replaceGroupOp {S = S} {_·_} G a~c b~d w~y x~z pr = transitive (symmetric (wellDefined a~c b~d)) (transitive pr (wellDefined w~y x~z))
       where
