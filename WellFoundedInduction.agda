@@ -1,4 +1,4 @@
---{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error #-}
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Functions
