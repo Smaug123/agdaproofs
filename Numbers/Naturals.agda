@@ -831,3 +831,6 @@ module Numbers.Naturals where
   productZeroImpliesOperandZero {zero} {b} pr = inl refl
   productZeroImpliesOperandZero {succ a} {zero} pr = inr refl
   productZeroImpliesOperandZero {succ a} {succ b} ()
+
+  sumZeroImpliesOperandsZero : (a : ℕ) {b : ℕ} → a +N b ≡ 0 → (a ≡ 0) && (b ≡ 0)
+  sumZeroImpliesOperandsZero zero {zero} pr = refl ,, refl

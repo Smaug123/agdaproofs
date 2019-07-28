@@ -107,22 +107,85 @@ module Numbers.BinaryNaturals where
 -- Still not sure of the right way to go about this one. Should we go via canonical, even though it's a big waste in almost all cases?
   doubleIsBitShift : (a : ℕ) → (0 <N a) → NToBinNat (2 *N a) ≡ zero :: NToBinNat a
   doubleIsBitShift zero ()
-  doubleIsBitShift (succ a) _ = {!!}
+  doubleIsBitShift (succ a) _ with inspect (NToBinNat (a +N succ (a +N 0)))
+  doubleIsBitShift (succ a) _ | t = {!!}
 
-  +BIsInherited : (a b : BinNat) (prA : a ≡ canonical a) (prB : b ≡ canonical b) → a +Binherit b ≡ a +B b
-  +BIsInherited [] [] prA prB = refl
-  +BIsInherited [] (zero :: b) refl prB = t
+  +BCommutative : (a b : BinNat) → a +B b ≡ b +B a
+  +BCommutative [] [] = refl
+  +BCommutative [] (x :: b) = refl
+  +BCommutative (x :: a) [] = refl
+  +BCommutative (zero :: as) (zero :: bs) rewrite +BCommutative as bs = refl
+  +BCommutative (zero :: as) (one :: bs) rewrite +BCommutative as bs = refl
+  +BCommutative (one :: as) (zero :: bs) rewrite +BCommutative as bs = refl
+  +BCommutative (one :: as) (one :: bs) rewrite +BCommutative as bs = refl
+
+  +BIsInherited[] : (b : BinNat) (prB : b ≡ canonical b) → [] +Binherit b ≡ [] +B b
+  +BIsInherited[] [] prB = refl
+  +BIsInherited[] (zero :: b) prB = t
     where
       refine : (b : BinNat) → zero :: b ≡ canonical (zero :: b) → b ≡ canonical b
       refine b pr with canonical b
       refine b pr | x :: bl = ::Inj pr
       t : NToBinNat (0 +N binNatToN (zero :: b)) ≡ zero :: b
-      t = transitivity (doubleIsBitShift (binNatToN b) {!!}) (applyEquality (zero ::_) (transitivity (binToBin b) (equalityCommutative (refine b prB))))
-  +BIsInherited [] (one :: b) = {!!}
-  +BIsInherited (x :: a) [] = {!!}
-  +BIsInherited (zero :: as) (b :: bs) = {!!}
-  +BIsInherited (one :: as) (zero :: bs) = {!!}
-  +BIsInherited (one :: as) (one :: bs) = {!!}
+      t with orderIsTotal 0 (binNatToN b)
+      t | inl (inl pos) = transitivity (doubleIsBitShift (binNatToN b) pos) (applyEquality (zero ::_) (transitivity (binToBin b) (equalityCommutative (refine b prB))))
+      t | inl (inr ())
+      ... | inr eq with binNatToNZero b (equalityCommutative eq)
+      ... | u with canonical b
+      t | inr eq | u | [] = exFalso (bad b prB)
+        where
+          bad : (c : BinNat) → zero :: c ≡ [] → False
+          bad c ()
+      t | inr eq | () | x :: bl
+  +BIsInherited[] (one :: b) prB = ans
+    where
+      ans : NToBinNat (binNatToN (one :: b)) ≡ one :: b
+      ans = transitivity (binToBin (one :: b)) (equalityCommutative prB)
+
+  canonicalDescends : {a : Bit} (as : BinNat) → (prA : a :: as ≡ canonical (a :: as)) → as ≡ canonical as
+  canonicalDescends {zero} as pr with canonical as
+  canonicalDescends {zero} as pr | x :: bl = ::Inj pr
+  canonicalDescends {one} as pr = ::Inj pr
+
+  +BIsInherited : (a b : BinNat) (prA : a ≡ canonical a) (prB : b ≡ canonical b) → a +Binherit b ≡ a +B b
+  +BinheritLemma : (a : BinNat) (b : BinNat) (prA : a ≡ canonical a) (prB : b ≡ canonical b) → incr (NToBinNat ((binNatToN a +N binNatToN b) +N ((binNatToN a +N binNatToN b) +N zero))) ≡ one :: (a +B b)
+
+  +BinheritLemma a b prA prB with orderIsTotal 0 (binNatToN a +N binNatToN b)
+  +BinheritLemma a b prA prB | inl (inl x) rewrite doubleIsBitShift (binNatToN a +N binNatToN b) x = applyEquality (one ::_) (+BIsInherited a b prA prB)
+  +BinheritLemma a b prA prB | inr x with sumZeroImpliesOperandsZero (binNatToN a) (equalityCommutative x)
+  +BinheritLemma a b prA prB | inr x | fst ,, snd = ans2
+    where
+      bad : b ≡ []
+      bad = transitivity prB (binNatToNZero b snd)
+      bad2 : a ≡ []
+      bad2 = transitivity prA (binNatToNZero a fst)
+      ans2 : incr (NToBinNat ((binNatToN a +N binNatToN b) +N ((binNatToN a +N binNatToN b) +N zero))) ≡ one :: (a +B b)
+      ans2 rewrite bad | bad2 = refl
+
+  +BIsInherited [] b _ prB = +BIsInherited[] b prB
+  +BIsInherited (x :: a) [] prA _ rewrite +BCommutative (x :: a) [] | additionNIsCommutative (binNatToN (x :: a)) (binNatToN []) = +BIsInherited[] (x :: a) prA
+  +BIsInherited (zero :: as) (zero :: b) prA prB with orderIsTotal 0 (binNatToN as +N binNatToN b)
+  ... | inl (inl 0<) rewrite additionNIsCommutative (binNatToN as) 0 | additionNIsCommutative (binNatToN b) 0 | equalityCommutative (additionNIsAssociative (binNatToN as +N binNatToN as) (binNatToN b) (binNatToN b)) | additionNIsAssociative (binNatToN as) (binNatToN as) (binNatToN b) | additionNIsCommutative (binNatToN as) (binNatToN b) | equalityCommutative (additionNIsAssociative (binNatToN as) (binNatToN b) (binNatToN as)) | additionNIsAssociative (binNatToN as +N binNatToN b) (binNatToN as) (binNatToN b) | additionNIsCommutative 0 ((binNatToN as +N binNatToN b) +N (binNatToN as +N binNatToN b)) | additionNIsAssociative (binNatToN as +N binNatToN b) (binNatToN as +N binNatToN b) 0 = transitivity (doubleIsBitShift (binNatToN as +N binNatToN b) (identityOfIndiscernablesRight _ _ _ _<N_ 0< (additionNIsCommutative (binNatToN b) _))) (applyEquality (zero ::_) (+BIsInherited as b (canonicalDescends as prA) (canonicalDescends b prB)))
+  +BIsInherited (zero :: as) (zero :: b) prA prB | inl (inr ())
+  ... | inr p with sumZeroImpliesOperandsZero (binNatToN as) (equalityCommutative p)
+  +BIsInherited (zero :: as) (zero :: b) prA prB | inr p | as=0 ,, b=0 rewrite as=0 | b=0 = exFalso ans
+    where
+      bad : (b : BinNat) → (pr : b ≡ canonical b) → (pr2 : binNatToN b ≡ 0) → b ≡ []
+      bad b pr pr2 = transitivity pr (binNatToNZero b pr2)
+      t : b ≡ canonical b
+      t with canonical b
+      t | x :: bl = ::Inj prB
+      u : b ≡ []
+      u = bad b t b=0
+      nono : {A : Set} → {a : A} → {as : List A} → a :: as ≡ [] → False
+      nono ()
+      ans : False
+      ans with inspect (canonical b)
+      ans | [] with≡ x rewrite x = nono prB
+      ans | (x₁ :: y) with≡ x = nono (transitivity (equalityCommutative x) (transitivity (equalityCommutative t) u))
+  +BIsInherited (zero :: as) (one :: b) prA prB rewrite additionNIsCommutative (binNatToN as +N (binNatToN as +N zero)) (succ (binNatToN b +N (binNatToN b +N zero))) | additionNIsCommutative (binNatToN b +N (binNatToN b +N zero)) (binNatToN as +N (binNatToN as +N zero)) | equalityCommutative (productDistributes 2 (binNatToN as) (binNatToN b)) = +BinheritLemma as b (canonicalDescends as prA) (canonicalDescends b prB)
+  +BIsInherited (one :: as) (zero :: bs) prA prB rewrite equalityCommutative (productDistributes 2 (binNatToN as) (binNatToN bs)) = +BinheritLemma as bs (canonicalDescends as prA) (canonicalDescends bs prB)
+  +BIsInherited (one :: as) (one :: bs) prA prB rewrite additionNIsCommutative (binNatToN as +N (binNatToN as +N zero)) (succ (binNatToN bs +N (binNatToN bs +N zero))) | additionNIsCommutative (binNatToN bs +N (binNatToN bs +N zero)) (2 *N binNatToN as) | equalityCommutative (productDistributes 2 (binNatToN as) (binNatToN bs)) | +BinheritLemma as bs (canonicalDescends as prA) (canonicalDescends bs prB) = refl
 
 --- Proofs
 
