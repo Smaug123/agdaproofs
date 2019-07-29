@@ -91,11 +91,10 @@ module Numbers.BinaryNaturals where
   binToBin : (x : BinNat) → NToBinNat (binNatToN x) ≡ canonical x
   binToBin x = transitivity (NToBinNatIsCanonical (binNatToN x)) (binNatToNInj (NToBinNat (binNatToN x)) x (nToN (binNatToN x)))
 
+-- Define the monoid structure, and show that it's the same as ℕ's
+
   _+Binherit_ : BinNat → BinNat → BinNat
   a +Binherit b = NToBinNat (binNatToN a +N binNatToN b)
-
-  _+BinheritC_ : Canonicalised → Canonicalised → Canonicalised
-  (a , prA) +BinheritC (b , prB) = NToBinNatC (binNatToN a +N binNatToN b)
 
   _+B_ : BinNat → BinNat → BinNat
   [] +B b = b
@@ -104,11 +103,14 @@ module Numbers.BinaryNaturals where
   (one :: xs) +B (zero :: ys) = one :: (xs +B ys)
   (one :: xs) +B (one :: ys) = zero :: incr (xs +B ys)
 
--- Still not sure of the right way to go about this one. Should we go via canonical, even though it's a big waste in almost all cases?
+  doubleIsBitShift' : (a : ℕ) → NToBinNat (2 *N succ a) ≡ zero :: NToBinNat (succ a)
+  doubleIsBitShift' zero = refl
+  doubleIsBitShift' (succ a) with doubleIsBitShift' a
+  ... | bl rewrite additionNIsCommutative a (succ (succ (a +N 0))) | additionNIsCommutative (succ (a +N 0)) a | additionNIsCommutative a (succ (a +N 0)) | additionNIsCommutative (a +N 0) a | bl = refl
+
   doubleIsBitShift : (a : ℕ) → (0 <N a) → NToBinNat (2 *N a) ≡ zero :: NToBinNat a
   doubleIsBitShift zero ()
-  doubleIsBitShift (succ a) _ with inspect (NToBinNat (a +N succ (a +N 0)))
-  doubleIsBitShift (succ a) _ | t = {!!}
+  doubleIsBitShift (succ a) _ = doubleIsBitShift' a
 
   +BCommutative : (a b : BinNat) → a +B b ≡ b +B a
   +BCommutative [] [] = refl
@@ -146,6 +148,8 @@ module Numbers.BinaryNaturals where
   canonicalDescends {zero} as pr with canonical as
   canonicalDescends {zero} as pr | x :: bl = ::Inj pr
   canonicalDescends {one} as pr = ::Inj pr
+
+-- Show that the monoid structure of ℕ is the same as that of BinNat
 
   +BIsInherited : (a b : BinNat) (prA : a ≡ canonical a) (prB : b ≡ canonical b) → a +Binherit b ≡ a +B b
   +BinheritLemma : (a : BinNat) (b : BinNat) (prA : a ≡ canonical a) (prB : b ≡ canonical b) → incr (NToBinNat ((binNatToN a +N binNatToN b) +N ((binNatToN a +N binNatToN b) +N zero))) ≡ one :: (a +B b)
