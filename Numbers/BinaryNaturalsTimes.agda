@@ -167,31 +167,12 @@ module Numbers.BinaryNaturalsTimes where
       ans : canonical ((zero :: (bs *B as)) +B as) +B canonical bs ≡ canonical ((zero :: (as *B bs)) +B bs) +B canonical as
       ans rewrite equalityCommutative (canonicalDistributesPlus ((zero :: (bs *B as)) +B as) bs) | equalityCommutative (canonicalDistributesPlus ((zero :: (as *B bs)) +B bs) as) | equalityCommutative (+BAssociative (zero :: (bs *B as)) as bs) | equalityCommutative (+BAssociative (zero :: (as *B bs)) bs as) | canonicalDistributesPlus (zero :: (bs *B as)) (as +B bs) | canonicalDistributesPlus (zero :: (as *B bs)) (bs +B as) | equalityCommutative (canonicalAscends'' {zero} (bs *B as)) | timesCommutative bs as | canonicalAscends'' {zero} (as *B bs) | +BCommutative as bs = refl
 
-{-
-  *BIsInherited : (a b : BinNat) (prA : a ≡ canonical a) (prB : b ≡ canonical b) → a *Binherit b ≡ canonical (a *B b)
-  *BIsInherited [] b prA prB = refl
-  *BIsInherited (zero :: a) b prA prB rewrite equalityCommutative (multiplicationNIsAssociative 2 (binNatToN a) (binNatToN b)) = ans
+  *BIsInherited : (a b : BinNat) → a *Binherit b ≡ canonical (a *B b)
+  *BIsInherited a b = transitivity (applyEquality NToBinNat t) (transitivity (binToBin (canonical (a *B b))) (equalityCommutative (canonicalIdempotent (a *B b))))
     where
-      ans : NToBinNat (binNatToN a *N binNatToN b +N (binNatToN a *N binNatToN b +N zero)) ≡ canonical (zero :: (a *B b))
-      ans with orderIsTotal 0 (binNatToN a *N binNatToN b)
-      ans | inl (inl 0<ab) rewrite doubleIsBitShift (binNatToN a *N binNatToN b) 0<ab | *BIsInherited a b (canonicalDescends a prA) prB = transitivity {!!} (canonicalAscends'' (a *B b))
-      ans | inr 0=ab with productZeroImpliesOperandZero {binNatToN a} {binNatToN b} (equalityCommutative 0=ab)
-      ans | inr 0=ab | inl x rewrite transitivity (canonicalDescends a prA) (binNatToNZero a x) = refl
-      ans | inr 0=ab | inr x rewrite transitivity prB (binNatToNZero b x) | multiplicationNIsCommutative (binNatToN a) 0 | *BEmpty a = refl
-  *BIsInherited (one :: a) b prA prB rewrite equalityCommutative (multiplicationNIsAssociative 2 (binNatToN a) (binNatToN b)) = ans
-    where
-      ans : NToBinNat (binNatToN b +N (binNatToN a *N binNatToN b +N (binNatToN a *N binNatToN b +N zero))) ≡ canonical ((zero :: (a *B b)) +B b)
-      ans rewrite canonicalDistributesPlus (zero :: (a *B b)) b | NToBinNatDistributesPlus (binNatToN b) (2 *N (binNatToN a *N binNatToN b)) | binToBin b | +BCommutative (canonical b) (NToBinNat (2 *N (binNatToN a *N binNatToN b))) = applyEquality (_+B canonical b) foo
-        where
-          foo : NToBinNat (2 *N (binNatToN a *N binNatToN b)) ≡ canonical (zero :: (a *B b))
-          foo with inspect (binNatToN a *N binNatToN b)
-          foo | zero with≡ x with productZeroImpliesOperandZero {binNatToN a} {binNatToN b} x
-          foo | zero with≡ x | inl a=0 rewrite a=0 = {!!}
-          foo | zero with≡ x | inr b=0 rewrite b=0 = {!!}
-          foo | succ y with≡ x rewrite x | doubleIsBitShift' y = transitivity (applyEquality (zero ::_) (transitivity (NToBinNatSucc y) (transitivity (applyEquality NToBinNat (equalityCommutative x)) (*BIsInherited a b (canonicalDescends _ prA) prB)))) (canonicalAscends' {zero} (a *B b) λ p → t p x)
-            where
-              t : canonical (a *B b) ≡ [] → binNatToN a *N binNatToN b ≡ succ y → False
-              t pr1 pr2 with binNatToNZero' (a *B b) pr1
-              ... | bl = {!!}
-
--}
+      ans : (a b : BinNat) → binNatToN a *N binNatToN b ≡ binNatToN (a *B b)
+      ans [] b = refl
+      ans (zero :: a) b rewrite equalityCommutative (ans a b) = equalityCommutative (multiplicationNIsAssociative 2 (binNatToN a) (binNatToN b))
+      ans (one :: a) b rewrite binNatToNDistributesPlus (zero :: (a *B b)) b | additionNIsCommutative (binNatToN b) ((2 *N (binNatToN a)) *N (binNatToN b)) | equalityCommutative (ans a b) = applyEquality (_+N binNatToN b) (equalityCommutative (multiplicationNIsAssociative 2 (binNatToN a) (binNatToN b)))
+      t : (binNatToN a *N binNatToN b) ≡ binNatToN (canonical (a *B b))
+      t = transitivity (ans a b) (equalityCommutative (binNatToNIsCanonical (a *B b)))
