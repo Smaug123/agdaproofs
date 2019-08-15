@@ -18,6 +18,9 @@ module Numbers.BinaryNaturals where
   ::Inj : {xs ys : BinNat} {i : Bit} → i :: xs ≡ i :: ys → xs ≡ ys
   ::Inj refl = refl
 
+  nonEmptyNotEmpty : {a : _} {A : Set a} {l1 : List A} {i : A} → i :: l1 ≡ [] → False
+  nonEmptyNotEmpty {l1 = l1} {i} ()
+
 -- TODO - maybe we should do the floating-point style of assuming there's a leading bit and not storing it.
 -- That way, everything is already canonical.
 
@@ -51,6 +54,8 @@ module Numbers.BinaryNaturals where
   incrPreservesCanonical (one :: xs) pr | [] with≡ x = exFalso (incrNonzero xs x)
   incrPreservesCanonical (one :: xs) pr | (x₁ :: y) with≡ x rewrite x = applyEquality (zero ::_) (transitivity (equalityCommutative x) (incrPreservesCanonical xs (::Inj pr)))
 
+  incrPreservesCanonical' : (x : BinNat) → canonical (incr x) ≡ incr (canonical x)
+
   incrC : Canonicalised → Canonicalised
   incrC (a , b) = incr a , incrPreservesCanonical a b
 
@@ -72,8 +77,37 @@ module Numbers.BinaryNaturals where
   canonicalRespectsIncr' : {x y : BinNat} → canonical (incr x) ≡ canonical (incr y) → canonical x ≡ canonical y
 
   binNatToNSucc : (n : BinNat) → binNatToN (incr n) ≡ succ (binNatToN n)
+  NToBinNatSucc : (n : ℕ) → incr (NToBinNat n) ≡ NToBinNat (succ n)
 
   binNatToNZero : (x : BinNat) → binNatToN x ≡ 0 → canonical x ≡ []
+  binNatToNZero' : (x : BinNat) → canonical x ≡ [] → binNatToN x ≡ 0
+
+  canonicalAscends : {i : Bit} → (a : BinNat) → 0 <N binNatToN a → i :: canonical a ≡ canonical (i :: a)
+
+  canonicalAscends' : {i : Bit} → (a : BinNat) → (canonical a ≡ [] → False) → i :: canonical a ≡ canonical (i :: a)
+  canonicalAscends' {i} a pr = canonicalAscends {i} a (t a pr)
+    where
+      t : (a : BinNat) → (canonical a ≡ [] → False) → 0 <N binNatToN a
+      t a pr with orderIsTotal 0 (binNatToN a)
+      t a pr | inl (inl x) = x
+      t a pr | inr x = exFalso (pr (binNatToNZero a (equalityCommutative x)))
+
+  canonicalIdempotent : (a : BinNat) → canonical a ≡ canonical (canonical a)
+  canonicalIdempotent [] = refl
+  canonicalIdempotent (zero :: a) with inspect (canonical a)
+  canonicalIdempotent (zero :: a) | [] with≡ y rewrite y = refl
+  canonicalIdempotent (zero :: a) | (x :: bl) with≡ y = transitivity (equalityCommutative (canonicalAscends' {zero} a λ p → contr p y)) (transitivity (applyEquality (zero ::_) (canonicalIdempotent a)) (equalityCommutative v))
+    where
+      contr : {a : _} {A : Set a} {l1 l2 : List A} → {x : A} → l1 ≡ [] → l1 ≡ x :: l2 → False
+      contr {l1 = []} p1 ()
+      contr {l1 = x :: l1} () p2
+      u : canonical (canonical (zero :: a)) ≡ canonical (zero :: canonical a)
+      u = applyEquality canonical (equalityCommutative (canonicalAscends' {zero} a λ p → contr p y))
+      v : canonical (canonical (zero :: a)) ≡ zero :: canonical (canonical a)
+      v = transitivity u (equalityCommutative (canonicalAscends' {zero} (canonical a) λ p → contr (transitivity (canonicalIdempotent a) p) y))
+  canonicalIdempotent (one :: a) rewrite equalityCommutative (canonicalIdempotent a) = refl
+
+  canonicalAscends'' : {i : Bit} → (a : BinNat) → canonical (i :: canonical a) ≡ canonical (i :: a)
 
   binNatToNInj : (x y : BinNat) → binNatToN x ≡ binNatToN y → canonical x ≡ canonical y
 
@@ -83,6 +117,17 @@ module Numbers.BinaryNaturals where
   NToBinNatIsCanonical zero = refl
   NToBinNatIsCanonical (succ x) with NToBinNatC x
   NToBinNatIsCanonical (succ x) | a , b = equalityCommutative (incrPreservesCanonical (NToBinNat x) (equalityCommutative (NToBinNatIsCanonical x)))
+
+  contr' : {a : _} {A : Set a} {l1 l2 : List A} → {x : A} → l1 ≡ [] → l1 ≡ x :: l2 → False
+  contr' {l1 = []} p1 ()
+  contr' {l1 = x :: l1} () p2
+
+  binNatToNIsCanonical : (x : BinNat) → binNatToN (canonical x) ≡ binNatToN x
+  binNatToNIsCanonical [] = refl
+  binNatToNIsCanonical (zero :: x) with inspect (canonical x)
+  binNatToNIsCanonical (zero :: x) | [] with≡ t rewrite t | binNatToNZero' x t = refl
+  binNatToNIsCanonical (zero :: x) | (x₁ :: bl) with≡ t rewrite (equalityCommutative (canonicalAscends' {zero} x λ p → contr' p t)) | binNatToNIsCanonical x = refl
+  binNatToNIsCanonical (one :: x) rewrite binNatToNIsCanonical x = refl
 
 -- The following two theorems demonstrate that Canonicalised is isomorphic to ℕ
 
@@ -153,6 +198,8 @@ module Numbers.BinaryNaturals where
 
   +BIsInherited : (a b : BinNat) (prA : a ≡ canonical a) (prB : b ≡ canonical b) → a +Binherit b ≡ a +B b
   +BinheritLemma : (a : BinNat) (b : BinNat) (prA : a ≡ canonical a) (prB : b ≡ canonical b) → incr (NToBinNat ((binNatToN a +N binNatToN b) +N ((binNatToN a +N binNatToN b) +N zero))) ≡ one :: (a +B b)
+
+  +BIsInherited' : (a b : BinNat) → a +Binherit b ≡ canonical (a +B b)
 
   +BinheritLemma a b prA prB with orderIsTotal 0 (binNatToN a +N binNatToN b)
   +BinheritLemma a b prA prB | inl (inl x) rewrite doubleIsBitShift (binNatToN a +N binNatToN b) x = applyEquality (one ::_) (+BIsInherited a b prA prB)
@@ -327,3 +374,146 @@ module Numbers.BinaryNaturals where
       bad : (1 ≡ succ (succ ((b +N 0) +N b))) → False
       bad ()
   parity (succ a) (succ b) pr rewrite additionNIsCommutative b (succ (b +N 0)) | additionNIsCommutative a (succ (a +N 0)) | additionNIsCommutative (a +N 0) a | additionNIsCommutative (b +N 0) b = parity a b (succInjective (succInjective pr))
+
+  binNatToNZero' [] pr = refl
+  binNatToNZero' (zero :: xs) pr with inspect (canonical xs)
+  binNatToNZero' (zero :: xs) pr | [] with≡ p2 = ans
+    where
+      t : binNatToN xs ≡ 0
+      t = binNatToNZero' xs p2
+      ans : 2 *N binNatToN xs ≡ 0
+      ans rewrite t = refl
+  binNatToNZero' (zero :: xs) pr | (y :: ys) with≡ p rewrite p = exFalso (bad pr)
+    where
+      bad : zero :: y :: ys ≡ [] → False
+      bad ()
+  binNatToNZero' (one :: xs) ()
+
+  canonicalAscends {zero} a 0<a with inspect (canonical a)
+  canonicalAscends {zero} (zero :: a) 0<a | [] with≡ x = exFalso (contr'' (binNatToN a) t v)
+    where
+      u : binNatToN (zero :: a) ≡ 0
+      u = binNatToNZero' (zero :: a) x
+      v : binNatToN a ≡ 0
+      v with inspect (binNatToN a)
+      v | zero with≡ x = x
+      v | succ a' with≡ x with inspect (binNatToN (zero :: a))
+      v | succ a' with≡ x | zero with≡ pr2 rewrite pr2 = exFalso (lessIrreflexive 0<a)
+      v | succ a' with≡ x | succ y with≡ pr2 rewrite u = exFalso (lessIrreflexive 0<a)
+      t : 0 <N binNatToN a
+      t with binNatToN a
+      t | succ bl rewrite additionNIsCommutative (succ bl) 0 = succIsPositive bl
+      contr'' : (x : ℕ) → (0 <N x) → (x ≡ 0) → False
+      contr'' x 0<x x=0 rewrite x=0 = lessIrreflexive 0<x
+  canonicalAscends {zero} a 0<a | (x₁ :: y) with≡ x rewrite x = refl
+  canonicalAscends {one} a 0<a = refl
+
+  canonicalAscends'' {i} a with inspect (canonical a)
+  canonicalAscends'' {zero} a | [] with≡ x rewrite x = refl
+  canonicalAscends'' {one} a | [] with≡ x rewrite x = refl
+  canonicalAscends'' {i} a | (x₁ :: y) with≡ x = transitivity (applyEquality canonical (canonicalAscends' {i} a λ p → contr p x)) (equalityCommutative (canonicalIdempotent (i :: a)))
+    where
+      contr : {a : _} {A : Set a} {l1 l2 : List A} → {x : A} → l1 ≡ [] → l1 ≡ x :: l2 → False
+      contr {l1 = []} p1 ()
+      contr {l1 = x :: l1} () p2
+
+  incrPreservesCanonical' [] = refl
+  incrPreservesCanonical' (zero :: xs) with inspect (canonical xs)
+  incrPreservesCanonical' (zero :: xs) | [] with≡ x rewrite x = refl
+  incrPreservesCanonical' (zero :: xs) | (x₁ :: y) with≡ x rewrite x = refl
+  incrPreservesCanonical' (one :: xs) with inspect (canonical (incr xs))
+  ... | [] with≡ pr = exFalso (incrNonzero xs pr)
+  ... | (_ :: _) with≡ pr rewrite pr = applyEquality (zero ::_) (transitivity (equalityCommutative pr) (incrPreservesCanonical' xs))
+
+  +BIsInherited'[] : (b : BinNat) → [] +Binherit b ≡ canonical ([] +B b)
+  +BIsInherited'[] [] = refl
+  +BIsInherited'[] (zero :: b) with inspect (canonical b)
+  +BIsInherited'[] (zero :: b) | [] with≡ pr rewrite binNatToNZero' b pr | pr = refl
+  +BIsInherited'[] (zero :: b) | (x :: bl) with≡ pr rewrite pr = ans
+    where
+      contr : {a : _} {A : Set a} {l1 l2 : List A} → {x : A} → l1 ≡ [] → l1 ≡ x :: l2 → False
+      contr {l1 = []} p1 ()
+      contr {l1 = x :: l1} () p2
+      ans : NToBinNat (binNatToN b +N (binNatToN b +N zero)) ≡ zero :: x :: bl
+      ans with inspect (binNatToN b)
+      ans | zero with≡ th rewrite th = exFalso (contr (binNatToNZero b th) pr)
+      ans | succ th with≡ blah rewrite blah | doubleIsBitShift' th = applyEquality (zero ::_) (transitivity (equalityCommutative u) pr)
+        where
+          u : canonical b ≡ incr (NToBinNat th)
+          u = transitivity (equalityCommutative (binToBin b)) (applyEquality NToBinNat blah)
+  +BIsInherited'[] (one :: b) with inspect (binNatToN b)
+  ... | zero with≡ pr rewrite pr = applyEquality (one ::_) (equalityCommutative (binNatToNZero b pr))
+  ... | (succ bl) with≡ pr = ans
+    where
+      u : NToBinNat (2 *N binNatToN b) ≡ zero :: canonical b
+      u with doubleIsBitShift' bl
+      ... | t = transitivity (identityOfIndiscernablesLeft _ _ _ _≡_ t (applyEquality (λ i → NToBinNat (2 *N i)) (equalityCommutative pr))) (applyEquality (zero ::_) (transitivity (applyEquality NToBinNat (equalityCommutative pr)) (binToBin b)))
+      ans : incr (NToBinNat (binNatToN b +N (binNatToN b +N zero))) ≡ one :: canonical b
+      ans = applyEquality incr u
+
+  +BIsInherited' [] b = +BIsInherited'[] b
+  +BIsInherited' (x :: a) [] rewrite +BCommutative (x :: a) [] | additionNIsCommutative (binNatToN (x :: a)) 0 = binToBin (x :: a)
+  +BIsInherited' (zero :: as) (zero :: bs) rewrite equalityCommutative (productDistributes 2 (binNatToN as) (binNatToN bs)) = ans
+    where
+      ans : NToBinNat (2 *N (binNatToN as +N binNatToN bs)) ≡ canonical (zero :: (as +B bs))
+      ans with inspect (binNatToN as +N binNatToN bs)
+      ans | zero with≡ x with sumZeroImpliesOperandsZero (binNatToN as) x
+      ... | as=0 ,, bs=0 rewrite as=0 | bs=0 = foo
+        where
+          u : canonical (as +Binherit bs) ≡ []
+          u rewrite as=0 | bs=0 = refl
+          foo : [] ≡ canonical (zero :: (as +B bs))
+          foo = transitivity (transitivity b (applyEquality (λ i → canonical (zero :: i)) (+BIsInherited' as bs))) (canonicalAscends'' {zero} (as +B bs))
+            where
+              b : [] ≡ canonical (zero :: (as +Binherit bs))
+              b rewrite u = refl
+      ans | succ y with≡ x rewrite x | doubleIsBitShift' y = transitivity (applyEquality (λ i → zero :: NToBinNat i) (equalityCommutative x)) ans2
+        where
+          u : 0 <N binNatToN (as +B bs)
+          u rewrite equalityCommutative (binNatToNIsCanonical (as +B bs)) | equalityCommutative (+BIsInherited' as bs) | x | nToN (succ y) = succIsPositive y
+          ans2 : zero :: NToBinNat (binNatToN as +N binNatToN bs) ≡ canonical (zero :: (as +B bs))
+          ans2 rewrite +BIsInherited' as bs = canonicalAscends (as +B bs) u
+  +BIsInherited' (zero :: as) (one :: bs) rewrite additionNIsCommutative (2 *N binNatToN as) (succ (2 *N binNatToN bs)) | additionNIsCommutative (2 *N binNatToN bs) (2 *N binNatToN as) | equalityCommutative (productDistributes 2 (binNatToN as) (binNatToN bs)) = ans2
+    where
+      ans2 : incr (NToBinNat (2 *N (binNatToN as +N binNatToN bs))) ≡ one :: canonical (as +B bs)
+      ans2 with inspect (binNatToN as +N binNatToN bs)
+      ans2 | zero with≡ x with sumZeroImpliesOperandsZero (binNatToN as) x
+      ans2 | zero with≡ x | as=0 ,, bs=0 rewrite as=0 | bs=0 = applyEquality (one ::_) (transitivity t (+BIsInherited' as bs))
+        where
+          t : [] ≡ as +Binherit bs
+          t rewrite as=0 | bs=0 = refl
+      ans2 | succ y with≡ x rewrite x | doubleIsBitShift' y = applyEquality (one ::_) (transitivity (applyEquality NToBinNat (equalityCommutative x)) (+BIsInherited' as bs))
+  +BIsInherited' (one :: as) (zero :: bs) rewrite equalityCommutative (productDistributes 2 (binNatToN as) (binNatToN bs)) = ans
+    where
+      ans : incr (NToBinNat (2 *N (binNatToN as +N binNatToN bs))) ≡ one :: canonical (as +B bs)
+      ans with inspect (binNatToN as +N binNatToN bs)
+      ans | zero with≡ x with sumZeroImpliesOperandsZero (binNatToN as) x
+      ... | as=0 ,, bs=0 rewrite as=0 | bs=0 = applyEquality (one ::_) (transitivity t (+BIsInherited' as bs))
+        where
+          t : [] ≡ NToBinNat (binNatToN as +N binNatToN bs)
+          t rewrite as=0 | bs=0 = refl
+      ans | succ y with≡ x rewrite x | doubleIsBitShift' y = applyEquality (one ::_) (transitivity (applyEquality NToBinNat (equalityCommutative x)) (+BIsInherited' as bs))
+  +BIsInherited' (one :: as) (one :: bs) rewrite additionNIsCommutative (2 *N binNatToN as) (succ (2 *N binNatToN bs)) | additionNIsCommutative (2 *N binNatToN bs) (2 *N binNatToN as) | equalityCommutative (productDistributes 2 (binNatToN as) (binNatToN bs)) = ans
+    where
+      ans : incr (incr (NToBinNat (2 *N (binNatToN as +N binNatToN bs)))) ≡ canonical (zero :: incr (as +B bs))
+      ans with inspect (binNatToN as +N binNatToN bs)
+      ... | zero with≡ x with sumZeroImpliesOperandsZero (binNatToN as) x
+      ans | zero with≡ x | as=0 ,, bs=0 rewrite as=0 | bs=0 = bar
+        where
+          u' : canonical (as +Binherit bs) ≡ []
+          u' rewrite as=0 | bs=0 = refl
+          u : canonical (as +B bs) ≡ []
+          u rewrite equalityCommutative (+BIsInherited' as bs) = transitivity (NToBinNatIsCanonical (binNatToN as +N binNatToN bs)) u'
+          t : canonical (incr (as +B bs)) ≡ one :: []
+          t rewrite incrPreservesCanonical' (as +B bs) | u = refl
+          bar : zero :: one :: [] ≡ canonical (zero :: incr (as +B bs))
+          bar rewrite t = refl
+      ans | succ y with≡ x rewrite x | doubleIsBitShift' y = transitivity (applyEquality (λ i → zero :: incr (NToBinNat i)) (equalityCommutative x)) ans2
+        where
+          ans2 : zero :: incr (as +Binherit bs) ≡ canonical (zero :: incr (as +B bs))
+          ans2 rewrite +BIsInherited' as bs | equalityCommutative (incrPreservesCanonical' (as +B bs)) | canonicalAscends' {zero} (incr (as +B bs)) (incrNonzero (as +B bs)) = refl
+
+  NToBinNatSucc zero = refl
+  NToBinNatSucc (succ n) with NToBinNat n
+  ... | [] = refl
+  ... | a :: as = refl
