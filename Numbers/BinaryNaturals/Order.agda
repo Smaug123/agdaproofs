@@ -200,6 +200,44 @@ module Numbers.BinaryNaturals.Order where
   equalSymmetric (one :: n) (zero :: m) n=m = exFalso (equalContaminated' n m n=m)
   equalSymmetric (one :: n) (one :: m) n=m = equalSymmetric n m n=m
 
+  equalToFirstGreater : (state : Compare) → (a b : BinNat) → go<B Equal a b ≡ FirstGreater → go<B state a b ≡ FirstGreater
+  equalToFirstGreater FirstGreater [] (zero :: b) pr = equalToFirstGreater FirstGreater [] b pr
+  equalToFirstGreater FirstGreater (zero :: a) [] pr = refl
+  equalToFirstGreater FirstGreater (zero :: a) (zero :: b) pr = equalToFirstGreater FirstGreater a b pr
+  equalToFirstGreater FirstGreater (zero :: a) (one :: b) pr = pr
+  equalToFirstGreater FirstGreater (one :: a) [] pr = refl
+  equalToFirstGreater FirstGreater (one :: a) (zero :: b) pr = pr
+  equalToFirstGreater FirstGreater (one :: a) (one :: b) pr = equalToFirstGreater FirstGreater a b pr
+  equalToFirstGreater Equal a b pr = pr
+  equalToFirstGreater FirstLess [] (zero :: b) pr = equalToFirstGreater FirstLess [] b pr
+  equalToFirstGreater FirstLess (zero :: a) [] pr = equalToFirstGreater FirstLess a [] pr
+  equalToFirstGreater FirstLess (zero :: a) (zero :: b) pr = equalToFirstGreater FirstLess a b pr
+  equalToFirstGreater FirstLess (zero :: a) (one :: b) pr = pr
+  equalToFirstGreater FirstLess (one :: a) [] pr = refl
+  equalToFirstGreater FirstLess (one :: a) (zero :: b) pr = pr
+  equalToFirstGreater FirstLess (one :: a) (one :: b) pr = equalToFirstGreater FirstLess a b pr
+
+  equalToFirstLess : (state : Compare) → (a b : BinNat) → go<B Equal a b ≡ FirstLess → go<B state a b ≡ FirstLess
+  equalToFirstLess FirstLess [] b pr = refl
+  equalToFirstLess FirstLess (zero :: a) [] pr = equalToFirstLess FirstLess a [] pr
+  equalToFirstLess FirstLess (zero :: a) (zero :: b) pr = equalToFirstLess FirstLess a b pr
+  equalToFirstLess FirstLess (zero :: a) (one :: b) pr = pr
+  equalToFirstLess FirstLess (one :: a) (zero :: b) pr = pr
+  equalToFirstLess FirstLess (one :: a) (one :: b) pr = equalToFirstLess FirstLess a b pr
+  equalToFirstLess Equal a b pr = pr
+  equalToFirstLess FirstGreater [] (zero :: b) pr = equalToFirstLess FirstGreater [] b pr
+  equalToFirstLess FirstGreater [] (one :: b) pr = refl
+  equalToFirstLess FirstGreater (zero :: a) [] pr = transitivity (t a) (equalToFirstLess FirstGreater a [] pr)
+    where
+      t : (a : BinNat) → FirstGreater ≡ go<B FirstGreater a []
+      t [] = refl
+      t (zero :: a) = refl
+      t (one :: a) = refl
+  equalToFirstLess FirstGreater (zero :: a) (zero :: b) pr = equalToFirstLess FirstGreater a b pr
+  equalToFirstLess FirstGreater (zero :: a) (one :: b) pr = pr
+  equalToFirstLess FirstGreater (one :: a) (zero :: b) pr = pr
+  equalToFirstLess FirstGreater (one :: a) (one :: b) pr = equalToFirstLess FirstGreater a b pr
+
   _<BInherited_ : BinNat → BinNat → Compare
   a <BInherited b with orderIsTotal (binNatToN a) (binNatToN b)
   (a <BInherited b) | inl (inl x) = FirstLess
@@ -242,6 +280,9 @@ module Numbers.BinaryNaturals.Order where
   chopDouble a b one | inr a=b | inl (inr b<a) rewrite a=b = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) b<a)
   chopDouble a b i | inr a=b | inr x = refl
 
+  succNotLess : {n : ℕ} → succ n <N n → False
+  succNotLess {succ n} (le x proof) = succNotLess {n} (le x (succInjective (transitivity (applyEquality succ (transitivity (additionNIsCommutative (succ x) (succ n)) (transitivity (applyEquality succ (transitivity (additionNIsCommutative n (succ x)) (applyEquality succ (additionNIsCommutative x n)))) (additionNIsCommutative (succ (succ n)) x)))) proof)))
+
   <BIsInherited : (a b : BinNat) → a <BInherited b ≡ a <B b
   <BIsInherited [] b with orderIsTotal 0 (binNatToN b)
   <BIsInherited [] b | inl (inl x) with inspect (binNatToN b)
@@ -254,6 +295,56 @@ module Numbers.BinaryNaturals.Order where
   <BIsInherited (a :: as) [] | inl (inr x) | succ y with≡ pr rewrite pr = equalityCommutative (zeroLess' (a :: as) λ i → zeroNotSucc y (a :: as) i pr)
   <BIsInherited (a :: as) [] | inr x rewrite canonicalFirst (a :: as) [] Equal | binNatToNZero (a :: as) x = refl
   <BIsInherited (zero :: a) (zero :: b) rewrite chopFirstBit a b {zero} Equal = transitivity (chopDouble a b zero) (<BIsInherited a b)
-  <BIsInherited (zero :: a) (one :: b) = {!!}
-  <BIsInherited (one :: a) (zero :: b) = {!!}
+  <BIsInherited (zero :: a) (one :: b) with orderIsTotal (binNatToN (zero :: a)) (binNatToN (one :: b))
+  <BIsInherited (zero :: a) (one :: b) | inl (inl 2a<2b+1) with orderIsTotal (binNatToN a) (binNatToN b)
+  <BIsInherited (zero :: a) (one :: b) | inl (inl 2a<2b+1) | inl (inl a<b) = equalityCommutative (equalToFirstLess FirstLess a b (equalityCommutative indHyp))
+     where
+       t : a <BInherited b ≡ FirstLess
+       t with orderIsTotal (binNatToN a) (binNatToN b)
+       t | inl (inl x) = refl
+       t | inl (inr x) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) x a<b))
+       t | inr x rewrite x = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) a<b)
+       indHyp : FirstLess ≡ go<B Equal a b
+       indHyp = transitivity (equalityCommutative t) (<BIsInherited a b)
+  <BIsInherited (zero :: a) (one :: b) | inl (inl 2a<2b+1) | inl (inr b<a) = exFalso (noIntegersBetweenXAndSuccX {2 *N binNatToN a} (2 *N binNatToN b) (lessRespectsMultiplicationLeft (binNatToN b) (binNatToN a) 2 b<a (le 1 refl)) 2a<2b+1)
+  <BIsInherited (zero :: a) (one :: b) | inl (inl 2a<2b+1) | inr a=b rewrite a=b | canonicalFirst a b FirstLess | canonicalSecond (canonical a) b FirstLess | transitivity (equalityCommutative (binToBin a)) (transitivity (applyEquality NToBinNat a=b) (binToBin b)) = equalityCommutative (lemma1 (canonical b))
+  <BIsInherited (zero :: a) (one :: b) | inl (inr 2b+1<2a) with orderIsTotal (binNatToN a) (binNatToN b)
+  <BIsInherited (zero :: a) (one :: b) | inl (inr 2b+1<2a) | inl (inl a<b) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) 2b+1<2a (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) (lessRespectsMultiplicationLeft (binNatToN a) (binNatToN b) 2 a<b (le 1 refl)) (le zero refl))))
+  <BIsInherited (zero :: a) (one :: b) | inl (inr 2b+1<2a) | inl (inr b<a) = equalityCommutative (equalToFirstGreater FirstLess a b (equalityCommutative indHyp))
+    where
+      t : a <BInherited b ≡ FirstGreater
+      t with orderIsTotal (binNatToN a) (binNatToN b)
+      t | inl (inl x) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) x b<a))
+      t | inl (inr x) = refl
+      t | inr x rewrite x = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) b<a)
+      indHyp : FirstGreater ≡ go<B Equal a b
+      indHyp = transitivity (equalityCommutative t) (<BIsInherited a b)
+  <BIsInherited (zero :: a) (one :: b) | inl (inr 2b+1<2a) | inr a=b rewrite a=b = exFalso (succNotLess 2b+1<2a)
+  <BIsInherited (zero :: a) (one :: b) | inr 2a=2b+1 = exFalso (parity (binNatToN b) (binNatToN a) (equalityCommutative 2a=2b+1))
+  <BIsInherited (one :: a) (zero :: b) with orderIsTotal (binNatToN (one :: a)) (binNatToN (zero :: b))
+  <BIsInherited (one :: a) (zero :: b) | inl (inl 2a+1<2b) with orderIsTotal (binNatToN a) (binNatToN b)
+  <BIsInherited (one :: a) (zero :: b) | inl (inl 2a+1<2b) | inl (inl a<b) = equalityCommutative (equalToFirstLess FirstGreater a b (equalityCommutative indHyp))
+    where
+      t : a <BInherited b ≡ FirstLess
+      t with orderIsTotal (binNatToN a) (binNatToN b)
+      t | inl (inr x) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) x a<b))
+      t | inl (inl x) = refl
+      t | inr x rewrite x = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) a<b)
+      indHyp : FirstLess ≡ go<B Equal a b
+      indHyp = transitivity (equalityCommutative t) (<BIsInherited a b)
+  <BIsInherited (one :: a) (zero :: b) | inl (inl 2a+1<2b) | inl (inr b<a) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) 2a+1<2b (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) (lessRespectsMultiplicationLeft (binNatToN b) (binNatToN a) 2 b<a (le 1 refl)) (le zero refl))))
+  <BIsInherited (one :: a) (zero :: b) | inl (inl 2a+1<2b) | inr a=b rewrite a=b = exFalso (succNotLess 2a+1<2b)
+  <BIsInherited (one :: a) (zero :: b) | inl (inr 2b<2a+1) with orderIsTotal (binNatToN a) (binNatToN b)
+  <BIsInherited (one :: a) (zero :: b) | inl (inr 2b<2a+1) | inl (inl a<b) = exFalso (noIntegersBetweenXAndSuccX {2 *N binNatToN b} (2 *N binNatToN a) (lessRespectsMultiplicationLeft (binNatToN a) (binNatToN b) 2 a<b (le 1 refl)) 2b<2a+1)
+  <BIsInherited (one :: a) (zero :: b) | inl (inr 2b<2a+1) | inl (inr b<a) = equalityCommutative (equalToFirstGreater FirstGreater a b (equalityCommutative indHyp))
+    where
+      t : a <BInherited b ≡ FirstGreater
+      t with orderIsTotal (binNatToN a) (binNatToN b)
+      t | inl (inl x) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) x b<a))
+      t | inl (inr x) = refl
+      t | inr x rewrite x = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) b<a)
+      indHyp : FirstGreater ≡ go<B Equal a b
+      indHyp = transitivity (equalityCommutative t) (<BIsInherited a b)
+  <BIsInherited (one :: a) (zero :: b) | inl (inr 2b<2a+1) | inr a=b rewrite a=b | canonicalFirst a b FirstGreater | canonicalSecond (canonical a) b FirstGreater | transitivity (equalityCommutative (binToBin a)) (transitivity (applyEquality NToBinNat a=b) (binToBin b)) = equalityCommutative (lemma1 (canonical b))
+  <BIsInherited (one :: a) (zero :: b) | inr x = exFalso (parity (binNatToN a) (binNatToN b) x)
   <BIsInherited (one :: a) (one :: b) rewrite chopFirstBit a b {one} Equal = transitivity (chopDouble a b one) (<BIsInherited a b)
