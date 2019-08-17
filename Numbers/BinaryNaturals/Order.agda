@@ -10,13 +10,16 @@ open import Orders
 
 module Numbers.BinaryNaturals.Order where
 
-  _<Binherit_ : BinNat → BinNat → Set
-  a <Binherit b = (binNatToN a) <N binNatToN b
-
   data Compare : Set where
     Equal : Compare
     FirstLess : Compare
     FirstGreater : Compare
+
+  _<BInherited_ : BinNat → BinNat → Compare
+  a <BInherited b with orderIsTotal (binNatToN a) (binNatToN b)
+  (a <BInherited b) | inl (inl x) = FirstLess
+  (a <BInherited b) | inl (inr x) = FirstGreater
+  (a <BInherited b) | inr x = Equal
 
   go<B : Compare → BinNat → BinNat → Compare
   go<B Equal [] [] = Equal
@@ -237,12 +240,6 @@ module Numbers.BinaryNaturals.Order where
   equalToFirstLess FirstGreater (zero :: a) (one :: b) pr = pr
   equalToFirstLess FirstGreater (one :: a) (zero :: b) pr = pr
   equalToFirstLess FirstGreater (one :: a) (one :: b) pr = equalToFirstLess FirstGreater a b pr
-
-  _<BInherited_ : BinNat → BinNat → Compare
-  a <BInherited b with orderIsTotal (binNatToN a) (binNatToN b)
-  (a <BInherited b) | inl (inl x) = FirstLess
-  (a <BInherited b) | inl (inr x) = FirstGreater
-  (a <BInherited b) | inr x = Equal
 
   zeroNotSucc : (n : ℕ) (b : BinNat) → (canonical b ≡ []) → (binNatToN b ≡ succ n) → False
   zeroNotSucc n b b=0 b>0 rewrite binNatToNZero' b b=0 = naughtE b>0
