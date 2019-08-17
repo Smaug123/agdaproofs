@@ -5,10 +5,10 @@ open import Functions
 open import Lists.Lists
 open import Numbers.Naturals
 open import Groups.GroupDefinition
-open import Numbers.BinaryNaturals
+open import Numbers.BinaryNaturals.Definition
 open import Orders
 
-module Numbers.BinaryNaturalsOrder where
+module Numbers.BinaryNaturals.Order where
 
   _<Binherit_ : BinNat → BinNat → Set
   a <Binherit b = (binNatToN a) <N binNatToN b

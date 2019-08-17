@@ -5,9 +5,9 @@ open import Functions
 open import Lists.Lists
 open import Numbers.Naturals
 open import Groups.GroupDefinition
-open import Numbers.BinaryNaturals
+open import Numbers.BinaryNaturals.Definition
 
-module Numbers.BinaryNaturalsTimes where
+module Numbers.BinaryNaturals.Multiplication where
 
   _*Binherit_ : BinNat → BinNat → BinNat
   a *Binherit b = NToBinNat (binNatToN a *N binNatToN b)
