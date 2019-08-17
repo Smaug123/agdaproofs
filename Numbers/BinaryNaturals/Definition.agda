@@ -6,7 +6,7 @@ open import Lists.Lists
 open import Numbers.Naturals
 open import Groups.GroupDefinition
 
-module Numbers.BinaryNaturals where
+module Numbers.BinaryNaturals.Definition where
 
   data Bit : Set where
     zero : Bit
