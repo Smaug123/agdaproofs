@@ -4,7 +4,8 @@ before_install:
   - cabal update
   - cabal install alex
   - cabal install happy
-  - cabal install Agda
+  - cabal install --only-dependencies Agda
+  - travis wait cabal install Agda
 
 git:
   quiet: true
