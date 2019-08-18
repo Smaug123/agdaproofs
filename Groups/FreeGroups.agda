@@ -5,10 +5,10 @@ open import WithK
 open import Setoids.Setoids
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals
-open import Numbers.NaturalsWithK
+open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.WithK
 open import Sets.FinSet
-open import Groups.GroupDefinition
+open import Groups.Definition
 open import Groups.SymmetryGroups
 open import DecidableSet
 

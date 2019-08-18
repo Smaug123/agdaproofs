@@ -7,7 +7,7 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import KeyValue
 open import Vectors
 
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
 
 module KeyValueWithDomain where
 

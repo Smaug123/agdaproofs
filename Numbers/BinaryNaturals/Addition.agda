@@ -3,9 +3,10 @@
 open import LogicalFormulae
 open import Functions
 open import Lists.Lists
-open import Numbers.Naturals
-open import Groups.GroupDefinition
+open import Numbers.Naturals.Naturals
+open import Groups.Definition
 open import Numbers.BinaryNaturals.Definition
+open import Semirings.Definition
 
 module Numbers.BinaryNaturals.Addition where
 
@@ -73,9 +74,9 @@ _+B_ : BinNat → BinNat → BinNat
     ans2 rewrite bad | bad2 = refl
 
 +BIsInherited [] b _ prB = +BIsInherited[] b prB
-+BIsInherited (x :: a) [] prA _ = transitivity (applyEquality NToBinNat (additionNIsCommutative (binNatToN (x :: a)) 0)) (transitivity (binToBin (x :: a)) (equalityCommutative prA))
++BIsInherited (x :: a) [] prA _ = transitivity (applyEquality NToBinNat (Semiring.commutative ℕSemiring (binNatToN (x :: a)) 0)) (transitivity (binToBin (x :: a)) (equalityCommutative prA))
 +BIsInherited (zero :: as) (zero :: b) prA prB with orderIsTotal 0 (binNatToN as +N binNatToN b)
-... | inl (inl 0<) rewrite additionNIsCommutative (binNatToN as) 0 | additionNIsCommutative (binNatToN b) 0 | equalityCommutative (additionNIsAssociative (binNatToN as +N binNatToN as) (binNatToN b) (binNatToN b)) | additionNIsAssociative (binNatToN as) (binNatToN as) (binNatToN b) | additionNIsCommutative (binNatToN as) (binNatToN b) | equalityCommutative (additionNIsAssociative (binNatToN as) (binNatToN b) (binNatToN as)) | additionNIsAssociative (binNatToN as +N binNatToN b) (binNatToN as) (binNatToN b) | additionNIsCommutative 0 ((binNatToN as +N binNatToN b) +N (binNatToN as +N binNatToN b)) | additionNIsAssociative (binNatToN as +N binNatToN b) (binNatToN as +N binNatToN b) 0 = transitivity (doubleIsBitShift (binNatToN as +N binNatToN b) (identityOfIndiscernablesRight _ _ _ _<N_ 0< (additionNIsCommutative (binNatToN b) _))) (applyEquality (zero ::_) (+BIsInherited as b (canonicalDescends as prA) (canonicalDescends b prB)))
+... | inl (inl 0<) rewrite Semiring.commutative ℕSemiring (binNatToN as) 0 | Semiring.commutative ℕSemiring (binNatToN b) 0 | Semiring.+Associative ℕSemiring (binNatToN as +N binNatToN as) (binNatToN b) (binNatToN b) | equalityCommutative (Semiring.+Associative ℕSemiring (binNatToN as) (binNatToN as) (binNatToN b)) | Semiring.commutative ℕSemiring (binNatToN as) (binNatToN b) | Semiring.+Associative ℕSemiring (binNatToN as) (binNatToN b) (binNatToN as) | equalityCommutative (Semiring.+Associative ℕSemiring (binNatToN as +N binNatToN b) (binNatToN as) (binNatToN b)) | Semiring.commutative ℕSemiring 0 ((binNatToN as +N binNatToN b) +N (binNatToN as +N binNatToN b)) | equalityCommutative (Semiring.+Associative ℕSemiring (binNatToN as +N binNatToN b) (binNatToN as +N binNatToN b) 0) = transitivity (doubleIsBitShift (binNatToN as +N binNatToN b) (identityOfIndiscernablesRight _ _ _ _<N_ 0< (Semiring.commutative ℕSemiring (binNatToN b) _))) (applyEquality (zero ::_) (+BIsInherited as b (canonicalDescends as prA) (canonicalDescends b prB)))
 +BIsInherited (zero :: as) (zero :: b) prA prB | inl (inr ())
 ... | inr p with sumZeroImpliesOperandsZero (binNatToN as) (equalityCommutative p)
 +BIsInherited (zero :: as) (zero :: b) prA prB | inr p | as=0 ,, b=0 rewrite as=0 | b=0 = exFalso ans
@@ -93,9 +94,9 @@ _+B_ : BinNat → BinNat → BinNat
     ans with inspect (canonical b)
     ans | [] with≡ x rewrite x = nono prB
     ans | (x₁ :: y) with≡ x = nono (transitivity (equalityCommutative x) (transitivity (equalityCommutative t) u))
-+BIsInherited (zero :: as) (one :: b) prA prB rewrite additionNIsCommutative (binNatToN as +N (binNatToN as +N zero)) (succ (binNatToN b +N (binNatToN b +N zero))) | additionNIsCommutative (binNatToN b +N (binNatToN b +N zero)) (binNatToN as +N (binNatToN as +N zero)) | equalityCommutative (productDistributes 2 (binNatToN as) (binNatToN b)) = +BinheritLemma as b (canonicalDescends as prA) (canonicalDescends b prB)
-+BIsInherited (one :: as) (zero :: bs) prA prB rewrite equalityCommutative (productDistributes 2 (binNatToN as) (binNatToN bs)) = +BinheritLemma as bs (canonicalDescends as prA) (canonicalDescends bs prB)
-+BIsInherited (one :: as) (one :: bs) prA prB rewrite additionNIsCommutative (binNatToN as +N (binNatToN as +N zero)) (succ (binNatToN bs +N (binNatToN bs +N zero))) | additionNIsCommutative (binNatToN bs +N (binNatToN bs +N zero)) (2 *N binNatToN as) | equalityCommutative (productDistributes 2 (binNatToN as) (binNatToN bs)) | +BinheritLemma as bs (canonicalDescends as prA) (canonicalDescends bs prB) = refl
++BIsInherited (zero :: as) (one :: b) prA prB rewrite Semiring.commutative ℕSemiring (binNatToN as +N (binNatToN as +N zero)) (succ (binNatToN b +N (binNatToN b +N zero))) | Semiring.commutative ℕSemiring (binNatToN b +N (binNatToN b +N zero)) (binNatToN as +N (binNatToN as +N zero)) | equalityCommutative (Semiring.+DistributesOver* ℕSemiring 2 (binNatToN as) (binNatToN b)) = +BinheritLemma as b (canonicalDescends as prA) (canonicalDescends b prB)
++BIsInherited (one :: as) (zero :: bs) prA prB rewrite equalityCommutative (Semiring.+DistributesOver* ℕSemiring 2 (binNatToN as) (binNatToN bs)) = +BinheritLemma as bs (canonicalDescends as prA) (canonicalDescends bs prB)
++BIsInherited (one :: as) (one :: bs) prA prB rewrite Semiring.commutative ℕSemiring (binNatToN as +N (binNatToN as +N zero)) (succ (binNatToN bs +N (binNatToN bs +N zero))) | Semiring.commutative ℕSemiring (binNatToN bs +N (binNatToN bs +N zero)) (2 *N binNatToN as) | equalityCommutative (Semiring.+DistributesOver* ℕSemiring 2 (binNatToN as) (binNatToN bs)) | +BinheritLemma as bs (canonicalDescends as prA) (canonicalDescends bs prB) = refl
 
 +BIsInherited'[] : (b : BinNat) → [] +Binherit b ≡ canonical ([] +B b)
 +BIsInherited'[] [] = refl
@@ -126,7 +127,7 @@ _+B_ : BinNat → BinNat → BinNat
 +BIsInherited' [] b = +BIsInherited'[] b
 +BIsInherited' (zero :: a) [] with inspect (binNatToN a)
 +BIsInherited' (zero :: a) [] | zero with≡ x rewrite x | binNatToNZero a x = refl
-+BIsInherited' (zero :: a) [] | succ y with≡ x rewrite x | additionNIsCommutative (y +N succ (y +N 0)) 0 = transitivity (doubleIsBitShift' y) (transitivity (applyEquality (λ i → (zero :: NToBinNat i)) (equalityCommutative x)) (transitivity (applyEquality (λ i → zero :: i) (binToBin a)) (canonicalAscends' {zero} a bad)))
++BIsInherited' (zero :: a) [] | succ y with≡ x rewrite x | Semiring.commutative ℕSemiring (y +N succ (y +N 0)) 0 = transitivity (doubleIsBitShift' y) (transitivity (applyEquality (λ i → (zero :: NToBinNat i)) (equalityCommutative x)) (transitivity (applyEquality (λ i → zero :: i) (binToBin a)) (canonicalAscends' {zero} a bad)))
   where
     bad : canonical a ≡ [] → False
     bad pr with transitivity (equalityCommutative x) (transitivity (equalityCommutative (binNatToNIsCanonical a)) (applyEquality binNatToN pr))
@@ -136,8 +137,8 @@ _+B_ : BinNat → BinNat → BinNat
 +BIsInherited' (one :: a) [] | succ n with≡ x rewrite x | doubleIsBitShift' n = applyEquality incr {_} {zero :: canonical a} (transitivity {x = _} {NToBinNat (2 *N succ n)} bl (transitivity (doubleIsBitShift' n) (applyEquality (zero ::_) (transitivity (applyEquality NToBinNat (equalityCommutative x)) (binToBin a)))))
   where
     bl : incr (NToBinNat ((n +N succ (n +N 0)) +N 0)) ≡ NToBinNat (succ (n +N succ (n +N 0)))
-    bl rewrite equalityCommutative x | additionNIsCommutative (n +N succ (n +N 0)) 0 = refl
-+BIsInherited' (zero :: as) (zero :: bs) rewrite equalityCommutative (productDistributes 2 (binNatToN as) (binNatToN bs)) = ans
+    bl rewrite equalityCommutative x | Semiring.commutative ℕSemiring (n +N succ (n +N 0)) 0 = refl
++BIsInherited' (zero :: as) (zero :: bs) rewrite equalityCommutative (Semiring.+DistributesOver* ℕSemiring 2 (binNatToN as) (binNatToN bs)) = ans
   where
     ans : NToBinNat (2 *N (binNatToN as +N binNatToN bs)) ≡ canonical (zero :: (as +B bs))
     ans with inspect (binNatToN as +N binNatToN bs)
@@ -157,7 +158,7 @@ _+B_ : BinNat → BinNat → BinNat
         u rewrite equalityCommutative (binNatToNIsCanonical (as +B bs)) | equalityCommutative (+BIsInherited' as bs) | x | nToN (succ y) = succIsPositive y
         ans2 : zero :: NToBinNat (binNatToN as +N binNatToN bs) ≡ canonical (zero :: (as +B bs))
         ans2 rewrite +BIsInherited' as bs = canonicalAscends (as +B bs) u
-+BIsInherited' (zero :: as) (one :: bs) rewrite additionNIsCommutative (2 *N binNatToN as) (succ (2 *N binNatToN bs)) | additionNIsCommutative (2 *N binNatToN bs) (2 *N binNatToN as) | equalityCommutative (productDistributes 2 (binNatToN as) (binNatToN bs)) = ans2
++BIsInherited' (zero :: as) (one :: bs) rewrite Semiring.commutative ℕSemiring (2 *N binNatToN as) (succ (2 *N binNatToN bs)) | Semiring.commutative ℕSemiring (2 *N binNatToN bs) (2 *N binNatToN as) | equalityCommutative (Semiring.+DistributesOver* ℕSemiring 2 (binNatToN as) (binNatToN bs)) = ans2
   where
     ans2 : incr (NToBinNat (2 *N (binNatToN as +N binNatToN bs))) ≡ one :: canonical (as +B bs)
     ans2 with inspect (binNatToN as +N binNatToN bs)
@@ -167,7 +168,7 @@ _+B_ : BinNat → BinNat → BinNat
         t : [] ≡ as +Binherit bs
         t rewrite as=0 | bs=0 = refl
     ans2 | succ y with≡ x rewrite x | doubleIsBitShift' y = applyEquality (one ::_) (transitivity (applyEquality NToBinNat (equalityCommutative x)) (+BIsInherited' as bs))
-+BIsInherited' (one :: as) (zero :: bs) rewrite equalityCommutative (productDistributes 2 (binNatToN as) (binNatToN bs)) = ans
++BIsInherited' (one :: as) (zero :: bs) rewrite equalityCommutative (Semiring.+DistributesOver* ℕSemiring 2 (binNatToN as) (binNatToN bs)) = ans
   where
     ans : incr (NToBinNat (2 *N (binNatToN as +N binNatToN bs))) ≡ one :: canonical (as +B bs)
     ans with inspect (binNatToN as +N binNatToN bs)
@@ -177,7 +178,7 @@ _+B_ : BinNat → BinNat → BinNat
         t : [] ≡ NToBinNat (binNatToN as +N binNatToN bs)
         t rewrite as=0 | bs=0 = refl
     ans | succ y with≡ x rewrite x | doubleIsBitShift' y = applyEquality (one ::_) (transitivity (applyEquality NToBinNat (equalityCommutative x)) (+BIsInherited' as bs))
-+BIsInherited' (one :: as) (one :: bs) rewrite additionNIsCommutative (2 *N binNatToN as) (succ (2 *N binNatToN bs)) | additionNIsCommutative (2 *N binNatToN bs) (2 *N binNatToN as) | equalityCommutative (productDistributes 2 (binNatToN as) (binNatToN bs)) = ans
++BIsInherited' (one :: as) (one :: bs) rewrite Semiring.commutative ℕSemiring (2 *N binNatToN as) (succ (2 *N binNatToN bs)) | Semiring.commutative ℕSemiring (2 *N binNatToN bs) (2 *N binNatToN as) | equalityCommutative (Semiring.+DistributesOver* ℕSemiring 2 (binNatToN as) (binNatToN bs)) = ans
   where
     ans : incr (incr (NToBinNat (2 *N (binNatToN as +N binNatToN bs)))) ≡ canonical (zero :: incr (as +B bs))
     ans with inspect (binNatToN as +N binNatToN bs)

@@ -4,8 +4,9 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 open import LogicalFormulae
 open import Functions
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
 open import Sets.FinSet
+open import Semirings.Definition
 
 module Sets.Cardinality where
   record CountablyInfiniteSet {a : _} (A : Set a) : Set a where
@@ -25,13 +26,13 @@ module Sets.Cardinality where
 
   evenCannotBeOdd : (a b : ℕ) → 2 *N a ≡ succ (2 *N b) → False
   evenCannotBeOdd zero b ()
-  evenCannotBeOdd (succ a) zero pr rewrite additionNIsCommutative a 0 | additionNIsCommutative a (succ a) = naughtE (equalityCommutative (succInjective pr))
+  evenCannotBeOdd (succ a) zero pr rewrite Semiring.commutative ℕSemiring a 0 | Semiring.commutative ℕSemiring a (succ a) = naughtE (equalityCommutative (succInjective pr))
   evenCannotBeOdd (succ a) (succ b) pr = evenCannotBeOdd a b pr''
     where
       pr' : a +N a ≡ (b +N succ b)
-      pr' rewrite additionNIsCommutative a 0 | additionNIsCommutative b 0 | additionNIsCommutative a (succ a) = succInjective (succInjective pr)
+      pr' rewrite Semiring.commutative ℕSemiring a 0 | Semiring.commutative ℕSemiring b 0 | Semiring.commutative ℕSemiring a (succ a) = succInjective (succInjective pr)
       pr'' : 2 *N a ≡ succ (2 *N b)
-      pr'' rewrite additionNIsCommutative a 0 | additionNIsCommutative b 0 | additionNIsCommutative (succ b) b = pr'
+      pr'' rewrite Semiring.commutative ℕSemiring a 0 | Semiring.commutative ℕSemiring b 0 | Semiring.commutative ℕSemiring (succ b) b = pr'
 
   aMod2 : (a : ℕ) → Sg ℕ (λ i → (2 *N i ≡ a) || (succ (2 *N i) ≡ a))
   aMod2 zero = (0 , inl refl)
@@ -40,7 +41,7 @@ module Sets.Cardinality where
   aMod2 (succ a) | b , inr x = (succ b) , inl pr
     where
       pr : succ (b +N succ (b +N 0)) ≡ succ a
-      pr rewrite additionNIsCommutative b (succ (b +N 0)) | additionNIsCommutative (b +N 0) b = applyEquality succ x
+      pr rewrite Semiring.commutative ℕSemiring b (succ (b +N 0)) | Semiring.commutative ℕSemiring (b +N 0) b = applyEquality succ x
 
   sqrtFloor : (a : ℕ) → Sg (ℕ && ℕ) (λ pair → ((_&&_.fst pair) *N (_&&_.fst pair) +N (_&&_.snd pair) ≡ a) && ((_&&_.snd pair) <N 2 *N (_&&_.fst pair) +N 1))
   sqrtFloor zero = (0 ,, 0) , (refl ,, le zero refl)
@@ -49,16 +50,16 @@ module Sets.Cardinality where
   sqrtFloor (succ n) | (a ,, b) , pr | inl (inl x) = (a ,, succ b) , (p ,, q)
     where
       p : a *N a +N succ b ≡ succ n
-      p rewrite additionNIsCommutative (a *N a) (succ b) | additionNIsCommutative b (a *N a) = applyEquality succ (_&&_.fst pr)
+      p rewrite Semiring.commutative ℕSemiring (a *N a) (succ b) | Semiring.commutative ℕSemiring b (a *N a) = applyEquality succ (_&&_.fst pr)
       q : succ b <N (a +N (a +N 0)) +N 1
-      q rewrite additionNIsCommutative (a +N (a +N 0)) (succ 0) | additionNIsCommutative a 0 = succPreservesInequality x
-  sqrtFloor (succ n) | (a ,, b) , (_ ,, pr) | inl (inr x) rewrite additionNIsCommutative (a +N (a +N 0)) (succ 0) = exFalso (noIntegersBetweenXAndSuccX (a +N (a +N 0)) x pr)
+      q rewrite Semiring.commutative ℕSemiring (a +N (a +N 0)) (succ 0) | Semiring.commutative ℕSemiring a 0 = succPreservesInequality x
+  sqrtFloor (succ n) | (a ,, b) , (_ ,, pr) | inl (inr x) rewrite Semiring.commutative ℕSemiring (a +N (a +N 0)) (succ 0) = exFalso (noIntegersBetweenXAndSuccX (a +N (a +N 0)) x pr)
   sqrtFloor (succ n) | (a ,, b) , pr | inr x = (succ a ,, 0) , (q ,, succIsPositive _)
     where
       p : a +N a *N succ a ≡ n
-      p rewrite x | additionNIsCommutative a 0 | additionNIsCommutative (a +N a) (succ 0) | additionNIsCommutative (a *N a) (succ a +N a) | multiplicationNIsCommutative a (succ a) | additionNIsCommutative (a *N a) (a +N a) | additionNIsAssociative a a (a *N a) = _&&_.fst pr
+      p rewrite x | Semiring.commutative ℕSemiring a 0 | Semiring.commutative ℕSemiring (a +N a) (succ 0) | Semiring.commutative ℕSemiring (a *N a) (succ a +N a) | multiplicationNIsCommutative a (succ a) | Semiring.commutative ℕSemiring (a *N a) (a +N a) | Semiring.+Associative ℕSemiring a a (a *N a) = _&&_.fst pr
       q : succ ((a +N a *N succ a) +N 0) ≡ succ n
-      q rewrite additionNIsCommutative (a +N a *N succ a) 0 = applyEquality succ p
+      q rewrite Semiring.commutative ℕSemiring (a +N a *N succ a) 0 = applyEquality succ p
 
 {-
   triangle : (a : ℕ) → ℕ
@@ -69,11 +70,11 @@ module Sets.Cardinality where
   cantorPairing' a b zero pr = 0
   cantorPairing' zero zero (succ s) ()
   cantorPairing' zero (succ b) (succ s) pr = succ (cantorPairing' 1 b (succ s) pr)
-  cantorPairing' (succ a) zero (succ s) pr = succ (cantorPairing' 0 a s (succInjective (identityOfIndiscernablesRight _ _ _ _≡_ pr (applyEquality (λ i → succ i) (identityOfIndiscernablesLeft _ _ _ _≡_ (additionNIsCommutative a 0) refl)))))
+  cantorPairing' (succ a) zero (succ s) pr = succ (cantorPairing' 0 a s (succInjective (identityOfIndiscernablesRight _ _ _ _≡_ pr (applyEquality (λ i → succ i) (identityOfIndiscernablesLeft _ _ _ _≡_ (Semiring.commutative ℕSemiring a 0) refl)))))
   cantorPairing' (succ a) (succ b) (succ zero) pr = naughtE f
     where
       f : 0 ≡ succ b +N a
-      f rewrite additionNIsCommutative (succ b) a = succInjective pr
+      f rewrite Semiring.commutative ℕSemiring (succ b) a = succInjective pr
   cantorPairing' (succ a) (succ b) (succ (succ s)) pr = succ (cantorPairing' (succ (succ a)) b (succ (succ s)) (identityOfIndiscernablesRight _ _ _ _≡_ pr (applyEquality succ (succExtracts a b))))
 
   cantorPairing'Zero : (x y s : ℕ) → (pr : s ≡ x +N y) → cantorPairing' x y s pr ≡ 0 → (x ≡ 0) && (y ≡ 0)
@@ -81,7 +82,7 @@ module Sets.Cardinality where
   cantorPairing'Zero zero zero (succ s) () pr'
   cantorPairing'Zero zero (succ y) (succ s) pr ()
   cantorPairing'Zero (succ x) zero (succ s) pr ()
-  cantorPairing'Zero (succ x) (succ y) (succ zero) pr pr' = naughtE (identityOfIndiscernablesRight _ _ _ _≡_ (succInjective pr) (additionNIsCommutative x (succ y)))
+  cantorPairing'Zero (succ x) (succ y) (succ zero) pr pr' = naughtE (identityOfIndiscernablesRight _ _ _ _≡_ (succInjective pr) (Semiring.commutative ℕSemiring x (succ y)))
   cantorPairing'Zero (succ x) (succ y) (succ (succ s)) pr ()
 
   cantorPairingInj' : (s1 s2 : ℕ) → (x1 x2 y1 y2 : ℕ) → (pr1 : s1 ≡ x1 +N y1) → (pr2 : s2 ≡ x2 +N y2) → (cantorPairing' x1 y1 s1 pr1) ≡ (cantorPairing' x2 y2 s2 pr2) → (x1 ≡ x2) && (y1 ≡ y2)
@@ -130,7 +131,7 @@ module Sets.Cardinality where
       rec = succInjective injF
       rec' : (1 ≡ zero)
       rec' = _&&_.fst (cantorPairingInj' (succ s1) s2 1 zero s1 x2 refl _ rec)
-  cantorPairingInj' (succ s1) (succ zero) zero (succ x2) (succ .s1) (succ y2) refl pr2 injF = naughtE (identityOfIndiscernablesRight _ _ _ _≡_ (succInjective pr2) (additionNIsCommutative x2 (succ y2)))
+  cantorPairingInj' (succ s1) (succ zero) zero (succ x2) (succ .s1) (succ y2) refl pr2 injF = naughtE (identityOfIndiscernablesRight _ _ _ _≡_ (succInjective pr2) (Semiring.commutative ℕSemiring x2 (succ y2)))
   cantorPairingInj' (succ s1) (succ (succ s2)) zero (succ x2) (succ .s1) (succ y2) refl pr2 injF = naughtE (succInjective rec')
     where
       rec : cantorPairing' 1 s1 (succ s1) refl ≡ cantorPairing' (succ (succ x2)) y2 (succ (succ s2)) _
@@ -178,7 +179,7 @@ module Sets.Cardinality where
   pairUnionIsCountable : {a b : _} {A : Set a} {B : Set b} → (X : CountablyInfiniteSet A) → (Y : CountablyInfiniteSet B) → CountablyInfiniteSet (A || B)
   CountablyInfiniteSet.counting (pairUnionIsCountable X Y) (inl r) = 2 *N (CountablyInfiniteSet.counting X r)
   CountablyInfiniteSet.counting (pairUnionIsCountable X Y) (inr s) = succ (2 *N (CountablyInfiniteSet.counting Y s))
-  Injection.property (Bijection.inj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y))) {inl x} {inl y} pr rewrite additionNIsCommutative (CountablyInfiniteSet.counting X x) 0 | additionNIsCommutative (CountablyInfiniteSet.counting X y) 0 | doubleIsAddTwo (CountablyInfiniteSet.counting X x) | doubleIsAddTwo (CountablyInfiniteSet.counting X y) = applyEquality inl (Injection.property (Bijection.inj (CountablyInfiniteSet.countingIsBij X)) inter)
+  Injection.property (Bijection.inj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y))) {inl x} {inl y} pr rewrite Semiring.commutative ℕSemiring (CountablyInfiniteSet.counting X x) 0 | Semiring.commutative ℕSemiring (CountablyInfiniteSet.counting X y) 0 | doubleIsAddTwo (CountablyInfiniteSet.counting X x) | doubleIsAddTwo (CountablyInfiniteSet.counting X y) = applyEquality inl (Injection.property (Bijection.inj (CountablyInfiniteSet.countingIsBij X)) inter)
     where
       inter : CountablyInfiniteSet.counting X x ≡ CountablyInfiniteSet.counting X y
       inter = doubleLemma (CountablyInfiniteSet.counting X x) (CountablyInfiniteSet.counting X y) pr

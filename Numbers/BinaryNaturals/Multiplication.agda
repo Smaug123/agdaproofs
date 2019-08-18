@@ -3,10 +3,11 @@
 open import LogicalFormulae
 open import Functions
 open import Lists.Lists
-open import Numbers.Naturals
-open import Groups.GroupDefinition
+open import Numbers.Naturals.Naturals
+open import Groups.Definition
 open import Numbers.BinaryNaturals.Definition
 open import Numbers.BinaryNaturals.Addition
+open import Semirings.Definition
 
 module Numbers.BinaryNaturals.Multiplication where
 
@@ -92,7 +93,7 @@ module Numbers.BinaryNaturals.Multiplication where
   binNatToNDistributesPlus a b = transitivity (equalityCommutative (binNatToNIsCanonical (a +B b))) (transitivity (applyEquality binNatToN (equalityCommutative (+BIsInherited' a b))) (nToN (binNatToN a +N binNatToN b)))
 
   +BAssociative : (a b c : BinNat) → canonical (a +B (b +B c)) ≡ canonical ((a +B b) +B c)
-  +BAssociative a b c rewrite equalityCommutative (+BIsInherited' a (b +B c)) | equalityCommutative (+BIsInherited' (a +B b) c) | binNatToNDistributesPlus a b | binNatToNDistributesPlus b c | additionNIsAssociative (binNatToN a) (binNatToN b) (binNatToN c) = refl
+  +BAssociative a b c rewrite equalityCommutative (+BIsInherited' a (b +B c)) | equalityCommutative (+BIsInherited' (a +B b) c) | binNatToNDistributesPlus a b | binNatToNDistributesPlus b c | equalityCommutative (Semiring.+Associative ℕSemiring (binNatToN a) (binNatToN b) (binNatToN c)) = refl
 
   timesOne : (a b : BinNat) → (canonical b) ≡ (one :: []) → canonical (a *B b) ≡ canonical a
   timesOne [] b pr = refl
@@ -173,7 +174,7 @@ module Numbers.BinaryNaturals.Multiplication where
     where
       ans : (a b : BinNat) → binNatToN a *N binNatToN b ≡ binNatToN (a *B b)
       ans [] b = refl
-      ans (zero :: a) b rewrite equalityCommutative (ans a b) = equalityCommutative (multiplicationNIsAssociative 2 (binNatToN a) (binNatToN b))
-      ans (one :: a) b rewrite binNatToNDistributesPlus (zero :: (a *B b)) b | additionNIsCommutative (binNatToN b) ((2 *N (binNatToN a)) *N (binNatToN b)) | equalityCommutative (ans a b) = applyEquality (_+N binNatToN b) (equalityCommutative (multiplicationNIsAssociative 2 (binNatToN a) (binNatToN b)))
+      ans (zero :: a) b rewrite equalityCommutative (ans a b) = equalityCommutative (Semiring.*Associative ℕSemiring 2 (binNatToN a) (binNatToN b))
+      ans (one :: a) b rewrite binNatToNDistributesPlus (zero :: (a *B b)) b | Semiring.commutative ℕSemiring (binNatToN b) ((2 *N (binNatToN a)) *N (binNatToN b)) | equalityCommutative (ans a b) = applyEquality (_+N binNatToN b) (equalityCommutative (Semiring.*Associative ℕSemiring 2 (binNatToN a) (binNatToN b)))
       t : (binNatToN a *N binNatToN b) ≡ binNatToN (canonical (a *B b))
       t = transitivity (ans a b) (equalityCommutative (binNatToNIsCanonical (a *B b)))

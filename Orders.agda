@@ -33,6 +33,9 @@ module Orders where
     max a b | inl (inr b<a) = a
     max a b | inr a=b = b
 
+    irreflexive = PartialOrder.irreflexive order
+    transitive = PartialOrder.transitive order
+
   equivMin : {a b : _} {A : Set a} → (order : TotalOrder {a} {b} A) → {x y : A} → (TotalOrder._<_ order x y) → TotalOrder.min order x y ≡ x
   equivMin order {x} {y} x<y with TotalOrder.totality order x y
   equivMin order {x} {y} x<y | inl (inl x₁) = refl

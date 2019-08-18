@@ -27,5 +27,7 @@ open import Rings.Examples.Proofs
 
 open import Groups.FreeGroups
 open import Groups.Groups2
+open import Groups.Examples.ExampleSheet1
+open import Groups.LectureNotes.Lecture1
 
 module Everything.WithK where

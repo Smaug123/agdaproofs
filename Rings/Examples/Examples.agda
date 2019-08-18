@@ -3,7 +3,7 @@
 open import LogicalFormulae
 open import Groups.Groups
 open import Functions
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
 open import Numbers.Integers
 open import IntegersModN
 open import Rings.Examples.Proofs
