@@ -2,11 +2,11 @@
 
 open import LogicalFormulae
 open import Orders
-open import Groups
-open import Naturals
+open import Groups.Groups
+open import Numbers.Naturals
 open import PrimeNumbers
-open import Rings
-open import Setoids
+open import Rings.Definition
+open import Setoids.Setoids
 open import IntegersModN
 
 module IntegersModNRing where
@@ -54,12 +54,11 @@ module IntegersModNRing where
   ℤnMultIdent {succ (succ n)} {pr} record { x = a ; xLess = aLess } | inl (inr ssn<a) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) aLess ssn<a))
   ℤnMultIdent {succ (succ n)} {pr} record { x = .(succ (succ n)) ; xLess = aLess } | inr refl = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) aLess)
 
-  ℤnRing : (n : ℕ) → (pr : 0 <N n) → Ring {_} (ℤn n pr)
-  Ring.additiveGroup (ℤnRing n 0<n) = AbelianGroup.grp (ℤnGroup n 0<n)
-  Ring._*_ (ℤnRing n 0<n) a b = a *n b
+  ℤnRing : (n : ℕ) → (pr : 0 <N n) → Ring (reflSetoid (ℤn n pr)) (_+n_) (_*n_)
+  Ring.additiveGroup (ℤnRing n 0<n) = (ℤnGroup n 0<n)
   Ring.multWellDefined (ℤnRing n 0<n) = reflGroupWellDefined
   Ring.1R (ℤnRing n pr) = ℤnIdent n pr
-  Ring.groupIsAbelian (ℤnRing n 0<n) = AbelianGroup.commutative (ℤnGroup n 0<n)
+  Ring.groupIsAbelian (ℤnRing n 0<n) = AbelianGroup.commutative (ℤnAbGroup n 0<n)
   Ring.multAssoc (ℤnRing n 0<n) = {!!}
   Ring.multCommutative (ℤnRing n 0<n) {a} {b} = ℤnMultCommutative a b
   Ring.multDistributes (ℤnRing n 0<n) = {!!}

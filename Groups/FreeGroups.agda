@@ -1,10 +1,12 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
+open import WithK
 open import Setoids.Setoids
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals
+open import Numbers.NaturalsWithK
 open import Sets.FinSet
 open import Groups.GroupDefinition
 open import Groups.SymmetryGroups
@@ -26,15 +28,15 @@ module Groups.FreeGroups where
   ofInvInjective refl = refl
 
   decidableFreeCompletion : {a : _} {A : Set a} → DecidableSet A → DecidableSet (FreeCompletion A)
-  decidableFreeCompletion {A = A} record { eq = eq } = record { eq = pr }
+  decidableFreeCompletion {A = A} record { eq = dec } = record { eq = pr }
     where
       pr : (a b : FreeCompletion A) → (a ≡ b) || (a ≡ b → False)
-      pr (ofLetter x) (ofLetter y) with eq x y
+      pr (ofLetter x) (ofLetter y) with dec x y
       ... | inl refl = inl refl
       ... | inr x!=y = inr λ p → x!=y (ofLetterInjective p)
       pr (ofLetter x) (ofInv y) = inr λ ()
       pr (ofInv x) (ofLetter y) = inr λ ()
-      pr (ofInv x) (ofInv y) with eq x y
+      pr (ofInv x) (ofInv y) with dec x y
       ... | inl refl = inl refl
       ... | inr x!=y = inr λ p → x!=y (ofInvInjective p)
 
@@ -117,7 +119,7 @@ module Groups.FreeGroups where
         where
           ans : freeCompletionEqual decA (ofLetter x) (ofLetter startLetter) ≡ BoolFalse
           ans with DecidableSet.eq (decidableFreeCompletion decA) (ofLetter x) (ofInv startLetter)
-          ans | bl with eq x startLetter
+          ans | bl with DecidableSet.eq decA x startLetter
           ans | bl | inl x=sl = exFalso (startLetter!=x (equalityCommutative x=sl))
           ans | bl | inr x!=sl = refl
       bij : SetoidBijection (reflSetoid (ReducedWord decA)) (reflSetoid (ReducedWord decA)) f
@@ -136,7 +138,7 @@ module Groups.FreeGroups where
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofLetter x) w1 prX} {empty} fx=fy with prependLetterInjective fx=fy
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofLetter x) w1 prX} {empty} fx=fy | ()
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofLetter x) w1 prX} {prependLetter (ofLetter y) w2 prY} fx=fy = prependLetterInjective fx=fy
-      SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofLetter a) w1 prX} {prependLetter (ofInv y) w2 prY} fx=fy with eq y x
+      SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofLetter a) w1 prX} {prependLetter (ofInv y) w2 prY} fx=fy with DecidableSet.eq decA y x
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofLetter a) w1 prX} {prependLetter (ofInv y) empty prY} () | inl y=x
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofLetter a) w1 prX} {prependLetter (ofInv y) (prependLetter (ofLetter b) w2 x₁) prY} fx=fy | inl y=x with ofLetterInjective (prependLetterInjective' fx=fy)
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofLetter a) w1 prX} {prependLetter (ofInv y) (prependLetter (ofLetter b) w2 x₁) (wordEmpty ())} fx=fy | inl y=x | x=b
@@ -145,7 +147,7 @@ module Groups.FreeGroups where
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofLetter a) w1 prX} {prependLetter (ofInv y) (prependLetter (ofInv b) w2 x₁) prY} fx=fy | inl y=x | ()
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofLetter a) w1 prX} {prependLetter (ofInv y) w2 prY} fx=fy | inr y!=x with prependLetterInjective fx=fy
       ... | bl = bl
-      SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {empty} fx=fy with eq a x
+      SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {empty} fx=fy with DecidableSet.eq decA a x
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) empty prX} {empty} () | inl a=x
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) (prependLetter (ofLetter x₂) w1 x₁) prX} {empty} fx=fy | inl a=x with ofLetterInjective (prependLetterInjective' fx=fy)
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) (prependLetter (ofLetter x₂) w1 x₁) (wordEmpty ())} {empty} fx=fy | inl a=x | x2=x
@@ -153,21 +155,21 @@ module Groups.FreeGroups where
       ... | bl = exFalso (bl (applyEquality ofInv (transitivity a=x (equalityCommutative x2=x))))
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) (prependLetter (ofInv x₂) w1 x₁) prX} {empty} () | inl a=x
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {empty} () | inr a!=x
-      SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {prependLetter (ofLetter x₁) y x₂} fx=fy with eq a x
+      SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {prependLetter (ofLetter x₁) y x₂} fx=fy with DecidableSet.eq decA a x
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) empty prX} {prependLetter (ofLetter b) y x₂} () | inl a=x
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) (prependLetter (ofLetter x₃) w1 x₁) prX} {prependLetter (ofLetter b) y x₂} fx=fy | inl a=x with ofLetterInjective (prependLetterInjective' fx=fy)
       ... | x3=x rewrite a=x | x3=x = exFalso (badPrepend' prX)
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) (prependLetter (ofInv x₃) w1 x₁) prX} {prependLetter (ofLetter b) y x₂} fx=fy | inl a=x with prependLetterInjective' fx=fy
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) (prependLetter (ofInv x₃) w1 x₁) prX} {prependLetter (ofLetter b) y x₂} fx=fy | inl a=x | ()
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {prependLetter (ofLetter x₁) y x₂} () | inr a!=x
-      SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {prependLetter (ofInv x₁) y x₂} fx=fy with eq a x
-      SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {prependLetter (ofInv b) y x₂} fx=fy | inl a=x with eq b x
+      SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {prependLetter (ofInv x₁) y x₂} fx=fy with DecidableSet.eq decA a x
+      SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {prependLetter (ofInv b) y x₂} fx=fy | inl a=x with DecidableSet.eq decA b x
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {prependLetter (ofInv b) y x₂} fx=fy | inl a=x | inl b=x rewrite fx=fy | a=x | b=x = prependLetterRefl
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) empty prX} {prependLetter (ofInv b) y x₂} () | inl a=x | inr b!=x
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) (prependLetter (ofLetter x₃) w1 x₁) prX} {prependLetter (ofInv b) y x₂} fx=fy | inl a=x | inr b!=x with ofLetterInjective (prependLetterInjective' fx=fy)
       ... | x3=x rewrite a=x | x3=x = exFalso (badPrepend' prX)
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) (prependLetter (ofInv x₃) w1 x₁) prX} {prependLetter (ofInv b) y x₂} () | inl a=x | inr b!=x
-      SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {prependLetter (ofInv b) y x₂} fx=fy | inr a!=x with eq b x
+      SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {prependLetter (ofInv b) y x₂} fx=fy | inr a!=x with DecidableSet.eq decA b x
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {prependLetter (ofInv b) empty x₂} () | inr a!=x | inl b=x
       SetoidInjection.injective (SetoidBijection.inj bij) {prependLetter (ofInv a) w1 prX} {prependLetter (ofInv b) (prependLetter (ofLetter x₃) y x₁) x2} fx=fy | inr a!=x | inl b=x with ofLetterInjective (prependLetterInjective' fx=fy)
       ... | x3=x rewrite (equalityCommutative x3=x) | b=x = exFalso (badPrepend' x2)
@@ -200,12 +202,12 @@ module Groups.FreeGroups where
       SetoidSurjection.surjective (SetoidBijection.surj bij) {prependLetter (ofLetter l) (prependLetter letter w pr2) pr} | inr l!=x = prependLetter (ofInv x) (prependLetter (ofLetter l) (prependLetter letter w pr2) pr) (wordEnding (succIsPositive _) (freeCompletionEqualFalse decA λ p → l!=x (ofInvInjective (equalityCommutative p)))) , needed
         where
           needed : f (prependLetter (ofInv x) (prependLetter (ofLetter l) (prependLetter letter w pr2) pr) (wordEnding (succIsPositive (succ (wordLength w))) (freeCompletionEqualFalse decA (λ p → l!=x (ofInvInjective (equalityCommutative p)))))) ≡ prependLetter (ofLetter l) (prependLetter letter w pr2) pr
-          needed with eq x x
+          needed with DecidableSet.eq decA x x
           needed | inl x₁ = refl
           needed | inr x!=x = exFalso (x!=x refl)
       SetoidSurjection.surjective (SetoidBijection.surj bij) {prependLetter (ofInv l) w pr} = prependLetter (ofInv x) (prependLetter (ofInv l) w pr) (wordEnding (succIsPositive _) (freeCompletionEqualFalse decA {ofInv x} {ofLetter l} λ ())) , needed
         where
           needed : f (prependLetter (ofInv x) (prependLetter (ofInv l) w pr) (wordEnding (succIsPositive (wordLength w)) (freeCompletionEqualFalse decA {ofInv x} {ofLetter l} λ ()))) ≡ (prependLetter (ofInv l) w pr)
-          needed with eq x x
+          needed with DecidableSet.eq decA x x
           needed | inl x₁ = refl
           needed | inr x!=x = exFalso (x!=x refl)

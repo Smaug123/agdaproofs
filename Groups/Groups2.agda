@@ -10,7 +10,7 @@ open import Sets.FinSet
 open import Functions
 open import Numbers.Naturals
 open import IntegersModN
-open import Rings.RingExamples
+open import Rings.Examples.Examples
 open import PrimeNumbers
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)

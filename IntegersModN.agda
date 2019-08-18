@@ -7,7 +7,9 @@ open import Numbers.Naturals
 open import PrimeNumbers
 open import Setoids.Setoids
 open import Sets.FinSet
+open import Sets.FinSetWithK
 open import Functions
+open import Numbers.NaturalsWithK
 
 module IntegersModN where
   record ℤn (n : ℕ) (pr : 0 <N n) : Set where

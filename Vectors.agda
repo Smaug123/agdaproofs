@@ -2,6 +2,7 @@
 
 open import LogicalFormulae
 open import Numbers.Naturals
+open import Numbers.NaturalsWithK
 open import Functions
 
 data Vec {a : _} (X : Set a) : ℕ -> Set a where
@@ -251,25 +252,3 @@ o' th o>> o' th' = o' (o' th o>> th')
 
 eqHelper : {a : _} {X : Set a} (x : X) {n : ℕ} {r s : Vec X n} (pr : r ≡ s) → (x ,- r) ≡ (x ,- s)
 eqHelper x pr rewrite pr = refl
-
-{-
-
-cp-<?= : {p n m : ℕ} (th : p <= n) (th' : n <= m) → {a : _} {X : Set a} (xs : Vec X m) → ((th o>> th') <?= xs) ≡ (th <?= (th' <?= xs))
-cp-<?= oz oz [] = refl
-cp-<?= oz (o' th') xs = refl
-cp-<?= (os th) (os th') (x ,- xs) = eqHelper x (cp-<?= th th' xs)
-cp-<?= (o' th) (os th') (x ,- xs) = cp-<?= th th' xs
-cp-<?= (o' th) (o' th') (x ,- xs) = cp-<?= (o' th) th' xs
-cp-<?= (os th) (o' th') (x ,- xs) = {!!}
-
-idThen-o>> : {n m : ℕ} (th : n <= m) → (oi o>> th) ≡ th
-idThen-o>> oz = refl
-idThen-o>> (os th) = applyEquality os (idThen-o>> th)
-idThen-o>> {zero} (o' th) = refl
-idThen-o>> {succ n} (o' th) with idThen-o>> th
-... | bl = {!!}
-
-idAfter-o>> : {n m : ℕ} (th : n <= m) → (th o>> oi) ≡ th
-idAfter-o>> th = {!!}
-
--}

@@ -2,8 +2,10 @@
 
 open import LogicalFormulae
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Naturals
+open import Numbers.Naturals
 open import Vectors
+
+module Categories.Category where
 
 postulate
   extensionality : {a b : _} {S : Set a}{T : S → Set b} {f g : (x : S) → T x} → ((x : S) → f x ≡ g x) → f ≡ g

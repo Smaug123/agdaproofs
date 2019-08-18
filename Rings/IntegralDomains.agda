@@ -1,4 +1,4 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
 open import Groups.Groups
@@ -7,8 +7,8 @@ open import Numbers.Naturals
 open import Orders
 open import Setoids.Setoids
 open import Functions
-open import Rings.RingDefinition
-open import Rings.RingLemmas
+open import Rings.Definition
+open import Rings.Lemmas
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 

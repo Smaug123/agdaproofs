@@ -1,15 +1,15 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
 open import Functions
 open import Groups.Groups
 open import Groups.GroupDefinition
 open import Groups.GroupsLemmas
-open import Rings.RingDefinition
+open import Rings.Definition
 open import Setoids.Setoids
 open import Setoids.Orders
 
-module Rings.RingLemmas where
+module Rings.Lemmas where
   ringTimesZero : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} (R : Ring S _+_ _*_) → {x : A} → Setoid._∼_ S (x * (Ring.0R R)) (Ring.0R R)
   ringTimesZero {S = S} {_+_ = _+_} {_*_ = _*_} R {x} = symmetric (transitive blah'' (transitive (Group.multAssoc additiveGroup) (transitive (wellDefined invLeft reflexive) multIdentLeft)))
     where

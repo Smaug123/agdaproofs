@@ -6,10 +6,10 @@ open import Functions
 open import Numbers.Naturals
 open import Numbers.Integers
 open import IntegersModN
-open import Rings.RingExamplesProofs
+open import Rings.Examples.Proofs
 open import PrimeNumbers
 
-module Rings.RingExamples where
+module Rings.Examples.Examples where
 
   nToZn : (n : ℕ) (pr : 0 <N n) (x : ℕ) → ℤn n pr
   nToZn n pr x = nToZn' n pr x

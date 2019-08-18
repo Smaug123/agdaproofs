@@ -7,7 +7,7 @@ open import Numbers.Rationals
 open import Groups.Groups
 open import Groups.GroupsLemmas
 open import Groups.GroupDefinition
-open import Rings.RingDefinition
+open import Rings.Definition
 open import Fields.Fields
 open import PrimeNumbers
 open import Setoids.Setoids
@@ -16,7 +16,7 @@ open import Functions
 open import Fields.FieldOfFractions
 open import Fields.FieldOfFractionsOrder
 open import Rings.IntegralDomains
-open import Rings.RingLemmas
+open import Rings.Lemmas
 
 module Numbers.RationalsLemmas where
 

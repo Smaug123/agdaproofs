@@ -1,15 +1,16 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Setoids
+open import Setoids.Setoids
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Naturals
-open import Integers
-open import FinSet
-open import Groups
+open import Numbers.Naturals
+open import Numbers.Integers
+open import Sets.FinSet
+open import Groups.Groups
+open import Groups.GroupDefinition
 
-module CyclicGroups where
+module Groups.CyclicGroups where
 
     positiveEltPower : {m n : _} {A : Set m} {S : Setoid {m} {n} A} {_·_ : A → A → A} (G : Group S _·_) (x : A) (i : ℕ) → A
     positiveEltPower G x 0 = Group.identity G

@@ -2,12 +2,14 @@
 
 open import LogicalFormulae
 open import Numbers.Naturals
+open import Numbers.NaturalsWithK
 open import WellFoundedInduction
 open import KeyValue
 open import KeyValueWithDomain
 open import Orders
 open import Vectors
 open import Maybe
+open import WithK
 
 module PrimeNumbers where
 

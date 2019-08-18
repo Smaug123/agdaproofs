@@ -1,10 +1,10 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
 open import Groups.Groups
 open import Groups.GroupDefinition
-open import Rings.RingDefinition
-open import Rings.RingLemmas
+open import Rings.Definition
+open import Rings.Lemmas
 open import Setoids.Setoids
 open import Setoids.Orders
 open import Orders

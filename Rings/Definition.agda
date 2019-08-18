@@ -1,4 +1,4 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
 open import Groups.Groups
@@ -11,7 +11,7 @@ open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 -- Following Part IB's course Groups, Rings, and Modules, we take rings to be commutative with one.
-module Rings.RingDefinition where
+module Rings.Definition where
   record Ring {n m} {A : Set n} (S : Setoid {n} {m} A) (_+_ : A → A → A) (_*_ : A → A → A) : Set (lsuc n ⊔ m) where
     field
       additiveGroup : Group S _+_

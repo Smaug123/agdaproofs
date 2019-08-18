@@ -8,7 +8,7 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals
 open import Sets.FinSet
 open import Groups.GroupDefinition
-open import Lists
+open import Lists.Lists
 open import Orders
 open import Groups.Groups
 
@@ -65,7 +65,7 @@ module Groups.GeneratedGroup where
   evalWord {_+_ = _+_} G record { word = (ofInv x :: w) } = (Group.inverse G x) + evalWord G record { word = w }
 
   mapWord : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} (f : A → B) (w : Word S) → Word T
-  mapWord f record { word = word } = record { word = listMap (freeCompletionMap f) word }
+  mapWord f record { word = word } = record { word = map (freeCompletionMap f) word }
 
   subgroupSetoid : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} (T : Setoid {b} {d} B) {_+_ : A → A → A} (G : Group S _+_) {f : B → A} (fInj : SetoidInjection T S f) → Setoid (Word T)
   Setoid._∼_ (subgroupSetoid {S = S} T G {f} fInj) w1 w2 = Setoid._∼_ S (evalWord G (mapWord f w1)) (evalWord G (mapWord f w2))
@@ -85,7 +85,7 @@ module Groups.GeneratedGroup where
   mapWordWellDefined : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} (f : A → B) → ({x y : A} → (Setoid._∼_ S x y) → (Setoid._∼_ T (f x) (f y))) → {w1 : Word S} {w2 : Word S} → Setoid._∼_ (wordSetoid S) w1 w2 → Setoid._∼_ (wordSetoid T) (mapWord f w1) (mapWord f w2)
   mapWordWellDefined {S = S} {T = T} f fWD {w1} {w2} w1=w2 = p
     where
-      p : listEquality (freeCompletionSetoid T) (listMap (freeCompletionMap {S = S} {T = T} f) (Word.word w1)) (listMap (freeCompletionMap f) (Word.word w2))
+      p : listEquality (freeCompletionSetoid T) (map (freeCompletionMap {S = S} {T = T} f) (Word.word w1)) (map (freeCompletionMap f) (Word.word w2))
       p = listEqualityRespectsMap (freeCompletionSetoid S) (freeCompletionSetoid T) (freeCompletionMap {S = S} {T} f) (λ {x} {y} → freeCompletionMapWellDefined {S = S} {T = T} f fWD {x} {y}) {w1 = Word.word w1} {w2 = Word.word w2} w1=w2
 
   subgroupOp : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} (T : Setoid {b} {d} B) {_+_ : A → A → A} (G : Group S _+_) {f : B → A} (fInj : SetoidInjection T S f) → Word T → Word T → Word T
@@ -97,7 +97,7 @@ module Groups.GeneratedGroup where
       need : Setoid._∼_ (subgroupSetoid T G fInj) (subgroupOp T G fInj (record { word = w }) (record { word = x })) (subgroupOp T G fInj (record { word = y }) (record { word = z }))
       need = {!!}
   Group.identity (generatedSubgroup T G fInj) = record { word = [] }
-  Group.inverse (generatedSubgroup T G fInj) record { word = word } = record { word = listMap freeInverse (listRev word) }
+  Group.inverse (generatedSubgroup T G fInj) record { word = word } = record { word = map freeInverse (rev word) }
   Group.multAssoc (generatedSubgroup T G fInj) = {!!}
   Group.multIdentRight (generatedSubgroup {S = S} T G {f = f} fInj) {a = record { word = word }} = need
     where
@@ -111,6 +111,6 @@ module Groups.GeneratedGroup where
     where
       open Setoid S
       open Group G
-      need : Setoid._∼_ (subgroupSetoid T G fInj) (record { word = (listMap freeInverse (listRev (x :: word))) ++ (x :: word) }) (Group.identity (generatedSubgroup T G fInj))
+      need : Setoid._∼_ (subgroupSetoid T G fInj) (record { word = (map freeInverse (rev (x :: word))) ++ (x :: word) }) (Group.identity (generatedSubgroup T G fInj))
       need = {!!}
   Group.invRight (generatedSubgroup T G fInj) = {!!}
