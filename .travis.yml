@@ -1,6 +1,8 @@
+language: haskell
+
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install -y agda
+  - cabal update
+  - cabal install Agda
 
 git:
   quiet: true
