@@ -1,15 +1,16 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Setoids
+open import Setoids.Setoids
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Naturals
-open import Integers
-open import FinSet
-open import Groups
+open import Numbers.Naturals
+open import Numbers.Integers
+open import Sets.FinSet
+open import Groups.GroupDefinition
+open import Groups.Groups
 
-module GroupCosets where
+module Groups.GroupCosets where
   data GroupCoset {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+A_ : A → A → A} {_+B_ : B → B → B} {G : Group S _+A_} {H : Group T _+B_} {f : B → A} {fHom : GroupHom H G f} (subgrp : Subgroup G H fHom) : Set (a ⊔ b ⊔ c ⊔ d) where
     cosetOfElt : (x : A) → GroupCoset subgrp
 

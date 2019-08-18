@@ -5,7 +5,7 @@ open import Numbers.Naturals
 open import Numbers.Integers
 open import Groups.Groups
 open import Groups.GroupDefinition
-open import Rings.RingDefinition
+open import Rings.Definition
 open import Fields.Fields
 open import PrimeNumbers
 open import Setoids.Setoids

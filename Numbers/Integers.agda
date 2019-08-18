@@ -2,9 +2,10 @@
 
 open import LogicalFormulae
 open import Numbers.Naturals
+open import Numbers.NaturalsWithK -- TODO: remove this dependency, it's baked into ZSimple
 open import Groups.Groups
 open import Groups.GroupDefinition
-open import Rings.RingDefinition
+open import Rings.Definition
 open import Functions
 open import Orders
 open import Setoids.Setoids

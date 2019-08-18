@@ -1,4 +1,4 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
@@ -94,9 +94,6 @@ boolAnd BoolFalse y = BoolFalse
 typeCast : {a : _} {A : Set a} {B : Set a} (el : A) (pr : A ≡ B) → B
 typeCast {a} {A} {.A} elt refl = elt
 
-typeCastEqual : {a : _} {A : Set a} {B : Set a} {el : A} (pr1 pr2 : A ≡ B) → (typeCast el pr1) ≡ (typeCast el pr2)
-typeCastEqual {a} {A} {.A} {el} refl refl = refl
-
 data Singleton {a} {A : Set a} (x : A) : Set a where
   _with≡_ : (y : A) → x ≡ y → Singleton x
 
@@ -113,6 +110,3 @@ decidableOr : {a b : _} → (A : Set a) → (B : Set b) → (A || (A → False))
 decidableOr {a} {b} A B decidable (inl x) = inl x
 decidableOr {a} {b} A B (inl y) (inr x) = inl y
 decidableOr {a} {b} A B (inr y) (inr x) = inr (record { fst = y ; snd = x})
-
-reflRefl : {a : _} {A : Set a} → {r s : A} → (pr1 pr2 : r ≡ s) → pr1 ≡ pr2
-reflRefl refl refl = refl

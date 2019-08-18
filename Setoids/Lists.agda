@@ -1,8 +1,8 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
 open import Numbers.Naturals
-open import Lists
+open import Lists.Lists
 open import Setoids.Setoids
 open import Functions
 
@@ -31,7 +31,7 @@ module Setoids.Lists where
   listEqualityTransitive S {w1 = x :: w1} {y :: ys} {[]} w1=w2 ()
   listEqualityTransitive S {w1 = x :: w1} {y :: w2} {z :: w3} (pr1 ,, pr2) (pr3 ,, pr4) = Transitive.transitive (Equivalence.transitiveEq (Setoid.eq S)) pr1 pr3 ,, listEqualityTransitive S pr2 pr4
 
-  listEqualityRespectsMap : {a b c d : _} {A : Set a} {B : Set b} (S : Setoid {a} {c} A) (T : Setoid {b} {d} B) (f : A → B) (fWD : {x y : A} → Setoid._∼_ S x y → Setoid._∼_ T (f x) (f y)) → {w1 w2 : List A} (w1=w2 : listEquality S w1 w2) → listEquality T (listMap f w1) (listMap f w2)
+  listEqualityRespectsMap : {a b c d : _} {A : Set a} {B : Set b} (S : Setoid {a} {c} A) (T : Setoid {b} {d} B) (f : A → B) (fWD : {x y : A} → Setoid._∼_ S x y → Setoid._∼_ T (f x) (f y)) → {w1 w2 : List A} (w1=w2 : listEquality S w1 w2) → listEquality T (map f w1) (map f w2)
   listEqualityRespectsMap S T f fWD {[]} {[]} w1=w2 = record {}
   listEqualityRespectsMap S T f fWD {[]} {x :: w2} ()
   listEqualityRespectsMap S T f fWD {x :: w1} {[]} ()

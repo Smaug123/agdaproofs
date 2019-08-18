@@ -6,6 +6,7 @@ open import Lists.Lists
 open import Numbers.Naturals
 open import Groups.GroupDefinition
 open import Numbers.BinaryNaturals.Definition
+open import Numbers.BinaryNaturals.Addition
 
 module Numbers.BinaryNaturals.Multiplication where
 

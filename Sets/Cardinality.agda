@@ -1,13 +1,13 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 open import LogicalFormulae
 open import Functions
-open import Naturals
-open import FinSet
+open import Numbers.Naturals
+open import Sets.FinSet
 
-module Cardinality where
+module Sets.Cardinality where
   record CountablyInfiniteSet {a : _} (A : Set a) : Set a where
     field
       counting : A → ℕ
@@ -227,5 +227,5 @@ module Cardinality where
 
 -}
 
-  injectionToNMeansCountable : {a : _} {A : Set a} {f : A → ℕ} → Injection f → InfiniteSet A → Countable A
-  injectionToNMeansCountable {f = f} inj record { isInfinite = isInfinite } = {!!}
+--  injectionToNMeansCountable : {a : _} {A : Set a} {f : A → ℕ} → Injection f → InfiniteSet A → Countable A
+--  injectionToNMeansCountable {f = f} inj record { isInfinite = isInfinite } = {!!}

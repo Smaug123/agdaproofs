@@ -5,13 +5,13 @@ open import Functions
 open import Groups.Groups
 open import Groups.GroupDefinition
 open import Orders
-open import Rings.RingDefinition
+open import Rings.Definition
 open import Numbers.Naturals
 open import Numbers.Integers
 open import PrimeNumbers
 open import IntegersModN
 
-module Rings.RingExamplesProofs where
+module Rings.Examples.Proofs where
   nToZn' : (n : ℕ) (pr : 0 <N n) (x : ℕ) → ℤn n pr
   nToZn' 0 ()
   nToZn' (succ n) pr x with divisionAlg (succ n) x

@@ -1,4 +1,4 @@
-{-# OPTIONS --warning=error --safe #-}
+{-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
