@@ -1,8 +1,11 @@
 {-# OPTIONS --warning=error --safe #-}
 
 open import LogicalFormulae
-open import Numbers.Naturals
-open import Numbers.NaturalsWithK
+open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Addition -- TODO - remove this dependency
+open import Numbers.Naturals.Multiplication -- TODO - remove this dependency
+open import Numbers.Naturals.Order -- TODO - remove this dependency
+open import Numbers.Naturals.WithK
 open import WellFoundedInduction
 open import KeyValue
 open import KeyValueWithDomain
@@ -10,6 +13,7 @@ open import Orders
 open import Vectors
 open import Maybe
 open import WithK
+open import Semirings.Definition
 
 module PrimeNumbers where
 
@@ -22,15 +26,15 @@ module PrimeNumbers where
         quotSmall : (0 <N a) || ((0 ≡ a) && (quot ≡ 0))
 
     divAlgLessLemma : (a b : ℕ) → (0 <N a) → (r : divisionAlgResult a b) → (divisionAlgResult.quot r ≡ 0) || (divisionAlgResult.rem r <N b)
-    divAlgLessLemma zero b pr _ = exFalso (lessIrreflexive pr)
+    divAlgLessLemma zero b pr _ = exFalso (TotalOrder.irreflexive ℕTotalOrder pr)
     divAlgLessLemma (succ a) b _ record { quot = zero ; rem = a%b ; pr = pr ; remIsSmall = remIsSmall } = inl refl
     divAlgLessLemma (succ a) b _ record { quot = (succ a/b) ; rem = a%b ; pr = pr ; remIsSmall = remIsSmall } = inr record { x = a/b +N a *N succ (a/b) ; proof = pr }
 
     modUniqueLemma : {rem1 rem2 a : ℕ} → (quot1 quot2 : ℕ) → rem1 <N a → rem2 <N a → a *N quot1 +N rem1 ≡ a *N quot2 +N rem2 → rem1 ≡ rem2
-    modUniqueLemma {rem1} {rem2} {a} zero zero rem1<a rem2<a pr rewrite productZeroIsZeroRight a = pr
-    modUniqueLemma {rem1} {rem2} {a} zero (succ quot2) rem1<a rem2<a pr rewrite productZeroIsZeroRight a | pr | multiplicationNIsCommutative a (succ quot2) | additionNIsAssociative a (quot2 *N a) rem2 = exFalso (cannotAddAndEnlarge' {a} {quot2 *N a +N rem2} rem1<a)
-    modUniqueLemma {rem1} {rem2} {a} (succ quot1) zero rem1<a rem2<a pr rewrite productZeroIsZeroRight a | equalityCommutative pr | multiplicationNIsCommutative a (succ quot1) | additionNIsAssociative a (quot1 *N a) rem1 = exFalso (cannotAddAndEnlarge' {a} {quot1 *N a +N rem1} rem2<a)
-    modUniqueLemma {rem1} {rem2} {a} (succ quot1) (succ quot2) rem1<a rem2<a pr rewrite multiplicationNIsCommutative a (succ quot1) | multiplicationNIsCommutative a (succ quot2) | additionNIsAssociative a (quot1 *N a) rem1 | additionNIsAssociative a (quot2 *N a) rem2 = modUniqueLemma {rem1} {rem2} {a} quot1 quot2 rem1<a rem2<a (go {a}{quot1}{rem1}{quot2}{rem2} pr)
+    modUniqueLemma {rem1} {rem2} {a} zero zero rem1<a rem2<a pr rewrite Semiring.productZeroRight ℕSemiring a = pr
+    modUniqueLemma {rem1} {rem2} {a} zero (succ quot2) rem1<a rem2<a pr rewrite Semiring.productZeroRight ℕSemiring a | pr | multiplicationNIsCommutative a (succ quot2) | equalityCommutative (Semiring.+Associative ℕSemiring a (quot2 *N a) rem2) = exFalso (cannotAddAndEnlarge' {a} {quot2 *N a +N rem2} rem1<a)
+    modUniqueLemma {rem1} {rem2} {a} (succ quot1) zero rem1<a rem2<a pr rewrite Semiring.productZeroRight ℕSemiring a | equalityCommutative pr | multiplicationNIsCommutative a (succ quot1) | equalityCommutative (Semiring.+Associative ℕSemiring a (quot1 *N a) rem1) = exFalso (cannotAddAndEnlarge' {a} {quot1 *N a +N rem1} rem2<a)
+    modUniqueLemma {rem1} {rem2} {a} (succ quot1) (succ quot2) rem1<a rem2<a pr rewrite multiplicationNIsCommutative a (succ quot1) | multiplicationNIsCommutative a (succ quot2) | equalityCommutative (Semiring.+Associative ℕSemiring a (quot1 *N a) rem1) | equalityCommutative (Semiring.+Associative ℕSemiring a (quot2 *N a) rem2) = modUniqueLemma {rem1} {rem2} {a} quot1 quot2 rem1<a rem2<a (go {a}{quot1}{rem1}{quot2}{rem2} pr)
       where
         go : {a quot1 rem1 quot2 rem2 : ℕ} → (a +N (quot1 *N a +N rem1) ≡ a +N (quot2 *N a +N rem2)) → a *N quot1 +N rem1 ≡ a *N quot2 +N rem2
         go {a} {quot1} {rem1} {quot2} {rem2} pr rewrite multiplicationNIsCommutative quot1 a | multiplicationNIsCommutative quot2 a = canSubtractFromEqualityLeft {a} pr
@@ -42,16 +46,16 @@ module PrimeNumbers where
     modIsUnique {succ a} {b} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = remIsSmall1 } record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inr ()) }
 
     transferAddition : (a b c : ℕ) → (a +N b) +N c ≡ (a +N c) +N b
-    transferAddition a b c rewrite (additionNIsAssociative a b c) = p a b c
+    transferAddition a b c rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = p a b c
       where
         p : (a b c : ℕ) → a +N (b +N c) ≡ (a +N c) +N b
-        p a b c rewrite (additionNIsCommutative b c) = equalityCommutative (additionNIsAssociative a c b)
+        p a b c = transitivity (applyEquality (a +N_) (Semiring.commutative ℕSemiring b c)) (Semiring.+Associative ℕSemiring a c b)
 
     divisionAlgLemma : (x b : ℕ) → x *N zero +N b ≡ b
-    divisionAlgLemma x b rewrite (productZeroIsZeroRight x) = refl
+    divisionAlgLemma x b rewrite (Semiring.productZeroRight ℕSemiring x) = refl
 
     divisionAlgLemma2 : (x b : ℕ) → (x ≡ b) → x *N succ zero +N zero ≡ b
-    divisionAlgLemma2 x b pr rewrite (productWithOneRight x) = equalityCommutative (transitivity (equalityCommutative pr) (equalityCommutative (addZeroRight x)))
+    divisionAlgLemma2 x b pr rewrite (Semiring.productOneRight ℕSemiring x) = equalityCommutative (transitivity (equalityCommutative pr) (equalityCommutative (Semiring.sumZeroRight ℕSemiring x)))
 
     divisionAlgLemma3 : {a x : ℕ} → (p : succ a <N succ x) → (subtractionNResult.result (-N (inl p))) <N (succ x)
     divisionAlgLemma3 {a} {x} p = -NIsDecreasing {a} {succ x} p
@@ -225,7 +229,7 @@ module PrimeNumbers where
 
     numberLessThanOrder : (n : ℕ) → TotalOrder (numberLessThan n)
     PartialOrder._<_ (TotalOrder.order (numberLessThanOrder n)) = λ a b → (numberLessThan.a a) <N numberLessThan.a b
-    PartialOrder.irreflexive (TotalOrder.order (numberLessThanOrder n)) pr = lessIrreflexive pr
+    PartialOrder.irreflexive (TotalOrder.order (numberLessThanOrder n)) pr = TotalOrder.irreflexive ℕTotalOrder pr
     PartialOrder.transitive (TotalOrder.order (numberLessThanOrder n)) pr1 pr2 = orderIsTransitive pr1 pr2
     TotalOrder.totality (numberLessThanOrder n) a b with TotalOrder.totality ℕTotalOrder (numberLessThan.a a) (numberLessThan.a b)
     TotalOrder.totality (numberLessThanOrder n) a b | inl (inl x) = inl (inl x)

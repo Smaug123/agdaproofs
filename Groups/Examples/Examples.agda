@@ -1,19 +1,20 @@
 {-# OPTIONS --safe --warning=error #-}
 
-open import Groups
+open import Groups.Definition
 open import Orders
-open import Integers
-open import Setoids
+open import Numbers.Integers
+open import Setoids.Setoids
 open import LogicalFormulae
-open import FinSet
+open import Sets.FinSet
 open import Functions
-open import Naturals
+open import Numbers.Naturals
 open import IntegersModN
-open import RingExamples
+open import Rings.Examples.Examples
 open import PrimeNumbers
-open import Groups2
+open import Groups.Groups2
+open import Groups.CyclicGroups
 
-module GroupsExamples where
+module Groups.Examples.Examples where
   elementPowZ : (n : ℕ) → (elementPower ℤGroup (nonneg 1) n) ≡ nonneg n
   elementPowZ zero = refl
   elementPowZ (succ n) rewrite elementPowZ n = refl

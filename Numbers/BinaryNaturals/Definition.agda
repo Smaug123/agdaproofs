@@ -3,8 +3,11 @@
 open import LogicalFormulae
 open import Functions
 open import Lists.Lists
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Definition
 open import Groups.Definition
+open import Semirings.Definition
+open import Orders
 
 module Numbers.BinaryNaturals.Definition where
 
@@ -140,7 +143,7 @@ module Numbers.BinaryNaturals.Definition where
   doubleIsBitShift' : (a : ℕ) → NToBinNat (2 *N succ a) ≡ zero :: NToBinNat (succ a)
   doubleIsBitShift' zero = refl
   doubleIsBitShift' (succ a) with doubleIsBitShift' a
-  ... | bl rewrite additionNIsCommutative a (succ (succ (a +N 0))) | additionNIsCommutative (succ (a +N 0)) a | additionNIsCommutative a (succ (a +N 0)) | additionNIsCommutative (a +N 0) a | bl = refl
+  ... | bl rewrite Semiring.commutative ℕSemiring a (succ (succ (a +N 0))) | Semiring.commutative ℕSemiring (succ (a +N 0)) a | Semiring.commutative ℕSemiring a (succ (a +N 0)) | Semiring.commutative ℕSemiring (a +N 0) a | bl = refl
 
   doubleIsBitShift : (a : ℕ) → (0 <N a) → NToBinNat (2 *N a) ≡ zero :: NToBinNat a
   doubleIsBitShift zero ()
@@ -249,9 +252,9 @@ module Numbers.BinaryNaturals.Definition where
   doubleInj (succ a) (succ b) pr = applyEquality succ (doubleInj a b u)
     where
       t : a +N a ≡ b +N b
-      t rewrite additionNIsCommutative (succ a) 0 | additionNIsCommutative (succ b) 0 | additionNIsCommutative a (succ a) | additionNIsCommutative b (succ b) = succInjective (succInjective pr)
+      t rewrite Semiring.commutative ℕSemiring (succ a) 0 | Semiring.commutative ℕSemiring (succ b) 0 | Semiring.commutative ℕSemiring a (succ a) | Semiring.commutative ℕSemiring b (succ b) = succInjective (succInjective pr)
       u : a +N (a +N zero) ≡ b +N (b +N zero)
-      u rewrite additionNIsCommutative a 0 | additionNIsCommutative b 0 = t
+      u rewrite Semiring.commutative ℕSemiring a 0 | Semiring.commutative ℕSemiring b 0 = t
 
   binNatToNZero [] pr = refl
   binNatToNZero (zero :: xs) pr with inspect (canonical xs)
@@ -264,7 +267,7 @@ module Numbers.BinaryNaturals.Definition where
 
   binNatToNSucc [] = refl
   binNatToNSucc (zero :: n) = refl
-  binNatToNSucc (one :: n) rewrite additionNIsCommutative (binNatToN n) zero | additionNIsCommutative (binNatToN (incr n)) 0 | binNatToNSucc n = applyEquality succ (additionNIsCommutative (binNatToN n) (succ (binNatToN n)))
+  binNatToNSucc (one :: n) rewrite Semiring.commutative ℕSemiring (binNatToN n) zero | Semiring.commutative ℕSemiring (binNatToN (incr n)) 0 | binNatToNSucc n = applyEquality succ (Semiring.commutative ℕSemiring (binNatToN n) (succ (binNatToN n)))
 
   incrNonzero (one :: xs) pr with inspect (canonical (incr xs))
   incrNonzero (one :: xs) pr | [] with≡ x = incrNonzero xs x
@@ -282,11 +285,11 @@ module Numbers.BinaryNaturals.Definition where
       ans rewrite t | pr = refl
   nToN (succ x) | (bit :: xs) with≡ pr = transitivity (binNatToNSucc (NToBinNat x)) (applyEquality succ (nToN x))
 
-  parity zero (succ b) pr rewrite additionNIsCommutative b (succ (b +N 0)) = bad pr
+  parity zero (succ b) pr rewrite Semiring.commutative ℕSemiring b (succ (b +N 0)) = bad pr
     where
       bad : (1 ≡ succ (succ ((b +N 0) +N b))) → False
       bad ()
-  parity (succ a) (succ b) pr rewrite additionNIsCommutative b (succ (b +N 0)) | additionNIsCommutative a (succ (a +N 0)) | additionNIsCommutative (a +N 0) a | additionNIsCommutative (b +N 0) b = parity a b (succInjective (succInjective pr))
+  parity (succ a) (succ b) pr rewrite Semiring.commutative ℕSemiring b (succ (b +N 0)) | Semiring.commutative ℕSemiring a (succ (a +N 0)) | Semiring.commutative ℕSemiring (a +N 0) a | Semiring.commutative ℕSemiring (b +N 0) b = parity a b (succInjective (succInjective pr))
 
   binNatToNZero' [] pr = refl
   binNatToNZero' (zero :: xs) pr with inspect (canonical xs)
@@ -311,13 +314,13 @@ module Numbers.BinaryNaturals.Definition where
       v with inspect (binNatToN a)
       v | zero with≡ x = x
       v | succ a' with≡ x with inspect (binNatToN (zero :: a))
-      v | succ a' with≡ x | zero with≡ pr2 rewrite pr2 = exFalso (lessIrreflexive 0<a)
-      v | succ a' with≡ x | succ y with≡ pr2 rewrite u = exFalso (lessIrreflexive 0<a)
+      v | succ a' with≡ x | zero with≡ pr2 rewrite pr2 = exFalso (TotalOrder.irreflexive ℕTotalOrder 0<a)
+      v | succ a' with≡ x | succ y with≡ pr2 rewrite u = exFalso (TotalOrder.irreflexive ℕTotalOrder 0<a)
       t : 0 <N binNatToN a
       t with binNatToN a
-      t | succ bl rewrite additionNIsCommutative (succ bl) 0 = succIsPositive bl
+      t | succ bl rewrite Semiring.commutative ℕSemiring (succ bl) 0 = succIsPositive bl
       contr'' : (x : ℕ) → (0 <N x) → (x ≡ 0) → False
-      contr'' x 0<x x=0 rewrite x=0 = lessIrreflexive 0<x
+      contr'' x 0<x x=0 rewrite x=0 = TotalOrder.irreflexive ℕTotalOrder 0<x
   canonicalAscends {zero} a 0<a | (x₁ :: y) with≡ x rewrite x = refl
   canonicalAscends {one} a 0<a = refl
 

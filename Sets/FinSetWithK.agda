@@ -1,9 +1,10 @@
 {-# OPTIONS --safe --warning=error #-}
 
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Order
 open import Sets.FinSet
 open import LogicalFormulae
-open import Numbers.NaturalsWithK
+open import Numbers.Naturals.WithK
 
 module Sets.FinSetWithK where
 

@@ -4,13 +4,13 @@ open import LogicalFormulae
 open import Setoids.Setoids
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
 open import Numbers.Integers
 open import Numbers.Rationals
 open import Sets.FinSet
-open import Groups.GroupDefinition
+open import Groups.Definition
 open import Groups.Groups
-open import Rings.RingDefinition
+open import Rings.Definition
 open import IntegersModN
 
 module Groups.LectureNotes.Lecture1 where

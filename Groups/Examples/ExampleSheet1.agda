@@ -1,17 +1,19 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Setoids
+open import Setoids.Setoids
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Naturals
-open import Integers
-open import FinSet
-open import Groups
-open import Rings
-open import Fields
+open import Numbers.Naturals.Naturals
+open import Numbers.Integers
+open import Sets.FinSet
+open import Groups.Definition
+open import Groups.Groups
+open import Rings.Definition
+open import Rings.Lemmas
+open import Fields.Fields
 
-module GroupsExampleSheet1 where
+module Groups.Examples.ExampleSheet1 where
 
   {-
     Question 1: e is the unique solution of x^2 = x

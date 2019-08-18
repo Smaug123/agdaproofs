@@ -8,7 +8,7 @@ open import Setoids.Setoids
 open import LogicalFormulae
 open import Sets.FinSet
 open import Functions
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
 open import IntegersModN
 open import Rings.Examples.Examples
 open import PrimeNumbers

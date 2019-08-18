@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
 open import Numbers.Integers
 open import Groups.Groups
 open import Groups.Definition

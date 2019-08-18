@@ -3,7 +3,7 @@
 open import LogicalFormulae
 open import Groups.Groups
 open import Groups.Definition
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
 open import Setoids.Orders
 open import Setoids.Setoids
 open import Functions

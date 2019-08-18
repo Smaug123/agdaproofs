@@ -1,8 +1,11 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Numbers.Naturals
-open import Numbers.NaturalsWithK -- TODO: remove this dependency, it's baked into ZSimple
+open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Order -- TODO: remove dependencies on everything other than Naturals.Naturals
+open import Numbers.Naturals.Definition
+open import Numbers.Naturals.Addition
+open import Numbers.Naturals.WithK -- TODO: remove this dependency, it's baked into ZSimple
 open import Groups.Groups
 open import Groups.Definition
 open import Rings.Definition
@@ -11,6 +14,7 @@ open import Orders
 open import Setoids.Setoids
 open import Setoids.Orders
 open import Rings.IntegralDomains
+open import Semirings.Definition
 
 module Numbers.Integers where
 
@@ -106,7 +110,7 @@ plusZ' (succ (succ height)) (negative (succ (succ a)) _) (positive (succ (succ b
     h : a +N succ (succ b) ≡ height
     h = succInjective (succInjective pr)
     ans : succ (a +N succ b) ≡ height
-    ans rewrite additionNIsCommutative a (succ b) | additionNIsCommutative (succ (succ b)) a = h
+    ans rewrite Semiring.commutative ℕSemiring a (succ b) | Semiring.commutative ℕSemiring (succ (succ b)) a = h
 plusZ' (succ height) (negative (succ a) _) zZero pr = negative (succ a) (succIsPositive a)
 plusZ' (succ height) (positive zero (le x ())) b pr
 plusZ' (succ height) (positive (succ a) _) (negative zero (le x ())) pr
@@ -119,7 +123,7 @@ plusZ' (succ (succ height)) (positive (succ (succ a)) _) (negative (succ (succ b
     h : a +N succ (succ b) ≡ height
     h = succInjective (succInjective pr)
     ans : succ (a +N succ b) ≡ height
-    ans rewrite additionNIsCommutative a (succ b) | additionNIsCommutative (succ (succ b)) a = h
+    ans rewrite Semiring.commutative ℕSemiring a (succ b) | Semiring.commutative ℕSemiring (succ (succ b)) a = h
 plusZ' (succ height) (positive (succ a) _) (positive b x) pr = positive (succ a +N b) (succIsPositive (a +N b))
 plusZ' (succ height) (positive (succ a) _) zZero pr = positive (succ a) (succIsPositive a)
 plusZ' (succ height) zZero b pr = b
@@ -137,7 +141,7 @@ canKnockOneOff+Z'' (succ a) zero {pr1} {le x ()}
 canKnockOneOff+Z'' (succ a) (succ b) {pr1} {pr2} {pr3} {pr4} rewrite <NRefl (succIsPositive a) pr1 | <NRefl (succIsPositive b) pr2 = castPlusZ' {a +N succ (succ b)} {succ (a +N succ b)} (positive (succ a) pr1) (negative (succ b) pr2) help
   where
     help : a +N (succ (succ b)) ≡ succ (a +N succ b)
-    help rewrite additionNIsCommutative a (succ (succ b)) | additionNIsCommutative (succ b) a = refl
+    help rewrite Semiring.commutative ℕSemiring a (succ (succ b)) | Semiring.commutative ℕSemiring (succ b) a = refl
 
 canKnockOneOff+Z''2 : (a b : ℕ) → {pr1 : 0 <N a} → {pr2 : 0 <N b} → {pr3 : 0 <N succ a} → {pr4 : 0 <N succ b} → plusZ' (succ a +N succ b) (negative (succ a) pr3) (positive (succ b) pr4) refl ≡ (plusZ' (a +N b) (negative a pr1) (positive b pr2) refl)
 canKnockOneOff+Z''2 zero b {le x ()} {pr2}
@@ -145,10 +149,10 @@ canKnockOneOff+Z''2 (succ a) zero {pr1} {le x ()}
 canKnockOneOff+Z''2 (succ a) (succ b) {pr1} {pr2} {pr3} {pr4} rewrite <NRefl (succIsPositive a) pr1 | <NRefl (succIsPositive b) pr2 = castPlusZ' {a +N succ (succ b)} {succ (a +N succ b)} (negative (succ a) pr1) (positive (succ b) pr2) help
   where
     help : a +N (succ (succ b)) ≡ succ (a +N succ b)
-    help rewrite additionNIsCommutative a (succ (succ b)) | additionNIsCommutative (succ b) a = refl
+    help rewrite Semiring.commutative ℕSemiring a (succ (succ b)) | Semiring.commutative ℕSemiring (succ b) a = refl
 
 lemma' : (x y : ℕ) → succ (x +N succ y) ≡ x +N succ (succ y)
-lemma' x y = equalityCommutative (succExtracts x (succ y))
+lemma' x y rewrite Semiring.commutative ℕSemiring x (succ (succ y)) | Semiring.commutative ℕSemiring (succ y) x = refl
 
 helpPlusIsPlus' : (x y : ℕ) → (pr' : _) → negative (succ x) (succIsPositive x) +Z' positive (succ y) (succIsPositive y) ≡ plusZ' (x +N succ (succ y)) (negative (succ x) (logical<NImpliesLe (record {}))) (positive (succ y) (logical<NImpliesLe (record {}))) pr'
 helpPlusIsPlus' x y pr = castPlusZ' {succ x +N succ y} {x +N succ (succ y)} (negative (succ x) (succIsPositive x)) (positive (succ y) (succIsPositive y)) {refl} {pr} pr
@@ -170,7 +174,7 @@ plusIsPlus' : (a b : ℤ) → convertZ (a +Z b) ≡ (convertZ a) +Z' (convertZ b
 plusIsPlus' (nonneg zero) (nonneg zero) = refl
 plusIsPlus' (nonneg zero) (nonneg (succ x)) = refl
 plusIsPlus' (nonneg zero) (negSucc x) = refl
-plusIsPlus' (nonneg (succ x)) (nonneg zero) rewrite additionNIsCommutative x 0 = refl
+plusIsPlus' (nonneg (succ x)) (nonneg zero) rewrite Semiring.commutative ℕSemiring x 0 = refl
 plusIsPlus' (nonneg (succ x)) (nonneg (succ y)) = refl
 plusIsPlus' (nonneg (succ zero)) (negSucc zero) = refl
 plusIsPlus' (nonneg (succ (succ x))) (negSucc zero) = refl
@@ -198,7 +202,7 @@ plusIsPlusFirstPos (succ (succ a)) pr1 (negative (succ (succ b)) x) rewrite canK
 plusIsPlusFirstPos (succ (succ a)) pr1 (positive zero (le x ()))
 plusIsPlusFirstPos (succ (succ a)) pr1 (positive (succ zero) x) = refl
 plusIsPlusFirstPos (succ (succ a)) pr1 (positive (succ (succ b)) x) = refl
-plusIsPlusFirstPos (succ (succ a)) pr1 zZero rewrite additionNIsCommutative a 0 = refl
+plusIsPlusFirstPos (succ (succ a)) pr1 zZero rewrite Semiring.commutative ℕSemiring a 0 = refl
 
 plusIsPlusFirstNeg : (a : ℕ) (pr1 : 0 <N a) → (b : ℤSimple) → convertZ' ((negative a pr1) +Z' b) ≡ (convertZ' (negative a pr1)) +Z (convertZ' b)
 plusIsPlusFirstNeg zero (le x ()) b
@@ -305,7 +309,7 @@ additionZIsCommutative : (a b : ℤ) → a +Z b ≡ b +Z a
 additionZIsCommutative (nonneg x) (nonneg y) = splitRight
   where
     inN : x +N y ≡ y +N x
-    inN = additionNIsCommutative x y
+    inN = Semiring.commutative ℕSemiring x y
     inZ : nonneg (x +N y) ≡ nonneg (y +N x)
     inZ = applyEquality nonneg inN
     splitLeft : nonneg x +Z nonneg y ≡ nonneg (y +N x)
@@ -324,23 +328,23 @@ additionZIsCommutative (negSucc zero) (negSucc zero) = refl
 additionZIsCommutative (negSucc zero) (negSucc (succ b)) = applyEquality negSucc i
   where
     h : succ b ≡ b +N succ zero
-    h = succIsAddOne b
+    h = equalityCommutative (Semiring.commutative ℕSemiring b 1)
     i : succ (succ b) ≡ succ (b +N succ zero)
     i = applyEquality succ h
 
 additionZIsCommutative (negSucc (succ a)) (negSucc zero) = applyEquality negSucc i
   where
     i : succ (a +N succ zero) ≡ succ (succ a)
-    i = applyEquality succ (equalityCommutative (succIsAddOne a))
+    i = applyEquality succ (Semiring.commutative ℕSemiring a 1)
 
 additionZIsCommutative (negSucc (succ a)) (negSucc (succ b)) = applyEquality negSucc (applyEquality succ j)
   where
     m : succ (a +N b) ≡ succ (b +N a)
-    m = applyEquality succ (additionNIsCommutative a b)
+    m = applyEquality succ (Semiring.commutative ℕSemiring a b)
     r : a +N succ b ≡ b +N succ a
     r = transitivity (succExtracts a b) (transitivity m (equalityCommutative (succExtracts b a)))
     k : succ (a +N succ b) ≡ succ (b +N succ a)
-    k rewrite additionNIsCommutative a (succ b) | additionNIsCommutative b a | additionNIsCommutative (succ a) b = refl
+    k rewrite Semiring.commutative ℕSemiring a (succ b) | Semiring.commutative ℕSemiring b a | Semiring.commutative ℕSemiring (succ a) b = refl
     j : a +N succ (succ b) ≡ b +N succ (succ a)
     j = transitivity (succExtracts a (succ b)) (transitivity k (equalityCommutative (succExtracts b (succ a))))
 
@@ -441,11 +445,11 @@ addToNegativeSelf (succ a) = addToNegativeSelf a
 
 multiplicativeIdentityOneZNegsucc : (a : ℕ) → (negSucc a *Z nonneg (succ zero) ≡ negSucc a)
 multiplicativeIdentityOneZNegsucc zero = refl
-multiplicativeIdentityOneZNegsucc (succ x) rewrite multiplicationZIsCommutative (negSucc (succ x)) (nonneg 1) | additionNIsCommutative x 0 = refl
+multiplicativeIdentityOneZNegsucc (succ x) rewrite multiplicationZIsCommutative (negSucc (succ x)) (nonneg 1) | Semiring.commutative ℕSemiring x 0 = refl
 
 multiplicativeIdentityOneZ : (a : ℤ) → (a *Z nonneg (succ zero) ≡ a)
 multiplicativeIdentityOneZ (nonneg zero) rewrite multiplicationZIsCommutative (nonneg 0) (nonneg 1) = refl
-multiplicativeIdentityOneZ (nonneg (succ x)) rewrite multiplicationZIsCommutative (nonneg (succ x)) (nonneg 1) | additionNIsCommutative x 0 = refl
+multiplicativeIdentityOneZ (nonneg (succ x)) rewrite multiplicationZIsCommutative (nonneg (succ x)) (nonneg 1) | Semiring.commutative ℕSemiring x 0 = refl
 multiplicativeIdentityOneZ (negSucc x) = multiplicativeIdentityOneZNegsucc (x)
 
 multiplicativeIdentityOneZLeft : (a : ℤ) → (nonneg (succ zero)) *Z a ≡ a
@@ -462,7 +466,7 @@ negSuccPlusNonnegNonneg (succ a) (succ b) c pr with negSuccPlusNonnegNonneg a b 
 
 negSuccPlusNonnegNonnegConverse : (a : ℕ) → (b : ℕ) → (c : ℕ) → (b ≡ c +N succ a) → (negSucc a +Z (nonneg b) ≡ nonneg c)
 negSuccPlusNonnegNonnegConverse zero zero c pr rewrite succExtracts c zero = naughtE pr
-negSuccPlusNonnegNonnegConverse zero (succ b) c pr rewrite additionNIsCommutative c 1 with succInjective pr
+negSuccPlusNonnegNonnegConverse zero (succ b) c pr rewrite Semiring.commutative ℕSemiring c 1 with succInjective pr
 ... | pr' = applyEquality nonneg pr'
 negSuccPlusNonnegNonnegConverse (succ a) zero c pr rewrite succExtracts c (succ a) = naughtE pr
 negSuccPlusNonnegNonnegConverse (succ a) (succ b) c pr rewrite succExtracts c (succ a) with succInjective pr
@@ -523,13 +527,13 @@ moveNegsucc a (nonneg x) (negSucc y) pr with negSuccPlusNonnegNegsucc a x y pr
 ... | pr' = equalityCommutative (negSuccPlusNonnegNonnegConverse y (succ a) x (g {a} {x} {y} (applyEquality succ pr')))
   where
     g : {a x y : ℕ} → succ (y +N x) ≡ succ a → succ a ≡ x +N succ y
-    g {a} {x} {y} p rewrite additionNIsCommutative y x | succExtracts x y = equalityCommutative p
+    g {a} {x} {y} p rewrite Semiring.commutative ℕSemiring y x | succExtracts x y = equalityCommutative p
 moveNegsucc a (negSucc x) (nonneg y) pr = exFalso (negSuccPlusNegSuccIsNegative a x y pr)
 moveNegsucc a (negSucc x) (negSucc y) pr with negSuccPlusNegSuccNegSucc a x y pr
 ... | pr' = equalityCommutative (negSuccPlusNonnegNegsuccConverse y (succ a) x g)
   where
     g : x +N succ a ≡ y
-    g rewrite succExtracts x a | additionNIsCommutative a x = pr'
+    g rewrite succExtracts x a | Semiring.commutative ℕSemiring a x = pr'
 
 moveNegsuccConverse : (a : ℕ) → (b c : ℤ) → (b ≡ c +Z (nonneg (succ a))) → (negSucc a) +Z b ≡ c
 moveNegsuccConverse zero (nonneg x) (nonneg y) pr with nonnegPlusNonnegNonneg y 1 x (equalityCommutative pr)
@@ -549,14 +553,14 @@ moveNegsuccConverse zero (negSucc x) (negSucc y) pr with negSuccPlusNonnegNegsuc
 ... | pr' = applyEquality negSucc g
   where
     g : succ x ≡ y
-    g rewrite additionNIsCommutative x 1 = pr'
+    g rewrite Semiring.commutative ℕSemiring x 1 = pr'
 moveNegsuccConverse (succ a) (nonneg x) (nonneg y) pr with nonnegPlusNonnegNonneg y (succ (succ a)) x (equalityCommutative pr)
 ... | pr' = negSuccPlusNonnegNonnegConverse (succ a) x y (equalityCommutative pr')
 moveNegsuccConverse (succ a) (nonneg x) (negSucc y) pr with negSuccPlusNonnegNonneg y (succ (succ a)) x (equalityCommutative pr)
 ... | pr' = negSuccPlusNonnegNegsuccConverse (succ a) x y (g a x y pr')
   where
     g : (a x y : ℕ) → succ (succ a) ≡ x +N succ y → y +N x ≡ succ a
-    g a x y pr rewrite succExtracts x y | additionNIsCommutative x y = equalityCommutative (succInjective pr)
+    g a x y pr rewrite succExtracts x y | Semiring.commutative ℕSemiring x y = equalityCommutative (succInjective pr)
 moveNegsuccConverse (succ a) (negSucc x) (nonneg z) pr = exFalso (nonnegPlusNonnegNegsucc z (succ (succ a)) x (equalityCommutative pr))
 moveNegsuccConverse (succ a) (negSucc x) (negSucc z) pr with negSuccPlusNonnegNegsucc z (succ (succ a)) x (equalityCommutative pr)
 ... | pr' = applyEquality negSucc (g a x z pr')
@@ -565,7 +569,7 @@ moveNegsuccConverse (succ a) (negSucc x) (negSucc z) pr with negSuccPlusNonnegNe
     g a x z pr rewrite succExtracts x (succ a) = identityOfIndiscernablesLeft (succ (x +N succ a)) z (succ (a +N succ x)) _≡_ pr (applyEquality succ (s x a))
       where
         s : (x a : ℕ) → x +N succ a ≡ a +N succ x
-        s x a rewrite succCanMove a x = additionNIsCommutative x (succ a)
+        s x a rewrite succCanMove a x = Semiring.commutative ℕSemiring x (succ a)
 
 -- By this point, any statement about addition can be moved from N into Z and from Z into N by applying moveNegSucc and its converse to eliminate any adding of negSucc.
 
@@ -576,14 +580,14 @@ lessIsPreservedNToZNegsucc {a} {b} (le x proof) = record { x = x ; proof = pr }
     pr rewrite additionZIsCommutative (nonneg (succ x)) (negSucc b) = moveNegsuccConverse b (nonneg (succ x)) (negSucc a) (equalityCommutative (moveNegsuccConverse a (nonneg (succ b)) (nonneg (succ x)) (applyEquality nonneg (applyEquality succ proof'))))
       where
         proof' : b ≡ x +N succ a
-        proof' rewrite additionNIsCommutative x a | additionNIsCommutative (succ a) x = equalityCommutative proof
+        proof' rewrite Semiring.commutative ℕSemiring x a | Semiring.commutative ℕSemiring (succ a) x = equalityCommutative proof
 
 lessLemma : (a x : ℕ) → succ x +N a ≡ a → False
 lessLemma zero x pr = naughtE (equalityCommutative pr)
 lessLemma (succ a) x pr = lessLemma a x q
   where
     q : succ x +N a ≡ a
-    q rewrite additionNIsCommutative a (succ x) | additionNIsCommutative x a | additionNIsCommutative (succ a) x = succInjective pr
+    q rewrite Semiring.commutative ℕSemiring a (succ x) | Semiring.commutative ℕSemiring x a | Semiring.commutative ℕSemiring (succ a) x = succInjective pr
 
 sumOfNegsucc : (a b : ℕ) → (negSucc a +Z negSucc b) ≡ negSucc (succ (a +N b))
 sumOfNegsucc a b = negSuccPlusNegSuccNegSuccConverse a b (succ (a +N b)) refl
@@ -600,7 +604,7 @@ additionZInjLemma {a} {b} {c} pr = cannotAddKeepingEquality a (c +N b) pr2''
     pr2' : a ≡ a +N (b +N succ c)
     pr2' = identityOfIndiscernablesRight a ((a +N b) +N succ c) (a +N (b +N succ c)) _≡_ pr2 (additionNIsAssociative a b (succ c))
     pr2'' : a ≡ a +N succ (c +N b)
-    pr2'' rewrite additionNIsCommutative (succ c) b = pr2'
+    pr2'' rewrite Semiring.commutative ℕSemiring (succ c) b = pr2'
 
 additionZInjectiveFirstLemma : (a : ℕ) → (b c : ℤ) → (nonneg a +Z b ≡ nonneg a +Z c) → (b ≡ c)
 additionZInjectiveFirstLemma a (nonneg b) (nonneg c) pr rewrite (addingNonnegIsHom a b) | (addingNonnegIsHom a c) = applyEquality nonneg (canSubtractFromEqualityLeft {a} pr')
@@ -628,9 +632,9 @@ additionZInjectiveFirstLemma (succ a) (negSucc zero) (negSucc x) pr = applyEqual
     pr''' : a +N succ x ≡ succ a
     pr''' = nonnegInjective pr''
     pr'''' : succ x +N a ≡ succ a
-    pr'''' rewrite additionNIsCommutative (succ x) a = pr'''
+    pr'''' rewrite Semiring.commutative ℕSemiring (succ x) a = pr'''
     qr : succ (a +N x) ≡ succ a
-    qr rewrite additionNIsCommutative a x = pr''''
+    qr rewrite Semiring.commutative ℕSemiring a x = pr''''
     qr' : a +N x ≡ a +N 0
     qr' rewrite addZeroRight a = succInjective qr
     qr'' : x ≡ 0
@@ -675,11 +679,11 @@ additionZInjectiveSecondLemmaLemma (succ a) (succ b) c pr = naughtE r
     q : succ a ≡ (b +N (succ (succ a))) +N succ c
     q = identityOfIndiscernablesRight (succ a) (b +N ((succ (succ a)) +N succ c)) ((b +N (succ (succ a))) +N succ c) _≡_ pr'''' (equalityCommutative (additionNIsAssociative b (succ (succ a)) (succ c)))
     moveSucc : (a b : ℕ) → a +N succ b ≡ succ a +N b
-    moveSucc a b rewrite additionNIsCommutative a (succ b) | additionNIsCommutative a b = refl
+    moveSucc a b rewrite Semiring.commutative ℕSemiring a (succ b) | Semiring.commutative ℕSemiring a b = refl
     q' : succ a ≡ (succ b +N succ a) +N succ c
     q' = identityOfIndiscernablesRight (succ a) ((b +N succ (succ a)) +N succ c) ((succ b +N succ a) +N succ c) _≡_ q (applyEquality (λ t → t +N succ c) (moveSucc b (succ a)))
     q'' : succ a ≡ (succ a +N succ b) +N succ c
-    q'' = identityOfIndiscernablesRight (succ a) ((succ b +N succ a) +N succ c) ((succ a +N succ b) +N succ c) _≡_ q' (applyEquality (λ t → t +N succ c) (additionNIsCommutative (succ b) (succ a)))
+    q'' = identityOfIndiscernablesRight (succ a) ((succ b +N succ a) +N succ c) ((succ a +N succ b) +N succ c) _≡_ q' (applyEquality (λ t → t +N succ c) (Semiring.commutative ℕSemiring (succ b) (succ a)))
     q''' : succ a ≡ succ a +N (succ b +N succ c)
     q''' rewrite equalityCommutative (additionNIsAssociative (succ a) (succ b) (succ c)) = q''
     q'''' : succ a +N zero ≡ succ a +N (succ b +N succ c)
@@ -773,11 +777,11 @@ addNonnegSuccLemma a x d pr = s
     q : succ x ≡ d +N succ (succ a)
     q = nonnegInjective p'''
     q' : succ x ≡ succ (succ a) +N d
-    q' rewrite additionNIsCommutative (succ (succ a)) d = q
+    q' rewrite Semiring.commutative ℕSemiring (succ (succ a)) d = q
     q'' : succ x ≡ succ d +N succ a
-    q'' rewrite additionNIsCommutative d (succ a) = q'
+    q'' rewrite Semiring.commutative ℕSemiring d (succ a) = q'
     q''' : succ x ≡ succ a +N succ d
-    q''' rewrite additionNIsCommutative (succ a) (succ d) = q''
+    q''' rewrite Semiring.commutative ℕSemiring (succ a) (succ d) = q''
     r : nonneg (succ x) ≡ nonneg (succ a +N succ d)
     r = applyEquality nonneg q'''
     r' : nonneg (succ x) ≡ nonneg (succ a) +Z nonneg (succ d)
@@ -827,7 +831,7 @@ addNonnegSucc' (negSucc zero) (negSucc (succ x)) zero d pr | negSucc int with≡
     pr'''' : succ (succ x) ≡ d +N 1
     pr'''' = nonnegInjective pr'''
     q : succ (succ x) ≡ succ d
-    q rewrite additionNIsCommutative 1 d = pr''''
+    q rewrite Semiring.commutative ℕSemiring 1 d = pr''''
     q' : succ x ≡ d
     q' = succInjective q
 addNonnegSucc' (negSucc zero) (negSucc (succ x)) (succ c) zero pr | negSucc int with≡ p = exFalso (nonnegIsNotNegsucc pr)
@@ -841,7 +845,7 @@ addNonnegSucc' (negSucc (succ a)) (negSucc zero) zero d pr | negSucc int with≡
     pr''' : nonneg 1 ≡ nonneg (d +N succ (succ a))
     pr''' rewrite equalityCommutative (addingNonnegIsHom d (succ (succ a))) = pr''
     q : 1 ≡ succ (succ a) +N d
-    q rewrite additionNIsCommutative (succ (succ a)) d = nonnegInjective pr'''
+    q rewrite Semiring.commutative ℕSemiring (succ (succ a)) d = nonnegInjective pr'''
     q' : 0 ≡ succ a +N d
     q' = succInjective q
 addNonnegSucc' (negSucc (succ a)) (negSucc zero) (succ c) zero pr | negSucc int with≡ p = help
@@ -853,7 +857,7 @@ addNonnegSucc' (negSucc (succ a)) (negSucc zero) (succ c) zero pr | negSucc int 
     pr''' : nonneg (succ a) ≡ nonneg (c +N 1)
     pr''' rewrite equalityCommutative (addingNonnegIsHom c 1) = pr''
     q : succ a ≡ succ c
-    q rewrite additionNIsCommutative 1 c = nonnegInjective pr'''
+    q rewrite Semiring.commutative ℕSemiring 1 c = nonnegInjective pr'''
     q' : a ≡ c
     q' = succInjective q
     help : negSucc a +Z nonneg (succ c) ≡ nonneg zero
@@ -935,8 +939,8 @@ additionZIsAssociativeFirstAndSecondArgNonneg (succ x) (succ b) (nonneg (succ c)
     i : x +N succ (b +N succ c) ≡ (x +N succ b) +N succ c
     i = identityOfIndiscernablesLeft (x +N (succ b +N succ c)) ((x +N succ b) +N succ c) (x +N succ (b +N succ c)) _≡_ h refl
 additionZIsAssociativeFirstAndSecondArgNonneg (succ x) zero (negSucc c) rewrite addZeroRight x = refl
-additionZIsAssociativeFirstAndSecondArgNonneg (succ x) (succ b) (negSucc zero) rewrite additionNIsCommutative x b | additionNIsCommutative x (succ b) = refl
-additionZIsAssociativeFirstAndSecondArgNonneg (succ x) (succ b) (negSucc (succ c)) rewrite additionNIsCommutative x (succ b) | additionNIsCommutative b x = additionZIsAssociativeFirstAndSecondArgNonneg (succ x) b (negSucc c)
+additionZIsAssociativeFirstAndSecondArgNonneg (succ x) (succ b) (negSucc zero) rewrite Semiring.commutative ℕSemiring x b | Semiring.commutative ℕSemiring x (succ b) = refl
+additionZIsAssociativeFirstAndSecondArgNonneg (succ x) (succ b) (negSucc (succ c)) rewrite Semiring.commutative ℕSemiring x (succ b) | Semiring.commutative ℕSemiring b x = additionZIsAssociativeFirstAndSecondArgNonneg (succ x) b (negSucc c)
 
 additionZIsAssociativeFirstArgNonneg : (a : ℕ) (b c : ℤ) → (nonneg a +Z (b +Z c) ≡ ((nonneg a) +Z b) +Z c)
 additionZIsAssociativeFirstArgNonneg zero (nonneg b) c = additionZIsAssociativeFirstAndSecondArgNonneg 0 b c
@@ -950,7 +954,7 @@ additionZIsAssociativeFirstArgNonneg (succ x) (negSucc zero) (nonneg (succ c)) =
     t : nonneg (x +N succ c) ≡ nonneg (succ c) +Z nonneg x
     i : nonneg (succ (x +N c)) ≡ nonneg x +Z nonneg (succ c)
     h = applyEquality nonneg (equalityCommutative (succExtracts x c))
-    s = applyEquality nonneg (additionNIsCommutative x (succ c))
+    s = applyEquality nonneg (Semiring.commutative ℕSemiring x (succ c))
     t = transitivity s refl
     i = transitivity h (equalityCommutative (addingNonnegIsHom x (succ c)))
 additionZIsAssociativeFirstArgNonneg (succ x) (negSucc (succ b)) (nonneg 0) rewrite additionZIsCommutative (nonneg x +Z negSucc b) (nonneg zero) = refl
@@ -965,7 +969,7 @@ additionZIsAssociativeFirstArgNonneg (succ x) (negSucc (succ b)) (nonneg (succ c
     p : nonneg (succ x) +Z (negSucc b +Z nonneg c) ≡ (nonneg x +Z negSucc b) +Z nonneg (succ c)
     p = identityOfIndiscernablesLeft ((negSucc b +Z nonneg c) +Z nonneg (succ x)) ((nonneg x +Z negSucc b) +Z nonneg (succ c)) (nonneg (succ x) +Z (negSucc b +Z nonneg c)) _≡_ p' (additionZIsCommutative (negSucc b +Z nonneg c) (nonneg (succ x)))
 additionZIsAssociativeFirstArgNonneg (succ x) (negSucc zero) (negSucc c) = refl
-additionZIsAssociativeFirstArgNonneg (succ a) (negSucc (succ b)) (negSucc zero) rewrite additionNIsCommutative b 1 | additionZIsCommutative (nonneg a +Z negSucc b) (negSucc 0) = equalityCommutative (moveNegsuccConverse 0 (nonneg a +Z negSucc b) (nonneg a +Z negSucc (succ b)) q'')
+additionZIsAssociativeFirstArgNonneg (succ a) (negSucc (succ b)) (negSucc zero) rewrite Semiring.commutative ℕSemiring b 1 | additionZIsCommutative (nonneg a +Z negSucc b) (negSucc 0) = equalityCommutative (moveNegsuccConverse 0 (nonneg a +Z negSucc b) (nonneg a +Z negSucc (succ b)) q'')
   where
     q : nonneg 1 +Z (nonneg a +Z negSucc (succ b)) ≡ (nonneg 1 +Z nonneg a) +Z negSucc (succ b)
     q = additionZIsAssociativeFirstAndSecondArgNonneg 1 a (negSucc (succ b))
@@ -979,7 +983,7 @@ additionZIsAssociativeFirstArgNonneg (succ a) (negSucc (succ b)) (negSucc (succ 
     p :   nonneg a +Z (negSucc b +Z negSucc (succ c)) ≡ (nonneg a +Z negSucc b) +Z negSucc (succ c)
     p = additionZIsAssociativeFirstArgNonneg a (negSucc b) (negSucc (succ c))
     p' : negSucc (b +N succ (succ c)) ≡ negSucc b +Z negSucc (succ c)
-    p' rewrite additionZIsCommutative (negSucc b) (negSucc (succ c)) | additionNIsCommutative b (succ (succ c)) | additionNIsCommutative c (succ b) | additionNIsCommutative c b  = refl
+    p' rewrite additionZIsCommutative (negSucc b) (negSucc (succ c)) | Semiring.commutative ℕSemiring b (succ (succ c)) | Semiring.commutative ℕSemiring c (succ b) | Semiring.commutative ℕSemiring c b  = refl
     ans rewrite p' = p
 
 additionZIsAssociative : (a b c : ℤ) → (a +Z (b +Z c)) ≡ (a +Z b) +Z c
@@ -1000,11 +1004,11 @@ additionZIsAssociative (negSucc a) (negSucc b) (nonneg c) rewrite additionZIsCom
     p' rewrite additionZIsCommutative (negSucc a) (negSucc b) = p
 additionZIsAssociative (negSucc zero) (negSucc zero) (negSucc c) = refl
 additionZIsAssociative (negSucc zero) (negSucc (succ b)) (negSucc c) = refl
-additionZIsAssociative (negSucc (succ a)) (negSucc zero) (negSucc c) rewrite additionNIsCommutative a 1 | additionNIsCommutative a (succ (succ c)) | additionNIsCommutative a (succ c) = refl
-additionZIsAssociative (negSucc (succ a)) (negSucc (succ b)) (negSucc zero) rewrite additionNIsCommutative b 1 | additionNIsCommutative (succ ((a +N succ (succ b)))) 1 = applyEquality (λ t → negSucc (succ t)) (p (succ (succ b)))
+additionZIsAssociative (negSucc (succ a)) (negSucc zero) (negSucc c) rewrite Semiring.commutative ℕSemiring a 1 | Semiring.commutative ℕSemiring a (succ (succ c)) | Semiring.commutative ℕSemiring a (succ c) = refl
+additionZIsAssociative (negSucc (succ a)) (negSucc (succ b)) (negSucc zero) rewrite Semiring.commutative ℕSemiring b 1 | Semiring.commutative ℕSemiring (succ ((a +N succ (succ b)))) 1 = applyEquality (λ t → negSucc (succ t)) (p (succ (succ b)))
   where
     p : (r : ℕ) → a +N succ r ≡ succ (a +N r)
-    p r rewrite additionNIsCommutative a (succ r) | additionNIsCommutative r a = refl
+    p r rewrite Semiring.commutative ℕSemiring a (succ r) | Semiring.commutative ℕSemiring r a = refl
 additionZIsAssociative (negSucc (succ a)) (negSucc (succ b)) (negSucc (succ c)) = applyEquality (λ t → negSucc (succ t)) (equalityCommutative (additionNIsAssociative a (succ (succ b)) (succ (succ c))))
 
 lessZIrreflexive : {a : ℤ} → (a <Z a) → False
@@ -1017,11 +1021,11 @@ lessZIrreflexive {negSucc a} (le x proof) = naughtE (equalityCommutative q)
     pr'' rewrite equalityCommutative (additiveInverseExists a) = identityOfIndiscernablesLeft (nonneg (succ x) +Z (negSucc a +Z nonneg (succ a))) (negSucc a +Z nonneg (succ a)) (nonneg (succ (x +N zero))) _≡_ pr' q
       where
         q : nonneg (succ x) +Z (negSucc a +Z nonneg (succ a)) ≡ nonneg (succ (x +N 0))
-        q rewrite additionNIsCommutative x 0 | additiveInverseExists a | additionNIsCommutative x 0 = refl
+        q rewrite Semiring.commutative ℕSemiring x 0 | additiveInverseExists a | Semiring.commutative ℕSemiring x 0 = refl
     pr''' : succ x +N 0 ≡ 0
     pr''' rewrite addingNonnegIsHom (succ x) 0 = nonnegInjective pr''
     q : succ x ≡ 0
-    q rewrite additionNIsCommutative 0 (succ x) = pr'''
+    q rewrite Semiring.commutative ℕSemiring 0 (succ x) = pr'''
 
 lessNegsuccNonneg : {a b : ℕ} → (negSucc a <Z nonneg b)
 lessNegsuccNonneg {a} {b} = record { x = x ; proof = pr }
@@ -1029,7 +1033,7 @@ lessNegsuccNonneg {a} {b} = record { x = x ; proof = pr }
     x : ℕ
     x = a +N b
     pr' : nonneg (succ (a +N b)) ≡ nonneg b +Z nonneg (succ a)
-    pr' rewrite addingNonnegIsHom b (succ a) | additionNIsCommutative b (succ a) = refl
+    pr' rewrite addingNonnegIsHom b (succ a) | Semiring.commutative ℕSemiring b (succ a) = refl
     pr : nonneg (succ x) +Z negSucc a ≡ nonneg b
     pr rewrite additionZIsCommutative (nonneg (succ x)) (negSucc a) = moveNegsuccConverse a (nonneg (succ (a +N b))) (nonneg b) pr'
 
@@ -1056,14 +1060,14 @@ multiplicationZ'IsAssociative (negative (succ a) x) (negative (succ b) prb) (neg
 multiplicationZ'IsAssociative (negative (succ a) x) (negative ( succ b) prb) (negative (succ c) prc) = res _ _
   where
     help : _
-    help = multiplicationNIsAssociative (succ a) (succ b) (succ c)
+    help = Semiring.*Associative ℕSemiring (succ a) (succ b) (succ c)
     res : (pr1 : 0 <N succ a *N (succ b *N succ c)) → (pr2 : 0 <N (succ a *N succ b) *N succ c) → negative (succ a *N (succ b *N succ c)) pr1 ≡ negative ((succ a *N succ b) *N succ c) pr2
     res pr1 pr2 rewrite help = negIsNeg pr1 pr2
 multiplicationZ'IsAssociative (negative (succ a) x) (negative (succ b) prb) (positive zero (le x₁ ()))
 multiplicationZ'IsAssociative (negative (succ a) x) (negative (succ b) prb) (positive (succ c) prc) = res _ _
   where
     help : _
-    help = multiplicationNIsAssociative (succ a) (succ b) (succ c)
+    help = Semiring.*Associative ℕSemiring (succ a) (succ b) (succ c)
     res : (pr1 : 0 <N succ a *N (succ b *N succ c)) → (pr2 : 0 <N (succ a *N succ b) *N succ c) → positive (succ a *N (succ b *N succ c)) pr1 ≡ positive ((succ a *N succ b) *N succ c) pr2
     res pr1 pr2 rewrite help = posIsPos pr1 pr2
 multiplicationZ'IsAssociative (negative (succ a) x) (negative (succ b) prb) zZero = refl
@@ -1072,14 +1076,14 @@ multiplicationZ'IsAssociative (negative (succ a) x) (positive (succ b) prb) (neg
 multiplicationZ'IsAssociative (negative (succ a) x) (positive (succ b) prb) (negative (succ c) prc) = res _ _
   where
     help : _
-    help = multiplicationNIsAssociative (succ a) (succ b) (succ c)
+    help = Semiring.*Associative ℕSemiring (succ a) (succ b) (succ c)
     res : (pr1 : 0 <N succ a *N (succ b *N succ c)) → (pr2 : 0 <N (succ a *N succ b) *N succ c) → positive (succ a *N (succ b *N succ c)) pr1 ≡ positive ((succ a *N succ b) *N succ c) pr2
     res pr1 pr2 rewrite help = posIsPos pr1 pr2
 multiplicationZ'IsAssociative (negative (succ a) x) (positive (succ b) prb) (positive zero (le x₁ ()))
 multiplicationZ'IsAssociative (negative (succ a) x) (positive (succ b) prb) (positive (succ c) prc) = res _ _
   where
     help : _
-    help = multiplicationNIsAssociative (succ a) (succ b) (succ c)
+    help = Semiring.*Associative ℕSemiring (succ a) (succ b) (succ c)
     res : (pr1 : 0 <N succ a *N (succ b *N succ c)) → (pr2 : 0 <N (succ a *N succ b) *N succ c) → negative (succ a *N (succ b *N succ c)) pr1 ≡ negative ((succ a *N succ b) *N succ c) pr2
     res pr1 pr2 rewrite help = negIsNeg pr1 pr2
 multiplicationZ'IsAssociative (negative (succ a) x) (positive (succ b) prb) zZero = refl
@@ -1090,14 +1094,14 @@ multiplicationZ'IsAssociative (positive (succ a) x) (negative (succ b) prb) (neg
 multiplicationZ'IsAssociative (positive (succ a) x) (negative (succ b) prb) (negative (succ c) prc) = res _ _
   where
     help : _
-    help = multiplicationNIsAssociative (succ a) (succ b) (succ c)
+    help = Semiring.*Associative ℕSemiring (succ a) (succ b) (succ c)
     res : (pr1 : 0 <N succ a *N (succ b *N succ c)) → (pr2 : 0 <N (succ a *N succ b) *N succ c) → positive (succ a *N (succ b *N succ c)) pr1 ≡ positive ((succ a *N succ b) *N succ c) pr2
     res pr1 pr2 rewrite help = posIsPos pr1 pr2
 multiplicationZ'IsAssociative (positive (succ a) x) (negative (succ b) prb) (positive zero (le x₁ ()))
 multiplicationZ'IsAssociative (positive (succ a) x) (negative (succ b) prb) (positive (succ c) prc) = res _ _
   where
     help : _
-    help = multiplicationNIsAssociative (succ a) (succ b) (succ c)
+    help = Semiring.*Associative ℕSemiring (succ a) (succ b) (succ c)
     res : (pr1 : 0 <N succ a *N (succ b *N succ c)) → (pr2 : 0 <N (succ a *N succ b) *N succ c) → negative (succ a *N (succ b *N succ c)) pr1 ≡ negative ((succ a *N succ b) *N succ c) pr2
     res pr1 pr2 rewrite help = negIsNeg pr1 pr2
 multiplicationZ'IsAssociative (positive (succ a) x) (negative (succ b) prb) zZero = refl
@@ -1106,14 +1110,14 @@ multiplicationZ'IsAssociative (positive (succ a) x) (positive (succ b) prb) (neg
 multiplicationZ'IsAssociative (positive (succ a) x) (positive (succ b) prb) (negative (succ c) prc) = res _ _
   where
     help : _
-    help = multiplicationNIsAssociative (succ a) (succ b) (succ c)
+    help = Semiring.*Associative ℕSemiring (succ a) (succ b) (succ c)
     res : (pr1 : 0 <N succ a *N (succ b *N succ c)) → (pr2 : 0 <N (succ a *N succ b) *N succ c) → negative (succ a *N (succ b *N succ c)) pr1 ≡ negative ((succ a *N succ b) *N succ c) pr2
     res pr1 pr2 rewrite help = negIsNeg pr1 pr2
 multiplicationZ'IsAssociative (positive (succ a) x) (positive (succ b) prb) (positive zero (le x₁ ()))
 multiplicationZ'IsAssociative (positive (succ a) x) (positive (succ b) prb) (positive (succ c) prc) = res _ _
   where
     help : _
-    help = multiplicationNIsAssociative (succ a) (succ b) (succ c)
+    help = Semiring.*Associative ℕSemiring (succ a) (succ b) (succ c)
     res : (pr1 : 0 <N succ a *N (succ b *N succ c)) → (pr2 : 0 <N (succ a *N succ b) *N succ c) → positive (succ a *N (succ b *N succ c)) pr1 ≡ positive ((succ a *N succ b) *N succ c) pr2
     res pr1 pr2 rewrite help = posIsPos pr1 pr2
 multiplicationZ'IsAssociative (positive (succ a) x) (positive (succ b) prb) zZero = refl
@@ -1156,7 +1160,7 @@ flipSign zero = refl
 flipSign (succ a) = ans
   where
     help : convertZ (negSucc (succ a)) *Z' convertZ (negSucc 0) ≡ convertZ (nonneg (succ (succ a)))
-    help rewrite multiplicationNIsCommutative a 1 | additionNIsCommutative a 0 = refl
+    help rewrite multiplicationNIsCommutative a 1 | Semiring.commutative ℕSemiring a 0 = refl
     help' : convertZ' (convertZ (negSucc (succ a)) *Z' convertZ (negSucc 0)) ≡ convertZ' (convertZ (nonneg (succ (succ a))))
     help' = applyEquality convertZ' help
     help'' : convertZ' (convertZ (negSucc (succ a))) *Z (convertZ' (convertZ (negSucc 0))) ≡ nonneg (succ (succ a))
@@ -1170,7 +1174,7 @@ flipSign' a = ans
     inter : negSucc 0 *Z negSucc 0 ≡ nonneg 1
     inter = refl
     ans : nonneg (succ a) *Z negSucc 0 ≡ negSucc a
-    ans rewrite inter | multiplicationNIsCommutative a 1 | additionNIsCommutative a 0 = refl
+    ans rewrite inter | multiplicationNIsCommutative a 1 | Semiring.commutative ℕSemiring a 0 = refl
 
 additionZ'IsCommutative : (a b : ℤSimple) → a +Z' b ≡ b +Z' a
 additionZ'IsCommutative a b = ans
@@ -1214,7 +1218,7 @@ lemma'' : (a b c : ℕ) → (pr : _) → (pr2 : _) → (pr3 : _) → positive (s
 lemma'' a b c pr1 pr2 pr3 = equalityCommutative help'
   where
     pr' : succ (b +N a *N succ b) +N succ (c +N a *N succ c) ≡ succ ((b +N succ c) +N a *N succ (b +N succ c))
-    pr' = equalityCommutative (productDistributes (succ a) (succ b) (succ c))
+    pr' = equalityCommutative (Semiring.+DistributesOver* ℕSemiring (succ a) (succ b) (succ c))
     pr'' : 0 <N succ (b +N a *N succ b) +N succ (c +N a *N succ c)
     pr'' rewrite pr' = pr1
     help : (positive (succ (b +N a *N succ b))) pr2 +Z' (positive (succ (c +N a *N succ c))) pr3 ≡ positive (succ (b +N a *N succ b) +N succ (c +N a *N succ c)) pr''
@@ -1231,18 +1235,18 @@ addZZero zZero = refl
 
 negSucc+ZNegSucc : (a b : ℕ) → (negSucc a +Z negSucc b) ≡ negSucc (succ a +N b)
 negSucc+ZNegSucc zero b = refl
-negSucc+ZNegSucc (succ a) b rewrite additionNIsCommutative a (succ b) | additionNIsCommutative b a = refl
+negSucc+ZNegSucc (succ a) b rewrite Semiring.commutative ℕSemiring a (succ b) | Semiring.commutative ℕSemiring b a = refl
 
 oneIsIdentity : (a : ℤ) → convertZ' (positive 1 (succIsPositive 0) *Z' convertZ a) ≡ a
 oneIsIdentity (nonneg zero) = refl
-oneIsIdentity (nonneg (succ x)) rewrite additionNIsCommutative x 0 = refl
-oneIsIdentity (negSucc x) rewrite additionNIsCommutative x 0 = refl
+oneIsIdentity (nonneg (succ x)) rewrite Semiring.commutative ℕSemiring x 0 = refl
+oneIsIdentity (negSucc x) rewrite Semiring.commutative ℕSemiring x 0 = refl
 
 oneIsIdentity' : (a : ℤSimple) → (positive 1 (succIsPositive 0)) *Z' a ≡ a
 oneIsIdentity' (negative zero (le x ()))
-oneIsIdentity' (negative (succ a) x) rewrite additionNIsCommutative a 0 | <NRefl x (logical<NImpliesLe (record {})) = refl
+oneIsIdentity' (negative (succ a) x) rewrite Semiring.commutative ℕSemiring a 0 | <NRefl x (logical<NImpliesLe (record {})) = refl
 oneIsIdentity' (positive zero (le x ()))
-oneIsIdentity' (positive (succ a) x) rewrite additionNIsCommutative a 0 | <NRefl x (logical<NImpliesLe (record {})) = refl
+oneIsIdentity' (positive (succ a) x) rewrite Semiring.commutative ℕSemiring a 0 | <NRefl x (logical<NImpliesLe (record {})) = refl
 oneIsIdentity' zZero = refl
 
 canPullOutSuccZ' : (a : ℕ) → (b c : ℤSimple) → (positive (succ (succ a)) (succIsPositive (succ a))) *Z' (b +Z' c) ≡ (b +Z' c) +Z' (positive (succ a) (succIsPositive a)) *Z' (b +Z' c)
@@ -1289,26 +1293,26 @@ swapAdds : (a c : ℕ) → (a +N succ c) +N succ (a +N succ c) ≡ (a +N succ a)
 swapAdds a c rewrite additionNIsAssociative a (succ c) (succ (a +N succ c)) | additionNIsAssociative a (succ a) (succ (c +N succ c)) = applyEquality (λ t → a +N succ t) help'
   where
     help' : c +N succ (a +N succ c) ≡ a +N succ (c +N succ c)
-    help' rewrite additionNIsCommutative c (succ (a +N succ c)) | additionNIsCommutative (a +N succ c) c | additionNIsCommutative (succ c) (a +N succ c) | additionNIsAssociative a (succ c) (succ c) = refl
+    help' rewrite Semiring.commutative ℕSemiring c (succ (a +N succ c)) | Semiring.commutative ℕSemiring (a +N succ c) c | Semiring.commutative ℕSemiring (succ c) (a +N succ c) | additionNIsAssociative a (succ c) (succ c) = refl
 
 lemmaDistributive : (a : ℕ) → (b c : ℤSimple) → (positive (succ a) (succIsPositive a)) *Z' (b +Z' c) ≡ positive (succ a) (succIsPositive a) *Z' b +Z' positive (succ a) (succIsPositive a) *Z' c
 lemmaDistributive zero (negative zero (le x ())) c
 lemmaDistributive zero (negative (succ b) prB) (negative zero (le x ()))
-lemmaDistributive zero (negative (succ b) prB) (negative (succ a) x) rewrite additionNIsCommutative a 0 | additionNIsCommutative b 0 | additionNIsCommutative (b +N succ a) 0 = refl
+lemmaDistributive zero (negative (succ b) prB) (negative (succ a) x) rewrite Semiring.commutative ℕSemiring a 0 | Semiring.commutative ℕSemiring b 0 | Semiring.commutative ℕSemiring (b +N succ a) 0 = refl
 
 lemmaDistributive zero (negative (succ b) prB) (positive zero (le x ()))
-lemmaDistributive zero (negative (succ b) prB) (positive (succ a) x) rewrite oneIsIdentity' (negative (succ b) prB +Z' positive (succ a) x) | additionNIsCommutative b 0 | additionNIsCommutative a 0 | <NRefl x (logical<NImpliesLe (record {})) | <NRefl prB (logical<NImpliesLe (record {})) = refl
+lemmaDistributive zero (negative (succ b) prB) (positive (succ a) x) rewrite oneIsIdentity' (negative (succ b) prB +Z' positive (succ a) x) | Semiring.commutative ℕSemiring b 0 | Semiring.commutative ℕSemiring a 0 | <NRefl x (logical<NImpliesLe (record {})) | <NRefl prB (logical<NImpliesLe (record {})) = refl
 lemmaDistributive zero (negative (succ b) prB) zZero = refl
 lemmaDistributive zero (positive zero (le x ())) c
 lemmaDistributive zero (positive (succ b) prB) (negative zero (le x ()))
-lemmaDistributive zero (positive (succ b) prB) (negative (succ a) x) rewrite additionNIsCommutative b 0 | additionNIsCommutative a 0 | oneIsIdentity' (positive (succ b) prB +Z' negative (succ a) x) | <NRefl prB (logical<NImpliesLe (record {})) | <NRefl x (logical<NImpliesLe (record {})) = refl
+lemmaDistributive zero (positive (succ b) prB) (negative (succ a) x) rewrite Semiring.commutative ℕSemiring b 0 | Semiring.commutative ℕSemiring a 0 | oneIsIdentity' (positive (succ b) prB +Z' negative (succ a) x) | <NRefl prB (logical<NImpliesLe (record {})) | <NRefl x (logical<NImpliesLe (record {})) = refl
 lemmaDistributive zero (positive (succ b) prB) (positive zero (le x ()))
-lemmaDistributive zero (positive (succ b) prB) (positive (succ a) x) rewrite additionNIsCommutative b 0 | additionNIsCommutative a 0 = help2 ((b +N succ a) +N 0) (b +N succ a) (applyEquality succ lem)
+lemmaDistributive zero (positive (succ b) prB) (positive (succ a) x) rewrite Semiring.commutative ℕSemiring b 0 | Semiring.commutative ℕSemiring a 0 = help2 ((b +N succ a) +N 0) (b +N succ a) (applyEquality succ lem)
   where
     help2 : (a b : ℕ) → (pr : succ a ≡ succ b) → positive (succ a) (succIsPositive _) ≡ positive (succ b) (succIsPositive _)
     help2 a .a refl = refl
     lem : (b +N succ a) +N 0 ≡ b +N succ a
-    lem rewrite additionNIsCommutative (b +N succ a) 0 = refl
+    lem rewrite Semiring.commutative ℕSemiring (b +N succ a) 0 = refl
 lemmaDistributive zero (positive (succ b) prB) zZero = refl
 lemmaDistributive zero zZero c rewrite oneIsIdentity' (zZero +Z' c) | oneIsIdentity' c = refl
 lemmaDistributive (succ a) b c = lemmV''
@@ -1450,7 +1454,7 @@ additionZ'DistributiveMulZ' (negative (succ a) x) (positive 0 (le y ())) (positi
 additionZ'DistributiveMulZ' (negative (succ a) x) (positive (succ b) prB) (positive (succ c) prC) rewrite timesNegPosPos a b c = applyEquality (λ t → negative (succ t) (succIsPositive t)) help
     where
       help : (b +N succ c) +N a *N succ (b +N succ c) ≡ (b +N a *N succ b) +N succ (c +N a *N succ c)
-      help rewrite productDistributes a (succ b) (succ c) | equalityCommutative (additionNIsAssociative (b +N succ c) (a *N succ b) (a *N succ c)) | additionNIsAssociative b (succ c) (a *N succ b) | additionNIsCommutative (succ c) (a *N succ b) | equalityCommutative (additionNIsAssociative b (a *N succ b) (succ c)) | additionNIsAssociative (b +N a *N succ b) (succ c) (a *N succ c) = refl
+      help rewrite Semiring.+DistributesOver* ℕSemiring a (succ b) (succ c) | Semiring.+Associative ℕSemiring (b +N succ c) (a *N succ b) (a *N succ c) | additionNIsAssociative b (succ c) (a *N succ b) | Semiring.commutative ℕSemiring (succ c) (a *N succ b) | equalityCommutative (additionNIsAssociative b (a *N succ b) (succ c)) | additionNIsAssociative (b +N a *N succ b) (succ c) (a *N succ c) = refl
 additionZ'DistributiveMulZ' (negative (succ a) x) (positive zero (le y ())) zZero
 additionZ'DistributiveMulZ' (negative (succ a) x) (positive (succ b) prB) zZero = refl
 additionZ'DistributiveMulZ' (negative (succ a) x) zZero (negative zero (le y ()))
@@ -1508,7 +1512,7 @@ lessZTransitive : {a b c : ℤ} → (a <Z b) → (b <Z c) → (a <Z c)
 lessZTransitive {a} {b} {c} (le d1 pr1) (le d2 pr2) rewrite equalityCommutative pr1 = le (d1 +N succ d2) pr
   where
     pr : nonneg (succ (d1 +N succ d2)) +Z a ≡ c
-    pr rewrite additionZIsAssociative (nonneg (succ d2)) (nonneg (succ d1)) a | additionNIsCommutative (succ d2) (succ d1) = pr2
+    pr rewrite additionZIsAssociative (nonneg (succ d2)) (nonneg (succ d1)) a | Semiring.commutative ℕSemiring (succ d2) (succ d1) = pr2
 
 ℤGroup : Group (reflSetoid ℤ) (_+Z_)
 Group.wellDefined ℤGroup {a} {b} {.a} {.b} refl refl = refl

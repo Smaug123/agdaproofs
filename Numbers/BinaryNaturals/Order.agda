@@ -3,10 +3,11 @@
 open import LogicalFormulae
 open import Functions
 open import Lists.Lists
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
 open import Groups.Definition
 open import Numbers.BinaryNaturals.Definition
 open import Orders
+open import Semirings.Definition
 
 module Numbers.BinaryNaturals.Order where
 
@@ -278,7 +279,7 @@ module Numbers.BinaryNaturals.Order where
   chopDouble a b i | inr a=b | inr x = refl
 
   succNotLess : {n : ℕ} → succ n <N n → False
-  succNotLess {succ n} (le x proof) = succNotLess {n} (le x (succInjective (transitivity (applyEquality succ (transitivity (additionNIsCommutative (succ x) (succ n)) (transitivity (applyEquality succ (transitivity (additionNIsCommutative n (succ x)) (applyEquality succ (additionNIsCommutative x n)))) (additionNIsCommutative (succ (succ n)) x)))) proof)))
+  succNotLess {succ n} (le x proof) = succNotLess {n} (le x (succInjective (transitivity (applyEquality succ (transitivity (Semiring.commutative ℕSemiring (succ x) (succ n)) (transitivity (applyEquality succ (transitivity (Semiring.commutative ℕSemiring n (succ x)) (applyEquality succ (Semiring.commutative ℕSemiring x n)))) (Semiring.commutative ℕSemiring (succ (succ n)) x)))) proof)))
 
   <BIsInherited : (a b : BinNat) → a <BInherited b ≡ a <B b
   <BIsInherited [] b with orderIsTotal 0 (binNatToN b)
