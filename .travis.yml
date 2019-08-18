@@ -1,14 +1,14 @@
-language: haskell
+language: minimal
+
+services:
+  - docker
 
 before_install:
-  - cabal update
-  - cabal install alex
-  - cabal install happy
-  - cabal install --only-dependencies Agda
-  - travis wait cabal install Agda
+  - docker pull smaug451/agda:basic
 
 git:
   quiet: true
 
 script:
-  agda Everything/Safe.agda && agda Everything/WithK.agda
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+  - docker run smaug451/agda:basic /bin/sh -c "cd ~/; git clone https://github.com/Smaug123/agdaproofs.git; cd agdaproofs; git fetch; git checkout $BRANCH; agda Everything/Safe.agda && agda Everything/WithK.agda"
