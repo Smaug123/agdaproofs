@@ -2,8 +2,8 @@
 
 open import LogicalFormulae
 open import Groups.Groups
-open import Groups.GroupDefinition
-open import Groups.GroupsLemmas
+open import Groups.Definition
+open import Groups.Lemmas
 open import Rings.Definition
 open import Rings.Lemmas
 open import Rings.IntegralDomains

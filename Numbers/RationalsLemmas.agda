@@ -5,8 +5,8 @@ open import Numbers.Naturals
 open import Numbers.Integers
 open import Numbers.Rationals
 open import Groups.Groups
-open import Groups.GroupsLemmas
-open import Groups.GroupDefinition
+open import Groups.Lemmas
+open import Groups.Definition
 open import Rings.Definition
 open import Fields.Fields
 open import PrimeNumbers

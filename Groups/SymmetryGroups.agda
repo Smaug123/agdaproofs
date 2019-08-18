@@ -7,7 +7,7 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals
 open import Sets.FinSet
 open import Groups.Groups
-open import Groups.GroupDefinition
+open import Groups.Definition
 
 module Groups.SymmetryGroups where
   data SymmetryGroupElements {a b : _} {A : Set a} (S : Setoid {a} {b} A) : Set (a ⊔ b) where

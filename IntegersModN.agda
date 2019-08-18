@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import LogicalFormulae
-open import Groups.GroupDefinition
+open import Groups.Definition
 open import Groups.Groups
 open import Numbers.Naturals
 open import PrimeNumbers

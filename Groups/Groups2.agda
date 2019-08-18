@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --warning=error #-}
 
 open import Groups.Groups
-open import Groups.GroupDefinition
+open import Groups.Definition
 open import Orders
 open import Numbers.Integers
 open import Setoids.Setoids

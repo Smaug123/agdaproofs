@@ -6,7 +6,7 @@ open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals
 open import Sets.FinSet
-open import Groups.GroupDefinition
+open import Groups.Definition
 
 module Groups.Groups where
 

@@ -8,7 +8,7 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals
 open import Numbers.NaturalsWithK
 open import Sets.FinSet
-open import Groups.GroupDefinition
+open import Groups.Definition
 open import Groups.SymmetryGroups
 open import DecidableSet
 

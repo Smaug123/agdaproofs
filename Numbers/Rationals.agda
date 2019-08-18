@@ -4,7 +4,7 @@ open import LogicalFormulae
 open import Numbers.Naturals
 open import Numbers.Integers
 open import Groups.Groups
-open import Groups.GroupDefinition
+open import Groups.Definition
 open import Rings.Definition
 open import Fields.Fields
 open import PrimeNumbers

@@ -2,7 +2,7 @@
 
 open import LogicalFormulae
 open import Groups.Groups
-open import Groups.GroupDefinition
+open import Groups.Definition
 open import Numbers.Naturals
 open import Orders
 open import Setoids.Setoids

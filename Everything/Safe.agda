@@ -9,7 +9,7 @@ open import Lists.Lists
 
 open import Groups.Groups
 open import Groups.FinitePermutations
-open import Groups.GroupsLemmas
+open import Groups.Lemmas
 
 open import Fields.Fields
 open import Fields.FieldOfFractions
