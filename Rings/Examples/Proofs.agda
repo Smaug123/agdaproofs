@@ -3,10 +3,10 @@
 open import LogicalFormulae
 open import Functions
 open import Groups.Groups
-open import Groups.GroupDefinition
+open import Groups.Definition
 open import Orders
 open import Rings.Definition
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
 open import Numbers.Integers
 open import PrimeNumbers
 open import IntegersModN

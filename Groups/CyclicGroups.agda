@@ -8,7 +8,7 @@ open import Numbers.Naturals
 open import Numbers.Integers
 open import Sets.FinSet
 open import Groups.Groups
-open import Groups.GroupDefinition
+open import Groups.Definition
 
 module Groups.CyclicGroups where
 

@@ -3,7 +3,9 @@
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Definition
+open import Numbers.Naturals.Order
 open import Orders
 
 module Sets.FinSet where

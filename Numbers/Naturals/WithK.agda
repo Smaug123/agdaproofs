@@ -5,9 +5,9 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import WellFoundedInduction
 open import Functions
 open import Orders
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
 
-module Numbers.NaturalsWithK where
+module Numbers.Naturals.WithK where
 
 <NRefl : {a b : ℕ} → (p1 p2 : a <N b) → (p1 ≡ p2)
 <NRefl {a} {.(succ (p1 +N a))} (le p1 refl) (le p2 proof2) = help p1=p2 proof2

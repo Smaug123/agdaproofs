@@ -1,9 +1,11 @@
 {-# OPTIONS --warning=error --safe #-}
 
 open import LogicalFormulae
-open import Numbers.Naturals
-open import Numbers.NaturalsWithK
+open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Order
+open import Numbers.Naturals.WithK
 open import Functions
+open import Semirings.Definition
 
 data Vec {a : _} (X : Set a) : ℕ -> Set a where
   [] : Vec X zero
@@ -67,7 +69,7 @@ vecSolelyContains {m} n record { index = zero ; index<m = _ ; isHere = isHere } 
 vecSolelyContains {m} n record { index = (succ index) ; index<m = (le x proof) ; isHere = isHere } = exFalso (f {x} {index} proof)
   where
     f : {x index : ℕ} → succ (x +N succ index) ≡ 1 → False
-    f {x} {index} pr rewrite additionNIsCommutative x (succ index) = naughtE (equalityCommutative (succInjective pr))
+    f {x} {index} pr rewrite Semiring.commutative ℕSemiring x (succ index) = naughtE (equalityCommutative (succInjective pr))
 
 vecChop : {a : _} {X : Set a} (m : ℕ) {n : ℕ} → Vec X (m +N n) → Vec X m && Vec X n
 _&&_.fst (vecChop zero xs) = []

@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Numbers.Naturals -- for length
+open import Numbers.Naturals.Naturals -- for length
 open import Lists.Lists
 open import Functions
 open import Groups.SymmetryGroups

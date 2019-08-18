@@ -2,7 +2,8 @@
 
 open import LogicalFormulae
 open import Functions
-open import Numbers.Naturals -- for length
+open import Numbers.Naturals.Naturals -- for length
+open import Semirings.Definition
 
 module Lists.Lists where
   data List {a} (A : Set a) : Set a where
@@ -154,4 +155,4 @@ module Lists.Lists where
 
   lengthRev : {a : _} {A : Set a} (l : List A) → length (rev l) ≡ length l
   lengthRev [] = refl
-  lengthRev (x :: l) rewrite lengthConcat (rev l) (x :: []) | lengthRev l | additionNIsCommutative (length l) 1 = refl
+  lengthRev (x :: l) rewrite lengthConcat (rev l) (x :: []) | lengthRev l | Semiring.commutative ℕSemiring (length l) 1 = refl

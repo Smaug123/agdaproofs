@@ -3,8 +3,8 @@
 open import LogicalFormulae
 open import Functions
 open import Groups.Groups
-open import Groups.GroupDefinition
-open import Groups.GroupsLemmas
+open import Groups.Definition
+open import Groups.Lemmas
 open import Rings.Definition
 open import Setoids.Setoids
 open import Setoids.Orders

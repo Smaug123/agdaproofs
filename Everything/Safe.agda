@@ -2,14 +2,14 @@
 
 -- This file contains everything that can be compiled in --safe mode.
 
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
 open import Numbers.BinaryNaturals.Definition
 
 open import Lists.Lists
 
 open import Groups.Groups
 open import Groups.FinitePermutations
-open import Groups.GroupsLemmas
+open import Groups.Lemmas
 
 open import Fields.Fields
 open import Fields.FieldOfFractions
@@ -33,5 +33,9 @@ open import Orders
 open import WellFoundedInduction
 
 open import ClassicalLogic.ClassicalFive
+
+open import Monoids.Definition
+
+open import Semirings.Definition
 
 module Everything.Safe where
