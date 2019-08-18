@@ -6,5 +6,4 @@ git:
   quiet: true
 
 script:
-  agda Everything/Safe.agda
-  agda Everything/WithK.agda
+  agda Everything/Safe.agda && agda Everything/WithK.agda
