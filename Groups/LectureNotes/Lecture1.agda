@@ -5,13 +5,14 @@ open import Setoids.Setoids
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals.Naturals
-open import Numbers.Integers
+open import Numbers.Integers.Integers
 open import Numbers.Rationals
 open import Sets.FinSet
 open import Groups.Definition
 open import Groups.Groups
 open import Rings.Definition
 open import IntegersModN
+open import Semirings.Definition
 
 module Groups.LectureNotes.Lecture1 where
 
@@ -27,13 +28,19 @@ module Groups.LectureNotes.Lecture1 where
   integersMinusNotGroup record { wellDefined = wellDefined ; identity = identity ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with multAssoc {nonneg 3} {nonneg 2} {nonneg 1}
   integersMinusNotGroup record { wellDefined = wellDefined ; identity = identity ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | ()
 
+  negSuccInjective : {a b : ℕ} → (negSucc a ≡ negSucc b) → a ≡ b
+  negSuccInjective {a} {.a} refl = refl
+
+  nonnegInjective : {a b : ℕ} → (nonneg a ≡ nonneg b) → a ≡ b
+  nonnegInjective {a} {.a} refl = refl
+
   integersTimesNotGroup : Group (reflSetoid ℤ) (_*Z_) → False
   integersTimesNotGroup record { wellDefined = wellDefined ; identity = (nonneg zero) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with multIdentLeft {negSucc 1}
   ... | ()
   integersTimesNotGroup record { wellDefined = wellDefined ; identity = (nonneg (succ zero)) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with invLeft {nonneg zero}
   ... | bl with inverse (nonneg zero)
   integersTimesNotGroup record { wellDefined = wellDefined ; identity = (nonneg (succ zero)) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | () | nonneg zero
-  integersTimesNotGroup record { wellDefined = wellDefined ; identity = (nonneg (succ zero)) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | () | nonneg (succ x)
+  integersTimesNotGroup record { wellDefined = wellDefined ; identity = (nonneg (succ zero)) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | p | nonneg (succ x) = naughtE (nonnegInjective (transitivity (applyEquality nonneg (equalityCommutative (Semiring.productZeroRight ℕSemiring x))) p))
   integersTimesNotGroup record { wellDefined = wellDefined ; identity = (nonneg (succ zero)) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | () | negSucc x
   integersTimesNotGroup record { wellDefined = wellDefined ; identity = (nonneg (succ (succ x))) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with succInjective (negSuccInjective (multIdentLeft {negSucc 1}))
   ... | ()

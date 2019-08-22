@@ -3,7 +3,6 @@
 -- This file contains everything that is --safe, but uses K.
 
 open import PrimeNumbers
-open import Numbers.Integers
 open import Numbers.Rationals
 open import Numbers.RationalsLemmas
 open import Numbers.BinaryNaturals.Multiplication -- TODO there's no reason for this to need K

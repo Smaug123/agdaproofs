@@ -2,7 +2,7 @@
 
 open import LogicalFormulae
 open import Numbers.Naturals.Naturals
-open import Numbers.Integers
+open import Numbers.Integers.Integers
 open import Groups.Groups
 open import Groups.Definition
 open import Rings.Definition

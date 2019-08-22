@@ -3,7 +3,7 @@
 open import Groups.Groups
 open import Groups.Definition
 open import Orders
-open import Numbers.Integers
+open import Numbers.Integers.Integers
 open import Setoids.Setoids
 open import LogicalFormulae
 open import Sets.FinSet

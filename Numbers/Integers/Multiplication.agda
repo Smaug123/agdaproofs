@@ -9,6 +9,7 @@ open import Semirings.Definition
 open import Groups.Definition
 open import Rings.Definition
 open import Setoids.Setoids
+open import Rings.IntegralDomains
 
 module Numbers.Integers.Multiplication where
 
@@ -78,7 +79,12 @@ negSucc x *Z negSucc y = nonneg ((succ x) *N (succ y))
     ans rewrite Semiring.commutative ℕSemiring (succ a *N b) a | multiplicationNIsCommutative (succ a) b = transitivity (Semiring.*Associative ℕSemiring (succ a) (succ b) (succ x)) (applyEquality (_*N succ x) {succ a *N succ b} {succ b *N succ a} (multiplicationNIsCommutative (succ a) (succ b)))
 *ZAssociative (negSucc a) (nonneg zero) c rewrite *ZZeroLeft c = refl
 *ZAssociative (negSucc a) (nonneg (succ b)) (nonneg zero) rewrite multiplicationNIsCommutative b 0 = refl
-*ZAssociative (negSucc a) (nonneg (succ b)) (nonneg (succ c)) = applyEquality negSucc {!!}
+*ZAssociative (negSucc a) (nonneg (succ b)) (nonneg (succ c)) = applyEquality negSucc ans
+  where
+    ans2 : (d : ℕ) → ((succ b *N d) *N a) +N b *N d ≡ d *N ((succ b *N a) +N b)
+    ans2 d = transitivity (transitivity (applyEquality (((d +N b *N d) *N a) +N_) (multiplicationNIsCommutative b d)) (applyEquality (_+N d *N b) (transitivity (applyEquality (_*N a) {d +N b *N d} {d *N succ b} (multiplicationNIsCommutative (succ b) d)) (equalityCommutative (Semiring.*Associative ℕSemiring d (succ b) a))))) (equalityCommutative (Semiring.+DistributesOver* ℕSemiring d (succ b *N a) b))
+    ans : (succ (c +N b *N succ c) *N a) +N (c +N b *N succ c) ≡ (succ c *N ((succ b *N a) +N b)) +N c
+    ans rewrite Semiring.commutative ℕSemiring c (b *N succ c) | Semiring.+Associative ℕSemiring (succ (b *N succ c +N c) *N a) (b *N succ c) c | Semiring.commutative ℕSemiring (b *N succ c) c = applyEquality (_+N c) (ans2 (succ c))
 *ZAssociative (negSucc a) (nonneg (succ b)) (negSucc c) = applyEquality nonneg ans
   where
     ans : succ a *N ((succ ((succ b) *N c)) +N b) ≡ (succ (succ b *N a) +N b) *N succ c
@@ -107,6 +113,17 @@ negSucc+Nonneg zero zero = refl
 negSucc+Nonneg zero (succ b) = negSucc+Nonneg zero b
 negSucc+Nonneg (succ a) zero rewrite Semiring.commutative ℕSemiring a 0 = refl
 negSucc+Nonneg (succ a) (succ b) rewrite Semiring.commutative ℕSemiring a (succ b) | Semiring.commutative ℕSemiring b a = negSucc+Nonneg (succ a) b
+
+distLemma : (a b : ℕ) →  negSucc a *Z nonneg b ≡ negSucc ((a +N b *N a) +N b) +Z nonneg (succ a)
+distLemma a b rewrite Semiring.commutative ℕSemiring (a +N b *N a) b | Semiring.commutative ℕSemiring a (b *N a) | Semiring.+Associative ℕSemiring b (b *N a) a = transitivity u (transitivity (equalityCommutative (+ZAssociative (negSucc ((b +N b *N a) +N a)) (nonneg a) (nonneg 1))) (applyEquality ((negSucc ((b +N b *N a) +N a)) +Z_) {nonneg a +Z nonneg 1} {nonneg (succ a)} (+ZCommutative (nonneg a) (nonneg 1))))
+  where
+    v : (a b : ℕ) → negSucc a *Z nonneg b ≡ (negSucc (b +N b *N a)) +Z nonneg 1
+    v zero zero = refl
+    v zero (succ b) rewrite Semiring.productZeroRight ℕSemiring b = applyEquality negSucc (equalityCommutative (Semiring.sumZeroRight ℕSemiring b))
+    v (succ a) zero = refl
+    v (succ a) (succ b) = applyEquality negSucc (Semiring.commutative ℕSemiring (succ (a +N b *N succ a)) b)
+    u : negSucc a *Z nonneg b ≡ (negSucc ((b +N b *N a) +N a) +Z nonneg a) +Z nonneg 1
+    u = transitivity (v a b) (applyEquality (_+Z nonneg 1) (negSucc+Nonneg (b +N b *N a) a))
 
 *ZDistributesOver+Z : (a b c : ℤ) → a *Z (b +Z c) ≡ (a *Z b) +Z (a *Z c)
 *ZDistributesOver+Z (nonneg zero) b c rewrite *ZZeroLeft (b +Z c) | *ZZeroLeft b | *ZZeroLeft c = refl
@@ -148,12 +165,17 @@ negSucc+Nonneg (succ a) (succ b) rewrite Semiring.commutative ℕSemiring a (suc
     u rewrite Semiring.+Associative ℕSemiring (a +N c *N a) (a +N b *N a) b | (equalityCommutative (Semiring.+Associative ℕSemiring a (c *N a) (a +N b *N a))) = applyEquality (λ i → (a +N i) +N b) (transitivity (multiplicationNIsCommutative (b +N succ c) a) (transitivity (productDistributes a b (succ c)) v))
     t : (a +N (b +N succ c) *N a) +N (b +N succ c) ≡ succ (((a +N b *N a) +N b) +N ((a +N c *N a) +N c))
     t rewrite Semiring.+Associative ℕSemiring ((a +N (b +N succ c) *N a)) b (succ c) | Semiring.commutative ℕSemiring ((a +N b *N a) +N b) ((a +N c *N a) +N c) | Semiring.commutative ℕSemiring (a +N c *N a) c | equalityCommutative (Semiring.+Associative ℕSemiring (succ c) (a +N c *N a) ((a +N b *N a) +N b)) | Semiring.commutative ℕSemiring (succ c) ((a +N c *N a) +N ((a +N b *N a) +N b)) = applyEquality (_+N succ c) u
-*ZDistributesOver+Z (negSucc a) (nonneg (succ b)) (negSucc zero) rewrite multiplicationNIsCommutative a 1 | Semiring.commutative ℕSemiring a 0 = {!!}
-*ZDistributesOver+Z (negSucc a) (nonneg (succ b)) (negSucc (succ c)) = transitivity (*ZDistributesOver+Z (negSucc a) (nonneg b) (negSucc c)) {!!}
-*ZDistributesOver+Z (negSucc a) (negSucc b) (nonneg zero) rewrite Semiring.commutative ℕSemiring (b +N a *N succ b) 0 = refl
-*ZDistributesOver+Z (negSucc a) (negSucc zero) (nonneg (succ c)) rewrite Semiring.productOneRight ℕSemiring a = {!!}
+*ZDistributesOver+Z (negSucc a) (nonneg (succ b)) (negSucc zero) rewrite Semiring.productOneRight ℕSemiring a = distLemma a b
+*ZDistributesOver+Z (negSucc a) (nonneg (succ b)) (negSucc (succ c)) = transitivity (*ZDistributesOver+Z (negSucc a) (nonneg b) (negSucc c)) (transitivity (applyEquality (_+Z nonneg (succ (c +N a *N succ c))) (distLemma a b)) (transitivity (equalityCommutative (+ZAssociative (negSucc ((a +N b *N a) +N b)) (nonneg (succ a)) (nonneg (succ (c +N a *N succ c))))) (applyEquality (negSucc ((a +N b *N a) +N b) +Z_) {nonneg (succ (a +N succ (c +N a *N succ c)))} {nonneg (succ (succ (c +N a *N succ (succ c))))} (applyEquality nonneg (t (succ a) (succ c))))))
   where
-*ZDistributesOver+Z (negSucc a) (negSucc (succ b)) (nonneg (succ c)) = transitivity (*ZDistributesOver+Z (negSucc a) (negSucc b) (nonneg c)) {!!}
+    t : (x y : ℕ) → x +N x *N y ≡ x *N succ y
+    t x y = transitivity (Semiring.commutative ℕSemiring x (x *N y)) (equalityCommutative (multLemma x y))
+*ZDistributesOver+Z (negSucc a) (negSucc b) (nonneg zero) rewrite Semiring.commutative ℕSemiring (b +N a *N succ b) 0 = refl
+*ZDistributesOver+Z (negSucc a) (negSucc zero) (nonneg (succ b)) = transitivity (distLemma a b) (transitivity (+ZCommutative (negSucc ((a +N b *N a) +N b)) (nonneg (succ a))) (applyEquality (λ i → nonneg (succ i) +Z negSucc ((a +N b *N a) +N b)) (equalityCommutative (Semiring.productOneRight ℕSemiring a))))
+*ZDistributesOver+Z (negSucc a) (negSucc (succ c)) (nonneg (succ b)) = transitivity (applyEquality (negSucc a *Z_) (+ZCommutative (negSucc c) (nonneg b))) (transitivity (transitivity (*ZDistributesOver+Z (negSucc a) (nonneg b) (negSucc c)) (transitivity (applyEquality (_+Z nonneg (succ (c +N a *N succ c))) (distLemma a b)) (transitivity (equalityCommutative (+ZAssociative (negSucc ((a +N b *N a) +N b)) (nonneg (succ a)) (nonneg (succ (c +N a *N succ c))))) (applyEquality (negSucc ((a +N b *N a) +N b) +Z_) {nonneg (succ (a +N succ (c +N a *N succ c)))} {nonneg (succ (succ (c +N a *N succ (succ c))))} (applyEquality nonneg (t (succ a) (succ c))))))) (+ZCommutative (negSucc ((a +N b *N a) +N b)) (nonneg (succ (succ (c +N a *N succ (succ c)))))))
+  where
+    t : (x y : ℕ) → x +N x *N y ≡ x *N succ y
+    t x y = transitivity (Semiring.commutative ℕSemiring x (x *N y)) (equalityCommutative (multLemma x y))
 *ZDistributesOver+Z (negSucc a) (negSucc b) (negSucc c) = applyEquality nonneg (transitivity (applyEquality (λ i → succ a *N (succ i)) (transitivity (applyEquality succ (Semiring.commutative ℕSemiring b c)) (Semiring.commutative ℕSemiring (succ c) b))) (productDistributes (succ a) (succ b) (succ c)))
 
 ℤRing : Ring (reflSetoid ℤ) _+Z_ _*Z_
@@ -165,3 +187,13 @@ Ring.multAssoc ℤRing {a} {b} {c} = *ZAssociative a b c
 Ring.multCommutative ℤRing {a} {b} = *ZCommutative a b
 Ring.multDistributes ℤRing {a} {b} {c} = *ZDistributesOver+Z a b c
 Ring.multIdentIsIdent ℤRing {a} = *ZleftIdent a
+
+intDom : (a b : ℤ) → a *Z b ≡ nonneg 0 → (a ≡ nonneg 0) || (b ≡ nonneg 0)
+intDom (nonneg zero) (nonneg b) pr = inl refl
+intDom (nonneg (succ a)) (nonneg zero) pr = inr refl
+intDom (nonneg zero) (negSucc b) pr = inl refl
+intDom (negSucc a) (nonneg zero) pr = inr refl
+
+ℤIntDom : IntegralDomain ℤRing
+IntegralDomain.intDom ℤIntDom {a} {b} = intDom a b
+IntegralDomain.nontrivial ℤIntDom ()
