@@ -5,6 +5,8 @@
 open import Numbers.Naturals.Naturals
 open import Numbers.BinaryNaturals.Definition
 
+open import Numbers.Integers.Integers
+
 open import Lists.Lists
 
 open import Groups.Groups

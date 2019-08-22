@@ -2,7 +2,7 @@
 
 open import LogicalFormulae
 open import Numbers.Naturals.Naturals
-open import Numbers.Integers
+open import Numbers.Integers.Integers
 open import Numbers.Rationals
 open import Groups.Groups
 open import Groups.Lemmas

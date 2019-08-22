@@ -7,7 +7,7 @@ open import Groups.Definition
 open import Orders
 open import Rings.Definition
 open import Numbers.Naturals.Naturals
-open import Numbers.Integers
+open import Numbers.Integers.Integers
 open import PrimeNumbers
 open import IntegersModN
 
