@@ -1,9 +1,8 @@
-{-# OPTIONS --warning=error --safe #-}
+{-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
 open import Numbers.Naturals.Naturals
 open import Numbers.Naturals.Order
-open import Numbers.Naturals.WithK
 open import Functions
 open import Semirings.Definition
 
@@ -101,7 +100,7 @@ vecIndex0AndAppend [] () x
 vecIndex0AndAppend (a ,- v) 0<n x = refl
 
 vecIndexMAndAppend : {a : _} {X : Set a} {n : ℕ} → (v : Vec X n) → (x : X) → (m : ℕ) → (m<n : m <N n) → (pr : m <N succ n) → vecIndex (vecAppend v x) m pr ≡ vecIndex v m m<n
-vecIndexMAndAppend {n = n} v x zero m<n pr rewrite <NRefl pr (succIsPositive n) = vecIndex0AndAppend v m<n x
+vecIndexMAndAppend {n = .(succ _)} (v ,- vs) x zero m<n pr = refl
 vecIndexMAndAppend [] x (succ m) ()
 vecIndexMAndAppend {n = n} (y ,- v) x (succ m) m<n pr = vecIndexMAndAppend v x m (canRemoveSuccFrom<N m<n) (canRemoveSuccFrom<N pr)
 
