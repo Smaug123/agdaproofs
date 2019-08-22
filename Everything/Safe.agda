@@ -4,6 +4,8 @@
 
 open import Numbers.Naturals.Naturals
 open import Numbers.BinaryNaturals.Definition
+open import Numbers.BinaryNaturals.Multiplication
+open import Numbers.BinaryNaturals.Order
 
 open import Numbers.Integers.Integers
 
@@ -12,6 +14,7 @@ open import Lists.Lists
 open import Groups.Groups
 open import Groups.FinitePermutations
 open import Groups.Lemmas
+open import Groups.Groups2
 
 open import Fields.Fields
 open import Fields.FieldOfFractions
@@ -29,6 +32,11 @@ open import Sets.Cardinality
 open import Sets.FinSet
 
 open import DecidableSet
+
+open import Vectors
+
+open import KeyValue
+open import KeyValueWithDomain
 
 open import Maybe
 open import Orders

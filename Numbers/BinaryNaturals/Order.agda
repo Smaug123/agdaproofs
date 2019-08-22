@@ -1,4 +1,4 @@
-{-# OPTIONS --warning=error --safe #-}
+{-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
 open import Functions
@@ -292,7 +292,7 @@ module Numbers.BinaryNaturals.Order where
   <BIsInherited (a :: as) [] | inl (inr x) | zero with≡ pr rewrite binNatToNZero (a :: as) pr | pr = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) x)
   <BIsInherited (a :: as) [] | inl (inr x) | succ y with≡ pr rewrite pr = equalityCommutative (zeroLess' (a :: as) λ i → zeroNotSucc y (a :: as) i pr)
   <BIsInherited (a :: as) [] | inr x rewrite canonicalFirst (a :: as) [] Equal | binNatToNZero (a :: as) x = refl
-  <BIsInherited (zero :: a) (zero :: b) rewrite chopFirstBit a b {zero} Equal = transitivity (chopDouble a b zero) (<BIsInherited a b)
+  <BIsInherited (zero :: a) (zero :: b) = transitivity (chopDouble a b zero) (<BIsInherited a b)
   <BIsInherited (zero :: a) (one :: b) with orderIsTotal (binNatToN (zero :: a)) (binNatToN (one :: b))
   <BIsInherited (zero :: a) (one :: b) | inl (inl 2a<2b+1) with orderIsTotal (binNatToN a) (binNatToN b)
   <BIsInherited (zero :: a) (one :: b) | inl (inl 2a<2b+1) | inl (inl a<b) = equalityCommutative (equalToFirstLess FirstLess a b (equalityCommutative indHyp))
@@ -345,4 +345,4 @@ module Numbers.BinaryNaturals.Order where
       indHyp = transitivity (equalityCommutative t) (<BIsInherited a b)
   <BIsInherited (one :: a) (zero :: b) | inl (inr 2b<2a+1) | inr a=b rewrite a=b | canonicalFirst a b FirstGreater | canonicalSecond (canonical a) b FirstGreater | transitivity (equalityCommutative (binToBin a)) (transitivity (applyEquality NToBinNat a=b) (binToBin b)) = equalityCommutative (lemma1 (canonical b))
   <BIsInherited (one :: a) (zero :: b) | inr x = exFalso (parity (binNatToN a) (binNatToN b) x)
-  <BIsInherited (one :: a) (one :: b) rewrite chopFirstBit a b {one} Equal = transitivity (chopDouble a b one) (<BIsInherited a b)
+  <BIsInherited (one :: a) (one :: b) = transitivity (chopDouble a b one) (<BIsInherited a b)

@@ -1,4 +1,4 @@
-{-# OPTIONS --warning=error --safe #-}
+{-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
 open import Functions
@@ -144,7 +144,9 @@ module Numbers.BinaryNaturals.Multiplication where
 
   NToBinNatDistributesPlus : (a b : ℕ) → NToBinNat (a +N b) ≡ NToBinNat a +B NToBinNat b
   NToBinNatDistributesPlus zero b = refl
-  NToBinNatDistributesPlus (succ a) b rewrite equalityCommutative (NToBinNatSucc (a +N b)) | NToBinNatDistributesPlus a b = incrPullsOut (NToBinNat a) (NToBinNat b)
+  NToBinNatDistributesPlus (succ a) b with inspect (NToBinNat a)
+  ... | bl with≡ prA with inspect (NToBinNat (a +N b))
+  ... | q with≡ prAB = transitivity (applyEquality incr (NToBinNatDistributesPlus a b)) (incrPullsOut (NToBinNat a) (NToBinNat b))
 
   timesCommutative : (a b : BinNat) → canonical (a *B b) ≡ canonical (b *B a)
   timesCommLemma : (a b : BinNat) → canonical (zero :: (b *B a)) ≡ canonical (b *B (zero :: a))

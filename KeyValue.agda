@@ -1,4 +1,4 @@
-{-# OPTIONS --warning=error --safe #-}
+{-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
 open import Orders
@@ -41,7 +41,7 @@ module KeyValue where
   lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v record { firstEntry = firstEntry ; next = no } | inl (inl min<k) | inl (inl _) with TotalOrder.totality keyOrder k k
   lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v record { firstEntry = firstEntry ; next = no } | inl (inl min<k) | inl (inl _) | inl (inl k<k) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) k<k)
   lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v record { firstEntry = firstEntry ; next = no } | inl (inl min<k) | inl (inl _) | inl (inr k<k) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) k<k)
-  lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v record { firstEntry = firstEntry ; next = no } | inl (inl min<k) | inl (inl _) | inr refl = refl
+  lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v record { firstEntry = firstEntry ; next = no } | inl (inl min<k) | inl (inl _) | inr p = refl
   lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v record { firstEntry = firstEntry ; next = no } | inl (inl min<k) | inl (inr k<min) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) (PartialOrder.transitive (TotalOrder.order keyOrder) min<k k<min))
   lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v record { firstEntry = firstEntry ; next = no } | inl (inl min<k) | inr min=k rewrite min=k = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) min<k)
   lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v record { firstEntry = firstEntry ; next = (yes (newMin , (m ,, pr))) } | inl (inl min<k) with TotalOrder.totality keyOrder min k
@@ -51,14 +51,14 @@ module KeyValue where
   lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inl (inr k<min) with TotalOrder.totality keyOrder k k
   lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inl (inr k<min) | inl (inl k<k) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) k<k)
   lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inl (inr k<min) | inl (inr k<k) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) k<k)
-  lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inl (inr k<min) | inr refl = refl
+  lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inl (inr k<min) | inr p = refl
   lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inr min=k with TotalOrder.totality keyOrder k k
   lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inr min=k | inl (inl k<k) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) k<k)
   lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inr min=k | inl (inr k<k) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) k<k)
-  lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inr min=k | inr refl with TotalOrder.totality keyOrder min k
-  lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inr min=k | inr refl | inl (inl min<k) rewrite min=k = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) min<k)
-  lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inr min=k | inr refl | inl (inr k<min) rewrite min=k = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) k<min)
-  lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inr refl | inr refl | inr refl = refl
+  lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inr min=k | inr p with TotalOrder.totality keyOrder min k
+  lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inr min=k | inr p | inl (inl min<k) rewrite min=k = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) min<k)
+  lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {min} k v m | inr min=k | inr p | inl (inr k<min) rewrite min=k = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) k<min)
+  lookupReducedSucceedsAfterAdd {keyOrder = keyOrder} {.k} k v record { firstEntry = firstEntry ; next = next } | inr refl | inr p | inr s = refl
 
   lookupReducedSucceedsAfterUnrelatedAdd : {a b c : _} → {keys : Set a} → {values : Set b} → {keyOrder : TotalOrder {_} {c} keys} → {min : keys} → (unrelatedK : keys) → (unrelatedV : values) → (k : keys) → (v : values) → ((TotalOrder._<_ keyOrder unrelatedK k) || (TotalOrder._<_ keyOrder k unrelatedK)) → (m : ReducedMap keys values keyOrder min) → (lookupReduced m k ≡ yes v) → lookupReduced (addReducedMap unrelatedK unrelatedV m) k ≡ yes v
   lookupReducedSucceedsAfterUnrelatedAdd {keyOrder = keyOrder} {min} k' v' k v pr m lookupReducedSucceeds with TotalOrder.totality keyOrder min k'
@@ -68,7 +68,7 @@ module KeyValue where
   lookupReducedSucceedsAfterUnrelatedAdd {keyOrder = keyOrder} {min} k' v' k v (inl x) m lookupReducedSucceeds | inl (inl min<k') | inl (inr k<min) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) (PartialOrder.transitive (TotalOrder.order keyOrder) k<min (PartialOrder.transitive (TotalOrder.order keyOrder) min<k' x)))
   lookupReducedSucceedsAfterUnrelatedAdd {keyOrder = keyOrder} {min} k' v' k v (inr k<k') m () | inl (inl min<k') | inl (inr k<min)
   lookupReducedSucceedsAfterUnrelatedAdd {keyOrder = keyOrder} {.min} k' v' min v (inl x) m lookupReducedSucceeds | inl (inl min<k') | inr refl = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) (PartialOrder.transitive (TotalOrder.order keyOrder) x min<k'))
-  lookupReducedSucceedsAfterUnrelatedAdd {keyOrder = keyOrder} {.min} k' v' min v (inr x) record { firstEntry = .v ; next = no } refl | inl (inl min<k') | inr refl = applyEquality yes refl
+  lookupReducedSucceedsAfterUnrelatedAdd {keyOrder = keyOrder} {.min} k' v' min v (inr x) record { firstEntry = v2 ; next = no } p | inl (inl min<k') | inr refl = applyEquality yes (yesInjective p)
   lookupReducedSucceedsAfterUnrelatedAdd {keyOrder = keyOrder} {.min} k' v' min v (inr x) record { firstEntry = .v ; next = (yes (a , b)) } refl | inl (inl min<k') | inr refl = applyEquality yes refl
   lookupReducedSucceedsAfterUnrelatedAdd {keyOrder = keyOrder} {min} k' v' k v pr m lookupReducedSucceeds | inl (inr k'<min) with TotalOrder.totality keyOrder k' k
   lookupReducedSucceedsAfterUnrelatedAdd {keyOrder = keyOrder} {min} k' v' k v pr m lookupReducedSucceeds | inl (inr k'<min) | inl (inl k'<k) with TotalOrder.totality keyOrder min k
@@ -144,25 +144,33 @@ module KeyValue where
   countReducedBehavesWhenAddingNotPresent {keyOrder = keyOrder} {min} k v m lookupReducedFails | inr refl with TotalOrder.totality keyOrder min min
   countReducedBehavesWhenAddingNotPresent {keyOrder = keyOrder} {k} k v m lookupReducedFails | inr refl | inl (inl min<min) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) min<min)
   countReducedBehavesWhenAddingNotPresent {keyOrder = keyOrder} {k} k v m lookupReducedFails | inr refl | inl (inr min<min) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) min<min)
-  countReducedBehavesWhenAddingNotPresent {keyOrder = keyOrder} {k} k v record { firstEntry = firstEntry ; next = no } () | inr refl | inr refl
-  countReducedBehavesWhenAddingNotPresent {keyOrder = keyOrder} {k} k v record { firstEntry = firstEntry ; next = (yes x) } () | inr refl | inr refl
+  countReducedBehavesWhenAddingNotPresent {keyOrder = keyOrder} {k} k v record { firstEntry = firstEntry ; next = no } () | inr refl | inr p
+  countReducedBehavesWhenAddingNotPresent {keyOrder = keyOrder} {k} k v record { firstEntry = firstEntry ; next = (yes x) } () | inr refl | inr p
 
   countReducedBehavesWhenAddingPresent : {a b c : _} {keys : Set a} {values : Set b} {keyOrder : TotalOrder {_} {c} keys} {min : keys} → (k : keys) → (v v' : values) → (m : ReducedMap keys values keyOrder min) → (lookupReduced {keyOrder = keyOrder} m k ≡ yes v') → countReduced (addReducedMap k v m) ≡ countReduced m
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds with TotalOrder.totality keyOrder k min
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inl (inl k<min) with TotalOrder.totality keyOrder min k
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inl (inl k<min) | inl (inl min<k) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) (PartialOrder.transitive (TotalOrder.order keyOrder) k<min min<k))
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m () | inl (inl k<min) | inl (inr _)
-  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inl (inl k<min) | inr refl = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) k<min)
+  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inl (inl k<min) | inr q = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) (identityOfIndiscernablesLeft _ _ _ (TotalOrder._<_ keyOrder) k<min (equalityCommutative q)))
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inl (inr min<k) with TotalOrder.totality keyOrder min k
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' record { firstEntry = firstEntry ; next = no } () | inl (inr min<k) | inl (inl _)
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' record { firstEntry = firstEntry ; next = (yes (a , (fst ,, snd))) } lookupReducedSucceeds | inl (inr min<k) | inl (inl _) = applyEquality succ (countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} k v v' fst lookupReducedSucceeds)
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m () | inl (inr min<k) | inl (inr k<min)
-  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inl (inr min<k) | inr refl = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) min<k)
-  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inr refl with TotalOrder.totality keyOrder min min
-  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {k} k v v' m lookupReducedSucceeds | inr refl | inl (inl x) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) x)
-  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {k} k v v' m lookupReducedSucceeds | inr refl | inl (inr x) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) x)
-  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {k} k v v' record { firstEntry = firstEntry ; next = no } lookupReducedSucceeds | inr refl | inr refl = refl
-  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {k} k v v' record { firstEntry = firstEntry ; next = (yes (a , b)) } lookupReducedSucceeds | inr refl | inr refl = refl
+  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inl (inr min<k) | inr q = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) (identityOfIndiscernablesLeft _ _ _ (λ a b → TotalOrder._<_ keyOrder a b) min<k q))
+  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inr q with TotalOrder.totality keyOrder min min
+  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inr q | inl (inl x) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) x)
+  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inr q | inl (inr x) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) x)
+  countReducedBehavesWhenAddingPresent {keys = keys} {keyOrder = keyOrder} {min} k v v' record { firstEntry = firstEntry ; next = no } lookupReducedSucceeds | inr _ | inr p with TotalOrder.totality keyOrder min k
+  countReducedBehavesWhenAddingPresent {keys = keys} {keyOrder = keyOrder} {min} k v v' record { firstEntry = firstEntry ; next = no } () | inr _ | inr p | inl (inl x)
+  countReducedBehavesWhenAddingPresent {keys = keys} {keyOrder = keyOrder} {min} k v v' record { firstEntry = firstEntry ; next = no } () | inr _ | inr p | inl (inr x`)
+  countReducedBehavesWhenAddingPresent {keys = keys} {keyOrder = keyOrder} {.k} k v v' record { firstEntry = firstEntry ; next = no } lookupReducedSucceeds | inr q | inr p | inr refl = refl
+  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' record { firstEntry = firstEntry ; next = (yes (a , b)) } lookupReducedSucceeds | inr q | inr p with TotalOrder.totality keyOrder k k
+  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' record { firstEntry = firstEntry ; next = (yes (a , b)) } lookupReducedSucceeds | inr q | inr p | inl (inl x) = exFalso (TotalOrder.irreflexive keyOrder x)
+  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' record { firstEntry = firstEntry ; next = (yes (a , b)) } lookupReducedSucceeds | inr q | inr p | inl (inr x) = exFalso (TotalOrder.irreflexive keyOrder x)
+  countReducedBehavesWhenAddingPresent {keys = keys} {values = values} {keyOrder = keyOrder} {min} k v v' record { firstEntry = firstEntry ; next = (yes (a , (m ,, pr))) } q | inr q1 | inr p | inr x with TotalOrder.totality keyOrder min k
+  countReducedBehavesWhenAddingPresent {keys = keys} {values} {keyOrder} {.k} k v v' record { firstEntry = firstEntry ; next = (yes (a , (m ,, pr))) } q | inr refl | inr p | inr x | inl (inl min<k) = exFalso (TotalOrder.irreflexive keyOrder min<k)
+  countReducedBehavesWhenAddingPresent {keys = keys} {values} {keyOrder} {.k} k v v' record { firstEntry = firstEntry ; next = (yes (a , (m ,, pr))) } q | inr q1 | inr p | inr x | inr refl = refl
 
   data Map {a b c : _} (keys : Set a) (values : Set b) (keyOrder : TotalOrder {_} {c} keys) : Set (a ⊔ b ⊔ c) where
     empty : Map keys values keyOrder
@@ -203,10 +211,10 @@ module KeyValue where
       q with TotalOrder.totality keyOrder k k
       q | inl (inl k<k) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) k<k)
       q | inl (inr k<k) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) k<k)
-      q | inr refl with TotalOrder.totality keyOrder min k
-      q | inr refl | inl (inl min<k) rewrite t = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) min<k)
-      q | inr refl | inl (inr k<min) rewrite t = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) k<min)
-      q | inr refl | inr x = refl
+      q | inr p with TotalOrder.totality keyOrder min k
+      q | inr p | inl (inl min<k) rewrite t = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) min<k)
+      q | inr p | inl (inr k<min) rewrite t = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) k<min)
+      q | inr p | inr x = refl
   lookupCertainReduced {keyOrder = keyOrder} {min} record { firstEntry = firstEntry ; next = (yes (a , (fst ,, snd))) } k pr with TotalOrder.totality keyOrder min k
   lookupCertainReduced {keyOrder = keyOrder} {min} record { firstEntry = firstEntry ; next = (yes (a , (fst ,, snd))) } k record { index = zero ; index<m = _ ; isHere = isHere } | inl (inl min<k) rewrite isHere = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) min<k)
   lookupCertainReduced {keyOrder = keyOrder} {min} record { firstEntry = firstEntry ; next = (yes (a , (fst ,, snd))) } k record { index = (succ index) ; index<m = index<m ; isHere = isHere } | inl (inl min<k) = lookupCertainReduced {keyOrder = keyOrder} fst k record { index = index ; index<m = canRemoveSuccFrom<N index<m ; isHere = isHere }

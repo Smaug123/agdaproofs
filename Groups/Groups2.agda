@@ -1,4 +1,4 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 
 open import Groups.Groups
 open import Groups.Definition
@@ -9,9 +9,6 @@ open import LogicalFormulae
 open import Sets.FinSet
 open import Functions
 open import Numbers.Naturals.Naturals
-open import IntegersModN
-open import Rings.Examples.Examples
-open import PrimeNumbers
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
