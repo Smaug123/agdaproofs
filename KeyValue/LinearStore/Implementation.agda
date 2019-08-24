@@ -9,7 +9,7 @@ open import Vectors
 open import Numbers.Naturals.Naturals
 open import Numbers.Naturals.Order
 
-module KeyValue where
+module KeyValue.LinearStore.Implementation where
   record ReducedMap {a b c : _} (keys : Set a) (values : Set b) (keyOrder : TotalOrder {_} {c} keys) (min : keys) : Set (a ⊔ b ⊔ c)
   record ReducedMap {a} {b} {c} keys values keyOrder min where
     inductive

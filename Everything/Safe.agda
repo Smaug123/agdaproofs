@@ -35,8 +35,7 @@ open import DecidableSet
 
 open import Vectors
 
-open import KeyValue
-open import KeyValueWithDomain
+open import KeyValue.LinearStore.Definition
 
 open import Maybe
 open import Orders

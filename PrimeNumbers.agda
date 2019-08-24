@@ -7,8 +7,7 @@ open import Numbers.Naturals.Multiplication -- TODO - remove this dependency
 open import Numbers.Naturals.Order -- TODO - remove this dependency
 open import Numbers.Naturals.WithK
 open import WellFoundedInduction
-open import KeyValue
-open import KeyValueWithDomain
+open import KeyValue.KeyValue
 open import Orders
 open import Vectors
 open import Maybe
@@ -248,31 +247,6 @@ module PrimeNumbers where
 
     allNumbersLessThan : (n : ℕ) → Vec (numberLessThan n) n
     allNumbersLessThan n = vecRev (allNumbersLessThanDescending n)
-
-    record extensionalHCF (a b : ℕ) : Set where
-      field
-        c : ℕ
-        c|a : c ∣ a
-        c|b : c ∣ b
-      field
-        zeroCase : ((a ≡ 0) & (b ≡ 0) & (c ≡ 0)) || ((0 <N a) || (0 <N b))
-        hcfExtension : MapWithDomain (numberLessThan c) (Sg (numberLessThan c) (λ i → ((notDiv (numberLessThan.a i) a) || (notDiv (numberLessThan.a i) b)) || ((numberLessThan.a i) ∣ a & (numberLessThan.a i) ∣ b & (numberLessThan.a i) ∣ c))) (numberLessThanOrder c)
-        hcfExtensionIsRightLength : vecLen (MapWithDomain.domain hcfExtension) ≡ c
-
-{-
-    hcfsContains : {a b r : ℕ} → (hcf : extensionalHCF a b) → (r<hcf : r <N extensionalHCF.c hcf) → vecContains (MapWithDomain.domain (extensionalHCF.hcfExtension hcf)) record { a = r ; a<n = r<hcf }
-    hcfsContains = {!!}
-
-    hcfsEquivalent : {a b : ℕ} → hcfData a b → extensionalHCF a b
-    hcfsEquivalent {a} {b} record { c = c ; c|a = c|a ; c|b = c|b ; hcf = hcf } = record { c = c ; c|a = c|a ; c|b = c|b ; hcfExtension = hcfsMap ; hcfExtensionIsRightLength = {!!} ; zeroCase = {!!} }
-      where
-        pair : Set
-        pair = (Sg (numberLessThan c) (λ i → ((notDiv (numberLessThan.a i) a) || (notDiv (numberLessThan.a i) b)) || ((numberLessThan.a i) ∣ a & (numberLessThan.a i) ∣ b & (numberLessThan.a i) ∣ c)))
-        allHcfs : Map (numberLessThan c) pair (numberLessThanOrder c)
-        allHcfs = {!!}
-        hcfsMap : MapWithDomain (numberLessThan c) (Sg (numberLessThan c) (λ i → ((notDiv (numberLessThan.a i) a) || (notDiv (numberLessThan.a i) b)) || ((numberLessThan.a i) ∣ a & (numberLessThan.a i) ∣ b & (numberLessThan.a i) ∣ c))) (numberLessThanOrder c)
-        hcfsMap = {!!}
--}
 
     positiveTimes : {a b : ℕ} → (succ a *N succ b <N succ a) → False
     positiveTimes {a} {b} pr = zeroNeverGreater f'
