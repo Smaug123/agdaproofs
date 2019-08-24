@@ -35,6 +35,7 @@ open import DecidableSet
 
 open import Vectors
 
+open import KeyValue.KeyValue
 open import KeyValue.LinearStore.Definition
 
 open import Maybe
