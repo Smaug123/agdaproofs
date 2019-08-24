@@ -3,8 +3,9 @@
 open import LogicalFormulae
 open import Functions
 open import Maybe
+open import Orders
 
-open import Naturals
+open import Numbers.Naturals.Naturals
 
 module RedBlackTree where
   record BinaryTreeNode {a : _} (carrier : Set a) (order : TotalOrder carrier) (minValue : Maybe carrier) (maxValue : Maybe carrier) : Set a
@@ -15,7 +16,7 @@ module RedBlackTree where
     inductive
     field
       value : carrier
-      min<=val : TotalOrder._<_ order min val
+      min<=val : TotalOrder._<_ order minValue maxValue
       leftChild : Maybe (Sg (BinaryTreeNode {a} carrier order minValue (yes value)) (λ i → TotalOrder._<_ order (valueExtractor {a} {carrier} {order} i) value))
       rightChild : Maybe (Sg (BinaryTreeNode {a} carrier order (yes value) maxValue) (λ i → TotalOrder._<_ order value (valueExtractor i)))
 
