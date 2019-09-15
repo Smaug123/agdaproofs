@@ -31,3 +31,9 @@ module Maybe where
   defaultValue : {a : _} → {A : Set a} → (default : A) → Maybe A → A
   defaultValue default no = default
   defaultValue default (yes x) = x
+
+  noNotYes : {a : _} {A : Set a} {b : A} → (no ≡ yes b) → False
+  noNotYes ()
+
+  mapMaybePreservesNo : {a b : _} {A : Set a} {B : Set b} (f : A → B) (x : Maybe A) → mapMaybe f x ≡ no → x ≡ no
+  mapMaybePreservesNo f no pr = refl
