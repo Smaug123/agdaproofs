@@ -1,5 +1,6 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
+open import WellFoundedInduction
 open import LogicalFormulae
 open import Functions
 open import Lists.Lists
@@ -15,6 +16,15 @@ module Numbers.BinaryNaturals.Order where
     Equal : Compare
     FirstLess : Compare
     FirstGreater : Compare
+
+  badCompare : Equal ≡ FirstLess → False
+  badCompare ()
+
+  badCompare' : Equal ≡ FirstGreater → False
+  badCompare' ()
+
+  badCompare'' : FirstLess ≡ FirstGreater → False
+  badCompare'' ()
 
   _<BInherited_ : BinNat → BinNat → Compare
   a <BInherited b with orderIsTotal (binNatToN a) (binNatToN b)
@@ -194,6 +204,25 @@ module Numbers.BinaryNaturals.Order where
   equalContaminated' (zero :: n) (one :: m) pr = equalContaminated n m pr
   equalContaminated' (one :: n) (zero :: m) pr = equalContaminated' n m pr
   equalContaminated' (one :: n) (one :: m) pr = equalContaminated' n m pr
+
+  comparisonEqual : (a b : BinNat) → (a <B b ≡ Equal) → canonical a ≡ canonical b
+  comparisonEqual [] [] pr = refl
+  comparisonEqual [] (zero :: b) pr with inspect (canonical b)
+  comparisonEqual [] (zero :: b) pr | [] with≡ p rewrite p = refl
+  comparisonEqual [] (zero :: b) pr | (x :: r) with≡ p rewrite zeroLess b (λ i → nonEmptyNotEmpty (transitivity (equalityCommutative p) i)) = exFalso (badCompare (equalityCommutative pr))
+  comparisonEqual (zero :: a) [] pr with inspect (canonical a)
+  comparisonEqual (zero :: a) [] pr | [] with≡ x rewrite x = refl
+  comparisonEqual (zero :: a) [] pr | (x₁ :: y) with≡ x rewrite zeroLess' a (λ i → nonEmptyNotEmpty (transitivity (equalityCommutative x) i)) = exFalso (badCompare' (equalityCommutative pr))
+  comparisonEqual (zero :: a) (zero :: b) pr with inspect (canonical a)
+  comparisonEqual (zero :: a) (zero :: b) pr | [] with≡ x with inspect (canonical b)
+  comparisonEqual (zero :: a) (zero :: b) pr | [] with≡ pr2 | [] with≡ pr3 rewrite pr2 | pr3 = refl
+  comparisonEqual (zero :: a) (zero :: b) pr | [] with≡ pr2 | (x₂ :: y) with≡ pr3 rewrite pr2 | pr3 | comparisonEqual a b pr = exFalso (nonEmptyNotEmpty (transitivity (equalityCommutative pr3) pr2))
+  comparisonEqual (zero :: a) (zero :: b) pr | (c :: cs) with≡ pr2 with inspect (canonical b)
+  comparisonEqual (zero :: a) (zero :: b) pr | (c :: cs) with≡ pr2 | [] with≡ pr3 rewrite pr2 | pr3 | comparisonEqual a b pr = exFalso (nonEmptyNotEmpty (transitivity (equalityCommutative pr2) pr3))
+  comparisonEqual (zero :: a) (zero :: b) pr | (c :: cs) with≡ pr2 | (x₁ :: y) with≡ pr3 rewrite pr2 | pr3 | comparisonEqual a b pr = applyEquality (zero ::_) (transitivity (equalityCommutative pr2) pr3)
+  comparisonEqual (zero :: a) (one :: b) pr = exFalso (equalContaminated a b pr)
+  comparisonEqual (one :: a) (zero :: b) pr = exFalso (equalContaminated' a b pr)
+  comparisonEqual (one :: a) (one :: b) pr = applyEquality (one ::_) (comparisonEqual a b pr)
 
   equalSymmetric : (n m : BinNat) → n <B m ≡ Equal → m <B n ≡ Equal
   equalSymmetric [] [] n=m = refl

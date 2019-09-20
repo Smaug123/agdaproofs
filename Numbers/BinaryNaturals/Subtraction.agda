@@ -1,45 +1,17 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
-open import Functions
 open import Lists.Lists
 open import Numbers.Naturals.Naturals
-open import Groups.Definition
 open import Numbers.BinaryNaturals.Definition
+open import Numbers.BinaryNaturals.SubtractionGo
+open import Numbers.BinaryNaturals.SubtractionGoPreservesCanonicalRight
+open import Numbers.BinaryNaturals.SubtractionGoPreservesCanonicalLeft
 open import Orders
 open import Semirings.Definition
 open import Maybe
 
 module Numbers.BinaryNaturals.Subtraction where
-
-  decr : BinNat → Maybe BinNat
-  decr [] = no
-  decr (zero :: xs) with decr xs
-  decr (zero :: xs) | no = no
-  decr (zero :: xs) | yes x = yes (one :: x)
-  decr (one :: xs) = yes (zero :: xs)
-
-  go : Bit → BinNat → BinNat → Maybe BinNat
-  go zero [] [] = yes []
-  go one [] [] = no
-  go zero [] (zero :: b) = go zero [] b
-  go zero [] (one :: b) = no
-  go one [] (x :: b) = no
-  go zero (zero :: a) [] = yes (zero :: a)
-  go one (zero :: a) [] = mapMaybe (one ::_) (go one a [])
-  go zero (zero :: a) (zero :: b) = mapMaybe (zero ::_) (go zero a b)
-  go one (zero :: a) (zero :: b) = mapMaybe (one ::_) (go one a b)
-  go zero (zero :: a) (one :: b) = mapMaybe (one ::_) (go one a b)
-  go one (zero :: a) (one :: b) = mapMaybe (zero ::_) (go one a b)
-  go zero (one :: a) [] = yes (one :: a)
-  go zero (one :: a) (zero :: b) = mapMaybe (one ::_) (go zero a b)
-  go zero (one :: a) (one :: b) = mapMaybe (zero ::_) (go zero a b)
-  go one (one :: a) [] = yes (zero :: a)
-  go one (one :: a) (zero :: b) = mapMaybe (zero ::_) (go zero a b)
-  go one (one :: a) (one :: b) = mapMaybe (one ::_) (go one a b)
-
-  _-B_ : BinNat → BinNat → Maybe BinNat
-  a -B b = go zero a b
 
   aMinusAGo : (a : BinNat) → mapMaybe canonical (go zero a a) ≡ yes []
   aMinusAGo [] = refl
@@ -64,22 +36,32 @@ module Numbers.BinaryNaturals.Subtraction where
   aMinusA (zero :: a) = aMinusALemma a
   aMinusA (one :: a) = aMinusALemma a
 
-  canonicalRespectsGoFirst : (bit : Bit) (a b : BinNat) → mapMaybe canonical (go bit a b) ≡ mapMaybe canonical (go bit (canonical a) b)
-  canonicalRespectsGoFirst zero [] b = refl
-  canonicalRespectsGoFirst zero (zero :: a) [] = {!!}
-  canonicalRespectsGoFirst zero (zero :: a) (zero :: b) with canonicalRespectsGoFirst zero a b
-  ... | bl with inspect (go zero a b)
-  canonicalRespectsGoFirst zero (zero :: a) (zero :: b) | bl | no with≡ pr with canonical a
-  canonicalRespectsGoFirst zero (zero :: a) (zero :: b) | bl | no with≡ pr | [] rewrite pr = bl
-  canonicalRespectsGoFirst zero (zero :: a) (zero :: b) | bl | no with≡ pr | x :: can rewrite pr | mapMaybePreservesNo canonical (go zero (x :: can) b) (equalityCommutative bl) = refl
-  canonicalRespectsGoFirst zero (zero :: a) (zero :: b) | bl | yes x with≡ pr with canonical a
-  canonicalRespectsGoFirst zero (zero :: a) (zero :: b) | bl | yes x with≡ pr | [] rewrite pr | equalityCommutative bl = {!!}
-  canonicalRespectsGoFirst zero (zero :: a) (zero :: b) | bl | yes x with≡ pr | x₁ :: as = {!!}
-  canonicalRespectsGoFirst zero (zero :: a) (one :: b) = {!!}
-  canonicalRespectsGoFirst zero (one :: a) b = {!!}
-  canonicalRespectsGoFirst one a b = {!!}
+{-
+  goOne : (a b : BinNat) → mapMaybe canonical (go one (incr a) b) ≡ mapMaybe canonical (go zero a b)
+  goOne [] [] = refl
+  goOne [] (zero :: b) with inspect (go zero [] b)
+  goOne [] (zero :: b) | no with≡ pr = {!!}
+  goOne [] (zero :: b) | yes x with≡ pr with goZeroEmpty b pr
+  ... | t = {!!}
+  goOne [] (one :: b) with inspect (go one [] b)
+  goOne [] (one :: b) | no with≡ pr rewrite pr = refl
+  goOne [] (one :: b) | yes x with≡ pr = exFalso (goOneEmpty b pr)
+  goOne (x :: a) b = {!!}
+
+  a+1MinusA : (a : BinNat) → mapMaybe canonical ((incr a) -B a) ≡ yes (one :: [])
+  a+1MinusA [] = refl
+  a+1MinusA (zero :: a) with inspect (go zero a a)
+  a+1MinusA (zero :: a) | no with≡ pr with aMinusAGo a
+  ... | r rewrite pr = exFalso (noNotYes r)
+  a+1MinusA (zero :: a) | (yes x) with≡ pr with aMinusAGo a
+  ... | bl rewrite pr | yesInjective bl = refl
+  a+1MinusA (one :: a) with inspect (go one (incr a) a)
+  a+1MinusA (one :: a) | no with≡ pr = {!!}
+  a+1MinusA (one :: a) | yes x with≡ pr = {!!}
 
   -Binherited : (a b : ℕ) → (p : (b <N a) || (b ≡ a)) → mapMaybe binNatToN ((NToBinNat a) -B (NToBinNat b)) ≡ yes (subtractionNResult.result (-N p))
   -Binherited a b (inl x) = {!!}
   -Binherited a .a (inr refl) with aMinusA (NToBinNat a)
   ... | t = {!!}
+
+-}
