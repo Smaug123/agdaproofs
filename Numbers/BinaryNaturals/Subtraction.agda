@@ -3,6 +3,7 @@
 open import LogicalFormulae
 open import Lists.Lists
 open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Order
 open import Numbers.BinaryNaturals.Definition
 open import Numbers.BinaryNaturals.Addition
 open import Numbers.BinaryNaturals.SubtractionGo
@@ -127,6 +128,261 @@ module Numbers.BinaryNaturals.Subtraction where
       ... | f rewrite x | plusThenMinus a b = exFalso (noNotYes f)
       t | yes y with≡ x with goOne (a +B b) b
       ... | f rewrite x | plusThenMinus a b = applyEquality (λ i → yes (one :: i)) (yesInjective f)
+
+  subLemma : (a b : ℕ) → a <N b → succ (a +N a) <N b +N b
+  subLemma a b a<b with TotalOrder.totality ℕTotalOrder (succ (a +N a)) (b +N b)
+  subLemma a b a<b | inl (inl x) = x
+  subLemma a b a<b | inl (inr x) = exFalso (noIntegersBetweenXAndSuccX (a +N a) (addStrongInequalities a<b a<b) x)
+  subLemma a b a<b | inr x = exFalso (parity a b (transitivity (applyEquality (succ a +N_) (Semiring.sumZeroRight ℕSemiring a)) (transitivity x (applyEquality (b +N_) (equalityCommutative (Semiring.sumZeroRight ℕSemiring b))))))
+
+  subLemma2 : (a b : ℕ) → a <N b → 2 *N a <N succ (2 *N b)
+  subLemma2 a b a<b with TotalOrder.totality ℕTotalOrder (2 *N a) (succ (2 *N b))
+  subLemma2 a b a<b | inl (inl x) = x
+  subLemma2 a b a<b | inl (inr x) = exFalso (TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder x (TotalOrder.transitive ℕTotalOrder (lessRespectsMultiplicationLeft a b 2 a<b (le 1 refl)) (le 0 refl))))
+  subLemma2 a b a<b | inr x = exFalso (parity b a (equalityCommutative x))
+
+  subtraction : (a b : BinNat) → go zero a b ≡ no → binNatToN a <N binNatToN b
+  subtraction' : (a b : BinNat) → go one a b ≡ no → (binNatToN a <N binNatToN b) || (binNatToN a ≡ binNatToN b)
+
+  subtraction' [] [] pr = inr refl
+  subtraction' [] (x :: b) pr with TotalOrder.totality ℕTotalOrder 0 (binNatToN (x :: b))
+  subtraction' [] (x :: b) pr | inl (inl x₁) = inl x₁
+  subtraction' [] (x :: b) pr | inr x₁ = inr x₁
+  subtraction' (zero :: a) [] pr with subtraction' a [] (mapMaybePreservesNo pr)
+  subtraction' (zero :: a) [] pr | inr x rewrite x = inr refl
+  subtraction' (zero :: a) (zero :: b) pr with subtraction' a b (mapMaybePreservesNo pr)
+  subtraction' (zero :: a) (zero :: b) pr | inl x = inl (lessRespectsMultiplicationLeft (binNatToN a) (binNatToN b) 2 x (le 1 refl))
+  subtraction' (zero :: a) (zero :: b) pr | inr x rewrite x = inr refl
+  subtraction' (zero :: a) (one :: b) pr with subtraction' a b (mapMaybePreservesNo pr)
+  subtraction' (zero :: a) (one :: b) pr | inl x = inl (subLemma2 (binNatToN a) (binNatToN b) x)
+  subtraction' (zero :: a) (one :: b) pr | inr x rewrite x = inl (le zero refl)
+  subtraction' (one :: a) (zero :: b) pr with subtraction a b (mapMaybePreservesNo pr)
+  ... | t rewrite Semiring.sumZeroRight ℕSemiring (binNatToN a) | Semiring.sumZeroRight ℕSemiring (binNatToN b) = inl (subLemma (binNatToN a) (binNatToN b) t)
+  subtraction' (one :: a) (one :: b) pr with subtraction' a b (mapMaybePreservesNo pr)
+  subtraction' (one :: a) (one :: b) pr | inl x = inl (succPreservesInequality (lessRespectsMultiplicationLeft (binNatToN a) (binNatToN b) 2 x (le 1 refl)))
+  subtraction' (one :: a) (one :: b) pr | inr x rewrite x = inr refl
+
+  subtraction [] (zero :: b) pr with inspect (binNatToN b)
+  subtraction [] (zero :: b) pr | zero with≡ pr1 = exFalso (noNotYes (transitivity (applyEquality (mapMaybe canonical) (equalityCommutative pr)) (transitivity (goPreservesCanonicalRight zero [] b) (transitivity (applyEquality (λ i → mapMaybe canonical (go zero [] i)) (binNatToNZero b pr1)) refl))))
+  subtraction [] (zero :: b) pr | (succ bl) with≡ pr1 rewrite pr | pr1 = succIsPositive _
+  subtraction [] (one :: b) pr = succIsPositive _
+  subtraction (zero :: a) (zero :: b) pr = lessRespectsMultiplicationLeft (binNatToN a) (binNatToN b) 2 u (le 1 refl)
+    where
+      u : binNatToN a <N binNatToN b
+      u = subtraction a b (mapMaybePreservesNo pr)
+  subtraction (zero :: a) (one :: b) pr with subtraction' a b (mapMaybePreservesNo pr)
+  subtraction (zero :: a) (one :: b) pr | inl x = subLemma2 (binNatToN a) (binNatToN b) x
+  subtraction (zero :: a) (one :: b) pr | inr x rewrite x = le zero refl
+  subtraction (one :: a) (zero :: b) pr rewrite Semiring.sumZeroRight ℕSemiring (binNatToN a) | Semiring.sumZeroRight ℕSemiring (binNatToN b) = subLemma (binNatToN a) (binNatToN b) u
+    where
+      u : binNatToN a <N binNatToN b
+      u = subtraction a b (mapMaybePreservesNo pr)
+  subtraction (one :: a) (one :: b) pr = succPreservesInequality (lessRespectsMultiplicationLeft (binNatToN a) (binNatToN b) 2 u (le 1 refl))
+    where
+      u : binNatToN a <N binNatToN b
+      u = subtraction a b (mapMaybePreservesNo pr)
+
+  subLemma4 : (a b : BinNat) {t : BinNat} → go one a b ≡ no → go zero a b ≡ yes t → canonical t ≡ []
+  subLemma4 [] [] {t} pr1 pr2 rewrite yesInjective (equalityCommutative pr2) = refl
+  subLemma4 [] (x :: b) {t} pr1 pr2 = goZeroEmpty' (x :: b) pr2
+  subLemma4 (zero :: a) [] {t} pr1 pr2 with inspect (go one a [])
+  subLemma4 (zero :: a) [] {t} pr1 pr2 | no with≡ pr3 with subLemma4 a [] pr3 (goEmpty a)
+  ... | bl with applyEquality canonical (yesInjective pr2)
+  ... | th rewrite bl = equalityCommutative th
+  subLemma4 (zero :: a) [] {t} pr1 pr2 | yes x with≡ pr3 rewrite pr3 = exFalso (noNotYes (equalityCommutative pr1))
+  subLemma4 (zero :: a) (zero :: b) {t} pr1 pr2 with inspect (go one a b)
+  subLemma4 (zero :: a) (zero :: b) {t} pr1 pr2 | no with≡ pr3 with inspect (go zero a b)
+  subLemma4 (zero :: a) (zero :: b) {t} pr1 pr2 | no with≡ pr3 | no with≡ pr4 rewrite pr4 = exFalso (noNotYes pr2)
+  subLemma4 (zero :: a) (zero :: b) {t} pr1 pr2 | no with≡ pr3 | yes x with≡ pr4 with subLemma4 a b pr3 pr4
+  ... | bl rewrite pr3 | pr4 = ans
+    where
+      ans : canonical t ≡ []
+      ans rewrite equalityCommutative (applyEquality canonical (yesInjective pr2)) | bl = refl
+  subLemma4 (zero :: a) (zero :: b) {t} pr1 pr2 | yes x with≡ pr3 rewrite pr3 = exFalso (noNotYes (equalityCommutative pr1))
+  subLemma4 (zero :: a) (one :: b) {t} pr1 pr2 with go one a b
+  ... | no = exFalso (noNotYes pr2)
+  subLemma4 (zero :: a) (one :: b) {t} pr1 pr2 | yes x = exFalso (noNotYes (equalityCommutative pr1))
+  subLemma4 (one :: a) (zero :: b) {t} pr1 pr2 with go zero a b
+  subLemma4 (one :: a) (zero :: b) {t} pr1 pr2 | no = exFalso (noNotYes pr2)
+  subLemma4 (one :: a) (zero :: b) {t} pr1 pr2 | yes x = exFalso (noNotYes (equalityCommutative pr1))
+  subLemma4 (one :: a) (one :: b) {t} pr1 pr2 with inspect (go zero a b)
+  subLemma4 (one :: a) (one :: b) {t} pr1 pr2 | no with≡ pr3 rewrite pr3 = exFalso (noNotYes pr2)
+  subLemma4 (one :: a) (one :: b) {t} pr1 pr2 | yes x with≡ pr3 with inspect (go one a b)
+  subLemma4 (one :: a) (one :: b) {t} pr1 pr2 | yes x with≡ pr3 | no with≡ pr4 with subLemma4 a b pr4 pr3
+  ... | bl rewrite pr3 | pr4 | bl = ans
+    where
+      ans : canonical t ≡ []
+      ans rewrite equalityCommutative (applyEquality canonical (yesInjective pr2)) | bl = refl
+  subLemma4 (one :: a) (one :: b) {t} pr1 pr2 | yes x with≡ pr3 | yes x₁ with≡ pr4 rewrite pr4 = exFalso (noNotYes (equalityCommutative pr1))
+
+  goOneFromZero : (a b : BinNat) → go zero a b ≡ no → go one a b ≡ no
+  goOneFromZero [] (zero :: b) pr = refl
+  goOneFromZero [] (one :: b) pr = refl
+  goOneFromZero (zero :: a) (zero :: b) pr rewrite goOneFromZero a b (mapMaybePreservesNo pr) = refl
+  goOneFromZero (zero :: a) (one :: b) pr rewrite (mapMaybePreservesNo pr) = refl
+  goOneFromZero (one :: a) (zero :: b) pr rewrite (mapMaybePreservesNo pr) = refl
+  goOneFromZero (one :: a) (one :: b) pr rewrite goOneFromZero a b (mapMaybePreservesNo pr) = refl
+
+  subLemma5 : (a b : BinNat) → mapMaybe canonical (go zero a b) ≡ yes [] → go one a b ≡ no
+  subLemma5 [] b pr = goOneEmpty' b
+  subLemma5 (zero :: a) [] pr with inspect (canonical a)
+  subLemma5 (zero :: a) [] pr | (z :: zs) with≡ pr2 rewrite pr2 = exFalso (nonEmptyNotEmpty (yesInjective pr))
+  subLemma5 (zero :: a) [] pr | [] with≡ pr2 rewrite pr2 = applyEquality (mapMaybe (one ::_)) (subLemma5 a [] (transitivity (applyEquality (mapMaybe canonical) (goEmpty a)) (applyEquality yes pr2)))
+  subLemma5 (zero :: a) (zero :: b) pr with inspect (go zero a b)
+  subLemma5 (zero :: a) (zero :: b) pr | no with≡ pr2 rewrite pr2 = exFalso (noNotYes pr)
+  subLemma5 (zero :: a) (zero :: b) pr | yes x with≡ pr2 with inspect (canonical x)
+  subLemma5 (zero :: a) (zero :: b) pr | yes x with≡ pr2 | [] with≡ pr3 rewrite pr | pr2 | pr3 = applyEquality (mapMaybe (one ::_)) (subLemma5 a b (transitivity (applyEquality (mapMaybe canonical) pr2) (applyEquality yes pr3)))
+  subLemma5 (zero :: a) (zero :: b) pr | yes x with≡ pr2 | (x₁ :: bl) with≡ pr3 rewrite pr | pr2 | pr3 = exFalso (nonEmptyNotEmpty (yesInjective pr))
+  subLemma5 (zero :: a) (one :: b) pr with (go one a b)
+  subLemma5 (zero :: a) (one :: b) pr | no = exFalso (noNotYes pr)
+  subLemma5 (zero :: a) (one :: b) pr | yes y = exFalso (nonEmptyNotEmpty (yesInjective pr))
+  subLemma5 (one :: a) (zero :: b) pr with go zero a b
+  subLemma5 (one :: a) (zero :: b) pr | no = exFalso (noNotYes pr)
+  subLemma5 (one :: a) (zero :: b) pr | yes x = exFalso (nonEmptyNotEmpty (yesInjective pr))
+  subLemma5 (one :: a) (one :: b) pr with inspect (go zero a b)
+  subLemma5 (one :: a) (one :: b) pr | yes x with≡ pr2 with inspect (canonical x)
+  subLemma5 (one :: a) (one :: b) pr | yes x with≡ pr2 | [] with≡ pr3 rewrite pr | pr2 | pr3 = applyEquality (mapMaybe (one ::_)) (subLemma5 a b (transitivity (applyEquality (mapMaybe canonical) pr2) (applyEquality yes pr3)))
+  subLemma5 (one :: a) (one :: b) pr | yes x with≡ pr2 | (x₁ :: y) with≡ pr3 rewrite pr | pr2 | pr3 = exFalso (nonEmptyNotEmpty (yesInjective pr))
+  subLemma5 (one :: a) (one :: b) pr | no with≡ pr2 rewrite pr2 = exFalso (noNotYes pr)
+
+  subLemma3 : (a b : BinNat) → go zero a b ≡ no → (go zero (incr a) b ≡ no) || (mapMaybe canonical (go zero (incr a) b) ≡ yes [])
+  subLemma3 a b pr with inspect (go zero (incr a) b)
+  subLemma3 a b pr | no with≡ x = inl x
+  subLemma3 [] (zero :: b) pr | yes y with≡ pr1 rewrite pr = exFalso (noNotYes pr1)
+  subLemma3 [] (one :: b) pr | yes y with≡ pr1 with inspect (go zero [] b)
+  subLemma3 [] (one :: b) pr | yes y with≡ pr1 | no with≡ pr2 rewrite pr1 | pr2 = exFalso (noNotYes pr1)
+  subLemma3 [] (one :: b) pr | yes y with≡ pr1 | yes x with≡ pr2 with goZeroEmpty' b pr2
+  ... | f rewrite pr1 | pr2 | equalityCommutative (yesInjective pr1) | f = inr refl
+  subLemma3 (zero :: a) (zero :: b) pr | yes y with≡ pr1 rewrite mapMaybePreservesNo pr = exFalso (noNotYes pr1)
+  subLemma3 (zero :: a) (one :: b) pr | yes y with≡ pr1 with inspect (go zero a b)
+  subLemma3 (zero :: a) (one :: b) pr | yes y with≡ pr1 | no with≡ pr2 rewrite pr1 | pr2 = exFalso (noNotYes pr1)
+  subLemma3 (zero :: a) (one :: b) pr | yes y with≡ pr1 | yes x with≡ pr2 with inspect (canonical x)
+  ... | [] with≡ pr3 rewrite pr1 | pr2 | equalityCommutative (yesInjective pr1) | pr3 = inr refl
+  ... | (z :: zs) with≡ pr3 with inspect (go one a b)
+  subLemma3 (zero :: a) (one :: b) pr | yes y with≡ pr1 | yes x with≡ pr2 | (z :: zs) with≡ pr3 | no with≡ pr4 rewrite pr1 | pr2 | pr3 | pr4 = exFalso (nonEmptyNotEmpty (transitivity (equalityCommutative pr3) (subLemma4 a b pr4 pr2)))
+  subLemma3 (zero :: a) (one :: b) pr | yes y with≡ pr1 | yes x with≡ pr2 | (z :: zs) with≡ pr3 | yes x₁ with≡ pr4 rewrite pr1 | pr2 | pr3 | pr4 = exFalso (noNotYes (equalityCommutative pr))
+  subLemma3 (one :: a) (zero :: b) pr | yes y with≡ pr1 with subLemma3 a b (mapMaybePreservesNo pr)
+  subLemma3 (one :: a) (zero :: b) pr | yes y with≡ pr1 | inl x rewrite x = inl refl
+  subLemma3 (one :: a) (zero :: b) pr | yes y with≡ pr1 | inr x with inspect (go zero (incr a) b)
+  ... | no with≡ pr2 rewrite pr1 | pr2 = exFalso (noNotYes x)
+  ... | yes z with≡ pr2 rewrite pr1 | pr2 = inr (applyEquality yes (transitivity (transitivity (applyEquality canonical (yesInjective (equalityCommutative pr1))) r) (yesInjective x)))
+    where
+      r : canonical (zero :: z) ≡ canonical z
+      r rewrite yesInjective x = refl
+  subLemma3 (one :: a) (one :: b) pr | yes y with≡ pr1 with subLemma3 a b (mapMaybePreservesNo pr)
+  subLemma3 (one :: a) (one :: b) pr | yes y with≡ pr1 | inl x with inspect (go one (incr a) b)
+  subLemma3 (one :: a) (one :: b) pr | yes y with≡ pr1 | inl th | no with≡ pr2 rewrite pr2 = exFalso (noNotYes pr1)
+  subLemma3 (one :: a) (one :: b) pr | yes y with≡ pr1 | inl th | yes x with≡ pr2 with goOneFromZero (incr a) b th
+  ... | bad rewrite pr2 = exFalso (noNotYes (equalityCommutative bad))
+  subLemma3 (one :: a) (one :: b) pr | yes y with≡ pr1 | inr x with inspect (go one (incr a) b)
+  subLemma3 (one :: a) (one :: b) pr | yes y with≡ pr1 | inr x | no with≡ pr2 rewrite pr2 = exFalso (noNotYes pr1)
+  subLemma3 (one :: a) (one :: b) pr | yes y with≡ pr1 | inr th | yes z with≡ pr2 with inspect (go zero (incr a) b)
+  subLemma3 (one :: a) (one :: b) pr | yes y with≡ pr1 | inr th | yes z with≡ pr2 | no with≡ pr3 rewrite pr3 = exFalso (noNotYes th)
+  subLemma3 (one :: a) (one :: b) pr | yes y with≡ pr1 | inr th | yes z with≡ pr2 | yes x with≡ pr3 with inspect (go zero a b)
+  subLemma3 (one :: a) (one :: b) pr | yes y with≡ pr1 | inr th | yes z with≡ pr2 | yes x with≡ pr3 | no with≡ pr4 rewrite pr1 | th | pr2 | pr3 | pr4 | equalityCommutative (yesInjective pr1) = exFalso false
+    where
+      false : False
+      false with applyEquality (mapMaybe canonical) pr3
+      ... | f rewrite th | subLemma5 (incr a) b f = exFalso (noNotYes pr2)
+  subLemma3 (one :: a) (one :: b) pr | yes y with≡ pr1 | inr th | yes z with≡ pr2 | yes x with≡ pr3 | yes w with≡ pr4 rewrite pr4 = exFalso (noNotYes (equalityCommutative pr))
+
+  goIncrOne : (a b : BinNat) → mapMaybe canonical (go one a b) ≡ mapMaybe canonical (go zero a (incr b))
+  goIncrOne [] b rewrite goOneEmpty' b | goZeroIncr b = refl
+  goIncrOne (zero :: a) [] = refl
+  goIncrOne (zero :: a) (zero :: b) = refl
+  goIncrOne (zero :: a) (one :: b) with inspect (go one a b)
+  goIncrOne (zero :: a) (one :: b) | no with≡ pr1 with inspect (go zero a (incr b))
+  goIncrOne (zero :: a) (one :: b) | no with≡ pr1 | no with≡ pr2 rewrite pr1 | pr2 = refl
+  goIncrOne (zero :: a) (one :: b) | no with≡ pr1 | yes x with≡ pr2 with goIncrOne a b
+  ... | f rewrite pr1 | pr2 = exFalso (noNotYes f)
+  goIncrOne (zero :: a) (one :: b) | yes x with≡ pr1 with inspect (go zero a (incr b))
+  goIncrOne (zero :: a) (one :: b) | yes x with≡ pr1 | no with≡ pr2 with goIncrOne a b
+  ... | f rewrite pr1 | pr2 = exFalso (noNotYes (equalityCommutative f))
+  goIncrOne (zero :: a) (one :: b) | yes x with≡ pr1 | yes y with≡ pr2 with goIncrOne a b
+  ... | f rewrite pr1 | pr2 | yesInjective f = refl
+  goIncrOne (one :: a) [] rewrite goEmpty a = refl
+  goIncrOne (one :: a) (zero :: b) = refl
+  goIncrOne (one :: a) (one :: b) with inspect (go one a b)
+  goIncrOne (one :: a) (one :: b) | no with≡ pr with inspect (go zero a (incr b))
+  goIncrOne (one :: a) (one :: b) | no with≡ pr | no with≡ pr2 with goIncrOne a b
+  ... | f rewrite pr | pr2 = refl
+  goIncrOne (one :: a) (one :: b) | no with≡ pr | yes x with≡ pr2 with goIncrOne a b
+  ... | f rewrite pr | pr2 = exFalso (noNotYes f)
+  goIncrOne (one :: a) (one :: b) | yes x with≡ pr with inspect (go zero a (incr b))
+  goIncrOne (one :: a) (one :: b) | yes x with≡ pr | no with≡ pr2 with goIncrOne a b
+  ... | f rewrite pr | pr2 = exFalso (noNotYes (equalityCommutative f))
+  goIncrOne (one :: a) (one :: b) | yes x with≡ pr | yes y with≡ pr2 with goIncrOne a b
+  ... | f rewrite pr | pr2 | yesInjective f = refl
+
+  goIncrIncr : (a b : BinNat) → mapMaybe canonical (go zero (incr a) (incr b)) ≡ mapMaybe canonical (go zero a b)
+  goIncrIncr [] [] = refl
+  goIncrIncr [] (zero :: b) with inspect (go zero [] b)
+  ... | no with≡ pr rewrite goIncrIncr [] b | pr = refl
+  ... | yes y with≡ pr rewrite goIncrIncr [] b | pr | goZeroEmpty' b {y} pr = refl
+  goIncrIncr [] (one :: b) rewrite goZeroIncr b = refl
+  goIncrIncr (zero :: a) [] rewrite goEmpty a = refl
+  goIncrIncr (zero :: a) (zero :: b) = refl
+  goIncrIncr (zero :: a) (one :: b) with inspect (go zero a (incr b))
+  goIncrIncr (zero :: a) (one :: b) | no with≡ pr with inspect (go one a b)
+  goIncrIncr (zero :: a) (one :: b) | no with≡ pr | no with≡ pr2 rewrite pr | pr2 = refl
+  goIncrIncr (zero :: a) (one :: b) | no with≡ pr | yes x with≡ pr2 with goIncrOne a b
+  ... | f rewrite pr | pr2 = exFalso (noNotYes (equalityCommutative f))
+  goIncrIncr (zero :: a) (one :: b) | yes y with≡ pr with inspect (go one a b)
+  goIncrIncr (zero :: a) (one :: b) | yes y with≡ pr | yes z with≡ pr2 with goIncrOne a b
+  ... | f rewrite pr | pr2 = applyEquality (λ i → yes (one :: i)) (equalityCommutative (yesInjective f))
+  goIncrIncr (zero :: a) (one :: b) | yes y with≡ pr | no with≡ pr2 with goIncrOne a b
+  ... | f rewrite pr | pr2 = exFalso (noNotYes f)
+  goIncrIncr (one :: a) [] with goOne a []
+  ... | f with go one (incr a) []
+  goIncrIncr (one :: a) [] | f | no rewrite goEmpty a = exFalso (noNotYes f)
+  goIncrIncr (one :: a) [] | f | yes x rewrite goEmpty a | yesInjective f = refl
+  goIncrIncr (one :: a) (zero :: b) with goOne a b
+  ... | f with go one (incr a) b
+  goIncrIncr (one :: a) (zero :: b) | f | no with go zero a b
+  goIncrIncr (one :: a) (zero :: b) | f | no | no = refl
+  goIncrIncr (one :: a) (zero :: b) | f | yes x with go zero a b
+  goIncrIncr (one :: a) (zero :: b) | f | yes x | yes x₁ rewrite yesInjective f = refl
+  goIncrIncr (one :: a) (one :: b) with goIncrIncr a b
+  ... | f with go zero a b
+  goIncrIncr (one :: a) (one :: b) | f | no with go zero (incr a) (incr b)
+  goIncrIncr (one :: a) (one :: b) | f | no | no = refl
+  goIncrIncr (one :: a) (one :: b) | f | yes x with go zero (incr a) (incr b)
+  goIncrIncr (one :: a) (one :: b) | f | yes x | yes x₁ rewrite yesInjective f = refl
+
+  subtractionConverse : (a b : ℕ) → a <N b → go zero (NToBinNat a) (NToBinNat b) ≡ no
+  subtractionConverse zero (succ b) a<b with NToBinNat b
+  subtractionConverse zero (succ b) a<b | [] = refl
+  subtractionConverse zero (succ b) a<b | zero :: bl = refl
+  subtractionConverse zero (succ b) a<b | one :: bl = goZeroIncr bl
+  subtractionConverse (succ a) (succ b) a<b with inspect (NToBinNat a)
+  subtractionConverse (succ a) (succ b) a<b | [] with≡ pr with inspect (NToBinNat b)
+  subtractionConverse (succ a) (succ b) a<b | [] with≡ pr | [] with≡ pr2 rewrite NToBinNatZero a pr | NToBinNatZero b pr2 = exFalso (TotalOrder.irreflexive ℕTotalOrder a<b)
+  subtractionConverse (succ a) (succ zero) a<b | [] with≡ pr | (zero :: y) with≡ pr2 rewrite NToBinNatZero a pr | pr2 = exFalso (TotalOrder.irreflexive ℕTotalOrder a<b)
+  subtractionConverse (succ a) (succ (succ b)) a<b | [] with≡ pr | (zero :: y) with≡ pr2 with inspect (go zero [] y)
+  ... | no with≡ pr3 rewrite NToBinNatZero a pr | pr2 | pr3 = refl
+  ... | yes t with≡ pr3 with applyEquality canonical pr2
+  ... | g rewrite (goZeroEmpty y pr3) = exFalso (incrNonzero (NToBinNat b) g)
+  subtractionConverse (succ a) (succ b) a<b | [] with≡ pr | (one :: y) with≡ pr2 rewrite NToBinNatZero a pr | pr2 = applyEquality (mapMaybe (one ::_)) (goZeroIncr y)
+  subtractionConverse (succ a) (succ b) a<b | (zero :: y) with≡ pr with inspect (NToBinNat b)
+  subtractionConverse (succ a) (succ b) a<b | (zero :: y) with≡ pr | [] with≡ pr2 rewrite NToBinNatZero b pr2 = exFalso (bad a<b)
+    where
+      bad : {a : ℕ} → succ a <N 1 → False
+      bad {zero} (le zero ())
+      bad {zero} (le (succ x) ())
+      bad {succ a} (le zero ())
+      bad {succ a} (le (succ x) ())
+  subtractionConverse (succ a) (succ b) a<b | (zero :: y) with≡ pr | (zero :: z) with≡ pr2 rewrite pr | pr2 = applyEquality (mapMaybe (zero ::_)) (mapMaybePreservesNo u)
+    where
+      t : go zero (NToBinNat a) (NToBinNat b) ≡ no
+      t = subtractionConverse a b (canRemoveSuccFrom<N a<b)
+      u : go zero (zero :: y) (zero :: z) ≡ no
+      u = transitivity (transitivity {x = _} {go zero (NToBinNat a) (zero :: z)} (applyEquality (λ i → go zero i (zero :: z)) (equalityCommutative pr)) (applyEquality (go zero (NToBinNat a)) (equalityCommutative pr2))) t
+  subtractionConverse (succ a) (succ b) a<b | (zero :: y) with≡ pr | (one :: z) with≡ pr2 with subtractionConverse a (succ b) (le (succ (_<N_.x a<b)) (transitivity (applyEquality succ (transitivity (applyEquality succ (Semiring.commutative ℕSemiring (_<N_.x a<b) a)) (Semiring.commutative ℕSemiring (succ a) (_<N_.x a<b)))) (_<N_.proof a<b)))
+  subtractionConverse (succ a) (succ b) a<b | (zero :: y) with≡ pr | (one :: z) with≡ pr2 | thing=no with subLemma3 (NToBinNat a) (incr (NToBinNat b)) thing=no
+  subtractionConverse (succ a) (succ b) a<b | (zero :: y) with≡ pr | (one :: z) with≡ pr2 | thing=no | inl x = x
+  subtractionConverse (succ a) (succ b) a<b | (zero :: y) with≡ pr | (one :: z) with≡ pr2 | thing=no | inr x rewrite pr | pr2 | mapMaybePreservesNo thing=no = exFalso (noNotYes x)
+  subtractionConverse (succ a) (succ b) a<b | (one :: y) with≡ pr with goIncrIncr (NToBinNat a) (NToBinNat b)
+  ... | f rewrite subtractionConverse a b (canRemoveSuccFrom<N a<b) = mapMaybePreservesNo f
 
 {-
 

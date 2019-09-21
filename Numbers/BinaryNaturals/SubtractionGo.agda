@@ -63,6 +63,11 @@ module Numbers.BinaryNaturals.SubtractionGo where
   goZeroEmpty' (x :: b) {[]} pr = refl
   goZeroEmpty' (zero :: b) {x₁ :: t} pr = goZeroEmpty' b pr
 
+  goZeroIncr : (b : BinNat) → go zero [] (incr b) ≡ no
+  goZeroIncr [] = refl
+  goZeroIncr (zero :: b) = refl
+  goZeroIncr (one :: b) = goZeroIncr b
+
   goPreservesCanonicalRightEmpty : (b : BinNat) → go zero [] (canonical b) ≡ go zero [] b
   goPreservesCanonicalRightEmpty [] = refl
   goPreservesCanonicalRightEmpty (zero :: b) with inspect (canonical b)
