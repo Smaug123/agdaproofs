@@ -141,7 +141,7 @@ module Numbers.BinaryNaturals.Subtraction where
   subLemma2 a b a<b | inl (inr x) = exFalso (TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder x (TotalOrder.transitive ℕTotalOrder (lessRespectsMultiplicationLeft a b 2 a<b (le 1 refl)) (le 0 refl))))
   subLemma2 a b a<b | inr x = exFalso (parity b a (equalityCommutative x))
 
-  subtraction : (a b : BinNat) → go zero a b ≡ no → binNatToN a <N binNatToN b
+  subtraction : (a b : BinNat) → a -B b ≡ no → binNatToN a <N binNatToN b
   subtraction' : (a b : BinNat) → go one a b ≡ no → (binNatToN a <N binNatToN b) || (binNatToN a ≡ binNatToN b)
 
   subtraction' [] [] pr = inr refl
@@ -407,7 +407,7 @@ module Numbers.BinaryNaturals.Subtraction where
   doubling : (a : ℕ) {y : BinNat} → (NToBinNat a ≡ zero :: y) → binNatToN y +N (binNatToN y +N 0) ≡ a
   doubling a {y} pr = NToBinNatInj (binNatToN y +N (binNatToN y +N zero)) a (transitivity (transitivity (equalityCommutative (NToBinNatIsCanonical (binNatToN y +N (binNatToN y +N zero)))) (doublingLemma y)) (applyEquality canonical (equalityCommutative pr)))
 
-  subtraction2 : (a b : ℕ) {t : BinNat} → go zero (NToBinNat a) (NToBinNat b) ≡ yes t → (binNatToN t) +N b ≡ a
+  subtraction2 : (a b : ℕ) {t : BinNat} → (NToBinNat a) -B (NToBinNat b) ≡ yes t → (binNatToN t) +N b ≡ a
   subtraction2 zero zero {t} pr rewrite yesInjective (equalityCommutative pr) = refl
   subtraction2 zero (succ b) pr with goZeroEmpty (NToBinNat (succ b)) pr
   ... | t = exFalso (incrNonzero (NToBinNat b) t)
@@ -430,7 +430,6 @@ module Numbers.BinaryNaturals.Subtraction where
       ans : (NToBinNat b ≡ one :: bl) → b ≡ 1
       ans pr with applyEquality binNatToN pr
       ... | th rewrite z = transitivity (equalityCommutative (nToN b)) th
-  --lemma6 : (a : BinNat) (b : ℕ) → canonical a ≡ [] → NToBinNat b ≡ one :: a → a ≡ []
   subtraction2 (succ a) b pr | (x :: y) with≡ pr2 with inspect (NToBinNat b)
   subtraction2 (succ a) b pr | (zero :: y) with≡ pr2 | [] with≡ pr3 rewrite NToBinNatZero b pr3 | pr2 | pr3 | equalityCommutative (yesInjective pr) = applyEquality succ (transitivity (Semiring.sumZeroRight ℕSemiring _) (doubling a pr2))
   subtraction2 (succ a) b pr | (one :: y) with≡ pr2 | [] with≡ pr3 rewrite NToBinNatZero b pr3 | pr2 | pr3 | equalityCommutative (yesInjective pr) = transitivity (Semiring.sumZeroRight ℕSemiring (binNatToN (incr y) +N (binNatToN (incr y) +N zero))) (equalityCommutative (transitivity (equalityCommutative (nToN (succ a))) (applyEquality binNatToN (transitivity (equalityCommutative (NToBinNatSucc a)) (applyEquality incr pr2)))))
@@ -447,17 +446,19 @@ module Numbers.BinaryNaturals.Subtraction where
           h : (canonical t) ≡ (canonical x)
           h rewrite pr | pr4 = yesInjective f
 
-{-
-  -Binherited : (a b : ℕ) → (p : (b <N a) || (b ≡ a)) → mapMaybe binNatToN ((NToBinNat a) -B (NToBinNat b)) ≡ yes (subtractionNResult.result (-N p))
-  -Binherited a b (inl x) = {!!}
-  -Binherited a b (inr pr) with aMinusA (NToBinNat a)
-  ... | t with inspect (go zero (NToBinNat a) (NToBinNat a))
-  -Binherited a b (inr pr) | t | yes x with≡ pr2 rewrite pr | pr2 | binNatToNZero' x (yesInjective t) = applyEquality yes (equalityCommutative {!!})
-    where
-      subLemm : {m n : ℕ} → (pr : m ≡ n) → subtractionNResult.result (-N (inr pr)) ≡ 0
-      subLemm {zero} pr = equalityCommutative pr
-      subLemm {succ m} pr with -N (inr pr)
-      subLemm {succ m} {n} pr1 | record { result = result ; pr = pr } rewrite equalityCommutative pr1 = canSubtractFromEqualityLeft {succ m} (transitivity pr (equalityCommutative (Semiring.sumZeroRight ℕSemiring (succ m))))
-  -Binherited a b (inr pr) | t | no with≡ pr2 rewrite pr | pr2 = exFalso (noNotYes t)
 
--}
+  subtraction2' : (a b : ℕ) {t : BinNat} → (NToBinNat a) -B (NToBinNat b) ≡ yes t → b ≤N a
+  subtraction2' a b {t} pr with subtraction2 a b pr
+  ... | f with binNatToN t
+  subtraction2' a b {t} pr | f | zero = inr f
+  subtraction2' a b {t} pr | f | succ g = inl (le g f)
+
+  subtraction2'' : (a b : ℕ) → (pr : b ≤N a) → mapMaybe binNatToN ((NToBinNat a) -B (NToBinNat b)) ≡ yes (subtractionNResult.result (-N pr))
+  subtraction2'' a b pr with -N pr
+  subtraction2'' a b pr | record { result = result ; pr = subPr } with inspect (go zero (NToBinNat a) (NToBinNat b))
+  subtraction2'' a b (inl pr) | record { result = result ; pr = subPr } | no with≡ pr2 with subtraction (NToBinNat a) (NToBinNat b) pr2
+  ... | bl rewrite nToN a | nToN b = exFalso (TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder pr bl))
+  subtraction2'' a b (inr pr) | record { result = result ; pr = subPr } | no with≡ pr2 with subtraction (NToBinNat a) (NToBinNat b) pr2
+  ... | bl rewrite nToN a | nToN b | pr = exFalso (TotalOrder.irreflexive ℕTotalOrder bl)
+  subtraction2'' a b pr | record { result = result ; pr = subPr } | yes x with≡ pr2 with subtraction2 a b pr2
+  ... | f rewrite pr2 | Semiring.commutative ℕSemiring (binNatToN x) b = applyEquality yes (canSubtractFromEqualityLeft {b} {binNatToN x} (transitivity f (equalityCommutative subPr)))
