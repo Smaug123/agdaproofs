@@ -6,6 +6,7 @@ open import Numbers.Naturals.Naturals
 open import Numbers.BinaryNaturals.Definition
 open import Numbers.BinaryNaturals.Multiplication
 open import Numbers.BinaryNaturals.Order
+open import Numbers.BinaryNaturals.Subtraction
 
 open import Numbers.Integers.Integers
 

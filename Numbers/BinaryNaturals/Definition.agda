@@ -86,6 +86,12 @@ module Numbers.BinaryNaturals.Definition where
   binNatToNZero : (x : BinNat) → binNatToN x ≡ 0 → canonical x ≡ []
   binNatToNZero' : (x : BinNat) → canonical x ≡ [] → binNatToN x ≡ 0
 
+  NToBinNatZero : (n : ℕ) → NToBinNat n ≡ [] → n ≡ 0
+  NToBinNatZero zero pr = refl
+  NToBinNatZero (succ n) pr with NToBinNat n
+  NToBinNatZero (succ n) pr | zero :: bl = exFalso (nonEmptyNotEmpty pr)
+  NToBinNatZero (succ n) pr | one :: bl = exFalso (nonEmptyNotEmpty pr)
+
   canonicalAscends : {i : Bit} → (a : BinNat) → 0 <N binNatToN a → i :: canonical a ≡ canonical (i :: a)
 
   canonicalAscends' : {i : Bit} → (a : BinNat) → (canonical a ≡ [] → False) → i :: canonical a ≡ canonical (i :: a)
