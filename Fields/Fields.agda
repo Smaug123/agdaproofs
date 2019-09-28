@@ -10,6 +10,7 @@ open import Setoids.Orders
 open import Orders
 open import Rings.IntegralDomains
 open import Functions
+open import Sets.EquivalenceRelations
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
@@ -27,9 +28,7 @@ module Fields.Fields where
   IntegralDomain.intDom (orderedFieldIsIntDom {A = A} {S = S} {_*_ = _*_} {R = R} {pOrder = pOrder} {tOrder = tOrder} O F) {a} {b} ab=0 | inl (inl x) = inr (transitive (transitive (symmetric multIdentIsIdent) (multWellDefined q reflexive)) p')
     where
       open Setoid S
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Equivalence eq
       open Ring R
       a!=0 : (a ∼ Group.identity additiveGroup) → False
       a!=0 pr = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.wellDefined pOrder (symmetric pr) reflexive x)
@@ -45,9 +44,7 @@ module Fields.Fields where
   IntegralDomain.intDom (orderedFieldIsIntDom {A = A} {S = S} {_*_ = _*_} {R = R} {pOrder = pOrder} {tOrder = tOrder} O F) {a} {b} ab=0 | inl (inr x) = inr (transitive (transitive (symmetric multIdentIsIdent) (multWellDefined q reflexive)) p')
     where
       open Setoid S
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Equivalence eq
       open Ring R
       a!=0 : (a ∼ Group.identity additiveGroup) → False
       a!=0 pr = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.wellDefined pOrder reflexive (symmetric pr) x)
@@ -60,8 +57,8 @@ module Fields.Fields where
       p = multWellDefined reflexive ab=0
       p' : (invA * a) * b ∼ Group.identity additiveGroup
       p' = transitive (symmetric multAssoc) (transitive p (ringTimesZero R))
-  IntegralDomain.intDom (orderedFieldIsIntDom {S = S} {_*_ = _*_} {R = R} {tOrder = tOrder} O F) {a} {b} ab=0 | inr x = inl (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) x)
-  IntegralDomain.nontrivial (orderedFieldIsIntDom {S = S} O F) pr = Field.nontrivial F (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) pr)
+  IntegralDomain.intDom (orderedFieldIsIntDom {S = S} {_*_ = _*_} {R = R} {tOrder = tOrder} O F) {a} {b} ab=0 | inr x = inl (Equivalence.symmetric (Setoid.eq S) x)
+  IntegralDomain.nontrivial (orderedFieldIsIntDom {S = S} O F) pr = Field.nontrivial F (Equivalence.symmetric (Setoid.eq S) pr)
 
   record Field' {m n : _} : Set (lsuc m ⊔ lsuc n) where
     field

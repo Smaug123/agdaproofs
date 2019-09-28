@@ -99,21 +99,3 @@ module Functions where
 
   codom : {a b : _} {A : Set a} {B : Set b} (f : A → B) → Set b
   codom {B = B} f = B
-
-  record Reflexive {a b : _} {A : Set a} (r : Rel {a} {b} A) : Set (a ⊔ lsuc b) where
-    field
-      reflexive : {b : A} → r b b
-
-  record Symmetric {a b : _} {A : Set a} (r : Rel {a} {b} A) : Set (a ⊔ lsuc b) where
-    field
-      symmetric : {b c : A} → r b c → r c b
-
-  record Transitive {a b : _} {A : Set a} (r : Rel {a} {b} A) : Set (a ⊔ lsuc b) where
-    field
-      transitive : {b c d : A} → r b c → r c d → r b d
-
-  record Equivalence {a b : _} {A : Set a} (r : Rel {a} {b} A) : Set (a ⊔ lsuc b) where
-    field
-      reflexiveEq : Reflexive r
-      symmetricEq : Symmetric r
-      transitiveEq : Transitive r

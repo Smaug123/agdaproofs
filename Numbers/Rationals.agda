@@ -13,6 +13,7 @@ open import Setoids.Orders
 open import Functions
 open import Fields.FieldOfFractions
 open import Fields.FieldOfFractionsOrder
+open import Sets.EquivalenceRelations
 
 module Numbers.Rationals where
 
@@ -41,7 +42,7 @@ module Numbers.Rationals where
   a =Q b = Setoid._∼_ (fieldOfFractionsSetoid ℤIntDom) a b
 
   reflQ : {x : ℚ} → (x =Q x)
-  reflQ {x} = Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq (fieldOfFractionsSetoid ℤIntDom))) {x}
+  reflQ {x} = Equivalence.reflexive (Setoid.eq (fieldOfFractionsSetoid ℤIntDom)) {x}
 
   _≤Q_ : ℚ → ℚ → Set
   a ≤Q b = (a <Q b) || (a =Q b)

@@ -9,6 +9,7 @@ open import Setoids.Setoids
 open import Functions
 open import Rings.Definition
 open import Rings.Lemmas
+open import Sets.EquivalenceRelations
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
@@ -22,9 +23,7 @@ module Rings.IntegralDomains where
   cancelIntDom {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I {a} {b} {c} ab=ac = t4
     where
       open Setoid S
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Equivalence eq
       t1 : (a * b) + Group.inverse (Ring.additiveGroup R) (a * c) ∼ Ring.0R R
       t1 = transferToRight'' (Ring.additiveGroup R) ab=ac
       t2 : a * (b + Group.inverse (Ring.additiveGroup R) c) ∼ Ring.0R R
