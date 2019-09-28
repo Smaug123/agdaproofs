@@ -8,6 +8,7 @@ open import Setoids.Setoids
 open import LogicalFormulae
 open import Sets.FinSet
 open import Functions
+open import Sets.EquivalenceRelations
 open import Numbers.Naturals.Naturals
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
@@ -19,9 +20,9 @@ module Groups.Groups2 where
 
   imageGroupSetoid : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+A_ : A → A → A} {_+B_ : B → B → B} {G : Group S _+A_} {H : Group T _+B_} {f : A → B} (fHom : GroupHom G H f) → Setoid (GroupHomImageElement fHom)
   (imageGroupSetoid {T = T} {f = f} fHom Setoid.∼ ofElt b1) (ofElt b2) = Setoid._∼_ T (f b1) (f b2)
-  Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq (imageGroupSetoid {T = T} fHom))) {ofElt b1} = Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq T))
-  Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq (imageGroupSetoid {T = T} fHom))) {ofElt b1} {ofElt b2} = Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq T))
-  Transitive.transitive (Equivalence.transitiveEq (Setoid.eq (imageGroupSetoid {T = T} fHom))) {ofElt b1} {ofElt b2} {ofElt b3} = Transitive.transitive (Equivalence.transitiveEq (Setoid.eq T))
+  Equivalence.reflexive (Setoid.eq (imageGroupSetoid {T = T} fHom)) {ofElt b1} = Equivalence.reflexive (Setoid.eq T)
+  Equivalence.symmetric (Setoid.eq (imageGroupSetoid {T = T} fHom)) {ofElt b1} {ofElt b2} = Equivalence.symmetric (Setoid.eq T)
+  Equivalence.transitive (Setoid.eq (imageGroupSetoid {T = T} fHom)) {ofElt b1} {ofElt b2} {ofElt b3} = Equivalence.transitive (Setoid.eq T)
 
   imageGroupOp : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+A_ : A → A → A} {_+B_ : B → B → B} {G : Group S _+A_} {H : Group T _+B_} {f : A → B} (fHom : GroupHom G H f) → GroupHomImageElement fHom → GroupHomImageElement fHom → GroupHomImageElement fHom
   imageGroupOp {_+A_ = _+A_} fHom (ofElt a) (ofElt b) = ofElt (a +A b)
@@ -30,8 +31,7 @@ module Groups.Groups2 where
   Group.wellDefined (imageGroup {T = T} {_+A_ = _+A_} {H = H} {f = f} fHom) {ofElt x} {ofElt y} {ofElt a} {ofElt b} x~a y~b = ans
     where
       open Setoid T
-      open Transitive (Equivalence.transitiveEq eq)
-      open Symmetric (Equivalence.symmetricEq eq)
+      open Equivalence eq
       ans : f (x +A y) ∼ f (a +A b)
       ans = transitive (GroupHom.groupHom fHom) (transitive (Group.wellDefined H x~a y~b) (symmetric (GroupHom.groupHom fHom)))
   Group.identity (imageGroup {G = G} fHom) = ofElt (Group.identity G)
@@ -59,13 +59,11 @@ module Groups.Groups2 where
   groupFirstIsomorphismIso fHom (ofElt a) = a
 
   groupFirstIsomorphismIsoHom : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+G_ : A → A → A} {_+H_ : B → B → B} {G : Group S _+G_} {H : Group T _+H_} {f : A → B} (fHom : GroupHom G H f) → GroupHom (imageGroup fHom) (quotientGroup G fHom) (groupFirstIsomorphismIso fHom)
-  GroupHom.groupHom (groupFirstIsomorphismIsoHom {G = G} fHom) {ofElt a} {ofElt b} = Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq (quotientGroupSetoid G fHom)))
+  GroupHom.groupHom (groupFirstIsomorphismIsoHom {G = G} fHom) {ofElt a} {ofElt b} = Equivalence.reflexive (Setoid.eq (quotientGroupSetoid G fHom))
   GroupHom.wellDefined (groupFirstIsomorphismIsoHom {T = T} {_+G_ = _+G_} {G = G} {H = H} {f = f} fHom) {ofElt a} {ofElt b} pr = ans
     where
       open Setoid T
-      open Transitive (Equivalence.transitiveEq (Setoid.eq T))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq T))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq T))
+      open Equivalence (Setoid.eq T)
       ans : f (a +G Group.inverse G b) ∼ Group.identity H
       ans = transitive (GroupHom.groupHom fHom) (transitive (Group.wellDefined H pr reflexive) (transitive (symmetric (GroupHom.groupHom fHom)) (transitive (GroupHom.wellDefined fHom (Group.invRight G)) (imageOfIdentityIsIdentity fHom))))
 
@@ -75,13 +73,11 @@ module Groups.Groups2 where
   SetoidInjection.injective (SetoidBijection.inj (GroupIso.bij (groupFirstIsomorphismTheorem' {T = T} {H = H} {f = f} fHom))) {ofElt a} {ofElt b} pr = need
     where
       open Setoid T
-      open Transitive (Equivalence.transitiveEq (Setoid.eq T))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq T))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq T))
+      open Equivalence eq
       need : f a ∼ f b
       need = transferToRight H (transitive (transitive (Group.wellDefined H reflexive (symmetric (homRespectsInverse fHom))) (symmetric (GroupHom.groupHom fHom))) pr)
   SetoidSurjection.wellDefined (SetoidBijection.surj (GroupIso.bij (groupFirstIsomorphismTheorem' fHom))) {x} {y} x~y = GroupHom.wellDefined (groupFirstIsomorphismIsoHom fHom) {x} {y} x~y
-  SetoidSurjection.surjective (SetoidBijection.surj (GroupIso.bij (groupFirstIsomorphismTheorem' {G = G} fHom))) {a} = ofElt a , Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq (quotientGroupSetoid G fHom)))
+  SetoidSurjection.surjective (SetoidBijection.surj (GroupIso.bij (groupFirstIsomorphismTheorem' {G = G} fHom))) {a} = ofElt a , Equivalence.reflexive (Setoid.eq (quotientGroupSetoid G fHom))
 
   groupFirstIsomorphismTheorem : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+G_ : A → A → A} {_+H_ : B → B → B} {G : Group S _+G_} {H : Group T _+H_} {f : A → B} (fHom : GroupHom G H f) → GroupsIsomorphic (imageGroup fHom) (quotientGroup G fHom)
   groupFirstIsomorphismTheorem fHom = record { isomorphism = groupFirstIsomorphismIso fHom ; proof = groupFirstIsomorphismTheorem' fHom }
@@ -97,15 +93,15 @@ module Groups.Groups2 where
 
   groupKernel : {a b c d : _} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} {f : A → B} (hom : GroupHom G H f) → Setoid (GroupKernelElement G hom)
   Setoid._∼_ (groupKernel {S = S} G {H} {f} fHom) (kerOfElt x fx=0) (kerOfElt y fy=0) = Setoid._∼_ S x y
-  Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq (groupKernel {S = S} G {H} {f} fHom))) {kerOfElt x x₁} = Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))
-  Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq (groupKernel {S = S} G {H} {f} fHom))) {kerOfElt x prX} {kerOfElt y prY} = Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S))
-  Transitive.transitive (Equivalence.transitiveEq (Setoid.eq (groupKernel {S = S} G {H} {f} fHom))) {kerOfElt x prX} {kerOfElt y prY} {kerOfElt z prZ} = Transitive.transitive (Equivalence.transitiveEq (Setoid.eq S))
+  Equivalence.reflexive (Setoid.eq (groupKernel {S = S} G {H} {f} fHom)) {kerOfElt x x₁} = Equivalence.reflexive (Setoid.eq S)
+  Equivalence.symmetric (Setoid.eq (groupKernel {S = S} G {H} {f} fHom)) {kerOfElt x prX} {kerOfElt y prY} = Equivalence.symmetric (Setoid.eq S)
+  Equivalence.transitive (Setoid.eq (groupKernel {S = S} G {H} {f} fHom)) {kerOfElt x prX} {kerOfElt y prY} {kerOfElt z prZ} = Equivalence.transitive (Setoid.eq S)
 
   groupKernelGroupOp : {a b c d : _} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} {f : A → B} (hom : GroupHom G H f) → (GroupKernelElement G hom) → (GroupKernelElement G hom) → (GroupKernelElement G hom)
   groupKernelGroupOp {T = T} {_·A_ = _+A_} G {H = H} hom (kerOfElt x prX) (kerOfElt y prY) = kerOfElt (x +A y) (transitive (GroupHom.groupHom hom) (transitive (Group.wellDefined H prX prY) (Group.multIdentLeft H)))
     where
       open Setoid T
-      open Transitive (Equivalence.transitiveEq (Setoid.eq T))
+      open Equivalence eq
 
   groupKernelGroup : {a b c d : _} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} {f : A → B} (hom : GroupHom G H f) → Group (groupKernel G hom) (groupKernelGroupOp G hom)
   Group.wellDefined (groupKernelGroup G fHom) {kerOfElt x prX} {kerOfElt y prY} {kerOfElt a prA} {kerOfElt b prB} = Group.wellDefined G
@@ -113,7 +109,7 @@ module Groups.Groups2 where
   Group.inverse (groupKernelGroup {T = T} G {H = H} fHom) (kerOfElt x prX) = kerOfElt (Group.inverse G x) (transitive (homRespectsInverse fHom) (transitive (inverseWellDefined H prX) (invIdentity H)))
     where
       open Setoid T
-      open Transitive (Equivalence.transitiveEq (Setoid.eq T))
+      open Equivalence eq
   Group.multAssoc (groupKernelGroup {S = S} {_·A_ = _·A_} G fHom) {kerOfElt x prX} {kerOfElt y prY} {kerOfElt z prZ} = Group.multAssoc G
   Group.multIdentRight (groupKernelGroup G fHom) {kerOfElt x prX} = Group.multIdentRight G
   Group.multIdentLeft (groupKernelGroup G fHom) {kerOfElt x prX} = Group.multIdentLeft G
@@ -124,7 +120,7 @@ module Groups.Groups2 where
   injectionFromKernelToG G hom (kerOfElt x _) = x
 
   injectionFromKernelToGIsHom : {a b c d : _} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} {f : A → B} (hom : GroupHom G H f) → GroupHom (groupKernelGroup G hom) G (injectionFromKernelToG G hom)
-  GroupHom.groupHom (injectionFromKernelToGIsHom {S = S} G hom) {kerOfElt x prX} {kerOfElt y prY} = Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+  GroupHom.groupHom (injectionFromKernelToGIsHom {S = S} G hom) {kerOfElt x prX} {kerOfElt y prY} = Equivalence.reflexive (Setoid.eq S)
   GroupHom.wellDefined (injectionFromKernelToGIsHom G hom) {kerOfElt x prX} {kerOfElt y prY} i = i
 
   groupKernelGroupIsSubgroup : {a b c d : _} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} {f : A → B} (hom : GroupHom G H f) → Subgroup G (groupKernelGroup G hom) (injectionFromKernelToGIsHom G hom)
@@ -135,12 +131,10 @@ module Groups.Groups2 where
 
   groupKernelGroupIsNormalSubgroup : {a b c d : _} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} {f : A → B} (hom : GroupHom G H f) → NormalSubgroup G (groupKernelGroup G hom) (injectionFromKernelToGIsHom G hom)
   NormalSubgroup.subgroup (groupKernelGroupIsNormalSubgroup G hom) = groupKernelGroupIsSubgroup G hom
-  NormalSubgroup.normal (groupKernelGroupIsNormalSubgroup {S = S} {T = T} {_·A_ = _·A_} G {H = H} {f = f} hom) {g} {kerOfElt h prH} = kerOfElt ((g ·A h) ·A Group.inverse G g) ans , Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+  NormalSubgroup.normal (groupKernelGroupIsNormalSubgroup {S = S} {T = T} {_·A_ = _·A_} G {H = H} {f = f} hom) {g} {kerOfElt h prH} = kerOfElt ((g ·A h) ·A Group.inverse G g) ans , Equivalence.reflexive (Setoid.eq S)
     where
       open Setoid T
-      open Transitive (Equivalence.transitiveEq (Setoid.eq T))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq T))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq T))
+      open Equivalence eq
       ans : f ((g ·A h) ·A Group.inverse G g) ∼ Group.identity H
       ans = transitive (GroupHom.groupHom hom) (transitive (Group.wellDefined H (GroupHom.groupHom hom) reflexive) (transitive (Group.wellDefined H (Group.wellDefined H reflexive prH) reflexive) (transitive (Group.wellDefined H (Group.multIdentRight H) reflexive) (transitive (symmetric (GroupHom.groupHom hom)) (transitive (GroupHom.wellDefined hom (Group.invRight G)) (imageOfIdentityIsIdentity hom))))))
 
@@ -150,9 +144,7 @@ module Groups.Groups2 where
     where
       open Setoid S
       open Group G
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+      open Equivalence (Setoid.eq S)
 
   trivialGroup : Group (reflSetoid (FinSet 1)) λ _ _ → fzero
   Group.wellDefined trivialGroup _ _ = refl
@@ -167,6 +159,6 @@ module Groups.Groups2 where
   Group.invRight trivialGroup = refl
 
   identityHom : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+A_ : A → A → A} (G : Group S _+A_) → GroupHom G G id
-  GroupHom.groupHom (identityHom {S = S} G) = Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+  GroupHom.groupHom (identityHom {S = S} G) = Equivalence.reflexive (Setoid.eq S)
   GroupHom.wellDefined (identityHom G) = id
 

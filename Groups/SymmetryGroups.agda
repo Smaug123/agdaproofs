@@ -8,6 +8,7 @@ open import Numbers.Naturals.Naturals
 open import Sets.FinSet
 open import Groups.Groups
 open import Groups.Definition
+open import Sets.EquivalenceRelations
 
 module Groups.SymmetryGroups where
   data SymmetryGroupElements {a b : _} {A : Set a} (S : Setoid {a} {b} A) : Set (a ⊔ b) where
@@ -20,19 +21,19 @@ module Groups.SymmetryGroups where
     eq : ({x : A} → Setoid._∼_ T (f x) (g x)) → ExtensionallyEqual S T f g fWd gWd
 
   extensionallyEqualReflexive : {a b c d : _} {A : Set a} {B : Set b} (S : Setoid {a} {c} A) (T : Setoid {b} {d} B) (f : A → B) (fWD1 fWD2 : WellDefined S T f) → ExtensionallyEqual S T f f fWD1 fWD2
-  extensionallyEqualReflexive S T f fWD1 _ = eq (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq T)))
+  extensionallyEqualReflexive S T f fWD1 _ = eq (Equivalence.reflexive (Setoid.eq T))
 
   extensionallyEqualSymmetric : {a b c d : _} {A : Set a} {B : Set b} (S : Setoid {a} {c} A) (T : Setoid {b} {d} B) (f g : A → B) (fWD : WellDefined S T f) (gWD : WellDefined S T g) → ExtensionallyEqual S T f g fWD gWD → ExtensionallyEqual S T g f gWD fWD
-  extensionallyEqualSymmetric S T f g fWD gWD (eq pr) = eq (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq T)) pr)
+  extensionallyEqualSymmetric S T f g fWD gWD (eq pr) = eq (Equivalence.symmetric (Setoid.eq T) pr)
 
   extensionallyEqualTransitive : {a b c d : _} {A : Set a} {B : Set b} (S : Setoid {a} {c} A) (T : Setoid {b} {d} B) (f g h : A → B) (fWD : WellDefined S T f) (gWD : WellDefined S T g) (hWD : WellDefined S T h) → ExtensionallyEqual S T f g fWD gWD → ExtensionallyEqual S T g h gWD hWD → ExtensionallyEqual S T f h fWD hWD
-  extensionallyEqualTransitive S T f g h fWD gWD hWD (eq pr1) (eq pr2) = eq (Transitive.transitive (Equivalence.transitiveEq (Setoid.eq T)) pr1 pr2)
+  extensionallyEqualTransitive S T f g h fWD gWD hWD (eq pr1) (eq pr2) = eq (Equivalence.transitive (Setoid.eq T) pr1 pr2)
 
   symmetricSetoid : {a b : _} {A : Set a} (S : Setoid {a} {b} A) → Setoid (SymmetryGroupElements S)
   Setoid._∼_ (symmetricSetoid S) (sym {f} bijF) (sym {g} bijG) = ExtensionallyEqual S S f g (SetoidBijection.wellDefined bijF) (SetoidBijection.wellDefined bijG)
-  Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq (symmetricSetoid S))) {sym {f} bijF} = extensionallyEqualReflexive S S f (SetoidBijection.wellDefined bijF) (SetoidBijection.wellDefined bijF)
-  Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq (symmetricSetoid S))) {sym {f} bijF} {sym {g} bijG} f~g = extensionallyEqualSymmetric S S f g (SetoidBijection.wellDefined bijF) (SetoidBijection.wellDefined bijG) f~g
-  Transitive.transitive (Equivalence.transitiveEq (Setoid.eq (symmetricSetoid S))) {sym {f} bijF} {sym {g} bijG} {sym {h} bijH} f~g g~h = extensionallyEqualTransitive S S f g h (SetoidBijection.wellDefined bijF) (SetoidBijection.wellDefined bijG) (SetoidBijection.wellDefined bijH) f~g g~h
+  Equivalence.reflexive (Setoid.eq (symmetricSetoid S)) {sym {f} bijF} = extensionallyEqualReflexive S S f (SetoidBijection.wellDefined bijF) (SetoidBijection.wellDefined bijF)
+  Equivalence.symmetric (Setoid.eq (symmetricSetoid S)) {sym {f} bijF} {sym {g} bijG} f~g = extensionallyEqualSymmetric S S f g (SetoidBijection.wellDefined bijF) (SetoidBijection.wellDefined bijG) f~g
+  Equivalence.transitive (Setoid.eq (symmetricSetoid S)) {sym {f} bijF} {sym {g} bijG} {sym {h} bijH} f~g g~h = extensionallyEqualTransitive S S f g h (SetoidBijection.wellDefined bijF) (SetoidBijection.wellDefined bijG) (SetoidBijection.wellDefined bijH) f~g g~h
 
   symmetricGroupOp : {a b : _} {A : Set a} {S : Setoid {a} {b} A} (f g : SymmetryGroupElements S) → SymmetryGroupElements S
   symmetricGroupOp (sym {f} bijF) (sym {g} bijG) = sym (setoidBijComp bijG bijF)
@@ -58,11 +59,11 @@ module Groups.SymmetryGroups where
   symmetricGroup : {a b : _} {A : Set a} (S : Setoid {a} {b} A) → Group (symmetricSetoid S) (symmetricGroupOp {A = A})
   Group.wellDefined (symmetricGroup A) {sym {m} bijM} {sym {n} bijN} {sym {x} bijX} {sym {y} bijY} (ExtensionallyEqual.eq m~x) (ExtensionallyEqual.eq n~y) = ExtensionallyEqual.eq (transitive m~x (SetoidBijection.wellDefined bijX n~y))
     where
-      open Transitive (Equivalence.transitiveEq (Setoid.eq A))
+      open Equivalence (Setoid.eq A)
   Group.identity (symmetricGroup A) = sym setoidIdIsBijective
   Group.inverse (symmetricGroup S) = symmetricGroupInv S
-  Group.multAssoc (symmetricGroup A) {sym {f} bijF} {sym {g} bijG} {sym {h} bijH} = ExtensionallyEqual.eq λ {x} → Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq A))
-  Group.multIdentRight (symmetricGroup A) {sym {f} bijF} = ExtensionallyEqual.eq λ {x} → Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq A))
-  Group.multIdentLeft (symmetricGroup A) {sym {f} bijF} = ExtensionallyEqual.eq λ {x} → Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq A))
+  Group.multAssoc (symmetricGroup A) {sym {f} bijF} {sym {g} bijG} {sym {h} bijH} = ExtensionallyEqual.eq λ {x} → Equivalence.reflexive (Setoid.eq A)
+  Group.multIdentRight (symmetricGroup A) {sym {f} bijF} = ExtensionallyEqual.eq λ {x} → Equivalence.reflexive (Setoid.eq A)
+  Group.multIdentLeft (symmetricGroup A) {sym {f} bijF} = ExtensionallyEqual.eq λ {x} → Equivalence.reflexive (Setoid.eq A)
   Group.invLeft (symmetricGroup S) {x} = symmetricGroupInvIsLeft S {x}
   Group.invRight (symmetricGroup S) {x} = symmetricGroupInvIsRight S {x}

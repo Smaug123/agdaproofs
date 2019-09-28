@@ -7,6 +7,7 @@ open import Functions
 open import Groups.SymmetryGroups
 open import Sets.FinSet
 open import Setoids.Setoids
+--open import Groups.Actions
 
 module Groups.FinitePermutations where
   allInsertions : {a : _} {A : Set a} (x : A) (l : List A) → List (List A)
@@ -60,6 +61,9 @@ module Groups.FinitePermutations where
       lemma = allTrueEqual (λ a → succ (length a)) (succ (length l)) (permutations l) (allTrueExtension (λ z → length z ≡ length l) (λ i → succ (length i) ≡ succ (length l)) (permutations l) (λ pr → applyEquality succ pr) (permsAllSameLength l))
       ans : length (permutations l) +N length l *N length (permutations l) ≡ factorial (length l) +N length l *N factorial (length l)
       ans rewrite permsLen l = refl
+
+  --act : GroupAction (symmetricGroup (symmetricSetoid (reflSetoid (FinSet n))))
+  --act = ?
 
 {- TODO: show that symmetricGroup acts in the obvious way on permutations FinSet
   listElements : {a : _} {A : Set a} (l : List A) → Set

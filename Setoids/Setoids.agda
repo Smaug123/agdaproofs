@@ -3,6 +3,7 @@
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
+open import Sets.EquivalenceRelations
 
 module Setoids.Setoids where
   record Setoid {a} {b} (A : Set a) : Set (a ⊔ lsuc b) where
@@ -12,9 +13,6 @@ module Setoids.Setoids where
       eq : Equivalence _∼_
 
     open Equivalence eq
-    open Reflexive reflexiveEq
-    open Transitive transitiveEq
-    open Symmetric symmetricEq
 
     ~refl : {r : A} → (r ∼ r)
     ~refl {r} = reflexive {r}
@@ -39,15 +37,15 @@ module Setoids.Setoids where
 
   reflSetoid : {a : _} (A : Set a) → Setoid A
   _∼_ (reflSetoid A) a b = a ≡ b
-  Reflexive.reflexive (Equivalence.reflexiveEq (eq (reflSetoid A))) = refl
-  Symmetric.symmetric (Equivalence.symmetricEq (eq (reflSetoid A))) {b} {.b} refl = refl
-  Transitive.transitive (Equivalence.transitiveEq (eq (reflSetoid A))) {b} {.b} {.b} refl refl = refl
+  Equivalence.reflexive (eq (reflSetoid A)) = refl
+  Equivalence.symmetric (eq (reflSetoid A)) {b} {.b} refl = refl
+  Equivalence.transitive (eq (reflSetoid A)) {b} {.b} {.b} refl refl = refl
 
   directSumSetoid : {m n o p : _} → {A : Set m} {B : Set n} → (r : Setoid {m} {o} A) → (s : Setoid {n} {p} B) → Setoid (A && B)
   _∼_ (directSumSetoid r s) (a ,, b) (c ,, d) = (Setoid._∼_ r a c) && (Setoid._∼_ s b d)
-  Reflexive.reflexive (Equivalence.reflexiveEq (eq (directSumSetoid r s))) {(a ,, b)} = Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq r)) ,, Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq s))
-  Symmetric.symmetric (Equivalence.symmetricEq (eq (directSumSetoid r s))) {(a ,, b)} {(c ,, d)} (fst ,, snd) = Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq r)) fst ,, Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq s)) snd
-  Transitive.transitive (Equivalence.transitiveEq (eq (directSumSetoid r s))) {a ,, b} {c ,, d} {e ,, f} (fst1 ,, snd1) (fst2 ,, snd2) = Transitive.transitive (Equivalence.transitiveEq (Setoid.eq r)) fst1 fst2 ,, Transitive.transitive (Equivalence.transitiveEq (Setoid.eq s)) snd1 snd2
+  Equivalence.reflexive (eq (directSumSetoid r s)) {(a ,, b)} = Equivalence.reflexive (Setoid.eq r) ,, Equivalence.reflexive (Setoid.eq s)
+  Equivalence.symmetric (eq (directSumSetoid r s)) {(a ,, b)} {(c ,, d)} (fst ,, snd) = Equivalence.symmetric (Setoid.eq r) fst ,, Equivalence.symmetric (Setoid.eq s) snd
+  Equivalence.transitive (eq (directSumSetoid r s)) {a ,, b} {c ,, d} {e ,, f} (fst1 ,, snd1) (fst2 ,, snd2) = Equivalence.transitive (Setoid.eq r) fst1 fst2 ,, Equivalence.transitive (Setoid.eq s) snd1 snd2
 
   record SetoidInjection {a b c d : _} {A : Set a} {B : Set b} (S : Setoid {a} {c} A) (T : Setoid {b} {d} B) (f : A → B) : Set (a ⊔ b ⊔ c ⊔ d) where
     open Setoid S renaming (_∼_ to _∼A_)
@@ -83,10 +81,9 @@ module Setoids.Setoids where
   SetoidSurjection.wellDefined (setoidSurjComp gI hI) x~y = SetoidSurjection.wellDefined hI (SetoidSurjection.wellDefined gI x~y)
   SetoidSurjection.surjective (setoidSurjComp gI hI) {x} with SetoidSurjection.surjective hI {x}
   SetoidSurjection.surjective (setoidSurjComp gI hI) {x} | a , prA with SetoidSurjection.surjective gI {a}
-  SetoidSurjection.surjective (setoidSurjComp {U = U} gI hI) {x} | a , prA | b , prB = b , transitive (SetoidSurjection.wellDefined hI prB) prA
+  SetoidSurjection.surjective (setoidSurjComp {U = U} gI hI) {x} | a , prA | b , prB = b , Equivalence.transitive (Setoid.eq U) (SetoidSurjection.wellDefined hI prB) prA
     where
       open Setoid U
-      open Transitive (Equivalence.transitiveEq (Setoid.eq U))
 
   setoidBijComp : {a b c d e f : _} {A : Set a} {B : Set b} {C : Set c} {S : Setoid {a} {d} A} {T : Setoid {b} {e} B} {U : Setoid {c} {f} C} {g : A → B} {h : B → C} → (gB : SetoidBijection S T g) (hB : SetoidBijection T U h) → SetoidBijection S U (h ∘ g)
   SetoidBijection.inj (setoidBijComp gB hB) = setoidInjComp (SetoidBijection.inj gB) (SetoidBijection.inj hB)
@@ -96,7 +93,7 @@ module Setoids.Setoids where
   SetoidInjection.wellDefined (SetoidBijection.inj (setoidIdIsBijective {A = A})) = id
   SetoidInjection.injective (SetoidBijection.inj (setoidIdIsBijective {A = A})) = id
   SetoidSurjection.wellDefined (SetoidBijection.surj (setoidIdIsBijective {A = A})) = id
-  SetoidSurjection.surjective (SetoidBijection.surj (setoidIdIsBijective {S = S})) {x} = x , Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+  SetoidSurjection.surjective (SetoidBijection.surj (setoidIdIsBijective {S = S})) {x} = x , Equivalence.reflexive (Setoid.eq S)
 
   record SetoidInvertible {a b c d : _} {A : Set a} {B : Set b} (S : Setoid {a} {c} A) (T : Setoid {b} {d} B) (f : A → B) : Set (a ⊔ b ⊔ c ⊔ d) where
     field
@@ -112,11 +109,9 @@ module Setoids.Setoids where
   SetoidInvertible.inverse (setoidBijectiveImpliesInvertible bij) x | a , b = a
   SetoidInvertible.inverseWellDefined (setoidBijectiveImpliesInvertible bij) {x} {y} x~y with SetoidSurjection.surjective (SetoidBijection.surj bij) {x}
   SetoidInvertible.inverseWellDefined (setoidBijectiveImpliesInvertible {T = T} bij) {x} {y} x~y | a , prA with SetoidSurjection.surjective (SetoidBijection.surj bij) {y}
-  ... | b , prB = SetoidInjection.injective (SetoidBijection.inj bij) (transitive prA (transitive x~y (symmetric prB)))
+  ... | b , prB = SetoidInjection.injective (SetoidBijection.inj bij) (Equivalence.transitive (Setoid.eq T) prA (Equivalence.transitive (Setoid.eq T) x~y (Equivalence.symmetric (Setoid.eq T) prB)))
     where
       open Setoid T
-      open Transitive (Equivalence.transitiveEq (Setoid.eq T))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq T))
   SetoidInvertible.isLeft (setoidBijectiveImpliesInvertible bij) b with SetoidSurjection.surjective (SetoidBijection.surj bij) {b}
   ... | a , prA = prA
   SetoidInvertible.isRight (setoidBijectiveImpliesInvertible {f = f} bij) b with SetoidSurjection.surjective (SetoidBijection.surj bij) {f b}
@@ -124,10 +119,8 @@ module Setoids.Setoids where
 
   setoidInvertibleImpliesBijective : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {f : A → B} (inv : SetoidInvertible S T f) → SetoidBijection S T f
   SetoidInjection.wellDefined (SetoidBijection.inj (setoidInvertibleImpliesBijective inv)) x~y = SetoidInvertible.fWellDefined inv x~y
-  SetoidInjection.injective (SetoidBijection.inj (setoidInvertibleImpliesBijective {S = S} {f = f} inv)) {x} {y} pr = transitive (symmetric (SetoidInvertible.isRight inv x)) (transitive (SetoidInvertible.inverseWellDefined inv pr) (SetoidInvertible.isRight inv y))
+  SetoidInjection.injective (SetoidBijection.inj (setoidInvertibleImpliesBijective {S = S} {f = f} inv)) {x} {y} pr = Equivalence.transitive (Setoid.eq S) (Equivalence.symmetric (Setoid.eq S) (SetoidInvertible.isRight inv x)) (Equivalence.transitive (Setoid.eq S) (SetoidInvertible.inverseWellDefined inv pr) (SetoidInvertible.isRight inv y))
     where
       open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
   SetoidSurjection.wellDefined (SetoidBijection.surj (setoidInvertibleImpliesBijective inv)) x~y = SetoidInvertible.fWellDefined inv x~y
   SetoidSurjection.surjective (SetoidBijection.surj (setoidInvertibleImpliesBijective inv)) {x} = SetoidInvertible.inverse inv x , SetoidInvertible.isLeft inv x

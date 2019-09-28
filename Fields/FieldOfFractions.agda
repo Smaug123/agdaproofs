@@ -10,6 +10,7 @@ open import Rings.IntegralDomains
 open import Fields.Fields
 open import Functions
 open import Setoids.Setoids
+open import Sets.EquivalenceRelations
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
@@ -19,18 +20,15 @@ module Fields.FieldOfFractions where
 
   fieldOfFractionsSetoid : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} → {R : Ring S _+_ _*_} → (I : IntegralDomain R) → Setoid (fieldOfFractionsSet I)
   Setoid._∼_ (fieldOfFractionsSetoid {S = S} {_*_ = _*_} I) (a ,, (b , b!=0)) (c ,, (d , d!=0)) = Setoid._∼_ S (a * d) (b * c)
-  Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq (fieldOfFractionsSetoid {R = R} I))) {a ,, (b , b!=0)} = Ring.multCommutative R
-  Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq (fieldOfFractionsSetoid {S = S} {R = R} I))) {a ,, (b , b!=0)} {c ,, (d , d!=0)} ad=bc = transitive (Ring.multCommutative R) (transitive (symmetric ad=bc) (Ring.multCommutative R))
+  Equivalence.reflexive (Setoid.eq (fieldOfFractionsSetoid {R = R} I)) {a ,, (b , b!=0)} = Ring.multCommutative R
+  Equivalence.symmetric (Setoid.eq (fieldOfFractionsSetoid {S = S} {R = R} I)) {a ,, (b , b!=0)} {c ,, (d , d!=0)} ad=bc = transitive (Ring.multCommutative R) (transitive (symmetric ad=bc) (Ring.multCommutative R))
     where
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-  Transitive.transitive (Equivalence.transitiveEq (Setoid.eq (fieldOfFractionsSetoid {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I))) {a ,, (b , b!=0)} {c ,, (d , d!=0)} {e ,, (f , f!=0)} ad=bc cf=de = p5
+      open Equivalence (Setoid.eq S)
+  Equivalence.transitive (Setoid.eq (fieldOfFractionsSetoid {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I)) {a ,, (b , b!=0)} {c ,, (d , d!=0)} {e ,, (f , f!=0)} ad=bc cf=de = p5
     where
       open Setoid S
       open Ring R
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
+      open Equivalence eq
       p : (a * d) * f ∼ (b * c) * f
       p = Ring.multWellDefined R ad=bc reflexive
       p2 : (a * f) * d ∼ b * (d * e)
@@ -69,9 +67,7 @@ module Fields.FieldOfFractions where
     where
       open Setoid S
       open Ring R
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       have1 : (c * h) ∼ (d * g)
       have1 = ch=dg
       have2 : (a * f) ∼ (b * e)
@@ -83,83 +79,63 @@ module Fields.FieldOfFractions where
   Group.multAssoc (Ring.additiveGroup (fieldOfFractionsRing {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I)) {a ,, (b , b!=0)} {c ,, (d , d!=0)} {e ,, (f , f!=0)} = need
     where
       open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       need : (((a * (d * f)) + (b * ((c * f) + (d * e)))) * ((b * d) * f)) ∼ ((b * (d * f)) * ((((a * d) + (b * c)) * f) + ((b * d) * e)))
       need = transitive (Ring.multCommutative R) (Ring.multWellDefined R (symmetric (Ring.multAssoc R)) (transitive (Group.wellDefined (Ring.additiveGroup R) reflexive (Ring.multDistributes R)) (transitive (Group.wellDefined (Ring.additiveGroup R) reflexive (Group.wellDefined (Ring.additiveGroup R) (Ring.multAssoc R) (Ring.multAssoc R))) (transitive (Group.multAssoc (Ring.additiveGroup R)) (Group.wellDefined (Ring.additiveGroup R) (transitive (transitive (Group.wellDefined (Ring.additiveGroup R) (transitive (Ring.multAssoc R) (Ring.multCommutative R)) (Ring.multCommutative R)) (symmetric (Ring.multDistributes R))) (Ring.multCommutative R)) reflexive)))))
   Group.multIdentRight (Ring.additiveGroup (fieldOfFractionsRing {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I)) {a ,, (b , b!=0)} = need
     where
       open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       need : (((a * Ring.1R R) + (b * Group.identity (Ring.additiveGroup R))) * b) ∼ ((b * Ring.1R R) * a)
       need = transitive (transitive (Ring.multWellDefined R (transitive (Group.wellDefined (Ring.additiveGroup R) (transitive (Ring.multCommutative R) (Ring.multIdentIsIdent R)) reflexive) (transitive (Group.wellDefined (Ring.additiveGroup R) reflexive (ringTimesZero R)) (Group.multIdentRight (Ring.additiveGroup R)))) reflexive) (Ring.multCommutative R)) (symmetric (Ring.multWellDefined R (transitive (Ring.multCommutative R) (Ring.multIdentIsIdent R)) reflexive))
   Group.multIdentLeft (Ring.additiveGroup (fieldOfFractionsRing {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I)) {a ,, (b , _)} = need
     where
       open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       need : (((Group.identity (Ring.additiveGroup R) * b) + (Ring.1R R * a)) * b) ∼ ((Ring.1R R * b) * a)
       need = transitive (transitive (Ring.multWellDefined R (transitive (Group.wellDefined (Ring.additiveGroup R) reflexive (Ring.multIdentIsIdent R)) (transitive (Group.wellDefined (Ring.additiveGroup R) (transitive (Ring.multCommutative R) (ringTimesZero R)) reflexive) (Group.multIdentLeft (Ring.additiveGroup R)))) reflexive) (Ring.multCommutative R)) (Ring.multWellDefined R (symmetric (Ring.multIdentIsIdent R)) reflexive)
   Group.invLeft (Ring.additiveGroup (fieldOfFractionsRing {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I)) {a ,, (b , _)} = need
     where
       open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       need : (((Group.inverse (Ring.additiveGroup R) a * b) + (b * a)) * Ring.1R R) ∼ ((b * b) * Group.identity (Ring.additiveGroup R))
       need = transitive (transitive (transitive (Ring.multCommutative R) (Ring.multIdentIsIdent R)) (transitive (Group.wellDefined (Ring.additiveGroup R) (Ring.multCommutative R) reflexive) (transitive (symmetric (Ring.multDistributes R)) (transitive (Ring.multWellDefined R reflexive (Group.invLeft (Ring.additiveGroup R))) (ringTimesZero R))))) (symmetric (ringTimesZero R))
   Group.invRight (Ring.additiveGroup (fieldOfFractionsRing {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I)) {a ,, (b , _)} = need
     where
       open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       need : (((a * b) + (b * Group.inverse (Ring.additiveGroup R) a)) * Ring.1R R) ∼ ((b * b) * Group.identity (Ring.additiveGroup R))
       need = transitive (transitive (transitive (Ring.multCommutative R) (Ring.multIdentIsIdent R)) (transitive (Group.wellDefined (Ring.additiveGroup R) (Ring.multCommutative R) reflexive) (transitive (symmetric (Ring.multDistributes R)) (transitive (Ring.multWellDefined R reflexive (Group.invRight (Ring.additiveGroup R))) (ringTimesZero R))))) (symmetric (ringTimesZero R))
   Ring.multWellDefined (fieldOfFractionsRing {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I) {a ,, (b , _)} {c ,, (d , _)} {e ,, (f , _)} {g ,, (h , _)} af=be ch=dg = need
     where
       open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       need : ((a * c) * (f * h)) ∼ ((b * d) * (e * g))
       need = transitive (Ring.multWellDefined R reflexive (Ring.multCommutative R)) (transitive (Ring.multAssoc R) (transitive (Ring.multWellDefined R (symmetric (Ring.multAssoc R)) reflexive) (transitive (Ring.multWellDefined R (Ring.multWellDefined R reflexive ch=dg) reflexive) (transitive (Ring.multCommutative R) (transitive (Ring.multAssoc R) (transitive (Ring.multWellDefined R (Ring.multCommutative R) reflexive) (transitive (Ring.multWellDefined R af=be reflexive) (transitive (Ring.multAssoc R) (transitive (Ring.multWellDefined R (transitive (symmetric (Ring.multAssoc R)) (transitive (Ring.multWellDefined R reflexive (Ring.multCommutative R)) (Ring.multAssoc R))) reflexive) (symmetric (Ring.multAssoc R)))))))))))
   Ring.1R (fieldOfFractionsRing {R = R} I) = Ring.1R R ,, (Ring.1R R , IntegralDomain.nontrivial I)
   Ring.groupIsAbelian (fieldOfFractionsRing {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I) {a ,, (b , _)} {c ,, (d , _)} = need
     where
       open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       need : (((a * d) + (b * c)) * (d * b)) ∼ ((b * d) * ((c * b) + (d * a)))
       need = transitive (Ring.multCommutative R) (Ring.multWellDefined R (Ring.multCommutative R) (transitive (Group.wellDefined (Ring.additiveGroup R) (Ring.multCommutative R) (Ring.multCommutative R)) (Ring.groupIsAbelian R)))
   Ring.multAssoc (fieldOfFractionsRing {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I) {a ,, (b , _)} {c ,, (d , _)} {e ,, (f , _)} = need
     where
       open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       need : ((a * (c * e)) * ((b * d) * f)) ∼ ((b * (d * f)) * ((a * c) * e))
       need = transitive (Ring.multWellDefined R (Ring.multAssoc R) (symmetric (Ring.multAssoc R))) (Ring.multCommutative R)
   Ring.multCommutative (fieldOfFractionsRing {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I) {a ,, (b , _)} {c ,, (d , _)} = need
     where
       open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       need : ((a * c) * (d * b)) ∼ ((b * d) * (c * a))
       need = transitive (Ring.multCommutative R) (Ring.multWellDefined R (Ring.multCommutative R) (Ring.multCommutative R))
   Ring.multDistributes (fieldOfFractionsRing {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I) {a ,, (b , _)} {c ,, (d , _)} {e ,, (f , _)} = need
     where
       open Setoid S
       open Ring R
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       inter : b * (a * ((c * f) + (d * e))) ∼ (((a * c) * (b * f)) + ((b * d) * (a * e)))
       inter = transitive multAssoc (transitive multDistributes (Group.wellDefined additiveGroup (transitive multAssoc (transitive (multWellDefined (transitive (multWellDefined (multCommutative) reflexive) (transitive (symmetric multAssoc) (transitive (multWellDefined reflexive multCommutative) multAssoc))) reflexive) (symmetric multAssoc))) (transitive multAssoc (transitive (multWellDefined (transitive (symmetric multAssoc) (transitive (multWellDefined reflexive multCommutative) multAssoc)) reflexive) (symmetric multAssoc)))))
       need : ((a * ((c * f) + (d * e))) * ((b * d) * (b * f))) ∼ ((b * (d * f)) * (((a * c) * (b * f)) + ((b * d) * (a * e))))
@@ -167,9 +143,7 @@ module Fields.FieldOfFractions where
   Ring.multIdentIsIdent (fieldOfFractionsRing {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I) {a ,, (b , _)} = need
     where
       open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       need : (((Ring.1R R) * a) * b) ∼ (((Ring.1R R * b)) * a)
       need = transitive (Ring.multWellDefined R (Ring.multIdentIsIdent R) reflexive) (transitive (Ring.multCommutative R) (Ring.multWellDefined R (symmetric (Ring.multIdentIsIdent R)) reflexive))
 
@@ -177,9 +151,7 @@ module Fields.FieldOfFractions where
   Field.allInvertible (fieldOfFractions {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I) (fst ,, (b , _)) prA = (b ,, (fst , ans)) , need
     where
       open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       need : ((b * fst) * Ring.1R R) ∼ ((fst * b) * Ring.1R R)
       need = Ring.multWellDefined R (Ring.multCommutative R) reflexive
       ans : fst ∼ Ring.0R R → False
@@ -190,9 +162,7 @@ module Fields.FieldOfFractions where
   Field.nontrivial (fieldOfFractions {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I) pr = IntegralDomain.nontrivial I (symmetric (transitive (symmetric (ringTimesZero R)) (transitive (Ring.multCommutative R) (transitive pr (Ring.multIdentIsIdent R)))))
     where
       open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       pr' : (Ring.0R R) * (Ring.1R R) ∼ (Ring.1R R) * (Ring.1R R)
       pr' = pr
 
@@ -200,32 +170,24 @@ module Fields.FieldOfFractions where
   embedIntoFieldOfFractions {R = R} I a = a ,, (Ring.1R R , IntegralDomain.nontrivial I)
 
   homIntoFieldOfFractions : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} (I : IntegralDomain R) → RingHom R (fieldOfFractionsRing I) (embedIntoFieldOfFractions I)
-  RingHom.preserves1 (homIntoFieldOfFractions {S = S} I) = Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))
-  RingHom.ringHom (homIntoFieldOfFractions {S = S} {R = R} I) {a} {b} = Transitive.transitive (Equivalence.transitiveEq (Setoid.eq S)) (Ring.multWellDefined R (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))) (Ring.multIdentIsIdent R)) (Ring.multCommutative R)
+  RingHom.preserves1 (homIntoFieldOfFractions {S = S} I) = Equivalence.reflexive (Setoid.eq S)
+  RingHom.ringHom (homIntoFieldOfFractions {S = S} {R = R} I) {a} {b} = Equivalence.transitive (Setoid.eq S) (Ring.multWellDefined R (Equivalence.reflexive (Setoid.eq S)) (Ring.multIdentIsIdent R)) (Ring.multCommutative R)
   GroupHom.groupHom (RingHom.groupHom (homIntoFieldOfFractions {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} I)) {x} {y} = need
     where
       open Setoid S
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence eq
       need : ((x + y) * (Ring.1R R * Ring.1R R)) ∼ (Ring.1R R * ((x * Ring.1R R) + (Ring.1R R * y)))
       need = transitive (transitive (Ring.multWellDefined R reflexive (Ring.multIdentIsIdent R)) (transitive (Ring.multCommutative R) (transitive (Ring.multIdentIsIdent R) (Group.wellDefined (Ring.additiveGroup R) (symmetric (transitive (Ring.multCommutative R) (Ring.multIdentIsIdent R))) (symmetric (Ring.multIdentIsIdent R)))))) (symmetric (Ring.multIdentIsIdent R))
   GroupHom.wellDefined (RingHom.groupHom (homIntoFieldOfFractions {S = S} {R = R} I)) x=y = transitive (Ring.multCommutative R) (Ring.multWellDefined R reflexive x=y)
     where
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence (Setoid.eq S)
 
   homIntoFieldOfFractionsIsInj : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} (I : IntegralDomain R) → SetoidInjection S (fieldOfFractionsSetoid I) (embedIntoFieldOfFractions I)
   SetoidInjection.wellDefined (homIntoFieldOfFractionsIsInj {S = S} {R = R} I) x=y = transitive (Ring.multCommutative R) (Ring.multWellDefined R reflexive x=y)
     where
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
+      open Equivalence (Setoid.eq S)
   SetoidInjection.injective (homIntoFieldOfFractionsIsInj {S = S} {R = R} I) x~y = transitive (symmetric multIdentIsIdent) (transitive multCommutative (transitive x~y multIdentIsIdent))
     where
       open Ring R
       open Setoid S
-      open Reflexive (Equivalence.reflexiveEq (Setoid.eq S))
-      open Transitive (Equivalence.transitiveEq (Setoid.eq S))
-      open Symmetric (Equivalence.symmetricEq (Setoid.eq S))
+      open Equivalence eq

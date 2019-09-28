@@ -7,6 +7,7 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals.Naturals
 open import Sets.FinSet
 open import Groups.Definition
+open import Sets.EquivalenceRelations
 
 module Groups.Groups where
 
@@ -23,10 +24,10 @@ module Groups.Groups where
       where
       open Group g renaming (inverse to _^-1) renaming (identity to e)
       open Setoid S
-      open Transitive (Equivalence.transitiveEq eq)
-      open Symmetric (Equivalence.symmetricEq eq)
+      transitive = Equivalence.transitive (Setoid.eq S)
+      symmetric = Equivalence.symmetric (Setoid.eq S)
       j : ((x ^-1) · x) · y ∼ (x ^-1) · (x · z)
-      j = transitive (symmetric (multAssoc {x ^-1} {x} {y})) (wellDefined ~refl pr)
+      j = Equivalence.transitive eq (symmetric (multAssoc {x ^-1} {x} {y})) (wellDefined ~refl pr)
       k : ((x ^-1) · x) · y ∼ ((x ^-1) · x) · z
       k = transitive j multAssoc
       l : e · y ∼ ((x ^-1) · x) · z
@@ -43,8 +44,8 @@ module Groups.Groups where
       where
       open Group g renaming (inverse to _^-1) renaming (identity to e)
       open Setoid S
-      open Transitive (Equivalence.transitiveEq eq)
-      open Symmetric (Equivalence.symmetricEq eq)
+      transitive = Equivalence.transitive (Setoid.eq S)
+      symmetric = Equivalence.symmetric (Setoid.eq S)
       i : (y · x) · (x ^-1) ∼ (z · x) · (x ^-1)
       i = wellDefined pr ~refl
       j : y · (x · (x ^-1)) ∼ (z · x) · (x ^-1)
@@ -64,8 +65,6 @@ module Groups.Groups where
         open Group G
         open Setoid S
         open Equivalence eq
-        open Transitive transitiveEq
-        open Symmetric symmetricEq
 
     replaceGroupOpRight : {l m : _} {A : Set l} {S : Setoid {l} {m} A} {_·_ : A → A → A} → (G : Group S _·_) → {a b c x : A} → (Setoid._∼_ S a (b · c)) → (Setoid._∼_ S c x) → (Setoid._∼_ S a (b · x))
     replaceGroupOpRight {S = S} {_·_} G a~bc c~x = transitive a~bc (wellDefined reflexive c~x)
@@ -73,8 +72,6 @@ module Groups.Groups where
         open Group G
         open Setoid S
         open Equivalence eq
-        open Transitive transitiveEq
-        open Reflexive reflexiveEq
 
     inverseWellDefined : {l m : _} {A : Set l} {S : Setoid {l} {m} A} {_·_ : A → A → A} (G : Group S _·_) → {x y : A} → (Setoid._∼_ S x y) → Setoid._∼_ S (Group.inverse G x) (Group.inverse G y)
     inverseWellDefined {S = S} {_·_} G {x} {y} x~y = groupsHaveRightCancellation G x (inverse x) (inverse y) q
@@ -82,8 +79,6 @@ module Groups.Groups where
         open Group G
         open Setoid S
         open Equivalence eq
-        open Transitive transitiveEq
-        open Symmetric symmetricEq
         p : inverse x · x ∼ inverse y · y
         p = transitive invLeft (symmetric invLeft)
         q : inverse x · x ∼ inverse y · x
@@ -94,8 +89,7 @@ module Groups.Groups where
       where
       open Group G renaming (inverse to _^-1) renaming (identity to e)
       open Setoid S
-      open Transitive (Equivalence.transitiveEq eq)
-      open Symmetric (Equivalence.symmetricEq eq)
+      open Equivalence eq
       i : y ∼ y · e
       j : y · e ∼ y · (x · (x ^-1))
       k : y · (x · (x ^-1)) ∼ (y · x) · (x ^-1)
@@ -112,8 +106,7 @@ module Groups.Groups where
       where
         open Group G renaming (inverse to _^-1) renaming (identity to e)
         open Setoid S
-        open Transitive (Equivalence.transitiveEq eq)
-        open Symmetric (Equivalence.symmetricEq eq)
+        open Equivalence eq
         i : y · (x · y) ∼ y · e
         i' : y · (x · y) ∼ y
         j : (y · x) · y ∼ y
@@ -130,8 +123,7 @@ module Groups.Groups where
       where
       open Group G renaming (inverse to _^-1) renaming (identity to e)
       open Setoid S
-      open Transitive (Equivalence.transitiveEq eq)
-      open Symmetric (Equivalence.symmetricEq eq)
+      open Equivalence eq
 
     fourWayAssoc : {a b : _} → {A : Set a} → {S : Setoid {a} {b} A} → {_·_ : A → A → A} → (G : Group S _·_) → {r s t u : A} → (Setoid._∼_ S) (r · ((s · t) · u)) ((r · s) · (t · u))
     fourWayAssoc {S = S} {_·_} G {r} {s} {t} {u} = transitive p1 (transitive p2 p3)
@@ -139,9 +131,6 @@ module Groups.Groups where
         open Group G renaming (inverse to _^-1) renaming (identity to e)
         open Setoid S
         open Equivalence eq
-        open Transitive transitiveEq
-        open Reflexive reflexiveEq
-        open Symmetric symmetricEq
         p1 : r · ((s · t) · u) ∼ (r · (s · t)) · u
         p2 : (r · (s · t)) · u ∼ ((r · s) · t) · u
         p3 : ((r · s) · t) · u ∼ (r · s) · (t · u)
@@ -155,8 +144,6 @@ module Groups.Groups where
         open Group G
         open Setoid S
         open Equivalence eq
-        open Transitive transitiveEq
-        open Symmetric symmetricEq
 
     fourWayAssoc'' : {m n : _} {A : Set m} {S : Setoid {m} {n} A} {_·_ : A → A → A} (G : Group S _·_) {a b c d : A} → (Setoid._∼_ S (a · (b · (c · d))) (a · ((b · c) · d)))
     fourWayAssoc'' {S = S} {_·_ = _·_} G = transitive multAssoc (symmetric (fourWayAssoc G))
@@ -164,8 +151,6 @@ module Groups.Groups where
         open Group G
         open Setoid S
         open Equivalence eq
-        open Transitive transitiveEq
-        open Symmetric symmetricEq
 
     invContravariant : {a b : _} → {A : Set a} → {S : Setoid {a} {b} A} → {_·_ : A → A → A} → (G : Group S _·_) → {x y : A} → (Setoid._∼_ S (Group.inverse G (x · y)) ((Group.inverse G y) · (Group.inverse G x)))
     invContravariant {S = S} {_·_} G {x} {y} = ans
@@ -173,9 +158,6 @@ module Groups.Groups where
         open Group G renaming (inverse to _^-1) renaming (identity to e)
         open Setoid S
         open Equivalence eq
-        open Transitive transitiveEq
-        open Symmetric symmetricEq
-        open Reflexive reflexiveEq
         otherInv = (y ^-1) · (x ^-1)
         manyAssocs : x · ((y · (y ^-1)) · (x ^-1)) ∼ (x · y) · ((y ^-1) · (x ^-1))
         oneMult : (x · y) · otherInv ∼ x · (x ^-1)
@@ -192,8 +174,6 @@ module Groups.Groups where
         open Group G
         open Setoid S
         open Equivalence eq
-        open Symmetric symmetricEq
-        open Transitive transitiveEq
 
     transferToRight : {m n : _} {A : Set m} {S : Setoid {m} {n} A} {_·_ : A → A → A} → (G : Group S _·_) → {a b : A} → Setoid._∼_ S (a · (Group.inverse G b)) (Group.identity G) → Setoid._∼_ S a b
     transferToRight {S = S} {_·_ = _·_} G {a} {b} ab-1 = transitive (symmetric (invTwice G a)) (transitive u (invTwice G b))
@@ -201,8 +181,6 @@ module Groups.Groups where
         open Setoid S
         open Group G
         open Equivalence eq
-        open Symmetric symmetricEq
-        open Transitive transitiveEq
         t : inverse a ∼ inverse b
         t = symmetric (leftInversesAreUnique G ab-1)
         u : inverse (inverse a) ∼ inverse (inverse b)
@@ -214,9 +192,6 @@ module Groups.Groups where
         open Setoid S
         open Group G
         open Equivalence eq
-        open Symmetric symmetricEq
-        open Transitive transitiveEq
-        open Reflexive reflexiveEq
         lemma : a · (inverse (inverse b)) ∼ identity
         lemma = transitive (wellDefined reflexive (invTwice G b)) ab-1
 
@@ -225,8 +200,7 @@ module Groups.Groups where
       where
         open Group G
         open Setoid S
-        open Transitive (Equivalence.transitiveEq eq)
-        open Reflexive (Equivalence.reflexiveEq eq)
+        open Equivalence eq
 
     directSumGroup : {m n o p : _} → {A : Set m} {S : Setoid {m} {o} A} {_·A_ : A → A → A} {B : Set n} {T : Setoid {n} {p} B} {_·B_ : B → B → B} (G : Group S _·A_) (h : Group T _·B_) → Group (directSumSetoid S T) (λ x1 y1 → (((_&&_.fst x1) ·A (_&&_.fst y1)) ,, ((_&&_.snd x1) ·B (_&&_.snd y1))))
     Group.wellDefined (directSumGroup {A = A} {B} g h) (s ,, t) (u ,, v) = Group.wellDefined g s u ,, Group.wellDefined h t v
@@ -255,18 +229,18 @@ module Groups.Groups where
         injective : SetoidInjection S T underf
 
     imageOfIdentityIsIdentity : {m n o p : _} {A : Set m} {S : Setoid {m} {o} A} {B : Set n} {T : Setoid {n} {p} B} {_·A_ : A → A → A} {_·B_ : B → B → B} {G : Group S _·A_} {H : Group T _·B_} {f : A → B} → (hom : GroupHom G H f) → Setoid._∼_ T (f (Group.identity G)) (Group.identity H)
-    imageOfIdentityIsIdentity {S = S} {T = T} {_·A_ = _·A_} {_·B_ = _·B_} {G = G} {H = H} {f = f} hom = Symmetric.symmetric (Equivalence.symmetricEq eq) t
+    imageOfIdentityIsIdentity {S = S} {T = T} {_·A_ = _·A_} {_·B_ = _·B_} {G = G} {H = H} {f = f} hom = Equivalence.symmetric (Setoid.eq T) t
       where
         open Group H
         open Setoid T
         id2 : Setoid._∼_ S (Group.identity G) ((Group.identity G) ·A (Group.identity G))
-        id2 = Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (Group.multIdentRight G)
+        id2 = Equivalence.symmetric (Setoid.eq S) (Group.multIdentRight G)
         r : f (Group.identity G) ∼ f (Group.identity G) ·B f (Group.identity G)
         s : identity ·B f (Group.identity G) ∼ f (Group.identity G) ·B f (Group.identity G)
         t : identity ∼ f (Group.identity G)
         t = groupsHaveRightCancellation H (f (Group.identity G)) identity (f (Group.identity G)) s
-        s = Transitive.transitive (Equivalence.transitiveEq eq) multIdentLeft r
-        r = Transitive.transitive (Equivalence.transitiveEq eq) (GroupHom.wellDefined hom id2) (GroupHom.groupHom hom)
+        s = Equivalence.transitive (Setoid.eq T) multIdentLeft r
+        r = Equivalence.transitive (Setoid.eq T) (GroupHom.wellDefined hom id2) (GroupHom.groupHom hom)
 
     groupHomsCompose : {m n o r s t : _} {A : Set m} {S : Setoid {m} {r} A} {_+A_ : A → A → A} {B : Set n} {T : Setoid {n} {s} B} {_+B_ : B → B → B} {C : Set o} {U : Setoid {o} {t} C} {_+C_ : C → C → C} {G : Group S _+A_} {H : Group T _+B_} {I : Group U _+C_} {f : A → B} {g : B → C} (fHom : GroupHom G H f) (gHom : GroupHom H I g) → GroupHom G I (g ∘ f)
     GroupHom.wellDefined (groupHomsCompose {G = G} {H} {I} {f} {g} fHom gHom) {x} {y} pr = GroupHom.wellDefined gHom (GroupHom.wellDefined fHom pr)
@@ -274,7 +248,7 @@ module Groups.Groups where
       where
         open Group I
         answer : (Setoid._∼_ U) ((g ∘ f) (x ·A y)) ((g ∘ f) x ·C (g ∘ f) y)
-        answer = (Transitive.transitive (Equivalence.transitiveEq (Setoid.eq U))) (GroupHom.wellDefined gHom (GroupHom.groupHom fHom {x} {y}) ) (GroupHom.groupHom gHom {f x} {f y})
+        answer = (Equivalence.transitive (Setoid.eq U)) (GroupHom.wellDefined gHom (GroupHom.groupHom fHom {x} {y}) ) (GroupHom.groupHom gHom {f x} {f y})
 
     record GroupIso {m n o p : _} {A : Set m} {S : Setoid {m} {o} A} {_·A_ : A → A → A} {B : Set n} {T : Setoid {n} {p} B} {_·B_ : B → B → B} (G : Group S _·A_) (H : Group T _·B_) (f : A → B) : Set (m ⊔ n ⊔ o ⊔ p) where
       open Setoid S renaming (_∼_ to _∼G_)
@@ -301,7 +275,7 @@ module Groups.Groups where
         surj {x} | a , prA with SetoidSurjection.surjective (SetoidBijection.surj (GroupIso.bij fHom)) {a}
         ... | b , prB = b , transitive (GroupHom.wellDefined (GroupIso.groupHom gHom) prB) prA
           where
-            open Transitive (Equivalence.transitiveEq (Setoid.eq U))
+            open Equivalence (Setoid.eq U)
 
     record FiniteGroup {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_·_ : A → A → A} (G : Group S _·_) {c : _} (quotientSet : Set c) : Set (a ⊔ b ⊔ c) where
       field
@@ -324,8 +298,6 @@ module Groups.Groups where
       where
         open Setoid T
         open Equivalence eq
-        open Transitive transitiveEq
-        open Symmetric symmetricEq
 
     quotientGroupSetoid : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} → {underf : A → B} → (f : GroupHom G H underf) → (Setoid {a} {d} A)
     quotientGroupSetoid {A = A} {S = S} {T = T} {_·A_ = _·A_} {_·B_ = _·B_} G {H} {f} fHom = ansSetoid
@@ -333,20 +305,18 @@ module Groups.Groups where
         open Setoid T
         open Group H
         open Equivalence eq
-        open Transitive transitiveEq
-        open Reflexive reflexiveEq
         ansSetoid : Setoid A
         Setoid._∼_ ansSetoid r s = (f (r ·A (Group.inverse G s))) ∼ identity
-        Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq ansSetoid)) {b} = transitive (GroupHom.wellDefined fHom (Group.invRight G)) (imageOfIdentityIsIdentity fHom)
-        Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq ansSetoid)) {m} {n} pr = i
+        Equivalence.reflexive (Setoid.eq ansSetoid) {b} = transitive (GroupHom.wellDefined fHom (Group.invRight G)) (imageOfIdentityIsIdentity fHom)
+        Equivalence.symmetric (Setoid.eq ansSetoid) {m} {n} pr = i
           where
             g : f (Group.inverse G (m ·A Group.inverse G n)) ∼ identity
             g = transitive (homRespectsInverse fHom {m ·A Group.inverse G n}) (transitive (inverseWellDefined H pr) (invIdentity H))
             h : f (Group.inverse G (Group.inverse G n) ·A Group.inverse G m) ∼ identity
-            h = transitive (GroupHom.wellDefined fHom (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (invContravariant G))) g
+            h = transitive (GroupHom.wellDefined fHom (Equivalence.symmetric (Setoid.eq S) (invContravariant G))) g
             i : f (n ·A Group.inverse G m) ∼ identity
-            i = transitive (GroupHom.wellDefined fHom (Group.wellDefined G (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (invTwice G n)) (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))))) h
-        Transitive.transitive (Equivalence.transitiveEq (Setoid.eq ansSetoid)) {m} {n} {o} prmn prno = transitive (GroupHom.wellDefined fHom (Group.wellDefined G (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))) (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (Group.multIdentLeft G)))) k
+            i = transitive (GroupHom.wellDefined fHom (Group.wellDefined G (Equivalence.symmetric (Setoid.eq S) (invTwice G n)) (Equivalence.reflexive (Setoid.eq S)))) h
+        Equivalence.transitive (Setoid.eq ansSetoid) {m} {n} {o} prmn prno = transitive (GroupHom.wellDefined fHom (Group.wellDefined G (Equivalence.reflexive (Setoid.eq S)) (Equivalence.symmetric (Setoid.eq S) (Group.multIdentLeft G)))) k
           where
             g : f (m ·A Group.inverse G n) ·B f (n ·A Group.inverse G o) ∼ identity ·B identity
             g = replaceGroupOp H reflexive reflexive prmn prno reflexive
@@ -357,15 +327,13 @@ module Groups.Groups where
             j : f (m ·A (((Group.inverse G n) ·A n) ·A Group.inverse G o)) ∼ identity
             j = transitive (GroupHom.wellDefined fHom (fourWayAssoc G)) i
             k : f (m ·A ((Group.identity G) ·A Group.inverse G o)) ∼ identity
-            k = transitive (GroupHom.wellDefined fHom (Group.wellDefined G (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))) (Group.wellDefined G (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (Group.invLeft G)) (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S)))))) j
+            k = transitive (GroupHom.wellDefined fHom (Group.wellDefined G (Equivalence.reflexive (Setoid.eq S)) (Group.wellDefined G (Equivalence.symmetric (Setoid.eq S) (Group.invLeft G)) (Equivalence.reflexive (Setoid.eq S))))) j
 
     quotientGroup : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} → {underf : A → B} → (f : GroupHom G H underf) → Group (quotientGroupSetoid G f) _·A_
     Group.wellDefined (quotientGroup {S = S} {T = T} {_·A_ = _·A_} {_·B_ = _·B_} G {H = H} {underf = f} fHom) {x} {y} {m} {n} x~m y~n = ans
       where
         open Setoid T
         open Equivalence (Setoid.eq T)
-        open Symmetric symmetricEq
-        open Transitive transitiveEq
         p1 : f ((x ·A y) ·A (Group.inverse G (m ·A n))) ∼ f ((x ·A y) ·A ((Group.inverse G n) ·A (Group.inverse G m)))
         p2 : f ((x ·A y) ·A ((Group.inverse G n) ·A (Group.inverse G m))) ∼ f (x ·A ((y ·A (Group.inverse G n)) ·A (Group.inverse G m)))
         p3 : f (x ·A ((y ·A (Group.inverse G n)) ·A (Group.inverse G m))) ∼ (f x) ·B f ((y ·A (Group.inverse G n)) ·A (Group.inverse G m))
@@ -374,13 +342,13 @@ module Groups.Groups where
         p6 : (f x) ·B (Group.identity H ·B f (Group.inverse G m)) ∼ (f x) ·B f (Group.inverse G m)
         p7 : (f x) ·B f (Group.inverse G m) ∼ f (x ·A (Group.inverse G m))
         p8 : f (x ·A (Group.inverse G m)) ∼ Group.identity H
-        p1 = GroupHom.wellDefined fHom (Group.wellDefined G (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))) (invContravariant G))
-        p2 = GroupHom.wellDefined fHom (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (fourWayAssoc G))
+        p1 = GroupHom.wellDefined fHom (Group.wellDefined G (Equivalence.reflexive (Setoid.eq S)) (invContravariant G))
+        p2 = GroupHom.wellDefined fHom (Equivalence.symmetric (Setoid.eq S) (fourWayAssoc G))
         p3 = GroupHom.groupHom fHom
-        p4 = Group.wellDefined H (Reflexive.reflexive reflexiveEq) (GroupHom.groupHom fHom)
-        p5 = Group.wellDefined H (Reflexive.reflexive reflexiveEq) (replaceGroupOp H (symmetric y~n) (Reflexive.reflexive reflexiveEq) (Reflexive.reflexive reflexiveEq) (Reflexive.reflexive reflexiveEq) (Reflexive.reflexive reflexiveEq))
-        p6 = Group.wellDefined H (Reflexive.reflexive reflexiveEq) (Group.multIdentLeft H)
-        p7 = Symmetric.symmetric symmetricEq (GroupHom.groupHom fHom)
+        p4 = Group.wellDefined H reflexive (GroupHom.groupHom fHom)
+        p5 = Group.wellDefined H reflexive (replaceGroupOp H (symmetric y~n) reflexive reflexive reflexive reflexive)
+        p6 = Group.wellDefined H reflexive (Group.multIdentLeft H)
+        p7 = symmetric (GroupHom.groupHom fHom)
         p8 = x~m
         ans : f ((x ·A y) ·A (Group.inverse G (m ·A n))) ∼ Group.identity H
         ans = transitive p1 (transitive p2 (transitive p3 (transitive p4 (transitive p5 (transitive p6 (transitive p7 p8))))))
@@ -390,7 +358,6 @@ module Groups.Groups where
       where
         open Setoid T
         open Equivalence (Setoid.eq T)
-        open Transitive transitiveEq
         ans : f ((a ·A (b ·A c)) ·A (Group.inverse G ((a ·A b) ·A c))) ∼ Group.identity H
         ans = transitive (GroupHom.wellDefined fHom (transferToRight'' G (Group.multAssoc G))) (imageOfIdentityIsIdentity fHom)
     Group.multIdentRight (quotientGroup {S = S} {T = T} {_·A_ = _·A_} G {H = H} {underf = f} fHom) {a} = ans
@@ -398,35 +365,31 @@ module Groups.Groups where
         open Group G
         open Setoid T
         open Equivalence eq
-        open Transitive transitiveEq
-        open Transitive (Equivalence.transitiveEq (Setoid.eq S)) renaming (transitive to transitiveG)
+        transitiveG = Equivalence.transitive (Setoid.eq S)
         ans : f ((a ·A identity) ·A inverse a) ∼ Group.identity H
-        ans = transitive (GroupHom.wellDefined fHom (transitiveG (Group.wellDefined G (Group.multIdentRight G) (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S)))) (Group.invRight G))) (imageOfIdentityIsIdentity fHom)
+        ans = transitive (GroupHom.wellDefined fHom (transitiveG (Group.wellDefined G (Group.multIdentRight G) (Equivalence.reflexive (Setoid.eq S))) (Group.invRight G))) (imageOfIdentityIsIdentity fHom)
     Group.multIdentLeft (quotientGroup {S = S} {T = T} {_·A_ = _·A_} G {H = H} {underf = f} fHom) {a} = ans
       where
         open Group G
         open Setoid T
         open Equivalence eq
-        open Transitive transitiveEq
-        open Transitive (Equivalence.transitiveEq (Setoid.eq S)) renaming (transitive to transitiveG)
+        transitiveG = Equivalence.transitive (Setoid.eq S)
         ans : f ((identity ·A a) ·A (inverse a)) ∼ Group.identity H
-        ans = transitive (GroupHom.wellDefined fHom (transitiveG (Group.wellDefined G (Group.multIdentLeft G) (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S)))) (Group.invRight G))) (imageOfIdentityIsIdentity fHom)
+        ans = transitive (GroupHom.wellDefined fHom (transitiveG (Group.wellDefined G (Group.multIdentLeft G) (Equivalence.reflexive (Setoid.eq S))) (Group.invRight G))) (imageOfIdentityIsIdentity fHom)
     Group.invLeft (quotientGroup {S = S} {T = T} {_·A_ = _·A_} G {H = H} {underf = f} fHom) {x} = ans
       where
         open Group G
         open Setoid T
         open Equivalence eq
-        open Transitive transitiveEq
         ans : f ((inverse x ·A x) ·A (inverse identity)) ∼ (Group.identity H)
-        ans = transitive (GroupHom.wellDefined fHom (Transitive.transitive (Equivalence.transitiveEq (Setoid.eq S)) (replaceGroupOp G (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (Group.invLeft G)) (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (invIdentity G)) (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))) ((Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S)))) ((Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))))) (multIdentRight {identity}))) (imageOfIdentityIsIdentity fHom)
+        ans = transitive (GroupHom.wellDefined fHom (Equivalence.transitive (Setoid.eq S) (replaceGroupOp G (Equivalence.symmetric (Setoid.eq S) (Group.invLeft G)) (Equivalence.symmetric (Setoid.eq S) (invIdentity G)) (Equivalence.reflexive (Setoid.eq S)) ((Equivalence.reflexive (Setoid.eq S))) ((Equivalence.reflexive (Setoid.eq S)))) (multIdentRight {identity}))) (imageOfIdentityIsIdentity fHom)
     Group.invRight (quotientGroup {S = S} {T = T} {_·A_ = _·A_} G {H = H} {underf = f} fHom) {x} = ans
       where
         open Group G
         open Setoid T
         open Equivalence eq
-        open Transitive transitiveEq
         ans : f ((x ·A inverse x) ·A (inverse identity)) ∼ (Group.identity H)
-        ans = transitive (GroupHom.wellDefined fHom (Transitive.transitive (Equivalence.transitiveEq (Setoid.eq S)) (replaceGroupOp G (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (Group.invRight G)) (Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) (invIdentity G)) (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))) (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S))) (Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq S)))) (multIdentRight {identity}))) (imageOfIdentityIsIdentity fHom)
+        ans = transitive (GroupHom.wellDefined fHom (Equivalence.transitive (Setoid.eq S) (replaceGroupOp G (Equivalence.symmetric (Setoid.eq S) (Group.invRight G)) (Equivalence.symmetric (Setoid.eq S) (invIdentity G)) (Equivalence.reflexive (Setoid.eq S)) (Equivalence.reflexive (Setoid.eq S)) (Equivalence.reflexive (Setoid.eq S))) (multIdentRight {identity}))) (imageOfIdentityIsIdentity fHom)
 
     record Subgroup {a} {b} {c} {d} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) (H : Group T _·B_) {f : B → A} (hom : GroupHom H G f) : Set (a ⊔ b ⊔ c ⊔ d) where
       open Setoid T renaming (_∼_ to _∼G_)
@@ -463,8 +426,7 @@ module Groups.Groups where
     AbelianGroup.commutative (subgroupOfAbelianIsAbelian {S = S} {_+B_ = _+B_} {fHom = fHom} record { fInj = fInj } record { commutative = commutative }) {x} {y} = SetoidInjection.injective fInj (transitive (GroupHom.groupHom fHom) (transitive commutative (symmetric (GroupHom.groupHom fHom))))
       where
         open Setoid S
-        open Transitive (Equivalence.transitiveEq eq)
-        open Symmetric (Equivalence.symmetricEq eq)
+        open Equivalence eq
 
     abelianIsGroupProperty : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+A_ : A → A → A} {_+B_ : B → B → B} {G : Group S _+A_} {H : Group T _+B_} → GroupsIsomorphic G H → AbelianGroup H → AbelianGroup G
     abelianIsGroupProperty iso abH = subgroupOfAbelianIsAbelian {fHom = GroupIso.groupHom (GroupsIsomorphic.proof iso)} (record { fInj = SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.proof iso)) }) abH

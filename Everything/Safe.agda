@@ -16,6 +16,7 @@ open import Groups.Groups
 open import Groups.FinitePermutations
 open import Groups.Lemmas
 open import Groups.Groups2
+open import Groups.SymmetryGroups
 
 open import Fields.Fields
 open import Fields.FieldOfFractions
