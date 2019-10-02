@@ -1,4 +1,6 @@
 {-# OPTIONS --safe --warning=error #-}
+-- These are explicitly with-K, because we currently encode an element of Zn as
+-- a natural together with a proof that it is small.
 
 open import LogicalFormulae
 open import Groups.Definition

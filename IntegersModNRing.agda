@@ -3,11 +3,13 @@
 open import LogicalFormulae
 open import Orders
 open import Groups.Groups
-open import Numbers.Naturals
-open import PrimeNumbers
+open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.WithK
+open import Numbers.Primes.PrimeNumbers
 open import Rings.Definition
 open import Setoids.Setoids
-open import IntegersModN
+open import Numbers.Modulo.IntegersModN
+open import Semirings.Definition
 
 module IntegersModNRing where
   modNToℕ : {n : ℕ} {pr : 0 <N n} → (a : ℤn n pr) → ℕ
@@ -48,7 +50,7 @@ module IntegersModNRing where
   ℤnMultIdent {succ zero} {pr} record { x = (succ a) ; xLess = (le diff proof) } = exFalso f
     where
       f : False
-      f rewrite additionNIsCommutative diff (succ a) = naughtE (succInjective (equalityCommutative proof))
+      f rewrite Semiring.commutative ℕSemiring diff (succ a) = naughtE (succInjective (equalityCommutative proof))
   ℤnMultIdent {succ (succ n)} {pr} record { x = a ; xLess = aLess } with orderIsTotal a (succ (succ n))
   ℤnMultIdent {succ (succ n)} {pr} record { x = a ; xLess = aLess } | inl (inl a<ssn) = equalityZn _ _ refl
   ℤnMultIdent {succ (succ n)} {pr} record { x = a ; xLess = aLess } | inl (inr ssn<a) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) aLess ssn<a))
