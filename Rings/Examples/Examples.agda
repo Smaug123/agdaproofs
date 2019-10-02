@@ -5,9 +5,9 @@ open import Groups.Groups
 open import Functions
 open import Numbers.Naturals.Naturals
 open import Numbers.Integers.Integers
-open import IntegersModN
+open import Numbers.Modulo.IntegersModN
 open import Rings.Examples.Proofs
-open import PrimeNumbers
+open import Numbers.Primes.PrimeNumbers
 
 module Rings.Examples.Examples where
 

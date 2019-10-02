@@ -2,7 +2,8 @@
 
 -- This file contains everything that is --safe, but uses K.
 
-open import PrimeNumbers
+open import Numbers.Primes.PrimeNumbers
+open import Numbers.Primes.IntegerFactorisation
 open import Numbers.Rationals
 open import Numbers.RationalsLemmas
 
@@ -10,7 +11,7 @@ open import Logic.PropositionalLogic
 open import Logic.PropositionalLogicExamples
 open import Logic.PropositionalAxiomsTautology
 
-open import IntegersModN
+open import Numbers.Modulo.IntegersModN
 
 open import Sets.FinSetWithK
 
