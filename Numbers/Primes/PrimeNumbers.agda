@@ -14,7 +14,7 @@ open import Maybe
 open import WithK
 open import Semirings.Definition
 
-module PrimeNumbers where
+module Numbers.Primes.PrimeNumbers where
 
     record divisionAlgResult (a : ℕ) (b : ℕ) : Set where
       field

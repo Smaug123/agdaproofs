@@ -11,7 +11,7 @@ open import Sets.FinSet
 open import Groups.Definition
 open import Groups.Groups
 open import Rings.Definition
-open import IntegersModN
+open import Numbers.Modulo.IntegersModN
 open import Semirings.Definition
 
 module Groups.LectureNotes.Lecture1 where

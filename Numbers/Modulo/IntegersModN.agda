@@ -5,7 +5,7 @@ open import Groups.Definition
 open import Groups.Groups
 open import Numbers.Naturals.Naturals
 open import Numbers.Naturals.Addition -- TODO remove this dependency
-open import PrimeNumbers
+open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
 open import Sets.FinSet
 open import Sets.FinSetWithK
@@ -14,7 +14,7 @@ open import Numbers.Naturals.WithK
 open import Semirings.Definition
 open import Orders
 
-module IntegersModN where
+module Numbers.Modulo.IntegersModN where
   record ℤn (n : ℕ) (pr : 0 <N n) : Set where
     field
       x : ℕ

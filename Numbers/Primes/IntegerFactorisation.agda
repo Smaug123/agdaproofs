@@ -1,11 +1,15 @@
 {-# OPTIONS --warning=error --safe #-}
 
 open import LogicalFormulae
-open import Naturals
-open import PrimeNumbers
+open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Addition
+open import Numbers.Naturals.Order
+open import Numbers.Primes.PrimeNumbers
 open import WellFoundedInduction
+open import Semirings.Definition
+open import Orders
 
-module IntegerFactorisation where
+module Numbers.Primes.IntegerFactorisation where
 
     -- Represent a factorisation into increasing factors
     -- Note that 0 cannot be expressed this way.
@@ -23,23 +27,23 @@ module IntegerFactorisation where
         otherFactors : ((divisionAlgResult.quot firstFactorDivision ≡ 1) && (otherFactorsNumber ≡ 0)) || (((1 <N divisionAlgResult.quot firstFactorDivision) && (factorisationNonunit firstFactor (divisionAlgResult.quot firstFactorDivision))))
 
     lemma : (p : ℕ) → p *N 1 +N 0 ≡ p
-    lemma p rewrite addZeroRight (p *N 1) | productWithOneRight p = refl
+    lemma p rewrite Semiring.sumZeroRight ℕSemiring (p *N 1) | Semiring.productOneRight ℕSemiring p = refl
 
     lemma' : {a b : ℕ} → a *N zero +N 0 ≡ b → b ≡ zero
-    lemma' {a} {b} pr rewrite addZeroRight (a *N zero) | productZeroIsZeroRight a = equalityCommutative pr
+    lemma' {a} {b} pr rewrite Semiring.sumZeroRight ℕSemiring (a *N zero) | Semiring.productZeroRight ℕSemiring a = equalityCommutative pr
 
     primeFactorisation : {p : ℕ} → (pr : Prime p) → factorisationNonunit 1 p
-    primeFactorisation {p} record { p>1 = p>1 ; pr = pr } = record {1<a = p>1 ; firstFactor = p ; firstFactorNontrivial = p>1 ; firstFactorBiggerMin = inl p>1 ; firstFactorDivision = record { quot = 1 ; rem = 0 ; pr = lemma p  ; remIsSmall = zeroIsValidRem p } ; firstFactorDivides = refl ; firstFactorPrime = record { p>1 = p>1 ; pr = pr} ; otherFactors = inl record { fst = refl ; snd = refl } ; otherFactorsNumber = 0 }
+    primeFactorisation {p} record { p>1 = p>1 ; pr = pr } = record {1<a = p>1 ; firstFactor = p ; firstFactorNontrivial = p>1 ; firstFactorBiggerMin = inl p>1 ; firstFactorDivision = record { quot = 1 ; rem = 0 ; pr = lemma p  ; remIsSmall = zeroIsValidRem p ; quotSmall = inl (TotalOrder.transitive ℕTotalOrder (le zero refl) p>1) } ; firstFactorDivides = refl ; firstFactorPrime = record { p>1 = p>1 ; pr = pr} ; otherFactors = inl record { fst = refl ; snd = refl } ; otherFactorsNumber = 0 }
       where
         proof : (s : ℕ) → s *N 1 +N 0 ≡ s
-        proof s rewrite addZeroRight (s *N 1) | multiplicationNIsCommutative s 1 | addZeroRight s = refl
+        proof s rewrite Semiring.sumZeroRight ℕSemiring (s *N 1) | multiplicationNIsCommutative s 1 | Semiring.sumZeroRight ℕSemiring s = refl
 
     twoAsFact : factorisationNonunit 2 2
     factorisationNonunit.1<a twoAsFact = succPreservesInequality (succIsPositive 0)
     factorisationNonunit.firstFactor twoAsFact = 2
     factorisationNonunit.firstFactorNontrivial twoAsFact = succPreservesInequality (succIsPositive 0)
     factorisationNonunit.firstFactorBiggerMin twoAsFact = inr refl
-    factorisationNonunit.firstFactorDivision twoAsFact = record { quot = 1 ; rem = 0 ; remIsSmall = zeroIsValidRem 2 ; pr = refl}
+    factorisationNonunit.firstFactorDivision twoAsFact = record { quot = 1 ; rem = 0 ; remIsSmall = zeroIsValidRem 2 ; pr = refl ; quotSmall = inl (le 1 refl) }
     factorisationNonunit.firstFactorDivides twoAsFact = refl
     factorisationNonunit.firstFactorPrime twoAsFact = twoIsPrime
     factorisationNonunit.otherFactorsNumber twoAsFact = 0
@@ -50,7 +54,7 @@ module IntegerFactorisation where
     factorisationNonunit.firstFactor fourFact = 2
     factorisationNonunit.firstFactorNontrivial fourFact = succPreservesInequality (succIsPositive 0)
     factorisationNonunit.firstFactorBiggerMin fourFact = inl (succPreservesInequality (succIsPositive 0))
-    factorisationNonunit.firstFactorDivision fourFact = record { quot = 2 ; rem = 0 ; remIsSmall = zeroIsValidRem 2 ; pr = refl}
+    factorisationNonunit.firstFactorDivision fourFact = record { quot = 2 ; rem = 0 ; remIsSmall = zeroIsValidRem 2 ; pr = refl ; quotSmall = inl (le 1 refl) }
     factorisationNonunit.firstFactorDivides fourFact = refl
     factorisationNonunit.firstFactorPrime fourFact = twoIsPrime
     factorisationNonunit.otherFactorsNumber fourFact = 1
@@ -84,18 +88,18 @@ module IntegerFactorisation where
     lemma2 {succ (succ a)} {succ b} {c} 1<a t pr = le (b +N (a *N succ b)) go
       where
         assocLemm : (a b c : ℕ) → (a +N b) +N c ≡ (a +N c) +N b
-        assocLemm a b c rewrite additionNIsAssociative a b c | additionNIsCommutative b c | equalityCommutative (additionNIsAssociative a c b) = refl
+        assocLemm a b c rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) | Semiring.commutative ℕSemiring b c | Semiring.+Associative ℕSemiring a c b = refl
         go : succ ((b +N a *N succ b) +N succ b) ≡ c
-        go rewrite addZeroRight (succ (b +N succ (b +N a *N succ b))) | equalityCommutative (assocLemm b (succ b) (a *N succ b)) | additionNIsAssociative b (succ b) (a *N succ b) = pr
+        go rewrite Semiring.sumZeroRight ℕSemiring (succ (b +N succ (b +N a *N succ b))) | equalityCommutative (assocLemm b (succ b) (a *N succ b)) | Semiring.+Associative ℕSemiring b (succ b) (a *N succ b) = pr
 
     factorIntegerLemma : (x : ℕ) (indHyp : (y : ℕ) (y<x : y <N x) → ((y <N 2) || (factorisationNonunit 1 y))) → ((x <N 2) || (factorisationNonunit 1 x))
     factorIntegerLemma zero indHyp = inl (succIsPositive 1)
     factorIntegerLemma (succ zero) indHyp = inl (succPreservesInequality (succIsPositive 0))
     factorIntegerLemma (succ (succ x)) indHyp with everyNumberHasAPrimeFactor {succ (succ x)} (succPreservesInequality (succIsPositive x))
-    factorIntegerLemma (succ (succ x)) indHyp | a , record { fst = record { fst = divides record {quot = zero ; rem = .0 ; pr = ssxDivA ; remIsSmall = r } refl ; snd = 1<a }; snd = record { fst = primeA ; snd = smallerFactors } } rewrite addZeroRight (a *N zero) | multiplicationNIsCommutative a 0 = naughtE ssxDivA
-    factorIntegerLemma (succ (succ x)) indHyp | a , record { fst = record { fst = divides record {quot = succ zero ; rem = .0 ; pr = ssxDivA ; remIsSmall = r } refl ; snd = 1<a }; snd = record { fst = primeA ; snd = smallerFactors } } = inr record { 1<a = succPreservesInequality (succIsPositive x) ; firstFactor = a ; firstFactorNontrivial = Prime.p>1 primeA ; firstFactorBiggerMin = inl (Prime.p>1 primeA) ; firstFactorDivision = record { quot = 1 ; rem = 0 ; pr = ssxDivA ; remIsSmall = r} ; firstFactorDivides = refl ; firstFactorPrime = record { p>1 = Prime.p>1 primeA ; pr = Prime.pr primeA } ; otherFactors = inl record { fst = refl ; snd = refl } ; otherFactorsNumber = 0 }
+    factorIntegerLemma (succ (succ x)) indHyp | a , record { fst = record { fst = divides record {quot = zero ; rem = .0 ; pr = ssxDivA ; remIsSmall = r } refl ; snd = 1<a }; snd = record { fst = primeA ; snd = smallerFactors } } rewrite Semiring.sumZeroRight ℕSemiring (a *N zero) | multiplicationNIsCommutative a 0 = naughtE ssxDivA
+    factorIntegerLemma (succ (succ x)) indHyp | a , record { fst = record { fst = divides record {quot = succ zero ; rem = .0 ; pr = ssxDivA ; remIsSmall = r } refl ; snd = 1<a }; snd = record { fst = primeA ; snd = smallerFactors } } = inr record { 1<a = succPreservesInequality (succIsPositive x) ; firstFactor = a ; firstFactorNontrivial = Prime.p>1 primeA ; firstFactorBiggerMin = inl (Prime.p>1 primeA) ; firstFactorDivision = record { quot = 1 ; rem = 0 ; pr = ssxDivA ; remIsSmall = r ; quotSmall = inl (TotalOrder.transitive ℕTotalOrder (le zero refl) 1<a) } ; firstFactorDivides = refl ; firstFactorPrime = record { p>1 = Prime.p>1 primeA ; pr = Prime.pr primeA } ; otherFactors = inl record { fst = refl ; snd = refl } ; otherFactorsNumber = 0 }
 
-    factorIntegerLemma (succ (succ x)) indHyp | a , record { fst = record { fst = divides record {quot = succ (succ qu) ; rem = .0 ; pr = ssxDivA ; remIsSmall = remSmall } refl ; snd = 1<a }; snd = record { fst = primeA ; snd = smallerFactors } } = inr record { 1<a = succPreservesInequality (succIsPositive x) ; firstFactor = a ; firstFactorNontrivial = Prime.p>1 primeA ; firstFactorBiggerMin = inl (Prime.p>1 primeA) ; firstFactorDivision = record { quot = succ (succ qu) ; rem = 0 ; pr = ssxDivA ; remIsSmall = remSmall} ; firstFactorDivides = refl ; firstFactorPrime = record { p>1 = Prime.p>1 primeA ; pr = Prime.pr primeA } ; otherFactors = inr record {fst = succPreservesInequality (succIsPositive qu) ; snd = factNonunit} ; otherFactorsNumber = succ (factorisationNonunit.otherFactorsNumber indHypRes') }
+    factorIntegerLemma (succ (succ x)) indHyp | a , record { fst = record { fst = divides record {quot = succ (succ qu) ; rem = .0 ; pr = ssxDivA ; remIsSmall = remSmall } refl ; snd = 1<a }; snd = record { fst = primeA ; snd = smallerFactors } } = inr record { 1<a = succPreservesInequality (succIsPositive x) ; firstFactor = a ; firstFactorNontrivial = Prime.p>1 primeA ; firstFactorBiggerMin = inl (Prime.p>1 primeA) ; firstFactorDivision = record { quot = succ (succ qu) ; rem = 0 ; pr = ssxDivA ; remIsSmall = remSmall ; quotSmall = inl (TotalOrder.transitive ℕTotalOrder (le zero refl) 1<a) } ; firstFactorDivides = refl ; firstFactorPrime = record { p>1 = Prime.p>1 primeA ; pr = Prime.pr primeA } ; otherFactors = inr record {fst = succPreservesInequality (succIsPositive qu) ; snd = factNonunit} ; otherFactorsNumber = succ (factorisationNonunit.otherFactorsNumber indHypRes') }
       where
         indHypRes : ((succ (succ qu)) <N 2) || factorisationNonunit 1 (succ (succ qu))
         indHypRes = indHyp (succ (succ qu)) (lemma2 {a} {succ (succ qu)} {succ (succ x)} 1<a (succIsPositive (succ qu)) ssxDivA)
@@ -104,12 +108,12 @@ module IntegerFactorisation where
         indHypRes' | inl y = exFalso (zeroNeverGreater (canRemoveSuccFrom<N (canRemoveSuccFrom<N y)))
         indHypRes' | inr y = y
         z|ssx : (z : ℕ) → z ∣ succ (succ qu) → z ∣ succ (succ x)
-        z|ssx z z|ssq = (divisibilityTransitive z|ssq (divides (record { quot = a ; rem = 0 ; pr = identityOfIndiscernablesLeft (a *N succ (succ qu) +N 0) (succ (succ x)) (succ (succ qu) *N a +N 0) _≡_ ssxDivA (applyEquality (λ t → t +N 0) (multiplicationNIsCommutative a (succ (succ qu)))) ; remIsSmall = zeroIsValidRem (succ (succ qu))}) refl))
+        z|ssx z z|ssq = (divisibilityTransitive z|ssq (divides (record { quot = a ; rem = 0 ; pr = identityOfIndiscernablesLeft (a *N succ (succ qu) +N 0) (succ (succ x)) (succ (succ qu) *N a +N 0) _≡_ ssxDivA (applyEquality (λ t → t +N 0) (multiplicationNIsCommutative a (succ (succ qu)))) ; remIsSmall = zeroIsValidRem (succ (succ qu)) ; quotSmall = inl (succIsPositive _) }) refl))
         factNonunit : factorisationNonunit a (succ (succ qu))
         factNonunit with orderIsTotal a (factorisationNonunit.firstFactor indHypRes')
         factNonunit | inl (inl a<ff) = canIncreaseFactorBound indHypRes' (λ z 1<z z<a z|ssq → smallerFactors z z<a 1<z (z|ssx z z|ssq)) (inl a<ff)
         factNonunit | inl (inr ff<a) = exFalso (smallerFactors (factorisationNonunit.firstFactor indHypRes') ff<a (factorisationNonunit.firstFactorNontrivial indHypRes') (z|ssx (factorisationNonunit.firstFactor indHypRes') (divides (factorisationNonunit.firstFactorDivision indHypRes') (factorisationNonunit.firstFactorDivides indHypRes'))))
-        factNonunit | inr ff=a = canIncreaseFactorBound indHypRes' (λ z 1<z z<a z|ssq → smallerFactors z z<a 1<z (divisibilityTransitive z|ssq (divides (record { quot = a ; rem = 0 ; pr = identityOfIndiscernablesLeft (a *N succ (succ qu) +N 0) (succ (succ x)) (succ (succ qu) *N a +N 0) _≡_ ssxDivA (applyEquality (λ t → t +N 0) (multiplicationNIsCommutative a (succ (succ qu)))) ; remIsSmall = zeroIsValidRem (succ (succ qu))}) refl))) (inr ff=a)
+        factNonunit | inr ff=a = canIncreaseFactorBound indHypRes' (λ z 1<z z<a z|ssq → smallerFactors z z<a 1<z (divisibilityTransitive z|ssq (divides (record { quot = a ; rem = 0 ; pr = identityOfIndiscernablesLeft (a *N succ (succ qu) +N 0) (succ (succ x)) (succ (succ qu) *N a +N 0) _≡_ ssxDivA (applyEquality (λ t → t +N 0) (multiplicationNIsCommutative a (succ (succ qu)))) ; remIsSmall = zeroIsValidRem (succ (succ qu)) ; quotSmall = inl (succIsPositive _) }) refl))) (inr ff=a)
 
     factorInteger : (a : ℕ) → (1 <N a) → factorisationNonunit 1 a
     factorInteger a 1<a with (rec <NWellfounded (λ n → (n <N 2) || (factorisationNonunit 1 n))) factorIntegerLemma
@@ -123,16 +127,16 @@ module IntegerFactorisation where
 
     lemma4' : {quot rem b : ℕ} → (quot +N quot) +N rem ≡ succ b → quot <N succ b
     lemma4' {zero} {rem} {b} pr = succIsPositive b
-    lemma4' {succ quot} {rem} {b} pr rewrite equalityCommutative (succExtracts (quot +N succ quot) rem) | additionNIsCommutative quot (succ quot) | additionNIsAssociative (succ quot) quot (succ rem) | succExtracts quot rem | additionNIsCommutative (succ quot) (succ (quot +N rem)) = le (quot +N rem) pr
+    lemma4' {succ quot} {rem} {b} pr rewrite equalityCommutative (Semiring.+Associative ℕSemiring quot (succ quot) rem) = succPreservesInequality (le (quot +N rem) (succInjective (transitivity (applyEquality succ (Semiring.commutative ℕSemiring _ quot)) pr)))
 
     lemma4 : {quot a rem b : ℕ} → (a *N quot +N rem ≡ succ b) → (1 <N a) → (quot <N succ b)
     lemma4 {quot} {zero} {rem} {b} pr 1<a = exFalso (zeroNeverGreater 1<a)
     lemma4 {quot} {succ zero} {rem} {b} pr 1<a = exFalso (lessIrreflexive 1<a)
-    lemma4 {quot} {succ (succ zero)} {rem} {b} pr 1<a rewrite addZeroRight quot = lemma4' pr
+    lemma4 {quot} {succ (succ zero)} {rem} {b} pr 1<a rewrite Semiring.sumZeroRight ℕSemiring quot = lemma4' pr
     lemma4 {quot} {succ (succ (succ a))} {rem} {b} pr 1<a = lemma4 {quot} {succ (succ a)} {quot +N rem} {b} p' (succPreservesInequality (succIsPositive a))
       where
         p' : (quot +N (quot +N a *N quot)) +N (quot +N rem) ≡ succ b
-        p' rewrite additionNIsCommutative quot (quot +N (quot +N a *N quot)) | additionNIsAssociative (quot +N (quot +N a *N quot)) quot rem = pr
+        p' rewrite Semiring.commutative ℕSemiring quot (quot +N (quot +N a *N quot)) | Semiring.+Associative ℕSemiring (quot +N (quot +N a *N quot)) quot rem = pr
 
     noSmallerFactors : {a i p : ℕ} → (factorisationNonunit i a) → (Prime p) → (p <N i) → (p ∣ a) → False
     noSmallerFactors {a} {i} {p} factA pPrime p<i p|a with rec <NWellfounded (λ b → (factorisationNonunit i b) → p ∣ b → False)
@@ -163,7 +167,7 @@ module IntegerFactorisation where
             inter' : firstFactor *N (divisionAlgResult.quot firstFactorDivision) +N 0 ≡ (succ x)
             inter' rewrite equalityCommutative firstFactorDivides = inter
             inter'' : firstFactor *N (divisionAlgResult.quot firstFactorDivision) ≡ (succ x)
-            inter'' rewrite equalityCommutative (addZeroRight (firstFactor *N (divisionAlgResult.quot firstFactorDivision))) = inter'
+            inter'' rewrite equalityCommutative (Semiring.sumZeroRight ℕSemiring (firstFactor *N (divisionAlgResult.quot firstFactorDivision))) = inter'
             p|ff*q : p ∣ firstFactor *N (divisionAlgResult.quot firstFactorDivision)
             p|ff*q rewrite inter'' = p|x
             p|ffOrQ : (p ∣ firstFactor) || (p ∣ divisionAlgResult.quot firstFactorDivision)
@@ -193,7 +197,7 @@ module IntegerFactorisation where
         p1<p2 = ff1<ff2
         a=p2rem2 : a ≡ p2 *N rem2
         a=p2rem2 with divisionAlgResult.pr (factorisationNonunit.firstFactorDivision f2)
-        ... | ff rewrite factorisationNonunit.firstFactorDivides f2 | addZeroRight (factorisationNonunit.firstFactor f2 *N divisionAlgResult.quot (factorisationNonunit.firstFactorDivision f2)) = equalityCommutative ff
+        ... | ff rewrite factorisationNonunit.firstFactorDivides f2 | Semiring.sumZeroRight ℕSemiring (factorisationNonunit.firstFactor f2 *N divisionAlgResult.quot (factorisationNonunit.firstFactorDivision f2)) = equalityCommutative ff
         p1|second : (p1 ∣ p2) || (p1 ∣ rem2)
         p1|second = primesArePrime {p1} {p2} {rem2} (factorisationNonunit.firstFactorPrime f1) lem
           where
@@ -240,7 +244,7 @@ module IntegerFactorisation where
         pr1 : (factorisationNonunit.firstFactor f1) *N (divisionAlgResult.quot div1) +N 0 ≡ a
         pr1 rewrite equalityCommutative rem1=0 = divisionAlgResult.pr div1
         pr1' : (factorisationNonunit.firstFactor f1) *N (divisionAlgResult.quot div1) ≡ a
-        pr1' rewrite equalityCommutative (addZeroRight ((factorisationNonunit.firstFactor f1) *N (divisionAlgResult.quot div1))) = pr1
+        pr1' rewrite equalityCommutative (Semiring.sumZeroRight ℕSemiring ((factorisationNonunit.firstFactor f1) *N (divisionAlgResult.quot div1))) = pr1
         div2 : divisionAlgResult (factorisationNonunit.firstFactor f2) a
         div2 = factorisationNonunit.firstFactorDivision f2
         rem2=0 : divisionAlgResult.rem div2 ≡ 0
@@ -248,7 +252,7 @@ module IntegerFactorisation where
         pr2 : (factorisationNonunit.firstFactor f2) *N (divisionAlgResult.quot div2) +N 0 ≡ a
         pr2 rewrite equalityCommutative rem2=0 = divisionAlgResult.pr div2
         pr2' : (factorisationNonunit.firstFactor f2) *N (divisionAlgResult.quot div2) ≡ a
-        pr2' rewrite equalityCommutative (addZeroRight ((factorisationNonunit.firstFactor f2) *N (divisionAlgResult.quot div2))) = pr2
+        pr2' rewrite equalityCommutative (Semiring.sumZeroRight ℕSemiring ((factorisationNonunit.firstFactor f2) *N (divisionAlgResult.quot div2))) = pr2
         pr : (factorisationNonunit.firstFactor f2) *N (divisionAlgResult.quot div2) ≡ (factorisationNonunit.firstFactor f1) *N (divisionAlgResult.quot div1)
         pr = transitivity pr2' (equalityCommutative pr1')
         pr' : (factorisationNonunit.firstFactor f1) *N (divisionAlgResult.quot div2) ≡ (factorisationNonunit.firstFactor f1) *N (divisionAlgResult.quot div1)

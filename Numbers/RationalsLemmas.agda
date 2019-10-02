@@ -9,7 +9,7 @@ open import Groups.Lemmas
 open import Groups.Definition
 open import Rings.Definition
 open import Fields.Fields
-open import PrimeNumbers
+open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
 open import Setoids.Orders
 open import Functions

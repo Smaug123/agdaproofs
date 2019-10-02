@@ -8,8 +8,8 @@ open import Orders
 open import Rings.Definition
 open import Numbers.Naturals.Naturals
 open import Numbers.Integers.Integers
-open import PrimeNumbers
-open import IntegersModN
+open import Numbers.Primes.PrimeNumbers
+open import Numbers.Modulo.IntegersModN
 
 module Rings.Examples.Proofs where
   nToZn' : (n : ℕ) (pr : 0 <N n) (x : ℕ) → ℤn n pr
