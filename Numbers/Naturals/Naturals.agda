@@ -9,15 +9,17 @@ open import Numbers.Naturals.Definition
 open import Numbers.Naturals.Addition
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Multiplication
+open import Numbers.Naturals.Exponentiation
 open import Semirings.Definition
 open import Monoids.Definition
 
 module Numbers.Naturals.Naturals where
 
-  open Numbers.Naturals.Definition using (ℕ ; zero ; succ; succInjective) public
-  open Numbers.Naturals.Addition using (_+N_) public
+  open Numbers.Naturals.Definition using (ℕ ; zero ; succ ; succInjective ; naughtE) public
+  open Numbers.Naturals.Addition using (_+N_ ; canSubtractFromEqualityRight ; canSubtractFromEqualityLeft) public
   open Numbers.Naturals.Multiplication using (_*N_ ; multiplicationNIsCommutative) public
-  open Numbers.Naturals.Order using (_<N_ ; le; succPreservesInequality) public
+  open Numbers.Naturals.Exponentiation using (_^N_) public
+  open Numbers.Naturals.Order using (_<N_ ; le; succPreservesInequality; succIsPositive; addingIncreases; zeroNeverGreater; noIntegersBetweenXAndSuccX; a<SuccA; canRemoveSuccFrom<N) public
 
   ℕSemiring : Semiring 0 1 _+N_ _*N_
   Monoid.associative (Semiring.monoid ℕSemiring) a b c = equalityCommutative (additionNIsAssociative a b c)
@@ -31,69 +33,14 @@ module Numbers.Naturals.Naturals where
   Semiring.productZeroRight ℕSemiring a = multiplicationNIsCommutative a 0
   Semiring.+DistributesOver* ℕSemiring = productDistributes
 
-  canAddZeroOnLeft : {a b : ℕ} → (a <N b) → (a +N zero) <N b
-  canAddZeroOnLeft {a} {b} prAB = identityOfIndiscernablesLeft a b (a +N zero) (λ x y -> x <N y) prAB (equalityCommutative (addZeroRight a))
-  canAddZeroOnRight : {a b : ℕ} → (a <N b) → a <N (b +N zero)
-  canAddZeroOnRight {a} {b} prAB = identityOfIndiscernablesRight a b (b +N zero) (λ x y → x <N y) prAB (equalityCommutative (addZeroRight b))
-
-  canRemoveZeroFromLeft : {a b : ℕ} → (a +N zero) <N b → (a <N b)
-  canRemoveZeroFromLeft {a} {b} prAB = identityOfIndiscernablesLeft (a +N zero) b a (λ x y → x <N y) prAB (addZeroRight a)
-  canRemoveZeroFromRight : {a b : ℕ} → (a <N b +N zero) → a <N b
-  canRemoveZeroFromRight {a} {b} prAB = identityOfIndiscernablesRight a (b +N zero) b (λ x y → x <N y) prAB (addZeroRight b)
-
-  collapseSuccOnLeft : {a b c : ℕ} → (succ (a +N c) <N b) → (a +N succ c <N b)
-  collapseSuccOnLeft {a} {b} {c} pr = identityOfIndiscernablesLeft (succ (a +N c)) b (a +N succ c) (λ x y → x <N y) pr (equalityCommutative (succExtracts a c))
-
-  extractSuccOnLeft : {a b c : ℕ} → (a +N succ c <N b) → (succ (a +N c) <N b)
-  extractSuccOnLeft {a} {b} {c} pr = identityOfIndiscernablesLeft (a +N succ c) b (succ (a +N c)) (λ x y → x <N y) pr (succExtracts a c)
-
-  collapseSuccOnRight : {a b c : ℕ} → (a <N succ (b +N c)) → (a <N b +N succ c)
-  collapseSuccOnRight {a} {b} {c} pr = identityOfIndiscernablesRight a (succ (b +N c)) (b +N succ c) (λ x y → x <N y) pr (equalityCommutative (succExtracts b c))
-
-  extractSuccOnRight : {a b c : ℕ} → (a <N b +N succ c) → (a <N succ (b +N c))
-  extractSuccOnRight {a} {b} {c} pr = identityOfIndiscernablesRight a (b +N succ c) (succ (b +N c)) (λ x y → x <N y) pr (succExtracts b c)
-
-  subtractOneFromInequality : {a b : ℕ} → (succ a <N succ b) → (a <N b)
-  subtractOneFromInequality {a} {b} (le x proof) = le x (transitivity t pr')
-    where
-      pr' : x +N succ a ≡ b
-      pr' = succInjective proof
-      t : succ (x +N a) ≡ x +N succ a
-      t = equalityCommutative (succExtracts x a)
-
-  succIsPositive : (a : ℕ) → zero <N succ a
-  succIsPositive a = logical<NImpliesLe (record {})
-
-  a<SuccA : (a : ℕ) → a <N succ a
-  a<SuccA a = le zero refl
-
   record subtractionNResult (a b : ℕ) (p : a ≤N b) : Set where
     field
       result : ℕ
       pr : a +N result ≡ b
 
-  canSubtractFromEqualityRight : {a b c : ℕ} → (a +N b ≡ c +N b) → a ≡ c
-  canSubtractFromEqualityRight {a} {zero} {c} pr = transitivity (equalityCommutative (addZeroRight a)) (transitivity pr (addZeroRight c))
-  canSubtractFromEqualityRight {a} {succ b} {c} pr = canSubtractFromEqualityRight {a} {b} {c} h
-    where
-      k : a +N succ b ≡ succ (c +N b)
-      k = identityOfIndiscernablesRight (a +N succ b) (c +N succ b) (succ (c +N b)) _≡_ pr (succExtracts c b)
-      i : succ (a +N b) ≡ succ (c +N b)
-      i = identityOfIndiscernablesLeft (a +N succ b) (succ (c +N b)) (succ (a +N b)) _≡_ k (succExtracts a b)
-      h : a +N b ≡ c +N b
-      h = succInjective i
-
-  canSubtractFromEqualityLeft : {a b c : ℕ} → (a +N b ≡ a +N c) → b ≡ c
-  canSubtractFromEqualityLeft {a} {b} {c} pr = canSubtractFromEqualityRight {b} {a} {c} h
-      where
-        i : a +N b ≡ c +N a
-        i = identityOfIndiscernablesRight (a +N b) (a +N c) (c +N a) _≡_ pr (additionNIsCommutative a c)
-        h : b +N a ≡ c +N a
-        h = identityOfIndiscernablesLeft (a +N b) (c +N a) (b +N a) _≡_ i (additionNIsCommutative a b)
-
-  subtractionNWellDefined : {a b : ℕ} → (p1 p2 : a ≤N b) → (s : subtractionNResult a b p1) → (t : subtractionNResult a b p2) → (subtractionNResult.result s ≡ subtractionNResult.result t)
-  subtractionNWellDefined {a} {b} (inl x) pr2 record { result = result1 ; pr = pr1 } record { result = result ; pr = pr } = canSubtractFromEqualityLeft {a} (transitivity pr1 (equalityCommutative pr))
-  subtractionNWellDefined {a} {.a} (inr refl) pr2 record { result = result1 ; pr = pr1 } record { result = result2 ; pr = pr } = transitivity g' (equalityCommutative g)
+  subtractionNWellDefined : {a b : ℕ} → {p1 p2 : a ≤N b} → (s : subtractionNResult a b p1) → (t : subtractionNResult a b p2) → (subtractionNResult.result s ≡ subtractionNResult.result t)
+  subtractionNWellDefined {a} {b} {inl x} {pr2} record { result = result1 ; pr = pr1 } record { result = result ; pr = pr } = canSubtractFromEqualityLeft {a} (transitivity pr1 (equalityCommutative pr))
+  subtractionNWellDefined {a} {.a} {inr refl} {pr2} record { result = result1 ; pr = pr1 } record { result = result2 ; pr = pr } = transitivity g' (equalityCommutative g)
     where
       g : result2 ≡ 0
       g = canSubtractFromEqualityLeft {a} {_} {0} (transitivity pr (equalityCommutative (addZeroRight a)))
@@ -104,7 +51,7 @@ module Numbers.Naturals.Naturals where
   -N {zero} {b} prAB = record { result = b ; pr = refl }
   -N {succ a} {zero} (inl (le x ()))
   -N {succ a} {zero} (inr ())
-  -N {succ a} {succ b} (inl x) with -N {a} {b} (inl (subtractOneFromInequality x))
+  -N {succ a} {succ b} (inl x) with -N {a} {b} (inl (canRemoveSuccFrom<N x))
   -N {succ a} {succ b} (inl x) | record { result = result ; pr = pr } = record { result = result ; pr = applyEquality succ pr }
   -N {succ a} {succ .a} (inr refl) = record { result = 0 ; pr = applyEquality succ (addZeroRight a) }
 
@@ -121,7 +68,7 @@ module Numbers.Naturals.Naturals where
   addMinus {succ a} {zero} (inl (le x ()))
   addMinus {succ a} {zero} (inr ())
   addMinus {succ a} {succ b} (inl x) with (-N {succ a} {succ b} (inl x))
-  addMinus {succ a} {succ b} (inl x) | record { result = result ; pr = pr } = g
+  addMinus {succ a} {succ b} (inl x) | record { result = result ; pr = pr } = transitivity (transitivity (applyEquality (_+N succ a) (transitivity (subtractionNWellDefined {p1 = inl (canRemoveSuccFrom<N x)} (record { result = subtractionNResult.result (-N (inl (canRemoveSuccFrom<N x))) ; pr = transitivity (additionNIsCommutative a _) (addMinus (inl (canRemoveSuccFrom<N x)))}) previous) (equalityCommutative t))) (additionNIsCommutative result (succ a))) pr
     where
       pr'' : (a <N b) || (a ≡ b)
       pr'' = (inl (le (_<N_.x x) (transitivity (equalityCommutative (succExtracts (_<N_.x x) a)) (succInjective (_<N_.proof x)))))
@@ -130,30 +77,22 @@ module Numbers.Naturals.Naturals where
       next : Sg (subtractionNResult (succ a) (succ b) (addOneToWeakInequality pr'')) λ n → subtractionNResult.result n ≡ subtractionNResult.result previous
       next = bumpUpSubtraction pr'' previous
       t : result ≡ subtractionNResult.result (underlying next)
-      t = subtractionNWellDefined {succ a} {succ b} (inl x) (addOneToWeakInequality pr'') (record { result = result ; pr = pr }) (underlying next)
-      u : subtractionNResult.result previous ≡ subtractionNResult.result (underlying next)
-      u = refl
-      v : subtractionNResult.result previous ≡ result
-      v = transitivity u (equalityCommutative t)
-      lemma : (a b : ℕ) → succ (a +N b) ≡ b +N succ a
-      lemma a b rewrite additionNIsCommutative a b = equalityCommutative (succExtracts b a)
-      g : subtractionNResult.result previous +N succ a ≡ succ b
-      g rewrite v = identityOfIndiscernablesLeft (succ (a +N result)) (succ b) (result +N succ a) _≡_ pr (lemma a result)
+      t = subtractionNWellDefined {succ a} {succ b} {inl x} {addOneToWeakInequality pr''} (record { result = result ; pr = pr }) (underlying next)
   addMinus {succ a} {succ .a} (inr refl) = refl
 
   addMinus' : {a b : ℕ} → (pr : a ≤N b) → a +N subtractionNResult.result (-N {a} {b} pr) ≡ b
   addMinus' {a} {b} pr rewrite additionNIsCommutative a (subtractionNResult.result (-N {a} {b} pr)) = addMinus {a} {b} pr
 
   additionPreservesInequality : {a b : ℕ} → (c : ℕ) → a <N b → a +N c <N b +N c
-  additionPreservesInequality {a} {b} zero prAB = canAddZeroOnRight {a +N zero} {b} (canAddZeroOnLeft {a} {b} prAB)
-  additionPreservesInequality {a} {b} (succ c) prAB = collapseSuccOnLeft {a} {b +N succ c} {c} (collapseSuccOnRight {succ (a +N c)} {b} {c} (succPreservesInequality {a +N c} {b +N c} (additionPreservesInequality {a} {b} c prAB)))
+  additionPreservesInequality {a} {b} zero prAB rewrite additionNIsCommutative a 0 | additionNIsCommutative b 0 = prAB
+  additionPreservesInequality {a} {b} (succ c) (le x proof) = le x (transitivity (equalityCommutative (additionNIsAssociative (succ x) a (succ c))) (applyEquality (_+N succ c) proof))
 
   additionPreservesInequalityOnLeft : {a b : ℕ} → (c : ℕ) → a <N b → c +N a <N c +N b
   additionPreservesInequalityOnLeft {a} {b} c prAB = identityOfIndiscernablesRight (c +N a) (b +N c) (c +N b) (λ a b → a <N b) (identityOfIndiscernablesLeft (a +N c) (b +N c) (c +N a) (λ a b → a <N b) (additionPreservesInequality {a} {b} c prAB) (additionNIsCommutative a c)) (additionNIsCommutative b c)
 
   subtractionPreservesInequality : {a b : ℕ} → (c : ℕ) → a +N c <N b +N c → a <N b
-  subtractionPreservesInequality {a} {b} zero prABC = canRemoveZeroFromRight {a} {b} (canRemoveZeroFromLeft {a} {b +N zero} prABC)
-  subtractionPreservesInequality {a} {b} (succ c) prABC = subtractionPreservesInequality {a} {b} c (subtractOneFromInequality {a +N c} {b +N c} (extractSuccOnLeft {a} {succ (b +N c)} {c} (extractSuccOnRight {a +N succ c} {b} {c} prABC)))
+  subtractionPreservesInequality {a} {b} zero prABC rewrite additionNIsCommutative a 0 | additionNIsCommutative b 0 = prABC
+  subtractionPreservesInequality {a} {b} (succ c) (le x proof) = le x (canSubtractFromEqualityRight {b = succ c} (transitivity (additionNIsAssociative (succ x) a (succ c)) proof))
 
   productNonzeroIsNonzero : {a b : ℕ} → zero <N a → zero <N b → zero <N a *N b
   productNonzeroIsNonzero {zero} {b} prA prB = prA
@@ -177,9 +116,6 @@ module Numbers.Naturals.Naturals where
         k : succ b <N succ b +N (succ a *N succ b)
         k = identityOfIndiscernablesLeft (zero +N succ b) (succ b +N (succ a *N succ b)) (succ b) (λ a b → a <N b) j refl
 
-  naughtE : {B : Set} {a : ℕ} → (pr : zero ≡ succ a) → B
-  naughtE {a} ()
-
   productCancelsRight : (a b c : ℕ) → (zero <N a) → (b *N a ≡ c *N a) → (b ≡ c)
   productCancelsRight a zero zero aPos eq = refl
   productCancelsRight zero zero (succ c) (le x ()) eq
@@ -188,7 +124,7 @@ module Numbers.Naturals.Naturals where
       h : zero ≡ succ c *N succ a
       h = eq
       contr : zero ≡ succ c
-      contr = naughtE h
+      contr = exFalso (naughtE h)
 
   productCancelsRight zero (succ b) zero (le x ()) eq
   productCancelsRight (succ a) (succ b) zero aPos eq = contr
@@ -196,7 +132,7 @@ module Numbers.Naturals.Naturals where
       h : succ b *N succ a ≡ zero
       h = eq
       contr : succ b ≡ zero
-      contr = naughtE (equalityCommutative h)
+      contr = exFalso (naughtE (equalityCommutative h))
 
   productCancelsRight zero (succ b) (succ c) (le x ()) eq
 
@@ -227,9 +163,9 @@ module Numbers.Naturals.Naturals where
   productCancelsLeft' zero b c pr = inl refl
   productCancelsLeft' (succ a) b c pr = inr (productCancelsLeft (succ a) b c (succIsPositive a) pr)
 
-  lessRespectsAddition : (a b c : ℕ) → (a <N b) → ((a +N c) <N (b +N c))
-  lessRespectsAddition a b zero prAB = canAddZeroOnRight {a +N zero} {b} (canAddZeroOnLeft {a} {b} prAB)
-  lessRespectsAddition a b (succ c) prAB = collapseSuccOnRight {a +N succ c} {b} {c} (collapseSuccOnLeft {a} {succ (b +N c)} {c} (succPreservesInequality {a +N c} {b +N c} (lessRespectsAddition a b c prAB)))
+  lessRespectsAddition : {a b : ℕ} (c : ℕ) → (a <N b) → ((a +N c) <N (b +N c))
+  lessRespectsAddition {a} {b} zero prAB rewrite additionNIsCommutative a 0 | additionNIsCommutative b 0 = prAB
+  lessRespectsAddition {a} {b} (succ c) prAB rewrite additionNIsCommutative a (succ c) | additionNIsCommutative b (succ c) | additionNIsCommutative c a | additionNIsCommutative c b = succPreservesInequality (lessRespectsAddition c prAB)
 
   canTimesOneOnLeft : {a b : ℕ} → (a <N b) → (a *N (succ zero)) <N b
   canTimesOneOnLeft {a} {b} prAB = identityOfIndiscernablesLeft a b (a *N (succ zero)) (λ x y → x <N y) prAB (equalityCommutative (productWithOneRight a))
@@ -268,7 +204,7 @@ module Numbers.Naturals.Naturals where
       h : c *N a <N c *N b
       h = lessRespectsMultiplicationLeft a b c (logical<NImpliesLe (leImpliesLogical<N prAB)) cPos
       j : c *N a +N c <N c *N b +N c
-      j = lessRespectsAddition (c *N a) (c *N b) c h
+      j = lessRespectsAddition c h
       i : c *N succ a <N c *N b +N c
       i = identityOfIndiscernablesLeft (c *N a +N c) (c *N b +N c) (c *N succ a) _<N_ j (equalityCommutative (bumpDownOnRight a c))
       m : c *N succ a <N c *N succ b
@@ -326,9 +262,6 @@ module Numbers.Naturals.Naturals where
   -NIsDecreasing : {a b : ℕ} → (prAB : succ a <N b) → subtractionNResult.result (-N (inl prAB)) <N b
   -NIsDecreasing {a} {b} prAB with (-N (inl prAB))
   -NIsDecreasing {a} {b} (le x proof) | record { result = result ; pr = pr } = record { x = a ; proof = pr }
-
-  zeroNeverGreater : {a : ℕ} → (a <N zero) → False
-  zeroNeverGreater {a} (le x ())
 
   equalityN : (a b : ℕ) → Sg Bool (λ truth → if truth then a ≡ b else Unit)
   equalityN zero zero = ( BoolTrue , refl )
@@ -391,16 +324,6 @@ module Numbers.Naturals.Naturals where
       q' : b <N c
       q' = cancelInequalityLeft {a} {b} {c} q
 
-  <NWellDefined : {a b : ℕ} → (p1 : a <N b) → (p2 : a <N b) → _<N_.x p1 ≡ _<N_.x p2
-  <NWellDefined {a} {b} (le x proof) (le y proof1) = equalityCommutative r
-    where
-      p : succ (y +N a) ≡ succ (x +N a)
-      p = transitivity proof1 (equalityCommutative proof)
-      q : y +N a ≡ x +N a
-      q = succInjective {y +N a} {x +N a} p
-      r : y ≡ x
-      r = canSubtractFromEqualityRight {_} {a} q
-
   cannotAddAndEnlarge : (a b : ℕ) → a <N succ (a +N b)
   cannotAddAndEnlarge a b = le b (applyEquality succ (additionNIsCommutative b a))
 
@@ -460,20 +383,8 @@ module Numbers.Naturals.Naturals where
       p'' = canSubtractFromEqualityLeft {d} {result} {c} p'
   equivalentSubtraction (succ a) b zero d (le x ()) prdb eq
   equivalentSubtraction (succ a) b (succ c) d prac prdb eq with (-N (inl (canRemoveSuccFrom<N prac)))
-  equivalentSubtraction (succ a) b (succ c) d prac prdb eq | record { result = c-a ; pr = prc-a } = go
-    where
-      d-b : ℕ
-      d-b = subtractionNResult.result (-N (inl prdb))
-      s : subtractionNResult (succ a) (succ c) (inl prac)
-      s = record { result = c-a ; pr = applyEquality succ prc-a }
-      t : subtractionNResult.result (-N {a} {c} (inl (canRemoveSuccFrom<N prac))) ≡ subtractionNResult.result (-N {d} {b} (inl prdb))
-      t = equivalentSubtraction a b c d (canRemoveSuccFrom<N prac) prdb (succInjective eq)
-      t' : subtractionNResult.result (-N {a} {c} (inl (canRemoveSuccFrom<N prac))) ≡ d-b
-      t' = transitivity t refl
-      r : subtractionNResult.result (-N (inl (canRemoveSuccFrom<N prac))) ≡ subtractionNResult.result (-N (inl (le (_<N_.x prac) (transitivity (equalityCommutative (succExtracts (_<N_.x prac) a)) (succInjective (_<N_.proof prac))))))
-      r = subtractionNWellDefined {a} {c} (inl (canRemoveSuccFrom<N prac)) ((inl (le (_<N_.x prac) (transitivity (equalityCommutative (succExtracts (_<N_.x prac) a)) (succInjective (_<N_.proof prac)))))) (-N (inl (canRemoveSuccFrom<N prac))) ((-N (inl (le (_<N_.x prac) (transitivity (equalityCommutative (succExtracts (_<N_.x prac) a)) (succInjective (_<N_.proof prac)))))))
-      go : subtractionNResult.result (-N (inl (le (_<N_.x prac) (transitivity (equalityCommutative (succExtracts (_<N_.x prac) a)) (succInjective (_<N_.proof prac)))))) ≡ subtractionNResult.result (-N (inl prdb))
-      go rewrite (equalityCommutative r) = t'
+  equivalentSubtraction (succ a) b (succ c) d prac prdb eq | record { result = c-a ; pr = prc-a } with -N (inl prdb)
+  equivalentSubtraction (succ a) b (succ c) d prac prdb eq | record { result = c-a ; pr = prc-a } | record { result = result ; pr = pr } rewrite equalityCommutative prc-a | equalityCommutative pr | equalityCommutative (additionNIsAssociative a d result) | additionNIsCommutative (a +N c-a) d | equalityCommutative (additionNIsAssociative d a c-a) | additionNIsCommutative a d = equalityCommutative (canSubtractFromEqualityLeft eq)
 
   leLemma : (b c : ℕ) → (b ≤N c) ≡ (b +N zero ≤N c +N zero)
   leLemma b c rewrite addZeroRight c = q
@@ -492,10 +403,6 @@ module Numbers.Naturals.Naturals where
 
   subtractionCast' : {a b c : ℕ} → {pr : a ≤N b} → (eq : b ≡ c) → (p : subtractionNResult a b pr) → Sg (subtractionNResult a c (lessCast' pr eq)) (λ res → subtractionNResult.result p ≡ subtractionNResult.result res)
   subtractionCast' {a} {b} {c} {a<b} eq subt rewrite eq = (subt , refl)
-
-  addingIncreases : (a b : ℕ) → a <N a +N succ b
-  addingIncreases zero b = succIsPositive b
-  addingIncreases (succ a) b = succPreservesInequality (addingIncreases a b)
 
   addToRightWeakInequality : (a : ℕ) → {b c : ℕ} → (pr : b ≤N c) → (b ≤N c +N a)
   addToRightWeakInequality zero {b} {c} (inl x) rewrite (addZeroRight c) = inl x
@@ -577,7 +484,7 @@ module Numbers.Naturals.Naturals where
       s = transitivity q r
       s' : subtractionNResult.result resbc +N 0 ≡ subtractionNResult.result (-N {b +N 0 *N b} {c +N 0 *N c} (inl (lessRespectsMultiplicationLeft b c 1 b<c aPos)))
       s' = identityOfIndiscernablesLeft (subtractionNResult.result resbc) _ (subtractionNResult.result resbc +N 0) _≡_ s (equalityCommutative (addZeroRight _))
-      r = subtractionNWellDefined {b +N 0 *N b} {c +N 0 *N c} ((lessCast' (lessCast (inl b<c) (equalityCommutative (addZeroRight b))) (equalityCommutative (addZeroRight c)))) (inl (lessRespectsMultiplicationLeft b c 1 b<c aPos)) (underlying resbc'') (-N {b +N 0 *N b} {c +N 0 *N c} (inl (lessRespectsMultiplicationLeft b c 1 b<c aPos)))
+      r = subtractionNWellDefined {b +N 0 *N b} {c +N 0 *N c} {(lessCast' (lessCast (inl b<c) (equalityCommutative (addZeroRight b))) (equalityCommutative (addZeroRight c)))} {inl (lessRespectsMultiplicationLeft b c 1 b<c aPos)} (underlying resbc'') (-N {b +N 0 *N b} {c +N 0 *N c} (inl (lessRespectsMultiplicationLeft b c 1 b<c aPos)))
       g (a , b) = b
       g' (a , b) = b
       resbc'' = subtractionCast' (equalityCommutative (addZeroRight c)) (underlying resbc')
@@ -609,19 +516,11 @@ module Numbers.Naturals.Naturals where
             u' rewrite equalityCommutative u = lhs'
             lhs' rewrite t = refl
             u = addSubIntoSub (inl b<c) (inl (lessRespectsMultiplicationLeft b c (succ a) b<c (succIsPositive a)))
-            v = subtractionNWellDefined {succ (succ a) *N b} {succ (succ a) *N c} (addWeakInequalities (inl b<c) (inl (lessRespectsMultiplicationLeft b c (succ a) b<c (succIsPositive a)))) (inl (lessRespectsMultiplicationLeft b c (succ (succ a)) b<c aPos)) (-N {b +N (succ a *N b)} {c +N (succ a *N c)} (addWeakInequalities (inl b<c) (inl (lessRespectsMultiplicationLeft b c (succ a) b<c (succIsPositive a))))) (-N {(succ (succ a)) *N b} {(succ (succ a)) *N c} (inl (lessRespectsMultiplicationLeft b c (succ (succ a)) b<c aPos)))
+            v = subtractionNWellDefined {succ (succ a) *N b} {succ (succ a) *N c} {addWeakInequalities (inl b<c) (inl (lessRespectsMultiplicationLeft b c (succ a) b<c (succIsPositive a)))} {inl (lessRespectsMultiplicationLeft b c (succ (succ a)) b<c aPos)} (-N {b +N (succ a *N b)} {c +N (succ a *N c)} (addWeakInequalities (inl b<c) (inl (lessRespectsMultiplicationLeft b c (succ a) b<c (succIsPositive a))))) (-N {(succ (succ a)) *N b} {(succ (succ a)) *N c} (inl (lessRespectsMultiplicationLeft b c (succ (succ a)) b<c aPos)))
 
   subtractProduct' : {a b c : ℕ} → (aPos : 0 <N a) → (b<c : b <N c) →
     (subtractionNResult.result (-N (inl b<c))) *N a ≡ subtractionNResult.result (-N {a *N b} {a *N c} (inl (lessRespectsMultiplicationLeft b c a b<c aPos)))
   subtractProduct' {a} aPos b<c = identityOfIndiscernablesLeft (a *N subtractionNResult.result (-N (inl b<c))) _ (subtractionNResult.result (-N (inl b<c)) *N a) _≡_ (subtractProduct aPos b<c) (multiplicationNIsCommutative a _)
-
-  noIntegersBetweenXAndSuccX : {a : ℕ} (x : ℕ) → (x <N a) → (a <N succ x) → False
-  noIntegersBetweenXAndSuccX {zero} x x<a a<sx = zeroNeverGreater x<a
-  noIntegersBetweenXAndSuccX {succ a} x (le y proof) (le z proof1) with succInjective proof1
-  ... | ah rewrite (equalityCommutative proof) | (succExtracts z (y +N x)) | equalityCommutative (additionNIsAssociative (succ z) y x) = naughtE (equalityCommutative absurd)
-    where
-      absurd : succ (z +N y) ≡ 0
-      absurd = canSubtractFromEqualityRight {_} {x} {0} ah
 
   equalityDecidable : (a b : ℕ) → (a ≡ b) || ((a ≡ b) → False)
   equalityDecidable zero zero = inl refl
@@ -631,19 +530,11 @@ module Numbers.Naturals.Naturals where
   equalityDecidable (succ a) (succ b) | inl x = inl (applyEquality succ x)
   equalityDecidable (succ a) (succ b) | inr x = inr (λ t → x (succInjective t))
 
-  cannotBeLeqAndG : {a b : ℕ} → a ≤N b → b <N a → False
-  cannotBeLeqAndG {a} {b} (inl x) b<a = orderIsIrreflexive x b<a
-  cannotBeLeqAndG {a} {b} (inr prf) b<a = lessImpliesNotEqual b<a (equalityCommutative prf)
-
   cannotAddKeepingEquality : (a b : ℕ) → (a ≡ a +N succ b) → False
   cannotAddKeepingEquality zero zero pr = naughtE pr
   cannotAddKeepingEquality (succ a) zero pr = cannotAddKeepingEquality a zero (succInjective pr)
   cannotAddKeepingEquality zero (succ b) pr = naughtE pr
   cannotAddKeepingEquality (succ a) (succ b) pr = cannotAddKeepingEquality a (succ b) (succInjective pr)
-
-  aIsNotSuccA : (a : ℕ) → (a ≡ succ a) → False
-  aIsNotSuccA zero pr = naughtE pr
-  aIsNotSuccA (succ a) pr = aIsNotSuccA a (succInjective pr)
 
   ℕTotalOrder : TotalOrder ℕ
   PartialOrder._<_ (TotalOrder.order ℕTotalOrder) = _<N_

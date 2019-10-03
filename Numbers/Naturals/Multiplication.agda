@@ -80,3 +80,15 @@ multiplicationNIsAssociative (succ a) b c =
     transitivity refl
       (transitivity refl
         (transitivity (applyEquality ((λ x → b *N c +N x)) (multiplicationNIsAssociative a b c)) (transitivity (equalityCommutative (productDistributesRight b (a *N b) c)) refl)))
+
+productOne : {a b : ℕ} → a ≡ a *N b → (a ≡ 0) || (b ≡ 1)
+productOne {zero} {b} pr = inl refl
+productOne {succ a} {zero} pr rewrite multiplicationNIsCommutative a 0 = exFalso (naughtE (equalityCommutative pr))
+productOne {succ a} {succ zero} pr = inr refl
+productOne {succ a} {succ (succ b)} pr rewrite multiplicationNIsCommutative a (succ (succ b)) | additionNIsCommutative (succ b) (a +N (a +N b *N a)) | additionNIsAssociative (succ a) (a +N b *N a) (succ b) | additionNIsCommutative (a +N b *N a) (succ b) = exFalso (bad pr)
+  where
+    bad' : {x : ℕ} → x ≡ succ x → False
+    bad' ()
+    bad : {x y : ℕ} → x ≡ x +N succ y → False
+    bad {succ x} {zero} pr rewrite additionNIsCommutative x 1 = bad' pr
+    bad {succ x} {succ y} pr = bad (succInjective pr)
