@@ -45,7 +45,7 @@ module Orders where
   equivMin' : {a b : _} {A : Set a} → (order : TotalOrder {a} {b} A) → {x y : A} → (TotalOrder.min order x y ≡ x) → (TotalOrder._<_ order x y) || (x ≡ y)
   equivMin' order {x} {y} minEq with TotalOrder.totality order x y
   equivMin' order {x} {y} minEq | inl (inl x<y) = inl x<y
-  equivMin' order {x} {y} minEq | inl (inr y<x) = exFalso (PartialOrder.irreflexive (TotalOrder.order order) (identityOfIndiscernablesLeft y _ x (TotalOrder._<_ order) y<x minEq))
+  equivMin' order {x} {y} minEq | inl (inr y<x) = exFalso (PartialOrder.irreflexive (TotalOrder.order order) (identityOfIndiscernablesLeft (TotalOrder._<_ order) y<x minEq))
   equivMin' order {x} {y} minEq | inr x=y = inr x=y
 
   minCommutes : {a b : _} {A : Set a} → (order : TotalOrder {a} {b} A) → (x y : A) → (TotalOrder.min order x y) ≡ (TotalOrder.min order y x)

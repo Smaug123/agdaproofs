@@ -54,7 +54,7 @@ module Lists.Lists where
       s : rev (rev l ++ [ x ] ) ≡ [ x ] ++ rev (rev l)
       s = revIsHom (rev l) [ x ]
       t : rev (rev l ++ [ x ] ) ≡ [ x ] ++ l
-      t = identityOfIndiscernablesRight (rev (rev l ++ (x :: []))) ([ x ] ++ rev (rev l)) ([ x ] ++ l) _≡_ s (applyEquality (λ n → [ x ] ++ n) (revRevIsId l))
+      t = identityOfIndiscernablesRight _≡_ s (applyEquality (λ n → [ x ] ++ n) (revRevIsId l))
 
   fold : {a b : _} {A : Set a} {B : Set b} (f : A → B → B) → B → List A → B
   fold f default [] = default

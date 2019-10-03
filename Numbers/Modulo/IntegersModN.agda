@@ -109,13 +109,13 @@ module Numbers.Modulo.IntegersModN where
   help30 {a} {b} {c} {n} c<n a+b=n n<b+c x = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive pr5 c<n)
     where
       pr : n +N n <N a +N (subtractionNResult.result (-N (inl n<b+c)) +N n)
-      pr = identityOfIndiscernablesRight _ _ _ _<N_ (additionPreservesInequality n x) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
+      pr = identityOfIndiscernablesRight _<N_ (additionPreservesInequality n x) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
       pr2 : n +N n <N a +N (b +N c)
-      pr2 = identityOfIndiscernablesRight _ _ _ _<N_ pr (applyEquality (a +N_) (addMinus (inl n<b+c)))
+      pr2 = identityOfIndiscernablesRight _<N_ pr (applyEquality (a +N_) (addMinus (inl n<b+c)))
       pr3 : n +N n <N (a +N b) +N c
       pr3 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = pr2
       pr4 : n +N n <N c +N n
-      pr4 rewrite Semiring.commutative ℕSemiring c n = identityOfIndiscernablesRight _ _ _ _<N_ pr3 (applyEquality (_+N c) a+b=n)
+      pr4 rewrite Semiring.commutative ℕSemiring c n = identityOfIndiscernablesRight _<N_ pr3 (applyEquality (_+N c) a+b=n)
       pr5 : n <N c
       pr5 = subtractionPreservesInequality n pr4
 
@@ -125,34 +125,34 @@ module Numbers.Modulo.IntegersModN where
       pr1 : a +N (n +N subtractionNResult.result (-N (inl n<b+c))) ≡ n +N c
       pr1 rewrite addMinus' (inl n<b+c) | Semiring.+Associative ℕSemiring a b c | a+b=n = refl
       pr2 : n +N (a +N subtractionNResult.result (-N (inl n<b+c))) ≡ n +N c
-      pr2 = identityOfIndiscernablesLeft _ _ _ _≡_ pr1 (lemm a n (subtractionNResult.result (-N (inl n<b+c))))
+      pr2 = identityOfIndiscernablesLeft _≡_ pr1 (lemm a n (subtractionNResult.result (-N (inl n<b+c))))
         where
           lemm : (a b c : ℕ) → a +N (b +N c) ≡ b +N (a +N c)
           lemm a b c rewrite Semiring.+Associative ℕSemiring a b c | Semiring.commutative ℕSemiring a b | equalityCommutative (Semiring.+Associative ℕSemiring b a c) = refl
 
   help7 : {a b c n : ℕ} → b +N c ≡ n → a <N n → (n<a+b : n <N a +N b) → (subtractionNResult.result (-N (inl n<a+b)) +N c ≡ n) → False
-  help7 {a} {b} {c} {n} b+c=n a<n n<a+b x = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _ _ _ _<N_ a<n pr5)
+  help7 {a} {b} {c} {n} b+c=n a<n n<a+b x = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _<N_ a<n pr5)
     where
       pr : (n +N subtractionNResult.result (-N (inl n<a+b))) +N c ≡ n +N n
-      pr = identityOfIndiscernablesLeft _ _ _ _≡_ (applyEquality (n +N_) x) (Semiring.+Associative ℕSemiring n _ c)
+      pr = identityOfIndiscernablesLeft _≡_ (applyEquality (n +N_) x) (Semiring.+Associative ℕSemiring n _ c)
       pr2 : (a +N b) +N c ≡ n +N n
-      pr2 = identityOfIndiscernablesLeft _ _ _ _≡_ pr (applyEquality (_+N c) (addMinus' (inl n<a+b)))
+      pr2 = identityOfIndiscernablesLeft _≡_ pr (applyEquality (_+N c) (addMinus' (inl n<a+b)))
       pr3 : a +N (b +N c) ≡ n +N n
       pr3 rewrite Semiring.+Associative ℕSemiring a b c = pr2
       pr4 : a +N n ≡ n +N n
-      pr4 = identityOfIndiscernablesLeft _ _ _ _≡_ pr3 (applyEquality (a +N_) b+c=n)
+      pr4 = identityOfIndiscernablesLeft _≡_ pr3 (applyEquality (a +N_) b+c=n)
       pr5 : a ≡ n
       pr5 = canSubtractFromEqualityRight pr4
 
   help29 : {a b c n : ℕ} → (c <N n) → (n<b+c : n <N b +N c) → (a +N subtractionNResult.result (-N (inl n<b+c))) ≡ n → a +N b ≡ n → False
-  help29 {a} {b} {c} {n} c<n n<b+c pr a+b=n = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _ _ _ _<N_ c<n p4)
+  help29 {a} {b} {c} {n} c<n n<b+c pr a+b=n = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _<N_ c<n p4)
     where
       p1 : a +N (subtractionNResult.result (-N (inl n<b+c)) +N n) ≡ n +N n
-      p1 = identityOfIndiscernablesLeft _ _ _ _≡_ (applyEquality (_+N n) pr) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
+      p1 = identityOfIndiscernablesLeft _≡_ (applyEquality (_+N n) pr) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
       p2 : (a +N b) +N c ≡ n +N n
-      p2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = identityOfIndiscernablesLeft _ _ _ _≡_ p1 (applyEquality (a +N_) (addMinus (inl n<b+c)))
+      p2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = identityOfIndiscernablesLeft _≡_ p1 (applyEquality (a +N_) (addMinus (inl n<b+c)))
       p3 : n +N c ≡ n +N n
-      p3 = identityOfIndiscernablesLeft _ _ _ _≡_ p2 (applyEquality (_+N c) a+b=n)
+      p3 = identityOfIndiscernablesLeft _≡_ p2 (applyEquality (_+N c) a+b=n)
       p4 : c ≡ n
       p4 = canSubtractFromEqualityLeft p3
 
@@ -162,7 +162,7 @@ module Numbers.Modulo.IntegersModN where
       p1 : a +N (b +N c) ≡ n +N c
       p1 rewrite Semiring.+Associative ℕSemiring a b c | a+b=n = refl
       p2 : n +N subtractionNResult.result (-N (inl pr)) ≡ n +N c
-      p2 = identityOfIndiscernablesLeft _ _ _ _≡_ p1 (equalityCommutative (addMinus' (inl pr)))
+      p2 = identityOfIndiscernablesLeft _≡_ p1 (equalityCommutative (addMinus' (inl pr)))
 
   help27 : {a b c n : ℕ} → (a +N b ≡ succ n) → (a +N (b +N c) <N succ n) → a +N (b +N c) ≡ c
   help27 {a} {b} {zero} {n} a+b=sn a+b+c<sn rewrite Semiring.commutative ℕSemiring b 0 | a+b=sn = exFalso (TotalOrder.irreflexive ℕTotalOrder a+b+c<sn)
@@ -181,23 +181,23 @@ module Numbers.Modulo.IntegersModN where
   help23 {a} {n} a<n a+0=n rewrite Semiring.commutative ℕSemiring a 0 | a+0=n = TotalOrder.irreflexive ℕTotalOrder a<n
 
   help22 : {a b c n : ℕ} → (a +N b ≡ n) → (c ≡ n) → (n<b+c : n <N b +N c) → (n <N a +N subtractionNResult.result (-N (inl n<b+c))) → False
-  help22 {a} {b} {c} {.c} a+b=n refl n<b+c pr = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesRight _ _ _ _<N_ pr4 a+b=n)
+  help22 {a} {b} {c} {.c} a+b=n refl n<b+c pr = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesRight _<N_ pr4 a+b=n)
     where
       pr1 : c +N c <N a +N (subtractionNResult.result (-N (inl n<b+c)) +N c)
-      pr1 = identityOfIndiscernablesRight _ _ _ _<N_ (additionPreservesInequality c pr) (equalityCommutative (Semiring.+Associative ℕSemiring a _ c))
+      pr1 = identityOfIndiscernablesRight _<N_ (additionPreservesInequality c pr) (equalityCommutative (Semiring.+Associative ℕSemiring a _ c))
       pr2 : c +N c <N a +N (b +N c)
-      pr2 = identityOfIndiscernablesRight _ _ _ _<N_ pr1 (applyEquality (a +N_) (addMinus (inl n<b+c)))
+      pr2 = identityOfIndiscernablesRight _<N_ pr1 (applyEquality (a +N_) (addMinus (inl n<b+c)))
       pr3 : c +N c <N (a +N b) +N c
-      pr3 = identityOfIndiscernablesRight _ _ _ _<N_ pr2 (Semiring.+Associative ℕSemiring a b c)
+      pr3 = identityOfIndiscernablesRight _<N_ pr2 (Semiring.+Associative ℕSemiring a b c)
       pr4 : c <N a +N b
       pr4 = subtractionPreservesInequality c pr3
 
   help21 : {a b c n : ℕ} → (a +N b ≡ n) → (b +N c ≡ n) → (c ≡ n) → (a <N n) → False
-  help21 {a} {b} {c} {.c} a+b=n b+c=n refl a<n = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _ _ _ _<N_ a<n a=c)
+  help21 {a} {b} {c} {.c} a+b=n b+c=n refl a<n = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _<N_ a<n a=c)
     where
       b=0 : b ≡ 0
       a=c : a ≡ c
-      a=c = identityOfIndiscernablesLeft _ _ _ _≡_ a+b=n lemm
+      a=c = identityOfIndiscernablesLeft _≡_ a+b=n lemm
         where
           lemm : a +N b ≡ a
           lemm rewrite b=0 | Semiring.commutative ℕSemiring a 0 = refl
@@ -211,28 +211,28 @@ module Numbers.Modulo.IntegersModN where
       b=0 = b=0' b c b+c=n
 
   help20 : {a b c n : ℕ} → (c ≡ n) → (a +N b ≡ n) → (n<b+c : n <N b +N c) → (a +N subtractionNResult.result (-N (inl n<b+c)) <N n) → False
-  help20 {a} {b} {c} {n} c=n a+b=n n<b+c pr = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _ _ _ _<N_ pr5 c=n)
+  help20 {a} {b} {c} {n} c=n a+b=n n<b+c pr = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _<N_ pr5 c=n)
     where
       pr1 : a +N (subtractionNResult.result (-N (inl n<b+c)) +N n) <N n +N n
-      pr1 = identityOfIndiscernablesLeft _ _ _ _<N_ (additionPreservesInequality n pr) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
+      pr1 = identityOfIndiscernablesLeft _<N_ (additionPreservesInequality n pr) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
       pr2 : a +N (b +N c) <N n +N n
-      pr2 = identityOfIndiscernablesLeft _ _ _ _<N_ pr1 (applyEquality (a +N_) (addMinus (inl n<b+c)))
+      pr2 = identityOfIndiscernablesLeft _<N_ pr1 (applyEquality (a +N_) (addMinus (inl n<b+c)))
       pr3 : (a +N b) +N c <N n +N n
       pr3 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = pr2
       pr4 : c +N n <N n +N n
-      pr4 = identityOfIndiscernablesLeft _ _ _ _<N_ pr3 (transitivity (applyEquality (_+N c) a+b=n) (Semiring.commutative ℕSemiring n c))
+      pr4 = identityOfIndiscernablesLeft _<N_ pr3 (transitivity (applyEquality (_+N c) a+b=n) (Semiring.commutative ℕSemiring n c))
       pr5 : c <N n
       pr5 = subtractionPreservesInequality n pr4
 
   help19 : {a b c n : ℕ} → (b+c<n : b +N c <N n) → (n<a+b : n <N a +N b) → (a <N n) → (subtractionNResult.result (-N (inl n<a+b)) +N c ≡ n) → False
-  help19 {a} {b} {c} {n} b+c<n n<a+b a<n pr = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _ _ _ _<N_ r q')
+  help19 {a} {b} {c} {n} b+c<n n<a+b a<n pr = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _<N_ r q')
     where
       p : (n +N subtractionNResult.result (-N (inl n<a+b))) +N c ≡ n +N n
-      p = identityOfIndiscernablesLeft _ _ _ _≡_ (applyEquality (n +N_ ) pr) (Semiring.+Associative ℕSemiring n _ c)
+      p = identityOfIndiscernablesLeft _≡_ (applyEquality (n +N_ ) pr) (Semiring.+Associative ℕSemiring n _ c)
       q : (a +N b) +N c ≡ n +N n
-      q = identityOfIndiscernablesLeft _ _ _ _≡_ p (applyEquality (_+N c) (addMinus' (inl n<a+b)))
+      q = identityOfIndiscernablesLeft _≡_ p (applyEquality (_+N c) (addMinus' (inl n<a+b)))
       q' : a +N (b +N c) ≡ n +N n
-      q' = identityOfIndiscernablesLeft _ _ _ _≡_ q (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
+      q' = identityOfIndiscernablesLeft _≡_ q (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
       r : a +N (b +N c) <N n +N n
       r = addStrongInequalities a<n b+c<n
 
@@ -240,57 +240,57 @@ module Numbers.Modulo.IntegersModN where
   help18 {a} {b} {c} {n} b+c<n n<a+b a<n pr = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive p4 a<n)
     where
       p : n +N n <N (n +N subtractionNResult.result (-N (inl n<a+b))) +N c
-      p = identityOfIndiscernablesRight _ _ _ _<N_ (additionPreservesInequalityOnLeft n pr) (Semiring.+Associative ℕSemiring n _ c)
+      p = identityOfIndiscernablesRight _<N_ (additionPreservesInequalityOnLeft n pr) (Semiring.+Associative ℕSemiring n _ c)
       p' : n +N n <N (a +N b) +N c
-      p' = identityOfIndiscernablesRight _ _ _ _<N_ p (applyEquality (_+N c) (addMinus' (inl n<a+b)))
+      p' = identityOfIndiscernablesRight _<N_ p (applyEquality (_+N c) (addMinus' (inl n<a+b)))
       p2 : n +N n <N a +N (b +N c)
-      p2 = identityOfIndiscernablesRight _ _ _ _<N_ p' (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
+      p2 = identityOfIndiscernablesRight _<N_ p' (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
       p3 : n +N n <N a +N n
       p3 = orderIsTransitive p2 (additionPreservesInequalityOnLeft a b+c<n)
       p4 : n <N a
       p4 = subtractionPreservesInequality n p3
 
   help17 : {a b c n : ℕ} → (n<b+c : n <N b +N c) → (n<a+b : n <N a +N b) → (a +N subtractionNResult.result (-N (inl n<b+c)) <N n) → (subtractionNResult.result (-N (inl n<a+b)) +N c) ≡ n → False
-  help17 {a} {b} {c} {n} n<b+c n<a+b p1 p2 = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _ _ _ _<N_ pr1'' pr3)
+  help17 {a} {b} {c} {n} n<b+c n<a+b p1 p2 = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _<N_ pr1'' pr3)
     where
       pr1' : a +N (subtractionNResult.result (-N (inl n<b+c)) +N n) <N n +N n
-      pr1' = identityOfIndiscernablesLeft _ _ _ _<N_ (additionPreservesInequality n p1) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
+      pr1' = identityOfIndiscernablesLeft _<N_ (additionPreservesInequality n p1) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
       pr1'' : a +N (b +N c) <N n +N n
-      pr1'' = identityOfIndiscernablesLeft _ _ _ _<N_ pr1' (applyEquality (a +N_) (addMinus (inl n<b+c)))
+      pr1'' = identityOfIndiscernablesLeft _<N_ pr1' (applyEquality (a +N_) (addMinus (inl n<b+c)))
       pr2' : (n +N subtractionNResult.result (-N (inl n<a+b))) +N c ≡ n +N n
-      pr2' = identityOfIndiscernablesLeft _ _ _ _≡_ (applyEquality (n +N_) p2) (Semiring.+Associative ℕSemiring n _ c)
+      pr2' = identityOfIndiscernablesLeft _≡_ (applyEquality (n +N_) p2) (Semiring.+Associative ℕSemiring n _ c)
       pr2'' : (a +N b) +N c ≡ n +N n
-      pr2'' = identityOfIndiscernablesLeft _ _ _ _≡_ pr2' (applyEquality (_+N c) (addMinus' (inl n<a+b)))
+      pr2'' = identityOfIndiscernablesLeft _≡_ pr2' (applyEquality (_+N c) (addMinus' (inl n<a+b)))
       pr3 : a +N (b +N c) ≡ n +N n
-      pr3 = identityOfIndiscernablesLeft _ _ _ _≡_ pr2'' (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
+      pr3 = identityOfIndiscernablesLeft _≡_ pr2'' (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
 
   help16 : {a b c n : ℕ} → (n<b+c : n <N b +N c) → (n<a+b : n <N a +N b) → (a +N subtractionNResult.result (-N (inl n<b+c))) <N n → (pr : n <N subtractionNResult.result (-N (inl n<a+b)) +N c) → a +N subtractionNResult.result (-N (inl n<b+c)) ≡ subtractionNResult.result (-N (inl pr))
   help16 {a} {b} {c} {n} n<b+c n<a+b pr1 pr2 = exFalso (TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive pr3 pr1''))
     where
       pr1' : a +N (subtractionNResult.result (-N (inl n<b+c)) +N n) <N n +N n
-      pr1' = identityOfIndiscernablesLeft _ _ _ _<N_ (additionPreservesInequality n pr1) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
+      pr1' = identityOfIndiscernablesLeft _<N_ (additionPreservesInequality n pr1) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
       pr1'' : a +N (b +N c) <N n +N n
-      pr1'' = identityOfIndiscernablesLeft _ _ _ _<N_ pr1' (applyEquality (a +N_) (addMinus (inl n<b+c)))
+      pr1'' = identityOfIndiscernablesLeft _<N_ pr1' (applyEquality (a +N_) (addMinus (inl n<b+c)))
       pr2' : n +N n <N (n +N subtractionNResult.result (-N (inl n<a+b))) +N c
-      pr2' = identityOfIndiscernablesRight _ _ _ _<N_ (additionPreservesInequalityOnLeft n pr2) (Semiring.+Associative ℕSemiring n _ c)
+      pr2' = identityOfIndiscernablesRight _<N_ (additionPreservesInequalityOnLeft n pr2) (Semiring.+Associative ℕSemiring n _ c)
       pr2'' : n +N n <N (a +N b) +N c
-      pr2'' = identityOfIndiscernablesRight _ _ _ _<N_ pr2' (applyEquality (_+N c) (addMinus' (inl n<a+b)))
+      pr2'' = identityOfIndiscernablesRight _<N_ pr2' (applyEquality (_+N c) (addMinus' (inl n<a+b)))
       pr3 : n +N n <N a +N (b +N c)
-      pr3 = identityOfIndiscernablesRight _ _ _ _<N_ pr2'' (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
+      pr3 = identityOfIndiscernablesRight _<N_ pr2'' (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
 
   help15 : {a b c n : ℕ} → (n<b+c : n <N b +N c) → (n<a+b : n <N a +N b) → (n <N a +N subtractionNResult.result (-N (inl n<b+c))) → (subtractionNResult.result (-N (inl n<a+b)) +N c) <N n → False
   help15 {a} {b} {c} {n} n<b+c n<a+b pr1 pr2 = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive p2'' p1')
     where
       p1 : (n +N subtractionNResult.result (-N (inl n<a+b))) +N c <N n +N n
-      p1 = identityOfIndiscernablesLeft _ _ _ _<N_ (additionPreservesInequalityOnLeft n pr2) (Semiring.+Associative ℕSemiring n _ c)
+      p1 = identityOfIndiscernablesLeft _<N_ (additionPreservesInequalityOnLeft n pr2) (Semiring.+Associative ℕSemiring n _ c)
       p1' : (a +N b) +N c <N n +N n
-      p1' = identityOfIndiscernablesLeft _ _ _ _<N_ p1 (applyEquality (_+N c) (addMinus' (inl n<a+b)))
+      p1' = identityOfIndiscernablesLeft _<N_ p1 (applyEquality (_+N c) (addMinus' (inl n<a+b)))
       p2 : n +N n <N a +N (subtractionNResult.result (-N (inl n<b+c)) +N n)
-      p2 = identityOfIndiscernablesRight _ _ _ _<N_ (additionPreservesInequality n pr1) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
+      p2 = identityOfIndiscernablesRight _<N_ (additionPreservesInequality n pr1) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
       p2' : n +N n <N a +N (b +N c)
-      p2' = identityOfIndiscernablesRight _ _ _ _<N_ p2 (applyEquality (a +N_) (addMinus (inl n<b+c)))
+      p2' = identityOfIndiscernablesRight _<N_ p2 (applyEquality (a +N_) (addMinus (inl n<b+c)))
       p2'' : n +N n <N (a +N b) +N c
-      p2'' = identityOfIndiscernablesRight _ _ _ _<N_ p2' (Semiring.+Associative ℕSemiring a b c)
+      p2'' = identityOfIndiscernablesRight _<N_ p2' (Semiring.+Associative ℕSemiring a b c)
 
   help14 : {a b c n : ℕ} → (n<b+c : n <N b +N c) → (n<a+b : n <N a +N b) → (pr1 : n <N a +N subtractionNResult.result (-N (inl n<b+c))) → (pr2 : n <N subtractionNResult.result (-N (inl n<a+b)) +N c) → subtractionNResult.result (-N (inl pr1)) ≡ subtractionNResult.result (-N (inl pr2))
   help14 {a} {b} {c} {n} n<b+c n<a+b pr1 pr2 = equivalentSubtraction _ _ _ _ pr1 pr2 (transitivity (Semiring.+Associative ℕSemiring n _ c) (transitivity (applyEquality (_+N c) (addMinus' (inl n<a+b))) (transitivity (equalityCommutative (Semiring.+Associative ℕSemiring a b c)) (equalityCommutative p2))))
@@ -298,19 +298,19 @@ module Numbers.Modulo.IntegersModN where
       p1 : (a +N subtractionNResult.result (-N (inl n<b+c))) +N n ≡ a +N (subtractionNResult.result (-N (inl n<b+c)) +N n)
       p1 = equalityCommutative (Semiring.+Associative ℕSemiring a _ n)
       p2 : (a +N subtractionNResult.result (-N (inl n<b+c))) +N n ≡ a +N (b +N c)
-      p2 = identityOfIndiscernablesRight _ _ _ _≡_ p1 (applyEquality (a +N_) (addMinus (inl n<b+c)))
+      p2 = identityOfIndiscernablesRight _≡_ p1 (applyEquality (a +N_) (addMinus (inl n<b+c)))
 
   help13 : {a b c n : ℕ} → (n<b+c : n <N b +N c) → (n<a+b : n <N a +N b) → (n <N a +N subtractionNResult.result (-N (inl n<b+c))) → (subtractionNResult.result (-N (inl n<a+b)) +N c ≡ n) → False
-  help13 {a} {b} {c} {n} n<b+c n<a+b pr1 pr2 = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesRight _ _ _ _<N_ lemm1' lemm3)
+  help13 {a} {b} {c} {n} n<b+c n<a+b pr1 pr2 = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesRight _<N_ lemm1' lemm3)
     where
       lemm1 : n +N n <N a +N (subtractionNResult.result (-N (inl n<b+c)) +N n)
-      lemm1 = identityOfIndiscernablesRight _ _ _ _<N_ (additionPreservesInequality n pr1) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
+      lemm1 = identityOfIndiscernablesRight _<N_ (additionPreservesInequality n pr1) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
       lemm1' : n +N n <N a +N (b +N c)
-      lemm1' = identityOfIndiscernablesRight _ _ _ _<N_ lemm1 (applyEquality (a +N_) (addMinus (inl n<b+c)))
+      lemm1' = identityOfIndiscernablesRight _<N_ lemm1 (applyEquality (a +N_) (addMinus (inl n<b+c)))
       lemm2 : (n +N subtractionNResult.result (-N (inl n<a+b))) +N c ≡ n +N n
-      lemm2 = identityOfIndiscernablesLeft _ _ _ _≡_ (applyEquality (n +N_) pr2) (Semiring.+Associative ℕSemiring n _ c)
+      lemm2 = identityOfIndiscernablesLeft _≡_ (applyEquality (n +N_) pr2) (Semiring.+Associative ℕSemiring n _ c)
       lemm2' : (a +N b) +N c ≡ n +N n
-      lemm2' = identityOfIndiscernablesLeft _ _ _ _≡_ lemm2 (applyEquality (_+N c) (addMinus' (inl n<a+b)))
+      lemm2' = identityOfIndiscernablesLeft _≡_ lemm2 (applyEquality (_+N c) (addMinus' (inl n<a+b)))
       lemm3 : a +N (b +N c) ≡ n +N n
       lemm3 rewrite Semiring.+Associative ℕSemiring a b c = lemm2'
 
@@ -320,17 +320,17 @@ module Numbers.Modulo.IntegersModN where
       pr : {a b c : ℕ} → a +N (b +N c) ≡ b +N (a +N c)
       pr {a} {b} {c} rewrite Semiring.+Associative ℕSemiring a b c | Semiring.commutative ℕSemiring a b | equalityCommutative (Semiring.+Associative ℕSemiring b a c) = refl
       lemm1 : (n +N subtractionNResult.result (-N (inl n<a+b))) +N c <N n +N n
-      lemm1 = identityOfIndiscernablesLeft _ _ _ _<N_ (additionPreservesInequalityOnLeft n pr2) (Semiring.+Associative ℕSemiring n _ c)
+      lemm1 = identityOfIndiscernablesLeft _<N_ (additionPreservesInequalityOnLeft n pr2) (Semiring.+Associative ℕSemiring n _ c)
       lemm2 : (a +N b) +N c <N n +N n
-      lemm2 = identityOfIndiscernablesLeft _ _ _ _<N_ lemm1 (applyEquality (_+N c) (addMinus' (inl n<a+b)))
+      lemm2 = identityOfIndiscernablesLeft _<N_ lemm1 (applyEquality (_+N c) (addMinus' (inl n<a+b)))
       lemm1' : a +N (subtractionNResult.result (-N (inl n<b+c)) +N n) ≡ n +N n
-      lemm1' = identityOfIndiscernablesLeft _ _ _ _≡_ (applyEquality (_+N n) pr1) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
+      lemm1' = identityOfIndiscernablesLeft _≡_ (applyEquality (_+N n) pr1) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
       lemm2' : a +N (b +N c) ≡ n +N n
-      lemm2' = identityOfIndiscernablesLeft _ _ _ _≡_ lemm1' (applyEquality (a +N_) (addMinus (inl n<b+c)))
+      lemm2' = identityOfIndiscernablesLeft _≡_ lemm1' (applyEquality (a +N_) (addMinus (inl n<b+c)))
       lemm3 : (a +N b) +N c ≡ n +N n
       lemm3 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = lemm2'
       lemm4 : (a +N b) +N c <N (a +N b) +N c
-      lemm4 = identityOfIndiscernablesRight _ _ _ _<N_ lemm2 (equalityCommutative lemm3)
+      lemm4 = identityOfIndiscernablesRight _<N_ lemm2 (equalityCommutative lemm3)
 
   help11 : {a b c n : ℕ} → (a <N n) → (b +N c ≡ n) → (n<a+b : n <N a +N b) → (n <N subtractionNResult.result (-N (inl n<a+b)) +N c) → False
   help11 {a} {b} {c} {n} a<n b+c=n n<a+b pr1 = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive a<n lemm5)
@@ -338,13 +338,13 @@ module Numbers.Modulo.IntegersModN where
       pr : {a b c : ℕ} → a +N (b +N c) ≡ b +N (a +N c)
       pr {a} {b} {c} rewrite Semiring.+Associative ℕSemiring a b c | Semiring.commutative ℕSemiring a b | equalityCommutative (Semiring.+Associative ℕSemiring b a c) = refl
       lemm : n +N n <N (n +N subtractionNResult.result (-N (inl n<a+b))) +N c
-      lemm = identityOfIndiscernablesRight _ _ _ _<N_ (additionPreservesInequalityOnLeft n pr1) (Semiring.+Associative ℕSemiring n _ c)
+      lemm = identityOfIndiscernablesRight _<N_ (additionPreservesInequalityOnLeft n pr1) (Semiring.+Associative ℕSemiring n _ c)
       lemm2 : n +N n <N (a +N b) +N c
-      lemm2 = identityOfIndiscernablesRight _ _ _ _<N_ lemm (applyEquality (_+N c) (addMinus' (inl n<a+b)))
+      lemm2 = identityOfIndiscernablesRight _<N_ lemm (applyEquality (_+N c) (addMinus' (inl n<a+b)))
       lemm3 : n +N n <N a +N (b +N c)
-      lemm3 = identityOfIndiscernablesRight _ _ _ _<N_ lemm2 (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
+      lemm3 = identityOfIndiscernablesRight _<N_ lemm2 (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
       lemm4 : n +N n <N a +N n
-      lemm4 = identityOfIndiscernablesRight _ _ _ _<N_ lemm3 (applyEquality (a +N_) b+c=n)
+      lemm4 = identityOfIndiscernablesRight _<N_ lemm3 (applyEquality (a +N_) b+c=n)
       lemm5 : n <N a
       lemm5 = subtractionPreservesInequality n lemm4
 
@@ -354,17 +354,17 @@ module Numbers.Modulo.IntegersModN where
       pr : {a b c : ℕ} → a +N (b +N c) ≡ b +N (a +N c)
       pr {a} {b} {c} rewrite Semiring.+Associative ℕSemiring a b c | Semiring.commutative ℕSemiring a b | equalityCommutative (Semiring.+Associative ℕSemiring b a c) = refl
       lemm : a +N (n +N subtractionNResult.result (-N (inl n<b+c))) ≡ n +N n
-      lemm = identityOfIndiscernablesLeft _ _ _ _≡_ (applyEquality (n +N_) pr1) (pr {n} {a})
+      lemm = identityOfIndiscernablesLeft _≡_ (applyEquality (n +N_) pr1) (pr {n} {a})
       lemm2 : a +N (b +N c) ≡ n +N n
-      lemm2 = identityOfIndiscernablesLeft _ _ _ _≡_ lemm (applyEquality (a +N_) (addMinus' (inl n<b+c)))
+      lemm2 = identityOfIndiscernablesLeft _≡_ lemm (applyEquality (a +N_) (addMinus' (inl n<b+c)))
       lemm3 : n +N n <N (n +N subtractionNResult.result (-N (inl n<a+b))) +N c
-      lemm3 = identityOfIndiscernablesRight _ _ _ _<N_ (additionPreservesInequalityOnLeft n pr2) (Semiring.+Associative ℕSemiring n _ c)
+      lemm3 = identityOfIndiscernablesRight _<N_ (additionPreservesInequalityOnLeft n pr2) (Semiring.+Associative ℕSemiring n _ c)
       lemm4 : n +N n <N (a +N b) +N c
-      lemm4 = identityOfIndiscernablesRight _ _ _ _<N_ lemm3 (applyEquality (_+N c) (addMinus' (inl n<a+b)))
+      lemm4 = identityOfIndiscernablesRight _<N_ lemm3 (applyEquality (_+N c) (addMinus' (inl n<a+b)))
       lemm5 : n +N n <N a +N (b +N c)
-      lemm5 = identityOfIndiscernablesRight _ _ _ _<N_ lemm4 (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
+      lemm5 = identityOfIndiscernablesRight _<N_ lemm4 (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
       lemm6 : a +N (b +N c) <N a +N (b +N c)
-      lemm6 = identityOfIndiscernablesLeft _ _ _ _<N_ lemm5 (equalityCommutative lemm2)
+      lemm6 = identityOfIndiscernablesLeft _<N_ lemm5 (equalityCommutative lemm2)
 
   help9 : {a n : ℕ} → (a +N 0 ≡ n) → (a <N n) → False
   help9 {a} {n} n=a+0 a<n rewrite Semiring.commutative ℕSemiring a 0 | n=a+0 = TotalOrder.irreflexive ℕTotalOrder a<n
@@ -378,7 +378,7 @@ module Numbers.Modulo.IntegersModN where
       lem : n +N a ≡ (n +N subtractionNResult.result (-N (inl n<a+b))) +N c
       lem rewrite addMinus' (inl n<a+b) | equalityCommutative (Semiring.+Associative ℕSemiring a b c) | b+c=n = Semiring.commutative ℕSemiring n a
       lem' : n +N a ≡ n +N (subtractionNResult.result (-N (inl n<a+b)) +N c)
-      lem' = identityOfIndiscernablesRight _ _ _ _≡_ lem (equalityCommutative (Semiring.+Associative ℕSemiring n _ c))
+      lem' = identityOfIndiscernablesRight _≡_ lem (equalityCommutative (Semiring.+Associative ℕSemiring n _ c))
 
   help5 : {a b c n : ℕ} → (n<b+c : n <N b +N c) → (n<a+b : n <N a +N b) → a +N subtractionNResult.result (-N (inl n<b+c)) ≡ subtractionNResult.result (-N (inl n<a+b)) +N c
   help5 {a} {b} {c} {n} n<b+c n<a+b = canSubtractFromEqualityLeft {n} lemma''
@@ -386,9 +386,9 @@ module Numbers.Modulo.IntegersModN where
       lemma : a +N (n +N subtractionNResult.result (-N (inl n<b+c))) ≡ (n +N subtractionNResult.result (-N (inl n<a+b))) +N c
       lemma rewrite addMinus' (inl n<b+c) | addMinus' (inl n<a+b) = Semiring.+Associative ℕSemiring a b c
       lemma' : a +N (n +N subtractionNResult.result (-N (inl n<b+c))) ≡ n +N (subtractionNResult.result (-N (inl n<a+b)) +N c)
-      lemma' = identityOfIndiscernablesRight _ _ _ _≡_ lemma (equalityCommutative (Semiring.+Associative ℕSemiring n _ c))
+      lemma' = identityOfIndiscernablesRight _≡_ lemma (equalityCommutative (Semiring.+Associative ℕSemiring n _ c))
       lemma'' : n +N (a +N subtractionNResult.result (-N (inl n<b+c))) ≡ n +N (subtractionNResult.result (-N (inl n<a+b)) +N c)
-      lemma'' = identityOfIndiscernablesLeft _ _ _ _≡_ lemma' (pr {a} {n} {subtractionNResult.result (-N (inl n<b+c))})
+      lemma'' = identityOfIndiscernablesLeft _≡_ lemma' (pr {a} {n} {subtractionNResult.result (-N (inl n<b+c))})
         where
           pr : {a b c : ℕ} → a +N (b +N c) ≡ b +N (a +N c)
           pr {a} {b} {c} rewrite Semiring.+Associative ℕSemiring a b c | Semiring.commutative ℕSemiring a b | equalityCommutative (Semiring.+Associative ℕSemiring b a c) = refl
@@ -399,18 +399,18 @@ module Numbers.Modulo.IntegersModN where
       lemma : (n +N subtractionNResult.result (-N (inl n<a+'b+c))) ≡ (n +N subtractionNResult.result (-N (inl n<a+b))) +N c
       lemma rewrite addMinus' (inl n<a+'b+c) | addMinus' (inl n<a+b) = Semiring.+Associative ℕSemiring a b c
       lemma' : n +N subtractionNResult.result (-N (inl n<a+'b+c)) ≡ n +N (subtractionNResult.result (-N (inl n<a+b)) +N c)
-      lemma' = identityOfIndiscernablesRight _ _ _ _≡_ lemma (equalityCommutative (Semiring.+Associative ℕSemiring n (subtractionNResult.result (-N (inl n<a+b))) c))
+      lemma' = identityOfIndiscernablesRight _≡_ lemma (equalityCommutative (Semiring.+Associative ℕSemiring n (subtractionNResult.result (-N (inl n<a+b))) c))
 
   help3 : {a b c n : ℕ} → (a <N n) → (b <N n) → (c <N n) → (a +N b <N n) → (pr : n <N b +N c) → a +N subtractionNResult.result (-N (inl pr)) ≡ n → False
   help3 {a} {b} {c} {n} a<n b<n c<n a+b<n n<b+c pr = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive (inter4 inter3) c<n)
     where
       inter : a +N (n +N subtractionNResult.result (-N (inl n<b+c))) ≡ n +N n
-      inter = identityOfIndiscernablesLeft _ _ _ _≡_ (applyEquality (n +N_) pr) (lemma n a (subtractionNResult.result (-N (inl n<b+c))))
+      inter = identityOfIndiscernablesLeft _≡_ (applyEquality (n +N_) pr) (lemma n a (subtractionNResult.result (-N (inl n<b+c))))
         where
           lemma : (a b c : ℕ) → a +N (b +N c) ≡ b +N (a +N c)
           lemma a b c rewrite Semiring.+Associative ℕSemiring a b c | Semiring.+Associative ℕSemiring b a c = applyEquality (_+N c) (Semiring.commutative ℕSemiring a b)
       inter2 : n +N n ≡ a +N (b +N c)
-      inter2 = equalityCommutative (identityOfIndiscernablesLeft _ _ _ _≡_ inter (applyEquality (a +N_) (addMinus' (inl n<b+c))))
+      inter2 = equalityCommutative (identityOfIndiscernablesLeft _≡_ inter (applyEquality (a +N_) (addMinus' (inl n<b+c))))
       inter3 : n +N n <N n +N c
       inter3 rewrite inter2 | Semiring.+Associative ℕSemiring a b c = additionPreservesInequality c a+b<n
       inter4 : (n +N n <N n +N c) → n <N c
@@ -422,7 +422,7 @@ module Numbers.Modulo.IntegersModN where
       inter : a +N (subtractionNResult.result (-N (inl sn<b+c)) +N succ n) ≡ subtractionNResult.result (-N (inl sn<a+b+c)) +N succ n
       inter rewrite addMinus (inl sn<b+c) | addMinus (inl sn<a+b+c) = Semiring.+Associative ℕSemiring a b c
       res : (a +N (subtractionNResult.result (-N (inl sn<b+c)) +N succ n) ≡ subtractionNResult.result (-N (inl sn<a+b+c)) +N succ n) → a +N subtractionNResult.result (-N (inl sn<b+c)) ≡ subtractionNResult.result (-N (inl sn<a+b+c))
-      res pr = canSubtractFromEqualityRight {_} {succ n} (identityOfIndiscernablesLeft _ _ _ _≡_ pr (Semiring.+Associative ℕSemiring a (subtractionNResult.result (-N (inl sn<b+c))) (succ n)))
+      res pr = canSubtractFromEqualityRight {_} {succ n} (identityOfIndiscernablesLeft _≡_ pr (Semiring.+Associative ℕSemiring a (subtractionNResult.result (-N (inl sn<b+c))) (succ n)))
 
   help1 : {a b c n : ℕ} → (sn<b+c : succ n <N b +N c) → (pr1 : succ n <N a +N subtractionNResult.result (-N (inl sn<b+c))) → (a +N b <N succ n) → (a <N succ n) → (b <N succ n) → (c <N succ n) → False
   help1 {a} {b} {c} {n} sn<b+c pr1 a+b<sn a<sn b<sn c<sn with -N (inl sn<b+c)
@@ -471,7 +471,7 @@ module Numbers.Modulo.IntegersModN where
       lemma : a +N (succ n +N result) ≡ a +N (b +N c)
       lemma' : a +N (succ n +N result) <N succ n
       lemma'' : succ n +N (a +N result) <N succ n
-      lemma'' = identityOfIndiscernablesLeft _ _ _ _<N_ lemma' (transitivity (Semiring.+Associative ℕSemiring a (succ n) result) (transitivity (applyEquality (λ t → t +N result) (Semiring.commutative ℕSemiring a (succ n))) (equalityCommutative (Semiring.+Associative ℕSemiring (succ n) a result))))
+      lemma'' = identityOfIndiscernablesLeft _<N_ lemma' (transitivity (Semiring.+Associative ℕSemiring a (succ n) result) (transitivity (applyEquality (λ t → t +N result) (Semiring.commutative ℕSemiring a (succ n))) (equalityCommutative (Semiring.+Associative ℕSemiring (succ n) a result))))
       lemma = applyEquality (λ i → a +N i) pr
       lemma' rewrite lemma = a+'b+c<sn
       false : False
@@ -482,7 +482,7 @@ module Numbers.Modulo.IntegersModN where
       lemma : a +N (succ n +N result) <N succ n
       lemma rewrite pr = a+'b+c<sn
       lemma' : succ n +N (a +N result) <N succ n
-      lemma' = identityOfIndiscernablesLeft _ _ _ _<N_ lemma (transitivity (Semiring.+Associative ℕSemiring a (succ n) result) (transitivity (applyEquality (λ t → t +N result) (Semiring.commutative ℕSemiring a (succ n))) (equalityCommutative (Semiring.+Associative ℕSemiring (succ n) a result))))
+      lemma' = identityOfIndiscernablesLeft _<N_ lemma (transitivity (Semiring.+Associative ℕSemiring a (succ n) result) (transitivity (applyEquality (λ t → t +N result) (Semiring.commutative ℕSemiring a (succ n))) (equalityCommutative (Semiring.+Associative ℕSemiring (succ n) a result))))
       false : False
       false = cannotAddAndEnlarge' lemma'
   plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) | inl (inr sn<b+c) | inl (inr x) = equalityZn _ _ (exFalso (false {succ n} a+b+c<sn x))
@@ -578,7 +578,7 @@ module Numbers.Modulo.IntegersModN where
   plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inr sn=a+b+c | inr b+c=sn | inl (inr sn<a+0) = exFalso (false sn<a+0 sn=a+b+c b+c=sn)
     where
       false : succ n <N a +N 0 → (a +N b) +N c ≡ succ n → b +N c ≡ succ n → False
-      false pr1 pr2 pr3 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) | pr3 | Semiring.commutative ℕSemiring a 0 = zeroNeverGreater {succ n} (identityOfIndiscernablesRight _ _ _ _<N_ pr1 (a=0 a pr2))
+      false pr1 pr2 pr3 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) | pr3 | Semiring.commutative ℕSemiring a 0 = zeroNeverGreater {succ n} (identityOfIndiscernablesRight _<N_ pr1 (a=0 a pr2))
         where
           a=0 : (a : ℕ) → (a +N succ n ≡ succ n) → a ≡ 0
           a=0 zero pr = refl
@@ -586,7 +586,7 @@ module Numbers.Modulo.IntegersModN where
   plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inr sn=a+b+c | inr b+c=sn | inr sn=a+0 = exFalso (false sn=a+b+c b+c=sn sn=a+0)
     where
       false : (a +N b) +N c ≡ succ n → b +N c ≡ succ n → a +N 0 ≡ succ n → False
-      false pr1 pr2 pr3 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) | pr2 | equalityCommutative pr3 | Semiring.commutative ℕSemiring a 0 = naughtE (identityOfIndiscernablesLeft _ _ _ _≡_ pr3 (a=0 a pr1))
+      false pr1 pr2 pr3 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) | pr2 | equalityCommutative pr3 | Semiring.commutative ℕSemiring a 0 = naughtE (identityOfIndiscernablesLeft _≡_ pr3 (a=0 a pr1))
         where
           a=0 : (a : ℕ) → (a +N a ≡ a) → a ≡ 0
           a=0 zero pr = refl
@@ -670,7 +670,7 @@ module Numbers.Modulo.IntegersModN where
           h with -N (inl (canRemoveSuccFrom<N aLess))
           h | record { result = result ; pr = pr } rewrite equalityCommutative pr = Semiring.commutative ℕSemiring result (succ a)
           f : False
-          f = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _ _ _ _<N_ x h)
+          f = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _<N_ x h)
       ... | inl (inr x) = exFalso f
         where
           h : subtractionNResult.result (-N (inl (canRemoveSuccFrom<N aLess))) +N succ a ≡ succ n

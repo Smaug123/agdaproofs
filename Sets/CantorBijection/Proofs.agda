@@ -46,7 +46,7 @@ module Sets.CantorBijection.Proofs where
   cantorInverseLemmaNotZero (succ a ,, succ b) ()
 
   cantorInverseLemmaIncreases : (x : ℕ && ℕ) → order x (cantorInverseLemma x)
-  cantorInverseLemmaIncreases (zero ,, b) = inl (identityOfIndiscernablesRight _ _ _ _<N_ (a<SuccA b) (applyEquality succ (equalityCommutative (Semiring.sumZeroRight ℕSemiring b))))
+  cantorInverseLemmaIncreases (zero ,, b) = inl (identityOfIndiscernablesRight _<N_ (a<SuccA b) (applyEquality succ (equalityCommutative (Semiring.sumZeroRight ℕSemiring b))))
   cantorInverseLemmaIncreases (succ a ,, zero) = inr (transitivity (applyEquality succ (Semiring.sumZeroRight ℕSemiring a)) (Semiring.commutative ℕSemiring 1 a) ,, (le 0 refl))
   cantorInverseLemmaIncreases (succ a ,, succ b) = inr (transitivity (applyEquality succ (Semiring.commutative ℕSemiring a (succ b))) (Semiring.commutative ℕSemiring (succ (succ b)) a) ,, (le 0 refl))
 
@@ -54,7 +54,7 @@ module Sets.CantorBijection.Proofs where
   cantorInverseOrderPreserving zero (succ y) x<y with TotalOrder.totality totalOrder (0 ,, 0) (cantorInverseLemma (cantorInverse y))
   cantorInverseOrderPreserving zero (succ y) x<y | inl (inl bl) = bl
   cantorInverseOrderPreserving zero (succ y) x<y | inl (inr bl) = exFalso (leastElement bl)
-  cantorInverseOrderPreserving zero (succ y) x<y | inr x = exFalso (leastElement {cantorInverse y} (identityOfIndiscernablesRight _ _ _ order (cantorInverseLemmaIncreases (cantorInverse y)) (equalityCommutative x)))
+  cantorInverseOrderPreserving zero (succ y) x<y | inr x = exFalso (leastElement {cantorInverse y} (identityOfIndiscernablesRight order (cantorInverseLemmaIncreases (cantorInverse y)) (equalityCommutative x)))
   cantorInverseOrderPreserving (succ x) (succ y) x<y with cantorInverseOrderPreserving x y (canRemoveSuccFrom<N x<y)
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inl pr with cantorInverse x
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inl pr | x1 ,, x2 with cantorInverse y
@@ -66,7 +66,7 @@ module Sets.CantorBijection.Proofs where
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inl pr | zero ,, zero | succ y1 ,, succ y2 rewrite Semiring.commutative ℕSemiring y1 (succ (succ y2)) = inl (succPreservesInequality (succIsPositive (y2 +N y1)))
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inl pr | succ x1 ,, zero | zero ,, succ y2 rewrite Semiring.commutative ℕSemiring x1 1 | Semiring.sumZeroRight ℕSemiring y2 | Semiring.sumZeroRight ℕSemiring x1 = inl (TotalOrder.transitive ℕTotalOrder pr (a<SuccA _))
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inl pr | succ x1 ,, zero | succ y1 ,, zero rewrite Semiring.commutative ℕSemiring x1 1 | Semiring.commutative ℕSemiring y1 1 | Semiring.sumZeroRight ℕSemiring x1 | Semiring.sumZeroRight ℕSemiring y1 = inl pr
-  cantorInverseOrderPreserving (succ x) (succ y) x<y | inl pr | succ x1 ,, zero | succ y1 ,, succ y2 rewrite Semiring.commutative ℕSemiring x1 1 | Semiring.sumZeroRight ℕSemiring x1 = inl (identityOfIndiscernablesRight _ _ _ _<N_ pr (transitivity (applyEquality succ (Semiring.commutative ℕSemiring y1 (succ y2))) (Semiring.commutative ℕSemiring (succ (succ y2)) y1)))
+  cantorInverseOrderPreserving (succ x) (succ y) x<y | inl pr | succ x1 ,, zero | succ y1 ,, succ y2 rewrite Semiring.commutative ℕSemiring x1 1 | Semiring.sumZeroRight ℕSemiring x1 = inl (identityOfIndiscernablesRight _<N_ pr (transitivity (applyEquality succ (Semiring.commutative ℕSemiring y1 (succ y2))) (Semiring.commutative ℕSemiring (succ (succ y2)) y1)))
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inl pr | zero ,, succ x2 | zero ,, succ y2 rewrite Semiring.sumZeroRight ℕSemiring x2 | Semiring.sumZeroRight ℕSemiring y2 = inl (succPreservesInequality pr)
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inl pr | zero ,, succ x2 | succ y1 ,, zero rewrite Semiring.commutative ℕSemiring y1 1 | Semiring.sumZeroRight ℕSemiring y1 | Semiring.sumZeroRight ℕSemiring x2 = ans
     where
@@ -80,9 +80,9 @@ module Sets.CantorBijection.Proofs where
       ans : (succ (succ x2) <N y1 +N succ (succ y2)) || (succ (succ x2) ≡ y1 +N succ (succ y2)) && (zero <N succ (succ y2))
       ans with TotalOrder.totality ℕTotalOrder (succ (succ x2)) (y1 +N succ (succ y2))
       ans | inl (inl x) = inl x
-      ans | inl (inr x) = exFalso (noIntegersBetweenXAndSuccX (succ x2) pr (identityOfIndiscernablesLeft _ _ _ _<N_ x (transitivity (Semiring.commutative ℕSemiring y1 (succ (succ y2))) (applyEquality succ (Semiring.commutative ℕSemiring (succ y2) y1)))))
+      ans | inl (inr x) = exFalso (noIntegersBetweenXAndSuccX (succ x2) pr (identityOfIndiscernablesLeft _<N_ x (transitivity (Semiring.commutative ℕSemiring y1 (succ (succ y2))) (applyEquality succ (Semiring.commutative ℕSemiring (succ y2) y1)))))
       ans | inr x = inr (x ,, succIsPositive (succ y2))
-  cantorInverseOrderPreserving (succ x) (succ y) x<y | inl pr | succ x1 ,, succ x2 | zero ,, succ y2 rewrite Semiring.sumZeroRight ℕSemiring y2 = inl (TotalOrder.transitive ℕTotalOrder (identityOfIndiscernablesLeft _ _ _ _<N_ pr (transitivity (applyEquality succ (Semiring.commutative ℕSemiring x1 (succ x2))) (Semiring.commutative ℕSemiring (succ (succ x2)) x1))) (a<SuccA (succ y2)))
+  cantorInverseOrderPreserving (succ x) (succ y) x<y | inl pr | succ x1 ,, succ x2 | zero ,, succ y2 rewrite Semiring.sumZeroRight ℕSemiring y2 = inl (TotalOrder.transitive ℕTotalOrder (identityOfIndiscernablesLeft _<N_ pr (transitivity (applyEquality succ (Semiring.commutative ℕSemiring x1 (succ x2))) (Semiring.commutative ℕSemiring (succ (succ x2)) x1))) (a<SuccA (succ y2)))
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inl pr | succ x1 ,, succ x2 | succ y1 ,, zero rewrite Semiring.commutative ℕSemiring y1 1 | Semiring.sumZeroRight ℕSemiring y1 | Semiring.commutative ℕSemiring x1 (succ x2) | Semiring.commutative ℕSemiring x1 (succ (succ x2)) = inl pr
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inl pr | succ x1 ,, succ x2 | succ y1 ,, succ y2 rewrite Semiring.commutative ℕSemiring x1 (succ x2) | Semiring.commutative ℕSemiring y1 (succ y2) | Semiring.commutative ℕSemiring x1 (succ (succ x2)) | Semiring.commutative ℕSemiring y1 (succ (succ y2)) = inl pr
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inr (fst ,, snd) with cantorInverse x
@@ -90,7 +90,7 @@ module Sets.CantorBijection.Proofs where
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inr (fst ,, ()) | zero ,, zero | zero ,, zero
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inr (() ,, snd) | zero ,, zero | zero ,, succ y2
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inr (refl ,, snd) | zero ,, succ .y2 | zero ,, succ y2 = exFalso (TotalOrder.irreflexive ℕTotalOrder snd)
-  cantorInverseOrderPreserving (succ x) (succ y) x<y | inr (refl ,, snd) | zero ,, succ .(y1 +N succ y2) | succ y1 ,, succ y2 = exFalso (TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder snd (identityOfIndiscernablesRight _ _ _ _<N_ (addingIncreases (succ y2) y1) (Semiring.commutative ℕSemiring (succ y2) (succ y1)))))
+  cantorInverseOrderPreserving (succ x) (succ y) x<y | inr (refl ,, snd) | zero ,, succ .(y1 +N succ y2) | succ y1 ,, succ y2 = exFalso (TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder snd (identityOfIndiscernablesRight _<N_ (addingIncreases (succ y2) y1) (Semiring.commutative ℕSemiring (succ y2) (succ y1)))))
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inr (fst ,, snd) | succ x1 ,, zero | zero ,, succ y2 rewrite Semiring.sumZeroRight ℕSemiring x1 | succInjective fst | Semiring.commutative ℕSemiring y2 1 | Semiring.sumZeroRight ℕSemiring y2 = inl (le zero refl)
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inr (fst ,, snd) | succ x1 ,, zero | succ y1 ,, succ y2 rewrite Semiring.commutative ℕSemiring x1 1 | Semiring.sumZeroRight ℕSemiring x1 = inr (transitivity fst (transitivity (applyEquality succ (Semiring.commutative ℕSemiring y1 (succ y2))) (Semiring.commutative ℕSemiring (succ (succ y2)) y1)) ,, succPreservesInequality snd)
   cantorInverseOrderPreserving (succ x) (succ y) x<y | inr (fst ,, snd) | succ x1 ,, succ x2 | zero ,, succ y2 rewrite Semiring.sumZeroRight ℕSemiring y2 | Semiring.commutative ℕSemiring x1 (succ x2) | Semiring.commutative ℕSemiring (succ (succ x2)) x1 | fst = inl (succPreservesInequality (le zero refl))
@@ -115,7 +115,7 @@ module Sets.CantorBijection.Proofs where
   cantorInverseDiscrete (succ a) (zero ,, succ zero) a<c (inl x) | zero ,, zero = TotalOrder.irreflexive ℕTotalOrder x
   cantorInverseDiscrete (succ a) (zero ,, succ (succ c)) a<c (inl x) | zero ,, zero = zeroNeverGreater (canRemoveSuccFrom<N x)
   cantorInverseDiscrete (succ a) (succ b ,, c) a<c (inl x) | zero ,, zero = zeroNeverGreater (canRemoveSuccFrom<N x)
-  cantorInverseDiscrete (succ a) (b ,, zero) (inl x) (inr (fst ,, snd)) | zero ,, zero = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesRight _ _ _ _<N_ x fst)
+  cantorInverseDiscrete (succ a) (b ,, zero) (inl x) (inr (fst ,, snd)) | zero ,, zero = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesRight _<N_ x fst)
   cantorInverseDiscrete (succ a) (b ,, succ c) a<c (inr (fst ,, snd)) | zero ,, zero = zeroNeverGreater (canRemoveSuccFrom<N snd)
   cantorInverseDiscrete (succ a) (b ,, c) (inl y) (inl x) | zero ,, succ snd rewrite Semiring.commutative ℕSemiring snd 1 | Semiring.sumZeroRight ℕSemiring snd = TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder x y)
   cantorInverseDiscrete (succ a) (b ,, succ c) (inr (fst ,, _)) (inl x) | zero ,, succ snd rewrite Semiring.commutative ℕSemiring snd 1 | Semiring.sumZeroRight ℕSemiring snd | fst = TotalOrder.irreflexive ℕTotalOrder x
@@ -130,12 +130,12 @@ module Sets.CantorBijection.Proofs where
       bad : {a : ℕ} → 1 ≡ succ (succ a) → False
       bad ()
   cantorInverseDiscrete (succ a) (b ,, c) (inl y) (inl x) | succ (succ fst) ,, zero rewrite Semiring.commutative ℕSemiring fst 2 | Semiring.commutative ℕSemiring fst 1 = TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder y x)
-  cantorInverseDiscrete (succ a) (b ,, c) (inr (bad ,, _)) (inl x) | succ (succ fst) ,, zero rewrite Semiring.commutative ℕSemiring fst 2 | Semiring.commutative ℕSemiring fst 1 = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesRight _ _ _ _<N_ x bad)
-  cantorInverseDiscrete (succ a) (b ,, c) (inl x) (inr (bad ,, snd)) | succ (succ fst) ,, zero rewrite Semiring.commutative ℕSemiring fst 2 | Semiring.commutative ℕSemiring fst 1 = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesRight _ _ _ _<N_ x bad)
+  cantorInverseDiscrete (succ a) (b ,, c) (inr (bad ,, _)) (inl x) | succ (succ fst) ,, zero rewrite Semiring.commutative ℕSemiring fst 2 | Semiring.commutative ℕSemiring fst 1 = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesRight _<N_ x bad)
+  cantorInverseDiscrete (succ a) (b ,, c) (inl x) (inr (bad ,, snd)) | succ (succ fst) ,, zero rewrite Semiring.commutative ℕSemiring fst 2 | Semiring.commutative ℕSemiring fst 1 = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesRight _<N_ x bad)
   cantorInverseDiscrete (succ a) (b ,, c) (inr (_ ,, bad)) (inr (fst₁ ,, snd)) | succ (succ fst) ,, zero rewrite Semiring.commutative ℕSemiring fst 2 | Semiring.commutative ℕSemiring fst 1 = noIntegersBetweenXAndSuccX 1 bad snd
   cantorInverseDiscrete (succ a) (b ,, c) (inl x) (inl y) | succ zero ,, succ snd rewrite Semiring.sumZeroRight ℕSemiring snd = noIntegersBetweenXAndSuccX (succ (succ snd)) x y
   cantorInverseDiscrete (succ a) (zero ,, c) (inr (fst ,, snd1)) (inl y) | succ zero ,, succ snd rewrite Semiring.sumZeroRight ℕSemiring snd = noIntegersBetweenXAndSuccX (succ (succ snd)) snd1 y
-  cantorInverseDiscrete (succ a) (succ b ,, c) (inr (fst ,, bad)) (inl y) | succ zero ,, succ snd rewrite Semiring.sumZeroRight ℕSemiring snd | fst = TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder bad (identityOfIndiscernablesRight _ _ _ _<N_ (addingIncreases c b) (Semiring.commutative ℕSemiring c (succ b))))
+  cantorInverseDiscrete (succ a) (succ b ,, c) (inr (fst ,, bad)) (inl y) | succ zero ,, succ snd rewrite Semiring.sumZeroRight ℕSemiring snd | fst = TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder bad (identityOfIndiscernablesRight _<N_ (addingIncreases c b) (Semiring.commutative ℕSemiring c (succ b))))
   cantorInverseDiscrete (succ a) (b ,, c) (inl x) (inl y) | succ (succ fst) ,, succ snd rewrite Semiring.commutative ℕSemiring fst (succ (succ (succ snd))) | Semiring.commutative ℕSemiring (succ (succ snd)) fst = TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder y x)
   cantorInverseDiscrete (succ a) (b ,, c) (inl x) (inr (y ,, z)) | succ (succ fst) ,, succ snd rewrite y | Semiring.commutative ℕSemiring fst (succ (succ (succ snd))) | Semiring.commutative ℕSemiring (succ (succ snd)) fst = TotalOrder.irreflexive ℕTotalOrder x
   cantorInverseDiscrete (succ a) (b ,, c) (inr (x ,, y)) (inl z) | succ (succ fst) ,, succ snd rewrite equalityCommutative x | Semiring.commutative ℕSemiring fst (succ (succ (succ snd))) | Semiring.commutative ℕSemiring (succ (succ snd)) fst = TotalOrder.irreflexive ℕTotalOrder z
@@ -154,5 +154,5 @@ module Sets.CantorBijection.Proofs where
       go : (a : ℕ && ℕ) → (pr : (x : ℕ && ℕ) (x₁ : order x a) → Sg ℕ (λ z → (cantorInverse z) ≡ x)) → Sg ℕ (λ i → (cantorInverse i) ≡ a)
       go a pr with cantorInverseLemmaSurjective a
       go .(0 ,, 0) pr | inl refl = 0 , refl
-      go a ind | inr (decr , proof) with ind decr (identityOfIndiscernablesRight _ _ _ order (cantorInverseLemmaIncreases decr) proof)
+      go a ind | inr (decr , proof) with ind decr (identityOfIndiscernablesRight order (cantorInverseLemmaIncreases decr) proof)
       go a ind | inr (decr , proof) | boundForDecr , boundIsBound = succ boundForDecr , transitivity (applyEquality cantorInverseLemma boundIsBound) proof

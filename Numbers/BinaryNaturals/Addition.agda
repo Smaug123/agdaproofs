@@ -76,7 +76,7 @@ _+B_ : BinNat → BinNat → BinNat
 +BIsInherited [] b _ prB = +BIsInherited[] b prB
 +BIsInherited (x :: a) [] prA _ = transitivity (applyEquality NToBinNat (Semiring.commutative ℕSemiring (binNatToN (x :: a)) 0)) (transitivity (binToBin (x :: a)) (equalityCommutative prA))
 +BIsInherited (zero :: as) (zero :: b) prA prB with orderIsTotal 0 (binNatToN as +N binNatToN b)
-... | inl (inl 0<) rewrite Semiring.commutative ℕSemiring (binNatToN as) 0 | Semiring.commutative ℕSemiring (binNatToN b) 0 | Semiring.+Associative ℕSemiring (binNatToN as +N binNatToN as) (binNatToN b) (binNatToN b) | equalityCommutative (Semiring.+Associative ℕSemiring (binNatToN as) (binNatToN as) (binNatToN b)) | Semiring.commutative ℕSemiring (binNatToN as) (binNatToN b) | Semiring.+Associative ℕSemiring (binNatToN as) (binNatToN b) (binNatToN as) | equalityCommutative (Semiring.+Associative ℕSemiring (binNatToN as +N binNatToN b) (binNatToN as) (binNatToN b)) | Semiring.commutative ℕSemiring 0 ((binNatToN as +N binNatToN b) +N (binNatToN as +N binNatToN b)) | equalityCommutative (Semiring.+Associative ℕSemiring (binNatToN as +N binNatToN b) (binNatToN as +N binNatToN b) 0) = transitivity (doubleIsBitShift (binNatToN as +N binNatToN b) (identityOfIndiscernablesRight _ _ _ _<N_ 0< (Semiring.commutative ℕSemiring (binNatToN b) _))) (applyEquality (zero ::_) (+BIsInherited as b (canonicalDescends as prA) (canonicalDescends b prB)))
+... | inl (inl 0<) rewrite Semiring.commutative ℕSemiring (binNatToN as) 0 | Semiring.commutative ℕSemiring (binNatToN b) 0 | Semiring.+Associative ℕSemiring (binNatToN as +N binNatToN as) (binNatToN b) (binNatToN b) | equalityCommutative (Semiring.+Associative ℕSemiring (binNatToN as) (binNatToN as) (binNatToN b)) | Semiring.commutative ℕSemiring (binNatToN as) (binNatToN b) | Semiring.+Associative ℕSemiring (binNatToN as) (binNatToN b) (binNatToN as) | equalityCommutative (Semiring.+Associative ℕSemiring (binNatToN as +N binNatToN b) (binNatToN as) (binNatToN b)) | Semiring.commutative ℕSemiring 0 ((binNatToN as +N binNatToN b) +N (binNatToN as +N binNatToN b)) | equalityCommutative (Semiring.+Associative ℕSemiring (binNatToN as +N binNatToN b) (binNatToN as +N binNatToN b) 0) = transitivity (doubleIsBitShift (binNatToN as +N binNatToN b) (identityOfIndiscernablesRight _<N_ 0< (Semiring.commutative ℕSemiring (binNatToN b) _))) (applyEquality (zero ::_) (+BIsInherited as b (canonicalDescends as prA) (canonicalDescends b prB)))
 +BIsInherited (zero :: as) (zero :: b) prA prB | inl (inr ())
 ... | inr p with sumZeroImpliesOperandsZero (binNatToN as) (equalityCommutative p)
 +BIsInherited (zero :: as) (zero :: b) prA prB | inr p | as=0 ,, b=0 rewrite as=0 | b=0 = exFalso ans
@@ -120,7 +120,7 @@ _+B_ : BinNat → BinNat → BinNat
   where
     u : NToBinNat (2 *N binNatToN b) ≡ zero :: canonical b
     u with doubleIsBitShift' bl
-    ... | t = transitivity (identityOfIndiscernablesLeft _ _ _ _≡_ t (applyEquality (λ i → NToBinNat (2 *N i)) (equalityCommutative pr))) (applyEquality (zero ::_) (transitivity (applyEquality NToBinNat (equalityCommutative pr)) (binToBin b)))
+    ... | t = transitivity (identityOfIndiscernablesLeft _≡_ t (applyEquality (λ i → NToBinNat (2 *N i)) (equalityCommutative pr))) (applyEquality (zero ::_) (transitivity (applyEquality NToBinNat (equalityCommutative pr)) (binToBin b)))
     ans : incr (NToBinNat (binNatToN b +N (binNatToN b +N zero))) ≡ one :: canonical b
     ans = applyEquality incr u
 

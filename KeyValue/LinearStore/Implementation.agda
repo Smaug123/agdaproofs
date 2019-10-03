@@ -152,12 +152,12 @@ module KeyValue.LinearStore.Implementation where
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inl (inl k<min) with TotalOrder.totality keyOrder min k
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inl (inl k<min) | inl (inl min<k) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) (PartialOrder.transitive (TotalOrder.order keyOrder) k<min min<k))
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m () | inl (inl k<min) | inl (inr _)
-  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inl (inl k<min) | inr q = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) (identityOfIndiscernablesLeft _ _ _ (TotalOrder._<_ keyOrder) k<min (equalityCommutative q)))
+  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inl (inl k<min) | inr q = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) (identityOfIndiscernablesLeft (TotalOrder._<_ keyOrder) k<min (equalityCommutative q)))
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inl (inr min<k) with TotalOrder.totality keyOrder min k
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' record { firstEntry = firstEntry ; next = no } () | inl (inr min<k) | inl (inl _)
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' record { firstEntry = firstEntry ; next = (yes (a , (fst ,, snd))) } lookupReducedSucceeds | inl (inr min<k) | inl (inl _) = applyEquality succ (countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} k v v' fst lookupReducedSucceeds)
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m () | inl (inr min<k) | inl (inr k<min)
-  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inl (inr min<k) | inr q = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) (identityOfIndiscernablesLeft _ _ _ (λ a b → TotalOrder._<_ keyOrder a b) min<k q))
+  countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inl (inr min<k) | inr q = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) (identityOfIndiscernablesLeft (λ a b → TotalOrder._<_ keyOrder a b) min<k q))
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inr q with TotalOrder.totality keyOrder min min
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inr q | inl (inl x) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) x)
   countReducedBehavesWhenAddingPresent {keyOrder = keyOrder} {min} k v v' m lookupReducedSucceeds | inr q | inl (inr x) = exFalso (PartialOrder.irreflexive (TotalOrder.order keyOrder) x)
