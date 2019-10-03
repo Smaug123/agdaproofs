@@ -96,7 +96,7 @@ module Numbers.Primes.IntegerFactorisation where
     factorIntegerLemma zero indHyp = inl (succIsPositive 1)
     factorIntegerLemma (succ zero) indHyp = inl (succPreservesInequality (succIsPositive 0))
     factorIntegerLemma (succ (succ x)) indHyp with everyNumberHasAPrimeFactor {succ (succ x)} (succPreservesInequality (succIsPositive x))
-    factorIntegerLemma (succ (succ x)) indHyp | a , record { fst = record { fst = divides record {quot = zero ; rem = .0 ; pr = ssxDivA ; remIsSmall = r } refl ; snd = 1<a }; snd = record { fst = primeA ; snd = smallerFactors } } rewrite Semiring.sumZeroRight ℕSemiring (a *N zero) | multiplicationNIsCommutative a 0 = naughtE ssxDivA
+    factorIntegerLemma (succ (succ x)) indHyp | a , record { fst = record { fst = divides record {quot = zero ; rem = .0 ; pr = ssxDivA ; remIsSmall = r } refl ; snd = 1<a }; snd = record { fst = primeA ; snd = smallerFactors } } rewrite Semiring.sumZeroRight ℕSemiring (a *N zero) | multiplicationNIsCommutative a 0 = exFalso (naughtE ssxDivA)
     factorIntegerLemma (succ (succ x)) indHyp | a , record { fst = record { fst = divides record {quot = succ zero ; rem = .0 ; pr = ssxDivA ; remIsSmall = r } refl ; snd = 1<a }; snd = record { fst = primeA ; snd = smallerFactors } } = inr record { 1<a = succPreservesInequality (succIsPositive x) ; firstFactor = a ; firstFactorNontrivial = Prime.p>1 primeA ; firstFactorBiggerMin = inl (Prime.p>1 primeA) ; firstFactorDivision = record { quot = 1 ; rem = 0 ; pr = ssxDivA ; remIsSmall = r ; quotSmall = inl (TotalOrder.transitive ℕTotalOrder (le zero refl) 1<a) } ; firstFactorDivides = refl ; firstFactorPrime = record { p>1 = Prime.p>1 primeA ; pr = Prime.pr primeA } ; otherFactors = inl record { fst = refl ; snd = refl } ; otherFactorsNumber = 0 }
 
     factorIntegerLemma (succ (succ x)) indHyp | a , record { fst = record { fst = divides record {quot = succ (succ qu) ; rem = .0 ; pr = ssxDivA ; remIsSmall = remSmall } refl ; snd = 1<a }; snd = record { fst = primeA ; snd = smallerFactors } } = inr record { 1<a = succPreservesInequality (succIsPositive x) ; firstFactor = a ; firstFactorNontrivial = Prime.p>1 primeA ; firstFactorBiggerMin = inl (Prime.p>1 primeA) ; firstFactorDivision = record { quot = succ (succ qu) ; rem = 0 ; pr = ssxDivA ; remIsSmall = remSmall ; quotSmall = inl (TotalOrder.transitive ℕTotalOrder (le zero refl) 1<a) } ; firstFactorDivides = refl ; firstFactorPrime = record { p>1 = Prime.p>1 primeA ; pr = Prime.pr primeA } ; otherFactors = inr record {fst = succPreservesInequality (succIsPositive qu) ; snd = factNonunit} ; otherFactorsNumber = succ (factorisationNonunit.otherFactorsNumber indHypRes') }
@@ -143,7 +143,7 @@ module Numbers.Primes.IntegerFactorisation where
     ... | indHyp = (indHyp prf) a factA p|a
       where
         prf : (x : ℕ) (ind : (y : ℕ) (y<x : y <N x) (factY : factorisationNonunit i y) (p|y : p ∣ y) → False) (factX : factorisationNonunit i x) (p|x : p ∣ x) → False
-        prf x ind record { 1<a = 1<a ; firstFactor = firstFactor ; firstFactorNontrivial = firstFactorNontrivial ; firstFactorBiggerMin = firstFactorBiggerMin ; firstFactorDivision = firstFactorDivision ; firstFactorDivides = firstFactorDivides ; firstFactorPrime = firstFactorPrime ; otherFactors = (inl record { fst = quotFirstfact=1 ; snd = otherFactorsNumber }) } p|x = cannotBeLeqAndG i<=firstFactor p<i
+        prf x ind record { 1<a = 1<a ; firstFactor = firstFactor ; firstFactorNontrivial = firstFactorNontrivial ; firstFactorBiggerMin = firstFactorBiggerMin ; firstFactorDivision = firstFactorDivision ; firstFactorDivides = firstFactorDivides ; firstFactorPrime = firstFactorPrime ; otherFactors = (inl record { fst = quotFirstfact=1 ; snd = otherFactorsNumber }) } p|x = exFalso bad
           where
             x=firstFact : firstFactor *N 1 +N 0 ≡ x
             x=firstFact rewrite equalityCommutative firstFactorDivides | equalityCommutative quotFirstfact=1 = divisionAlgResult.pr firstFactorDivision
@@ -155,6 +155,10 @@ module Numbers.Primes.IntegerFactorisation where
             p=firstFact = primeDivPrimeImpliesEqual pPrime firstFactorPrime p|firstFact
             i<=firstFactor : i ≤N p
             i<=firstFactor rewrite p=firstFact = firstFactorBiggerMin
+            bad : False
+            bad with i<=firstFactor
+            ... | inl t = TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder t p<i)
+            ... | inr eq rewrite eq = TotalOrder.irreflexive ℕTotalOrder p<i
         prf zero ind record { 1<a = 1<a ; firstFactor = firstFactor ; firstFactorNontrivial = firstFactorNontrivial ; firstFactorBiggerMin = firstFactorBiggerMin ; firstFactorDivision = firstFactorDivision ; firstFactorDivides = firstFactorDivides ; firstFactorPrime = firstFactorPrime ; otherFactors = (inr otherFact) } p|x = zeroNeverGreater 1<a
         prf (succ x) ind record { 1<a = 1<a ; firstFactor = firstFactor ; firstFactorNontrivial = firstFactorNontrivial ; firstFactorBiggerMin = firstFactorBiggerMin ; firstFactorDivision = firstFactorDivision ; firstFactorDivides = firstFactorDivides ; firstFactorPrime = firstFactorPrime ; otherFactors = (inr otherFact) } p|x = ind (divisionAlgResult.quot firstFactorDivision) (lemma4 {divisionAlgResult.quot firstFactorDivision} {firstFactor} {divisionAlgResult.rem firstFactorDivision} {x} (divisionAlgResult.pr (firstFactorDivision)) (primesAreBiggerThanOne firstFactorPrime)) (canReduceFactorBound' (_&&_.snd otherFact) firstFactorBiggerMin) (p|q p|ffOrQ)
           where

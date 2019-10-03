@@ -65,7 +65,7 @@ module Numbers.Modulo.IntegersModN where
   plusZnIdentityLeft {zero} {()}
   plusZnIdentityLeft {succ n} {pr} record { x = x ; xLess = xLess } with orderIsTotal x (succ n)
   plusZnIdentityLeft {succ n} {pr} record { x = x ; xLess = xLess } | inl (inl x<succn) rewrite <NRefl x<succn xLess = refl
-  plusZnIdentityLeft {succ n} {pr} record { x = x ; xLess = xLess } | inl (inr succn<x) = exFalso (cannotBeLeqAndG {x} {succ n} (inl xLess) succn<x)
+  plusZnIdentityLeft {succ n} {pr} record { x = x ; xLess = xLess } | inl (inr succn<x) = exFalso (TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder succn<x xLess))
   plusZnIdentityLeft {succ n} {pr} record { x = x ; xLess = xLess } | inr x=succn rewrite x=succn = exFalso (TotalOrder.irreflexive ℕTotalOrder xLess)
 
   subLemma : {a b c : ℕ} → (pr1 : a <N b) → (pr2 : a <N c) → (pr : b ≡ c) → (subtractionNResult.result (-N (inl pr1))) ≡ (subtractionNResult.result (-N (inl pr2)))
@@ -203,7 +203,7 @@ module Numbers.Modulo.IntegersModN where
           lemm rewrite b=0 | Semiring.commutative ℕSemiring a 0 = refl
       b=0' : (b c : ℕ) → (b +N c ≡ c) → b ≡ 0
       b=0' zero c b+c=c = refl
-      b=0' (succ b) zero b+c=c = naughtE (equalityCommutative b+c=c)
+      b=0' (succ b) zero b+c=c = exFalso (naughtE (equalityCommutative b+c=c))
       b=0' (succ b) (succ c) b+c=c = b=0' (succ b) c bl2
         where
           bl2 : succ b +N c ≡ c
@@ -590,7 +590,7 @@ module Numbers.Modulo.IntegersModN where
         where
           a=0 : (a : ℕ) → (a +N a ≡ a) → a ≡ 0
           a=0 zero pr = refl
-          a=0 (succ a) pr = naughtE {_} {a} (equalityCommutative (canSubtractFromEqualityRight pr))
+          a=0 (succ a) pr = exFalso (naughtE {a} (equalityCommutative (canSubtractFromEqualityRight pr)))
   plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) with orderIsTotal (b +N c) (succ n)
   plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inl b+c<sn) with orderIsTotal (a +N (b +N c)) (succ n)
   plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inl b+c<sn) | inl (inl a+'b+c<sn) = exFalso (false sn<a+b a+'b+c<sn)
@@ -661,18 +661,19 @@ module Numbers.Modulo.IntegersModN where
   inverseZn {succ n} {0<n} record { x = zero ; xLess = zeroLess } = record { x = zero ; xLess = zeroLess } , plusZnIdentityLeft _
   inverseZn {succ n} {0<n} record { x = (succ a) ; xLess = aLess } = ans , pr
     where
-      ans = record { x = subtractionNResult.result (-N (inl (subtractOneFromInequality aLess))) ; xLess = subLess (succIsPositive a) aLess }
+      ans = record { x = subtractionNResult.result (-N (inl (canRemoveSuccFrom<N aLess))) ; xLess = subLess (succIsPositive a) aLess }
       pr : ans +n record { x = (succ a) ; xLess = aLess } ≡ record { x = 0 ; xLess = 0<n }
-      pr with orderIsTotal (subtractionNResult.result (-N (inl (subtractOneFromInequality aLess))) +N (succ a)) (succ n)
+      pr with orderIsTotal (subtractionNResult.result (-N (inl (canRemoveSuccFrom<N aLess))) +N (succ a)) (succ n)
       ... | inl (inl x) = exFalso f
         where
-          h : subtractionNResult.result (-N (inl (le (_<N_.x aLess) (transitivity (equalityCommutative (succExtracts (_<N_.x aLess) a)) (succInjective (_<N_.proof aLess)))))) +N succ a ≡ succ n
-          h = addMinus {succ a} {succ n} (inl aLess)
+          h : subtractionNResult.result (-N (inl (canRemoveSuccFrom<N aLess))) +N succ a ≡ succ n
+          h with -N (inl (canRemoveSuccFrom<N aLess))
+          h | record { result = result ; pr = pr } rewrite equalityCommutative pr = Semiring.commutative ℕSemiring result (succ a)
           f : False
-          f rewrite h = TotalOrder.irreflexive ℕTotalOrder x
+          f = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _ _ _ _<N_ x h)
       ... | inl (inr x) = exFalso f
         where
-          h : subtractionNResult.result (-N (inl (subtractOneFromInequality aLess))) +N succ a ≡ succ n
+          h : subtractionNResult.result (-N (inl (canRemoveSuccFrom<N aLess))) +N succ a ≡ succ n
           h = addMinus {succ a} {succ n} (inl aLess)
           f : False
           f rewrite h = TotalOrder.irreflexive ℕTotalOrder x

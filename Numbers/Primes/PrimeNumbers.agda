@@ -262,7 +262,7 @@ module Numbers.Primes.PrimeNumbers where
     biggerThanCantDivideLemma {zero} {b} a<b b|a = refl
     biggerThanCantDivideLemma {succ a} {zero} a<b (divides record { quot = quot ; rem = .0 ; pr = pr ; remIsSmall = remIsSmall ; quotSmall = (inl (le x ())) } refl)
     biggerThanCantDivideLemma {succ a} {zero} a<b (divides record { quot = quot ; rem = .0 ; pr = () ; remIsSmall = remIsSmall ; quotSmall = (inr x) } refl)
-    biggerThanCantDivideLemma {succ a} {succ b} a<b (divides record { quot = zero ; rem = .0 ; pr = pr ; remIsSmall = remIsSmall ; quotSmall = quotSmall } refl) rewrite additionNIsCommutative (b *N zero) 0 | multiplicationNIsCommutative b 0 = naughtE pr
+    biggerThanCantDivideLemma {succ a} {succ b} a<b (divides record { quot = zero ; rem = .0 ; pr = pr ; remIsSmall = remIsSmall ; quotSmall = quotSmall } refl) rewrite additionNIsCommutative (b *N zero) 0 | multiplicationNIsCommutative b 0 = exFalso (naughtE pr)
     biggerThanCantDivideLemma {succ a} {succ b} a<b (divides record { quot = (succ quot) ; rem = .0 ; pr = pr ; remIsSmall = remIsSmall ; quotSmall = quotSmall } refl) rewrite additionNIsCommutative (quot +N b *N succ quot) 0 | equalityCommutative pr = exFalso (positiveTimes {b} {quot} a<b)
 
     biggerThanCantDivide : {a b : ℕ} → (x : ℕ) → (TotalOrder.max ℕTotalOrder a b) <N x → (x ∣ a) → (x ∣ b) → (a ≡ 0) && (b ≡ 0)
@@ -346,7 +346,7 @@ module Numbers.Primes.PrimeNumbers where
       where
         lem : {b r : ℕ} → b *N r ≡ b → (0 <N b) → r ≡ 1
         lem {zero} {r} pr ()
-        lem {succ b} {zero} pr _ rewrite multiplicationNIsCommutative b 0 = naughtE pr
+        lem {succ b} {zero} pr _ rewrite multiplicationNIsCommutative b 0 = exFalso (naughtE pr)
         lem {succ b} {succ zero} pr _ = refl
         lem {succ b} {succ (succ r)} pr _ rewrite multiplicationNIsCommutative b (succ (succ r)) | additionNIsCommutative (succ r) (b +N (b +N r *N b)) | additionNIsAssociative b (b +N r *N b) (succ r) | additionNIsCommutative (b +N r *N b) (succ r) = exFalso (cannotAddAndEnlarge'' {succ b} pr)
         p : quot *N quotAB ≡ 1
@@ -440,8 +440,7 @@ module Numbers.Primes.PrimeNumbers where
     euclidLemma2 {a} {b} {max} pr = lessTransitive {b} {succ (a +N b)} {max} (lemma a b) pr
       where
         lemma : (a b : ℕ) → b <N succ (a +N b)
-        lemma a zero = succIsPositive (a +N zero)
-        lemma a (succ b) = succPreservesInequality (collapseSuccOnRight {b} {a} {b} (lemma a b))
+        lemma a b rewrite Semiring.commutative ℕSemiring (succ a) b = addingIncreases b a
 
     euclidLemma3 : {a b max : ℕ} → (succ (succ (a +N b)) <N max) → succ b <N max
     euclidLemma3 {a} {b} {max} pr = euclidLemma2 {a} {succ b} {max} (identityOfIndiscernablesLeft (succ (succ (a +N b))) max (succ (a +N succ b)) _<N_ pr (applyEquality succ (equalityCommutative (succExtracts a b))))
@@ -569,7 +568,7 @@ module Numbers.Primes.PrimeNumbers where
         f (divides record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = remIsSmall } x) rewrite x = naughtE pr
     divisionDecidable (succ a) b with divisionAlg (succ a) b
     divisionDecidable (succ a) b | record { quot = quot ; rem = zero ; pr = pr ; remIsSmall = remSmall } = inl (divides (record { quot = quot ; rem = zero ; pr = pr ; remIsSmall = remSmall ; quotSmall = inl (succIsPositive a) }) refl)
-    divisionDecidable (succ a) b | record { quot = b/a ; rem = succ rem ; pr = prANotDivB ; remIsSmall = inr p } = naughtE (equalityCommutative p)
+    divisionDecidable (succ a) b | record { quot = b/a ; rem = succ rem ; pr = prANotDivB ; remIsSmall = inr p } = exFalso (naughtE (equalityCommutative p))
     divisionDecidable (succ a) b | record { quot = b/a ; rem = succ rem ; pr = prANotDivB ; remIsSmall = inl p } = inr f
       where
         f : (succ a) ∣ b → False
@@ -772,7 +771,7 @@ module Numbers.Primes.PrimeNumbers where
         q = succInjective (_&&_.snd p)
 
     oneHasNoDivisors : {a : ℕ} → a ∣ 1 → a ≡ 1
-    oneHasNoDivisors {a} (divides record { quot = zero ; rem = .0 ; pr = pr ; remIsSmall = remIsSmall } refl) rewrite addZeroRight (a *N zero) | multiplicationNIsCommutative a zero | addZeroRight a = naughtE pr
+    oneHasNoDivisors {a} (divides record { quot = zero ; rem = .0 ; pr = pr ; remIsSmall = remIsSmall } refl) rewrite addZeroRight (a *N zero) | multiplicationNIsCommutative a zero | addZeroRight a = exFalso (naughtE pr)
     oneHasNoDivisors {a} (divides record { quot = (succ quot) ; rem = .0 ; pr = pr ; remIsSmall = remIsSmall } refl) rewrite addZeroRight (a *N succ quot) = _&&_.fst (mult1Lemma pr)
 
     notSmallerMeansGE : {a b : ℕ} → (a <N b → False) → b ≤N a
