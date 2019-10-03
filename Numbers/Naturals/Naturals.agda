@@ -88,7 +88,7 @@ module Numbers.Naturals.Naturals where
   additionPreservesInequality {a} {b} (succ c) (le x proof) = le x (transitivity (equalityCommutative (additionNIsAssociative (succ x) a (succ c))) (applyEquality (_+N succ c) proof))
 
   additionPreservesInequalityOnLeft : {a b : ℕ} → (c : ℕ) → a <N b → c +N a <N c +N b
-  additionPreservesInequalityOnLeft {a} {b} c prAB = identityOfIndiscernablesRight (c +N a) (b +N c) (c +N b) (λ a b → a <N b) (identityOfIndiscernablesLeft (a +N c) (b +N c) (c +N a) (λ a b → a <N b) (additionPreservesInequality {a} {b} c prAB) (additionNIsCommutative a c)) (additionNIsCommutative b c)
+  additionPreservesInequalityOnLeft {a} {b} c prAB = identityOfIndiscernablesRight (λ a b → a <N b) (identityOfIndiscernablesLeft (λ a b → a <N b) (additionPreservesInequality {a} {b} c prAB) (additionNIsCommutative a c)) (additionNIsCommutative b c)
 
   subtractionPreservesInequality : {a b : ℕ} → (c : ℕ) → a +N c <N b +N c → a <N b
   subtractionPreservesInequality {a} {b} zero prABC rewrite additionNIsCommutative a 0 | additionNIsCommutative b 0 = prABC
@@ -105,16 +105,16 @@ module Numbers.Naturals.Naturals where
   multiplyIncreases (succ zero) b prA prb | ()
   multiplyIncreases (succ (succ a)) zero prA ()
   multiplyIncreases (succ (succ a)) (succ b) prA prB =
-      identityOfIndiscernablesRight (succ b) (succ b +N (succ a) *N succ b) (succ (succ a) *N succ b) (λ a b → a <N b) k refl
+      identityOfIndiscernablesRight _<N_ k refl
       where
         h : zero <N (succ a) *N (succ b)
         h = productNonzeroIsNonzero {succ a} {succ b} (logical<NImpliesLe (record {})) (logical<NImpliesLe (record {}))
         i : zero +N succ b <N (succ a) *N (succ b) +N succ b
         i = additionPreservesInequality {zero} {succ a *N succ b} (succ b) h
         j : zero +N succ b <N succ b +N (succ a *N succ b)
-        j = identityOfIndiscernablesRight (zero +N succ b) (succ ((b +N a *N succ b) +N succ b)) (succ (b +N succ (b +N a *N succ b))) (λ a b → a <N b) i (additionNIsCommutative (succ (b +N a *N succ b)) (succ b))
+        j = identityOfIndiscernablesRight _<N_ i (additionNIsCommutative (succ (b +N a *N succ b)) (succ b))
         k : succ b <N succ b +N (succ a *N succ b)
-        k = identityOfIndiscernablesLeft (zero +N succ b) (succ b +N (succ a *N succ b)) (succ b) (λ a b → a <N b) j refl
+        k = identityOfIndiscernablesLeft (λ a b → a <N b) j refl
 
   productCancelsRight : (a b c : ℕ) → (zero <N a) → (b *N a ≡ c *N a) → (b ≡ c)
   productCancelsRight a zero zero aPos eq = refl
@@ -151,9 +151,9 @@ module Numbers.Naturals.Naturals where
   productCancelsLeft a b c aPos pr = productCancelsRight a b c aPos j
     where
       i : b *N a ≡ a *N c
-      i = identityOfIndiscernablesLeft (a *N b) (a *N c) (b *N a) _≡_  pr (multiplicationNIsCommutative a b)
+      i = identityOfIndiscernablesLeft _≡_ pr (multiplicationNIsCommutative a b)
       j : b *N a ≡ c *N a
-      j = identityOfIndiscernablesRight (b *N a) (a *N c) (c *N a) _≡_ i (multiplicationNIsCommutative a c)
+      j = identityOfIndiscernablesRight _≡_ i (multiplicationNIsCommutative a c)
 
   productCancelsRight' : (a b c : ℕ) → (b *N a ≡ c *N a) → (a ≡ zero) || (b ≡ c)
   productCancelsRight' zero b c pr = inl refl
@@ -168,23 +168,23 @@ module Numbers.Naturals.Naturals where
   lessRespectsAddition {a} {b} (succ c) prAB rewrite additionNIsCommutative a (succ c) | additionNIsCommutative b (succ c) | additionNIsCommutative c a | additionNIsCommutative c b = succPreservesInequality (lessRespectsAddition c prAB)
 
   canTimesOneOnLeft : {a b : ℕ} → (a <N b) → (a *N (succ zero)) <N b
-  canTimesOneOnLeft {a} {b} prAB = identityOfIndiscernablesLeft a b (a *N (succ zero)) (λ x y → x <N y) prAB (equalityCommutative (productWithOneRight a))
+  canTimesOneOnLeft {a} {b} prAB = identityOfIndiscernablesLeft _<N_ prAB (equalityCommutative (productWithOneRight a))
 
   canTimesOneOnRight : {a b : ℕ} → (a <N b) → a <N (b *N (succ zero))
-  canTimesOneOnRight {a} {b} prAB = identityOfIndiscernablesRight a b (b *N (succ zero)) (λ x y → x <N y) prAB (equalityCommutative (productWithOneRight b))
+  canTimesOneOnRight {a} {b} prAB = identityOfIndiscernablesRight _<N_ prAB (equalityCommutative (productWithOneRight b))
 
   canSwapAddOnLeftOfInequality : {a b c : ℕ} → (a +N b <N c) → (b +N a <N c)
-  canSwapAddOnLeftOfInequality {a} {b} {c} pr = identityOfIndiscernablesLeft (a +N b) c (b +N a) (λ x y → x <N y) pr (additionNIsCommutative a b)
+  canSwapAddOnLeftOfInequality {a} {b} {c} pr = identityOfIndiscernablesLeft _<N_ pr (additionNIsCommutative a b)
 
   canSwapAddOnRightOfInequality : {a b c : ℕ} → (a <N b +N c) → (a <N c +N b)
-  canSwapAddOnRightOfInequality {a} {b} {c} pr = identityOfIndiscernablesRight a (b +N c) (c +N b) (λ x y → x <N y) pr (additionNIsCommutative b c)
+  canSwapAddOnRightOfInequality {a} {b} {c} pr = identityOfIndiscernablesRight _<N_ pr (additionNIsCommutative b c)
 
   naturalsAreNonnegative : (a : ℕ) → (a <NLogical zero) → False
   naturalsAreNonnegative zero pr = pr
   naturalsAreNonnegative (succ x) pr = pr
 
   canFlipMultiplicationsInIneq : {a b c d : ℕ} → (a *N b <N c *N d) → b *N a <N d *N c
-  canFlipMultiplicationsInIneq {a} {b} {c} {d} pr = identityOfIndiscernablesRight (b *N a) (c *N d) (d *N c) _<N_ (identityOfIndiscernablesLeft (a *N b) (c *N d) (b *N a) _<N_ pr (multiplicationNIsCommutative a b)) (multiplicationNIsCommutative c d)
+  canFlipMultiplicationsInIneq {a} {b} {c} {d} pr = identityOfIndiscernablesRight _<N_ (identityOfIndiscernablesLeft _<N_ pr (multiplicationNIsCommutative a b)) (multiplicationNIsCommutative c d)
 
   bumpDownOnRight : (a c : ℕ) → c *N succ a ≡ c *N a +N c
   bumpDownOnRight a c = transitivity (multiplicationNIsCommutative c (succ a)) (transitivity refl (transitivity (additionNIsCommutative c (a *N c)) ((addingPreservesEqualityRight c (multiplicationNIsCommutative a c) ))))
@@ -197,7 +197,7 @@ module Numbers.Naturals.Naturals where
       j : zero <N succ c *N succ b
       j = productNonzeroIsNonzero cPos prAB
       i : succ c *N zero <N succ c *N succ b
-      i = identityOfIndiscernablesLeft zero (succ c *N (succ b)) ((succ c) *N zero) _<N_ j (equalityCommutative (productZeroIsZeroRight c))
+      i = identityOfIndiscernablesLeft _<N_ j (equalityCommutative (productZeroIsZeroRight c))
   lessRespectsMultiplicationLeft (succ a) zero c (le x ()) cPos
   lessRespectsMultiplicationLeft (succ a) (succ b) c prAB cPos = m
     where
@@ -206,9 +206,9 @@ module Numbers.Naturals.Naturals where
       j : c *N a +N c <N c *N b +N c
       j = lessRespectsAddition c h
       i : c *N succ a <N c *N b +N c
-      i = identityOfIndiscernablesLeft (c *N a +N c) (c *N b +N c) (c *N succ a) _<N_ j (equalityCommutative (bumpDownOnRight a c))
+      i = identityOfIndiscernablesLeft _<N_ j (equalityCommutative (bumpDownOnRight a c))
       m : c *N succ a <N c *N succ b
-      m = identityOfIndiscernablesRight (c *N succ a) (c *N b +N c) (c *N succ b) _<N_ i (equalityCommutative (bumpDownOnRight b c))
+      m = identityOfIndiscernablesRight _<N_ i (equalityCommutative (bumpDownOnRight b c))
 
   lessRespectsMultiplication : (a b c : ℕ) → (a <N b) → (zero <N c) → (a *N c <N b *N c)
   lessRespectsMultiplication a b c prAB cPos = canFlipMultiplicationsInIneq {c} {a} {c} {b} (lessRespectsMultiplicationLeft a b c prAB cPos)
@@ -245,12 +245,12 @@ module Numbers.Naturals.Naturals where
           zSuccYAEqC'' : succ (z +N (y +N a)) ≡ c
           zSuccYAEqC''' : succ ((z +N y) +N a) ≡ c
           p : succ ((y +N z) +N a) ≡ c
-          p = identityOfIndiscernablesLeft (succ (z +N y) +N a) c (succ (y +N z) +N a) _≡_ zSuccYAEqC''' (applyEquality (λ n → succ (n +N a)) (additionNIsCommutative z y))
-          zSuccYAEqC''' = identityOfIndiscernablesLeft (succ (z +N (y +N a))) c (succ ((z +N y) +N a)) _≡_ zSuccYAEqC'' (equalityCommutative (applyEquality succ (additionNIsAssociative z y a)))
-          zSuccYAEqC'' = identityOfIndiscernablesLeft (z +N (succ y +N a)) c (succ (z +N (y +N a))) _≡_ zSuccYAEqC' (succExtracts z (y +N a))
-          zSuccYAEqC' = identityOfIndiscernablesLeft (z +N (succ y +N a)) c (z +N succ (y +N a)) _≡_ zSuccYAEqC (applyEquality (λ r → z +N r) refl)
+          p = identityOfIndiscernablesLeft _≡_ zSuccYAEqC''' (applyEquality (λ n → succ (n +N a)) (additionNIsCommutative z y))
+          zSuccYAEqC''' = identityOfIndiscernablesLeft _≡_ zSuccYAEqC'' (equalityCommutative (applyEquality succ (additionNIsAssociative z y a)))
+          zSuccYAEqC'' = identityOfIndiscernablesLeft _≡_ zSuccYAEqC' (succExtracts z (y +N a))
+          zSuccYAEqC' = identityOfIndiscernablesLeft _≡_ zSuccYAEqC (applyEquality (λ r → z +N r) refl)
           zbEqC = succInjective zbEqC'
-          zSuccYAEqC = identityOfIndiscernablesLeft (z +N b) c (z +N (succ y +N a)) _≡_ zbEqC (applyEquality (λ r → z +N r) (equalityCommutative succYAeqB))
+          zSuccYAEqC = identityOfIndiscernablesLeft _≡_ zbEqC (applyEquality (λ r → z +N r) (equalityCommutative succYAeqB))
       go : ∀ n m → m <N n → Accessible _<N_ m
       go zero m (le x ())
       go (succ n) zero mLessN = access (λ y ())
@@ -289,7 +289,7 @@ module Numbers.Naturals.Naturals where
       absurd' : 0 ≡ 1
       absurd'' : False
       absurd'' = succIsNonzero (equalityCommutative absurd')
-      absurd = identityOfIndiscernablesLeft (succ a *N zero) 1 (0 *N succ a) _≡_ pr (productZeroIsZeroRight a)
+      absurd = identityOfIndiscernablesLeft _≡_ pr (productZeroIsZeroRight a)
       absurd' = absurd
   productOneImpliesOperandsOne {succ a} {succ b} pr = record { fst = r' ; snd = (applyEquality succ (_&&_.fst q)) }
     where
@@ -303,7 +303,7 @@ module Numbers.Naturals.Naturals where
       r' = applyEquality succ r
 
   oneTimesPlusZero : (a : ℕ) → a ≡ a *N succ zero +N zero
-  oneTimesPlusZero a = identityOfIndiscernablesRight a (a *N succ zero) (a *N succ zero +N zero) _≡_ (equalityCommutative (productWithOneRight a)) (equalityCommutative (addZeroRight (a *N succ zero)))
+  oneTimesPlusZero a = identityOfIndiscernablesRight _≡_ (equalityCommutative (productWithOneRight a)) (equalityCommutative (addZeroRight (a *N succ zero)))
 
   cancelInequalityLeft : {a b c : ℕ} → a *N b <N a *N c → b <N c
   cancelInequalityLeft {a} {zero} {zero} (le x proof) rewrite (productZeroIsZeroRight a) = exFalso (succIsNonzero {x +N zero} proof)
@@ -314,9 +314,9 @@ module Numbers.Naturals.Naturals where
       p' : succ b *N a <N succ c *N a
       p' = canFlipMultiplicationsInIneq {a} {succ b} {a} {succ c} pr
       p'' : b *N a +N a <N succ c *N a
-      p'' = identityOfIndiscernablesLeft (succ b *N a) (succ c *N a) (b *N a +N a) _<N_ p' (additionNIsCommutative a (b *N a))
+      p'' = identityOfIndiscernablesLeft _<N_ p' (additionNIsCommutative a (b *N a))
       p''' : b *N a +N a <N c *N a +N a
-      p''' = identityOfIndiscernablesRight (b *N a +N a) (succ c *N a) (c *N a +N a) _<N_ p'' (additionNIsCommutative a (c *N a))
+      p''' = identityOfIndiscernablesRight _<N_ p'' (additionNIsCommutative a (c *N a))
       p : b *N a <N c *N a
       p = subtractionPreservesInequality a p'''
       q : a *N b <N a *N c
@@ -357,7 +357,7 @@ module Numbers.Naturals.Naturals where
   moveOneSubtraction {a} {b} {succ c} {inl a<b} pr with -N (inl a<b)
   moveOneSubtraction {a} {b} {succ c} {inl a<b} pr | record { result = result ; pr = sub } rewrite pr | sub = refl
   moveOneSubtraction {a} {.a} {zero} {inr refl} pr = equalityCommutative (addZeroRight a)
-  moveOneSubtraction {a} {.a} {succ c} {inr refl} pr = identityOfIndiscernablesRight a (a +N zero) (a +N (succ c)) _≡_ (equalityCommutative (addZeroRight a)) (applyEquality (λ t → a +N t) pr')
+  moveOneSubtraction {a} {.a} {succ c} {inr refl} pr = identityOfIndiscernablesRight _≡_ (equalityCommutative (addZeroRight a)) (applyEquality (λ t → a +N t) pr')
     where
       selfSub : (r : ℕ) → subtractionNResult.result (-N {r} {r} (inr refl)) ≡ zero
       selfSub zero = refl
@@ -424,9 +424,9 @@ module Numbers.Naturals.Naturals where
       g : (b +N c+a-b) +N c-b ≡ c +N (a +N c-b)
       g rewrite (equalityCommutative (additionNIsAssociative c a c-b)) = applyEquality (λ t → t +N c-b) prcab
       g' : (b +N c-b) +N c+a-b ≡ c +N (a +N c-b)
-      g' = identityOfIndiscernablesLeft ((b +N c+a-b) +N c-b) (c +N (a +N c-b)) ((b +N c-b) +N c+a-b) _≡_ g (addAssocLemma b c+a-b c-b)
+      g' = identityOfIndiscernablesLeft _≡_ g (addAssocLemma b c+a-b c-b)
       g'' : c +N c+a-b ≡ c +N (a +N c-b)
-      g'' = identityOfIndiscernablesLeft ((b +N c-b) +N c+a-b) (c +N (a +N c-b)) (c +N c+a-b) _≡_ g' (applyEquality (λ i → i +N c+a-b) prc-b)
+      g'' = identityOfIndiscernablesLeft _≡_ g' (applyEquality (λ i → i +N c+a-b) prc-b)
       g''' : c+a-b ≡ a +N c-b
       g''' = canSubtractFromEqualityLeft {c} {c+a-b} {a +N c-b} g''
 
@@ -483,7 +483,7 @@ module Numbers.Naturals.Naturals where
       s : subtractionNResult.result resbc ≡ subtractionNResult.result (-N {b +N 0 *N b} {c +N 0 *N c} (inl (lessRespectsMultiplicationLeft b c 1 b<c aPos)))
       s = transitivity q r
       s' : subtractionNResult.result resbc +N 0 ≡ subtractionNResult.result (-N {b +N 0 *N b} {c +N 0 *N c} (inl (lessRespectsMultiplicationLeft b c 1 b<c aPos)))
-      s' = identityOfIndiscernablesLeft (subtractionNResult.result resbc) _ (subtractionNResult.result resbc +N 0) _≡_ s (equalityCommutative (addZeroRight _))
+      s' = identityOfIndiscernablesLeft _≡_ s (equalityCommutative (addZeroRight _))
       r = subtractionNWellDefined {b +N 0 *N b} {c +N 0 *N c} {(lessCast' (lessCast (inl b<c) (equalityCommutative (addZeroRight b))) (equalityCommutative (addZeroRight c)))} {inl (lessRespectsMultiplicationLeft b c 1 b<c aPos)} (underlying resbc'') (-N {b +N 0 *N b} {c +N 0 *N c} (inl (lessRespectsMultiplicationLeft b c 1 b<c aPos)))
       g (a , b) = b
       g' (a , b) = b
@@ -520,7 +520,7 @@ module Numbers.Naturals.Naturals where
 
   subtractProduct' : {a b c : ℕ} → (aPos : 0 <N a) → (b<c : b <N c) →
     (subtractionNResult.result (-N (inl b<c))) *N a ≡ subtractionNResult.result (-N {a *N b} {a *N c} (inl (lessRespectsMultiplicationLeft b c a b<c aPos)))
-  subtractProduct' {a} aPos b<c = identityOfIndiscernablesLeft (a *N subtractionNResult.result (-N (inl b<c))) _ (subtractionNResult.result (-N (inl b<c)) *N a) _≡_ (subtractProduct aPos b<c) (multiplicationNIsCommutative a _)
+  subtractProduct' {a} aPos b<c = identityOfIndiscernablesLeft _≡_ (subtractProduct aPos b<c) (multiplicationNIsCommutative a _)
 
   equalityDecidable : (a b : ℕ) → (a ≡ b) || ((a ≡ b) → False)
   equalityDecidable zero zero = inl refl

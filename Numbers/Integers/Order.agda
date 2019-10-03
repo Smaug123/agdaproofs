@@ -37,7 +37,7 @@ irreflexive (negSucc a) record { x = x ; proof = proof } = naughtE (equalityComm
     pr' : nonneg (succ x) +Z (negSucc a +Z nonneg (succ a)) ≡ negSucc a +Z nonneg (succ a)
     pr' rewrite +ZAssociative (nonneg (succ x)) (negSucc a) (nonneg (succ a)) = applyEquality (λ t → t +Z nonneg (succ a)) proof
     pr'' : nonneg (succ x) +Z nonneg 0 ≡ nonneg 0
-    pr'' rewrite equalityCommutative (additiveInverseExists a) = identityOfIndiscernablesLeft (nonneg (succ x) +Z (negSucc a +Z nonneg (succ a))) (negSucc a +Z nonneg (succ a)) (nonneg (succ (x +N zero))) _≡_ pr' q
+    pr'' rewrite equalityCommutative (additiveInverseExists a) = identityOfIndiscernablesLeft _≡_ pr' q
       where
         q : nonneg (succ x) +Z (negSucc a +Z nonneg (succ a)) ≡ nonneg (succ (x +N 0))
         q rewrite Semiring.commutative ℕSemiring x 0 | additiveInverseExists a | Semiring.commutative ℕSemiring x 0 = refl

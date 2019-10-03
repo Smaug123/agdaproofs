@@ -55,11 +55,11 @@ liftEquality f .f x .x refl refl = refl
 applyEquality : {a : _} {b : _} {A : Set a} {B : Set b} (f : A → B) → {x y : A} → (x ≡ y) → ((f x) ≡ (f y))
 applyEquality {A} {B} f {x} {.x} refl = refl
 
-identityOfIndiscernablesLeft : {m n o : _} {A : Set m} {B : Set n} (a : A) (b : B) (c : A) → (prop : A → B → Set o) → (prop a b) → (a ≡ c) → (prop c b)
-identityOfIndiscernablesLeft a b .a prop pAB refl = pAB
+identityOfIndiscernablesLeft : {m n o : _} {A : Set m} {B : Set n} {a : A} {b : B} {c : A} → (prop : A → B → Set o) → (prop a b) → (a ≡ c) → (prop c b)
+identityOfIndiscernablesLeft {a = a} {b} {.a} prop pAB refl = pAB
 
-identityOfIndiscernablesRight : {m n o : _} {A : Set m} {B : Set n} (a : A) (b c : B) → (prop : A → B → Set o) → (prop a b) → (b ≡ c) → (prop a c)
-identityOfIndiscernablesRight a b .b prop prAB refl = prAB
+identityOfIndiscernablesRight : {m n o : _} {A : Set m} {B : Set n} {a : A} {b c : B} → (prop : A → B → Set o) → (prop a b) → (b ≡ c) → (prop a c)
+identityOfIndiscernablesRight {a = a} {b} {.b} prop prAB refl = prAB
 
 equalityCommutative : {a : _} {A : Set a} {x y : A} → (x ≡ y) → (y ≡ x)
 equalityCommutative refl = refl

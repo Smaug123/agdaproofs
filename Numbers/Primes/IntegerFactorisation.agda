@@ -65,7 +65,7 @@ module Numbers.Primes.IntegerFactorisation where
 
     canReduceFactorBound : {a i j : ℕ} → factorisationNonunit i a → j <N i → factorisationNonunit j a
     canReduceFactorBound {a} {i} {j} record { 1<a = 1<a ; firstFactor = firstFactor ; firstFactorNontrivial = firstFactorNontrivial ; firstFactorBiggerMin = inl ff<i ; firstFactorDivision = firstFactorDivision ; firstFactorDivides = firstFactorDivides ; firstFactorPrime = firstFactorPrime ; otherFactors = otherFactors } j<i = record { 1<a = 1<a ; firstFactor = firstFactor ; firstFactorNontrivial = firstFactorNontrivial ; firstFactorBiggerMin = inl (lessTransitive j<i ff<i) ; firstFactorDivision = firstFactorDivision ; firstFactorDivides = firstFactorDivides ; firstFactorPrime = firstFactorPrime ; otherFactors = otherFactors }
-    canReduceFactorBound {a} {i} {j} record { 1<a = 1<a ; firstFactor = firstFactor ; firstFactorNontrivial = firstFactorNontrivial ; firstFactorBiggerMin = inr ff=i ; firstFactorDivision = firstFactorDivision ; firstFactorDivides = firstFactorDivides ; firstFactorPrime = firstFactorPrime ; otherFactors = otherFactors } j<i = record { 1<a = 1<a ; firstFactor = firstFactor ; firstFactorNontrivial = firstFactorNontrivial ; firstFactorBiggerMin = inl (identityOfIndiscernablesRight j i firstFactor _<N_ j<i ff=i) ; firstFactorDivision = firstFactorDivision ; firstFactorDivides = firstFactorDivides ; firstFactorPrime = firstFactorPrime ; otherFactors = otherFactors }
+    canReduceFactorBound {a} {i} {j} record { 1<a = 1<a ; firstFactor = firstFactor ; firstFactorNontrivial = firstFactorNontrivial ; firstFactorBiggerMin = inr ff=i ; firstFactorDivision = firstFactorDivision ; firstFactorDivides = firstFactorDivides ; firstFactorPrime = firstFactorPrime ; otherFactors = otherFactors } j<i = record { 1<a = 1<a ; firstFactor = firstFactor ; firstFactorNontrivial = firstFactorNontrivial ; firstFactorBiggerMin = inl (identityOfIndiscernablesRight _<N_ j<i ff=i) ; firstFactorDivision = firstFactorDivision ; firstFactorDivides = firstFactorDivides ; firstFactorPrime = firstFactorPrime ; otherFactors = otherFactors }
 
     canReduceFactorBound' : {a i j : ℕ} → factorisationNonunit i a → j ≤N i → factorisationNonunit j a
     canReduceFactorBound' {a} {i} {j} factA (inl x) = canReduceFactorBound factA x
@@ -108,12 +108,12 @@ module Numbers.Primes.IntegerFactorisation where
         indHypRes' | inl y = exFalso (zeroNeverGreater (canRemoveSuccFrom<N (canRemoveSuccFrom<N y)))
         indHypRes' | inr y = y
         z|ssx : (z : ℕ) → z ∣ succ (succ qu) → z ∣ succ (succ x)
-        z|ssx z z|ssq = (divisibilityTransitive z|ssq (divides (record { quot = a ; rem = 0 ; pr = identityOfIndiscernablesLeft (a *N succ (succ qu) +N 0) (succ (succ x)) (succ (succ qu) *N a +N 0) _≡_ ssxDivA (applyEquality (λ t → t +N 0) (multiplicationNIsCommutative a (succ (succ qu)))) ; remIsSmall = zeroIsValidRem (succ (succ qu)) ; quotSmall = inl (succIsPositive _) }) refl))
+        z|ssx z z|ssq = (divisibilityTransitive z|ssq (divides (record { quot = a ; rem = 0 ; pr = identityOfIndiscernablesLeft _≡_ ssxDivA (applyEquality (λ t → t +N 0) (multiplicationNIsCommutative a (succ (succ qu)))) ; remIsSmall = zeroIsValidRem (succ (succ qu)) ; quotSmall = inl (succIsPositive _) }) refl))
         factNonunit : factorisationNonunit a (succ (succ qu))
         factNonunit with orderIsTotal a (factorisationNonunit.firstFactor indHypRes')
         factNonunit | inl (inl a<ff) = canIncreaseFactorBound indHypRes' (λ z 1<z z<a z|ssq → smallerFactors z z<a 1<z (z|ssx z z|ssq)) (inl a<ff)
         factNonunit | inl (inr ff<a) = exFalso (smallerFactors (factorisationNonunit.firstFactor indHypRes') ff<a (factorisationNonunit.firstFactorNontrivial indHypRes') (z|ssx (factorisationNonunit.firstFactor indHypRes') (divides (factorisationNonunit.firstFactorDivision indHypRes') (factorisationNonunit.firstFactorDivides indHypRes'))))
-        factNonunit | inr ff=a = canIncreaseFactorBound indHypRes' (λ z 1<z z<a z|ssq → smallerFactors z z<a 1<z (divisibilityTransitive z|ssq (divides (record { quot = a ; rem = 0 ; pr = identityOfIndiscernablesLeft (a *N succ (succ qu) +N 0) (succ (succ x)) (succ (succ qu) *N a +N 0) _≡_ ssxDivA (applyEquality (λ t → t +N 0) (multiplicationNIsCommutative a (succ (succ qu)))) ; remIsSmall = zeroIsValidRem (succ (succ qu)) ; quotSmall = inl (succIsPositive _) }) refl))) (inr ff=a)
+        factNonunit | inr ff=a = canIncreaseFactorBound indHypRes' (λ z 1<z z<a z|ssq → smallerFactors z z<a 1<z (divisibilityTransitive z|ssq (divides (record { quot = a ; rem = 0 ; pr = identityOfIndiscernablesLeft _≡_ ssxDivA (applyEquality (λ t → t +N 0) (multiplicationNIsCommutative a (succ (succ qu)))) ; remIsSmall = zeroIsValidRem (succ (succ qu)) ; quotSmall = inl (succIsPositive _) }) refl))) (inr ff=a)
 
     factorInteger : (a : ℕ) → (1 <N a) → factorisationNonunit 1 a
     factorInteger a 1<a with (rec <NWellfounded (λ n → (n <N 2) || (factorisationNonunit 1 n))) factorIntegerLemma
@@ -206,7 +206,7 @@ module Numbers.Primes.IntegerFactorisation where
         p1|second = primesArePrime {p1} {p2} {rem2} (factorisationNonunit.firstFactorPrime f1) lem
           where
             lem : p1 ∣ (p2 *N rem2)
-            lem = identityOfIndiscernablesRight p1 a (p2 *N rem2) _∣_ (divides (factorisationNonunit.firstFactorDivision f1) (factorisationNonunit.firstFactorDivides f1)) a=p2rem2
+            lem = identityOfIndiscernablesRight _∣_ (divides (factorisationNonunit.firstFactorDivision f1) (factorisationNonunit.firstFactorDivides f1)) a=p2rem2
         p1|second' : ((p1 ∣ p2) || (p1 ∣ rem2)) → ((p1 ≡ p2) || (p1 ∣ rem2))
         p1|second' (inl x) = inl (primeDivPrimeImpliesEqual (factorisationNonunit.firstFactorPrime f1) (factorisationNonunit.firstFactorPrime f2) x)
         p1|second' (inr x) = inr x
@@ -260,7 +260,7 @@ module Numbers.Primes.IntegerFactorisation where
         pr : (factorisationNonunit.firstFactor f2) *N (divisionAlgResult.quot div2) ≡ (factorisationNonunit.firstFactor f1) *N (divisionAlgResult.quot div1)
         pr = transitivity pr2' (equalityCommutative pr1')
         pr' : (factorisationNonunit.firstFactor f1) *N (divisionAlgResult.quot div2) ≡ (factorisationNonunit.firstFactor f1) *N (divisionAlgResult.quot div1)
-        pr' = identityOfIndiscernablesLeft ((factorisationNonunit.firstFactor f2) *N (divisionAlgResult.quot div2)) ((factorisationNonunit.firstFactor f1) *N (divisionAlgResult.quot div1)) ((factorisationNonunit.firstFactor f1) *N (divisionAlgResult.quot div2)) _≡_ pr (applyEquality (λ t → t *N divisionAlgResult.quot div2) (equalityCommutative firstFactEqual))
+        pr' = identityOfIndiscernablesLeft _≡_ pr (applyEquality (λ t → t *N divisionAlgResult.quot div2) (equalityCommutative firstFactEqual))
         positive : zero <N factorisationNonunit.firstFactor f1
         positive = lessTransitive (succIsPositive 0) (factorisationNonunit.firstFactorNontrivial f1)
         res : divisionAlgResult.quot div2 ≡ divisionAlgResult.quot div1

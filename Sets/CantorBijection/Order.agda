@@ -20,8 +20,8 @@ PartialOrder._<_ (TotalOrder.order totalOrder) = order
 PartialOrder.irreflexive (TotalOrder.order totalOrder) {fst ,, snd} (inl x) = exFalso (TotalOrder.irreflexive ℕTotalOrder x)
 PartialOrder.irreflexive (TotalOrder.order totalOrder) {fst ,, snd} (inr (_ ,, p)) = exFalso (TotalOrder.irreflexive ℕTotalOrder p)
 PartialOrder.transitive (TotalOrder.order totalOrder) {x1 ,, x2} {y1 ,, y2} {z1 ,, z2} (inl pr1) (inl pr2) = inl (TotalOrder.transitive ℕTotalOrder pr1 pr2)
-PartialOrder.transitive (TotalOrder.order totalOrder) {x1 ,, x2} {y1 ,, y2} {z1 ,, z2} (inl pr1) (inr (f1 ,, f2)) = inl (identityOfIndiscernablesRight _ _ _ _<N_ pr1 f1)
-PartialOrder.transitive (TotalOrder.order totalOrder) {x1 ,, x2} {y1 ,, y2} {z1 ,, z2} (inr (f1 ,, f2)) (inl x) = inl (identityOfIndiscernablesLeft _ _ _ _<N_ x (equalityCommutative f1))
+PartialOrder.transitive (TotalOrder.order totalOrder) {x1 ,, x2} {y1 ,, y2} {z1 ,, z2} (inl pr1) (inr (f1 ,, f2)) = inl (identityOfIndiscernablesRight _<N_ pr1 f1)
+PartialOrder.transitive (TotalOrder.order totalOrder) {x1 ,, x2} {y1 ,, y2} {z1 ,, z2} (inr (f1 ,, f2)) (inl x) = inl (identityOfIndiscernablesLeft _<N_ x (equalityCommutative f1))
 PartialOrder.transitive (TotalOrder.order totalOrder) {x1 ,, x2} {y1 ,, y2} {z1 ,, z2} (inr (f1 ,, f2)) (inr (fst ,, snd)) = inr (transitivity f1 fst ,, TotalOrder.transitive ℕTotalOrder f2 snd)
 TotalOrder.totality totalOrder (a ,, b) (c ,, d) with TotalOrder.totality ℕTotalOrder (a +N b) (c +N d)
 TotalOrder.totality totalOrder (a ,, b) (c ,, d) | inl (inl x) = inl (inl (inl x))
@@ -61,11 +61,11 @@ orderWellfounded (a ,, b) = access (go b a)
             go bound pr2 toProve bounded with TotalOrder.totality ℕTotalOrder (toProve +N bound) (m +N 0)
             ... | inl (inl bl) = pr m (le 0 refl) (toProve ,, bound) (inl bl)
             ... | inl (inr bl) = exFalso (noIntegersBetweenXAndSuccX (m +N 0) bl bounded)
-            go zero pr2 toProve _ | inr bl rewrite Semiring.sumZeroRight ℕSemiring m | Semiring.sumZeroRight ℕSemiring toProve = access λ i i<z → pr m (le 0 refl) i (inl (mustDescend (_&&_.fst i) (_&&_.snd i) (m +N zero) (identityOfIndiscernablesLeft _ _ _ order (identityOfIndiscernablesRight _ _ _ order i<z (p toProve (m +N 0) (transitivity bl (equalityCommutative (Semiring.sumZeroRight ℕSemiring m))))) refl)))
+            go zero pr2 toProve _ | inr bl rewrite Semiring.sumZeroRight ℕSemiring m | Semiring.sumZeroRight ℕSemiring toProve = access λ i i<z → pr m (le 0 refl) i (inl (mustDescend (_&&_.fst i) (_&&_.snd i) (m +N zero) (identityOfIndiscernablesLeft order (identityOfIndiscernablesRight order i<z (p toProve (m +N 0) (transitivity bl (equalityCommutative (Semiring.sumZeroRight ℕSemiring m))))) refl)))
             go (succ bound) pr2 toProve _ | inr bl = access desc
               where
                 desc : (i : ℕ && ℕ) → (order i (toProve ,, succ bound)) → Accessible order i
-                desc (i1 ,, i2) (inl ord) = pr m (le zero refl) (i1 ,, i2) (inl (identityOfIndiscernablesRight _ _ _ _<N_ ord bl))
+                desc (i1 ,, i2) (inl ord) = pr m (le zero refl) (i1 ,, i2) (inl (identityOfIndiscernablesRight _<N_ ord bl))
                 desc (i1 ,, i2) (inr (ord1 ,, ord2)) = pr2 i2 ord2 i1 (le 0 (applyEquality succ (transitivity ord1 bl)))
 
             h : (a : ℕ) (b : ℕ) (pr2 : b +N a <N succ m +N 0) → Accessible order (b ,, a)
@@ -82,12 +82,12 @@ orderWellfounded (a ,, b) = access (go b a)
         ans (zero ,, snd) (inr (a1 ,, a2)) rewrite y1+y2=x | a1 = exFalso (bad x y1 y2 y1+y2=x a2)
           where
             bad : (x y1 y2 : ℕ) → y1 +N y2 ≡ x → x <N y2 → False
-            bad x zero y2 y1+y2=x x<y2 = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesRight _ _ _ _<N_ x<y2 y1+y2=x)
-            bad x (succ y1) y2 y1+y2=x x<y2 rewrite equalityCommutative y1+y2=x = TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder x<y2 (identityOfIndiscernablesRight _ _ _ _<N_ (addingIncreases y2 y1) (Semiring.commutative ℕSemiring y2 (succ y1))))
+            bad x zero y2 y1+y2=x x<y2 = TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesRight _<N_ x<y2 y1+y2=x)
+            bad x (succ y1) y2 y1+y2=x x<y2 rewrite equalityCommutative y1+y2=x = TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder x<y2 (identityOfIndiscernablesRight _<N_ (addingIncreases y2 y1) (Semiring.commutative ℕSemiring y2 (succ y1))))
         ans (succ fst ,, snd) (inr (a1 ,, a2)) rewrite y1+y2=x = inr (a1 ,, le fst a1)
-    g (succ x) pr zero (zero ,, y2) (inr (fst ,, snd)) = exFalso (TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _ _ _ _<N_ snd fst))
+    g (succ x) pr zero (zero ,, y2) (inr (fst ,, snd)) = exFalso (TotalOrder.irreflexive ℕTotalOrder (identityOfIndiscernablesLeft _<N_ snd fst))
     g (succ x) pr zero (succ y1 ,, y2) (inr (fst ,, snd)) = pr y2 snd (succ (succ y1)) (succ y1 ,, y2) (inl (le 0 refl))
-    g (succ x) pr (succ c) y (inl z) = pr x (le 0 refl) (succ (succ c)) y (inl (identityOfIndiscernablesRight _ _ _ _<N_ z (applyEquality succ (transitivity (Semiring.commutative ℕSemiring c (succ x)) (applyEquality succ (Semiring.commutative ℕSemiring x c))))))
+    g (succ x) pr (succ c) y (inl z) = pr x (le 0 refl) (succ (succ c)) y (inl (identityOfIndiscernablesRight _<N_ z (applyEquality succ (transitivity (Semiring.commutative ℕSemiring c (succ x)) (applyEquality succ (Semiring.commutative ℕSemiring x c))))))
     g (succ x) pr (succ c) y (inr (fst ,, snd)) with TotalOrder.totality ℕTotalOrder (_&&_.snd y) x
     ... | inl (inl bl) = pr x (le 0 refl) (succ (succ c)) y (inr (transitivity fst (applyEquality succ (transitivity (Semiring.commutative ℕSemiring c (succ x)) (applyEquality succ (Semiring.commutative ℕSemiring x c)))) ,, bl))
     ... | inl (inr bl) = exFalso (noIntegersBetweenXAndSuccX x bl snd)

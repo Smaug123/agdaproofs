@@ -67,7 +67,7 @@ module Numbers.Primes.PrimeNumbers where
         s : ((p +N a *N p) +N q) +N a ≡ (p +N a *N succ p) +N q
         t : (p +N a *N p) +N a ≡ p +N a *N succ p
         s = transitivity (transferAddition (p +N a *N p) q a) (applyEquality (λ i → i +N q) t)
-        ans = identityOfIndiscernablesRight (((p +N a *N p) +N q) +N succ a) (succ (((p +N a *N p) +N q) +N a)) (succ ((p +N a *N succ p) +N q)) _≡_ r (applyEquality succ s)
+        ans = identityOfIndiscernablesRight _≡_ r (applyEquality succ s)
         r = succExtracts ((p +N a *N p) +N q) a
         t = transitivity (additionNIsAssociative p (a *N p) a) (applyEquality (λ n → p +N n) (equalityCommutative (aSucB a p)))
 
@@ -87,11 +87,11 @@ module Numbers.Primes.PrimeNumbers where
             addedA' : (succ a *N prevQuot +N prevRem) +N succ a ≡ succ x
             addedA'' : (succ a *N succ prevQuot) +N prevRem ≡ succ x
             addedA''' : succ ((prevQuot +N a *N succ prevQuot) +N prevRem) ≡ succ x
-            addedA''' = identityOfIndiscernablesLeft ((succ a *N succ prevQuot) +N prevRem) (succ x) (succ ((prevQuot +N a *N succ prevQuot) +N prevRem)) _≡_ addedA'' refl
+            addedA''' = identityOfIndiscernablesLeft _≡_ addedA'' refl
             p = record { quot = succ prevQuot ; rem = prevRem ; pr = addedA''' ; remIsSmall = smallRem ; quotSmall = inl (succIsPositive a) }
             addedA = applyEquality (λ n → n +N succ a) prevPr
-            addedA' = identityOfIndiscernablesRight ((succ a *N prevQuot +N prevRem) +N succ a) (subtractionNResult.result (-N (inl sa<sx)) +N (succ a)) (succ x) _≡_ addedA (addMinus {succ a} {succ x} (inl sa<sx))
-            addedA'' = identityOfIndiscernablesLeft ((succ a *N prevQuot +N prevRem) +N succ a) (succ x) ((succ a *N succ prevQuot) +N prevRem) _≡_ addedA' (divisionAlgLemma4 prevQuot a prevRem)
+            addedA' = identityOfIndiscernablesRight _≡_ addedA (addMinus {succ a} {succ x} (inl sa<sx))
+            addedA'' = identityOfIndiscernablesLeft _≡_ addedA' (divisionAlgLemma4 prevQuot a prevRem)
         go (succ x) indHyp | inr (sa=sx) = record { quot = succ zero ; rem = zero ; pr = divisionAlgLemma2 (succ a) (succ x) sa=sx ; remIsSmall = inl (succIsPositive a) ; quotSmall = inl (succIsPositive a) }
         go (succ x) indHyp | inl (inr (sx<sa)) = record { quot = zero ; rem = succ x ; pr = divisionAlgLemma (succ a) (succ x) ; remIsSmall = inl sx<sa ; quotSmall = inl (succIsPositive a) }
 
@@ -297,11 +297,11 @@ module Numbers.Primes.PrimeNumbers where
 
     maxDivides : (a b : ℕ) → ((TotalOrder.max ℕTotalOrder a b) ∣ a) → (TotalOrder.max ℕTotalOrder a b) ∣ b → (((a ≡ 0) && (0 <N b)) || ((b ≡ 0) && (0 <N a))) || (a ≡ b)
     maxDivides a b max|a max|b with TotalOrder.totality ℕTotalOrder a b
-    maxDivides a b max|a max|b | inl (inl a<b) = inl (inl (record { fst = gg ; snd = identityOfIndiscernablesLeft _ _ _ _<N_ a<b gg}))
+    maxDivides a b max|a max|b | inl (inl a<b) = inl (inl (record { fst = gg ; snd = identityOfIndiscernablesLeft _<N_ a<b gg}))
       where
         gg : a ≡ 0
         gg = biggerThanCantDivideLemma {a} {b} a<b max|a
-    maxDivides a b max|a max|b | inl (inr b<a) = inl (inr (record { fst = gg ; snd = identityOfIndiscernablesLeft _ _ _ _<N_ b<a gg }))
+    maxDivides a b max|a max|b | inl (inr b<a) = inl (inr (record { fst = gg ; snd = identityOfIndiscernablesLeft _<N_ b<a gg }))
       where
         gg : b ≡ 0
         gg = biggerThanCantDivideLemma b<a max|b
@@ -390,7 +390,7 @@ module Numbers.Primes.PrimeNumbers where
     dividesBothImpliesDividesSum {a} {x} {y} (divides record { quot = xDivA ; rem = .0 ; pr = prA ; quotSmall = qsm1 } refl) (divides record { quot = quot ; rem = .0 ; pr = pr ; quotSmall = qsm2 } refl) = divides (record { quot = xDivA +N quot ; rem = 0 ; pr = go {a} {x} {y} {xDivA} {quot} pr prA ; remIsSmall = zeroIsValidRem a ; quotSmall = (quotSmall qsm1 qsm2) }) refl
       where
         go : {a x y quot quot2 : ℕ} → (a *N quot2 +N zero ≡ y) → (a *N quot +N zero ≡ x) → a *N (quot +N quot2) +N zero ≡ x +N y
-        go {a} {x} {y} {quot} {quot2} pr1 pr2 rewrite addZeroRight (a *N quot) = identityOfIndiscernablesLeft (a *N (quot +N quot2)) (x +N y) (a *N (quot +N quot2) +N zero) _≡_ t (equalityCommutative (addZeroRight (a *N (quot +N quot2))))
+        go {a} {x} {y} {quot} {quot2} pr1 pr2 rewrite addZeroRight (a *N quot) = identityOfIndiscernablesLeft _≡_ t (equalityCommutative (addZeroRight (a *N (quot +N quot2))))
           where
             t : a *N (quot +N quot2) ≡ x +N y
             t rewrite addZeroRight (a *N quot2) = transitivity (productDistributes a quot quot2) p
@@ -412,7 +412,7 @@ module Numbers.Primes.PrimeNumbers where
 
     dividesBothImpliesDividesDifference : {a b c : ℕ} → a ∣ b → a ∣ c → (c<b : c <N b) → a ∣ (subtractionNResult.result (-N (inl c<b)))
     dividesBothImpliesDividesDifference {zero} {b} {.0} prab (divides record { quot = quot ; rem = .0 ; pr = refl } refl) c<b = prab
-    dividesBothImpliesDividesDifference {succ a} {b} {c} (divides record { quot = bDivSA ; rem = .0 ; pr = pr } refl) (divides record { quot = cDivSA ; rem = .0 ; pr = pr2 } refl) c<b rewrite (addZeroRight (succ a *N cDivSA)) | (addZeroRight (succ a *N bDivSA)) = divides (record { quot = subtractionNResult.result bDivSA-cDivSA ; rem = 0 ; pr = identityOfIndiscernablesLeft (succ a *N (subtractionNResult.result bDivSA-cDivSA)) (subtractionNResult.result (-N (inl c<b))) (succ a *N (subtractionNResult.result bDivSA-cDivSA) +N zero) _≡_ (identityOfIndiscernablesLeft (la-ka) (subtractionNResult.result (-N (inl c<b))) (succ a *N (subtractionNResult.result bDivSA-cDivSA)) _≡_ s (equalityCommutative q)) (equalityCommutative (addZeroRight _)) ; remIsSmall = inl (succIsPositive a) ; quotSmall = inl (succIsPositive a) }) refl
+    dividesBothImpliesDividesDifference {succ a} {b} {c} (divides record { quot = bDivSA ; rem = .0 ; pr = pr } refl) (divides record { quot = cDivSA ; rem = .0 ; pr = pr2 } refl) c<b rewrite (addZeroRight (succ a *N cDivSA)) | (addZeroRight (succ a *N bDivSA)) = divides (record { quot = subtractionNResult.result bDivSA-cDivSA ; rem = 0 ; pr = identityOfIndiscernablesLeft _≡_ (identityOfIndiscernablesLeft _≡_ s (equalityCommutative q)) (equalityCommutative (addZeroRight _)) ; remIsSmall = inl (succIsPositive a) ; quotSmall = inl (succIsPositive a) }) refl
       where
         p : cDivSA <N bDivSA
         p rewrite (equalityCommutative pr2) | (equalityCommutative pr) = cancelInequalityLeft {succ a} {cDivSA} {bDivSA} c<b
@@ -429,12 +429,12 @@ module Numbers.Primes.PrimeNumbers where
 
     euclidLemma1 : {a b : ℕ} → (a<b : a <N b) → (t : ℕ) → a +N b <N t → a +N (subtractionNResult.result (-N (inl a<b))) <N t
     euclidLemma1 {zero} {b} zero<b t b<t = b<t
-    euclidLemma1 {succ a} {b} sa<b t sa+b<t = identityOfIndiscernablesLeft (subtractionNResult.result (-N (inl sa<b)) +N succ a) t (succ a +N (subtractionNResult.result (-N (inl sa<b)))) _<N_ q (additionNIsCommutative (subtractionNResult.result (-N (inl sa<b))) (succ a))
+    euclidLemma1 {succ a} {b} sa<b t sa+b<t = identityOfIndiscernablesLeft _<N_ q (additionNIsCommutative (subtractionNResult.result (-N (inl sa<b))) (succ a))
       where
         p : b <N t
         p = orderIsTransitive (le a refl) sa+b<t
         q : (subtractionNResult.result (-N (inl sa<b))) +N succ a <N t
-        q = identityOfIndiscernablesLeft b t (subtractionNResult.result (-N (inl sa<b)) +N succ a) _<N_ p (equalityCommutative (addMinus (inl sa<b)))
+        q = identityOfIndiscernablesLeft _<N_ p (equalityCommutative (addMinus (inl sa<b)))
 
     euclidLemma2 : {a b max : ℕ} → (succ (a +N b) <N max) → b <N max
     euclidLemma2 {a} {b} {max} pr = lessTransitive {b} {succ (a +N b)} {max} (lemma a b) pr
@@ -443,7 +443,7 @@ module Numbers.Primes.PrimeNumbers where
         lemma a b rewrite Semiring.commutative ℕSemiring (succ a) b = addingIncreases b a
 
     euclidLemma3 : {a b max : ℕ} → (succ (succ (a +N b)) <N max) → succ b <N max
-    euclidLemma3 {a} {b} {max} pr = euclidLemma2 {a} {succ b} {max} (identityOfIndiscernablesLeft (succ (succ (a +N b))) max (succ (a +N succ b)) _<N_ pr (applyEquality succ (equalityCommutative (succExtracts a b))))
+    euclidLemma3 {a} {b} {max} pr = euclidLemma2 {a} {succ b} {max} (identityOfIndiscernablesLeft _<N_ pr (applyEquality succ (equalityCommutative (succExtracts a b))))
 
     euclidLemma4 : (a b c d h : ℕ) → (sa<b : (succ a) <N b) → (pr : subtractionNResult.result (-N (inl sa<b)) *N c ≡ (succ a) *N d +N h) → b *N c ≡ (succ a) *N (d +N c) +N h
     euclidLemma4 a b zero d h sa<b pr rewrite addZeroRight d | productZeroIsZeroRight b | productZeroIsZeroRight (subtractionNResult.result (-N (inl sa<b))) = pr
@@ -479,7 +479,7 @@ module Numbers.Primes.PrimeNumbers where
         pv' : (succ c) +N (a *N succ c +N succ a *N d) ≡ succ ((c +N (a +N result) *N succ c) +N h)
         pv' = applyEquality succ pv
         pv'' : (succ a) *N (d +N succ c) ≡ succ ((c +N (a +N result) *N succ c) +N h)
-        pv'' = identityOfIndiscernablesLeft ((succ c) +N (a *N succ c +N succ a *N d)) _ ((succ a) *N (d +N succ c)) _≡_ pv' (go a c d)
+        pv'' = identityOfIndiscernablesLeft _≡_ pv' (go a c d)
           where
             go : (a c d : ℕ) → (succ c) +N (a *N succ c +N ((succ a) *N d)) ≡ (succ a) *N (d +N succ c)
             go a c d rewrite equalityCommutative (additionNIsAssociative (succ c) (a *N succ c) ((succ a) *N d)) = go'
@@ -495,27 +495,27 @@ module Numbers.Primes.PrimeNumbers where
         go'' : {a b : ℕ} → (maxsum : ℕ) → (a <N b) → (a +N b <N maxsum) → (∀ y → y <N maxsum → P y) → extendedHcf a b
         go'' {zero} {b} maxSum zero<b b<maxsum indHyp = hcfZero b
         go'' {1} {b} maxSum 1<b b<maxsum indHyp = hcfOne b
-        go'' {succ (succ a)} {b} maxSum ssa<b ssa+b<maxsum indHyp with (indHyp (succ b) (euclidLemma3 {a} {b} {maxSum} ssa+b<maxsum)) (subtractionNResult.result (-N (inl ssa<b))) (succ (succ a)) (identityOfIndiscernablesLeft b (succ b) (subtractionNResult.result (-N (inl ssa<b)) +N succ (succ a)) _<N_ (a<SuccA b) (equalityCommutative (addMinus (inl ssa<b))))
+        go'' {succ (succ a)} {b} maxSum ssa<b ssa+b<maxsum indHyp with (indHyp (succ b) (euclidLemma3 {a} {b} {maxSum} ssa+b<maxsum)) (subtractionNResult.result (-N (inl ssa<b))) (succ (succ a)) (identityOfIndiscernablesLeft _<N_ (a<SuccA b) (equalityCommutative (addMinus (inl ssa<b))))
         go'' {succ (succ a)} {b} maxSum ssa<b ssa+b<maxsum indHyp | record { hcf = record { c = c ; c|a = c|a ; c|b = c|b ; hcf = hcf } ; extended1 = extended1 ; extended2 = extended2 ; extendedProof = inl extendedProof } = record { hcf = record { c = c ; c|a = c|b ; c|b = hcfDivB'' ; hcf = λ div prDivSSA prDivB → hcf div (dividesBothImpliesDividesDifference prDivB prDivSSA ssa<b) prDivSSA } ; extended2 = extended1; extended1 = extended2 +N extended1 ; extendedProof = inr (equalityCommutative (euclidLemma4 (succ a) b extended1 extended2 c ssa<b extendedProof)) }
           where
             hcfDivB : c ∣ ((succ (succ a)) +N (subtractionNResult.result (-N (inl ssa<b))))
             hcfDivB = dividesBothImpliesDividesSum {c} {succ (succ a)} { subtractionNResult.result (-N (inl ssa<b))} c|b c|a
             hcfDivB' : c ∣ ((subtractionNResult.result (-N (inl ssa<b))) +N (succ (succ a)))
-            hcfDivB' = identityOfIndiscernablesRight c ((succ (succ a)) +N (subtractionNResult.result (-N (inl ssa<b)))) ((subtractionNResult.result (-N (inl ssa<b))) +N (succ (succ a))) _∣_ hcfDivB (additionNIsCommutative (succ (succ a)) ( subtractionNResult.result (-N (inl ssa<b))))
+            hcfDivB' = identityOfIndiscernablesRight _∣_ hcfDivB (additionNIsCommutative (succ (succ a)) ( subtractionNResult.result (-N (inl ssa<b))))
             hcfDivB'' : c ∣ b
-            hcfDivB'' = identityOfIndiscernablesRight c ((subtractionNResult.result (-N (inl ssa<b))) +N (succ (succ a))) b _∣_ hcfDivB' (addMinus (inl ssa<b))
+            hcfDivB'' = identityOfIndiscernablesRight _∣_ hcfDivB' (addMinus (inl ssa<b))
         go'' {succ (succ a)} {b} maxSum ssa<b ssa+b<maxsum indHyp | record { hcf = record { c = c ; c|a = c|a ; c|b = c|b ; hcf = hcf } ; extended1 = extended1 ; extended2 = extended2 ; extendedProof = inr extendedProof } = record { hcf = record { c = c ; c|a = c|b ; c|b = hcfDivB'' ; hcf = λ div prDivSSA prDivB → hcf div (dividesBothImpliesDividesDifference prDivB prDivSSA ssa<b) prDivSSA } ; extended2 = extended1; extended1 = extended2 +N extended1 ; extendedProof = inl (euclidLemma5 (succ a) b extended1 extended2 c ssa<b extendedProof) }
           where
             hcfDivB : c ∣ ((succ (succ a)) +N (subtractionNResult.result (-N (inl ssa<b))))
             hcfDivB = dividesBothImpliesDividesSum {c} {succ (succ a)} { subtractionNResult.result (-N (inl ssa<b))} c|b c|a
             hcfDivB' : c ∣ ((subtractionNResult.result (-N (inl ssa<b))) +N (succ (succ a)))
-            hcfDivB' = identityOfIndiscernablesRight c ((succ (succ a)) +N (subtractionNResult.result (-N (inl ssa<b)))) ((subtractionNResult.result (-N (inl ssa<b))) +N (succ (succ a))) _∣_ hcfDivB (additionNIsCommutative (succ (succ a)) ( subtractionNResult.result (-N (inl ssa<b))))
+            hcfDivB' = identityOfIndiscernablesRight _∣_ hcfDivB (additionNIsCommutative (succ (succ a)) (subtractionNResult.result (-N (inl ssa<b))))
             hcfDivB'' : c ∣ b
-            hcfDivB'' = identityOfIndiscernablesRight c ((subtractionNResult.result (-N (inl ssa<b))) +N (succ (succ a))) b _∣_ hcfDivB' (addMinus (inl ssa<b))
+            hcfDivB'' = identityOfIndiscernablesRight _∣_ hcfDivB' (addMinus (inl ssa<b))
         go' : (maxSum a b : ℕ) → (a +N b <N maxSum) → (∀ y → y <N maxSum → P y) → extendedHcf a b
         go' maxSum a b a+b<maxsum indHyp with orderIsTotal a b
         go' maxSum a b a+b<maxsum indHyp | inl (inl a<b) = go'' maxSum a<b a+b<maxsum indHyp
-        go' maxSum a b a+b<maxsum indHyp | inl (inr b<a) = reverseHCF (go'' maxSum b<a (identityOfIndiscernablesLeft (a +N b) maxSum (b +N a) _<N_ a+b<maxsum (additionNIsCommutative a b)) indHyp)
+        go' maxSum a b a+b<maxsum indHyp | inl (inr b<a) = reverseHCF (go'' maxSum b<a (identityOfIndiscernablesLeft _<N_ a+b<maxsum (additionNIsCommutative a b)) indHyp)
         go' maxSum a .a _ indHyp | inr refl = record { hcf = record { c = a ; c|a = aDivA a ; c|b = aDivA a ; hcf = λ _ _ z → z } ; extended1 = 0 ; extended2 = 1 ; extendedProof = inr s}
           where
             s : a *N zero +N a ≡ a *N 1
@@ -596,16 +596,14 @@ module Numbers.Primes.PrimeNumbers where
 
     reduceEquationMod : {a b c : ℕ} → (d : ℕ) → (a ∣ b) → (a ∣ c) → b ≡ c +N d → a ∣ d
     reduceEquationMod {a} {b} {c} 0 a|b a|c pr = aDivZero a
-    reduceEquationMod {a} {b} {c} (succ d) (divides record { quot = b/a ; rem = .0 ; pr = prb/a ; remIsSmall = r1 ; quotSmall = qSm1 } refl) (divides record { quot = c/a ; rem = .0 ; pr = prc/a ; remIsSmall = r2 ; quotSmall = qSm2 } refl) b=c+d = identityOfIndiscernablesRight a (subtractionNResult.result (-N (inl c<b))) (succ d) _∣_ a|b-c ex'
+    reduceEquationMod {a} {b} {c} (succ d) (divides record { quot = b/a ; rem = .0 ; pr = prb/a ; remIsSmall = r1 ; quotSmall = qSm1 } refl) (divides record { quot = c/a ; rem = .0 ; pr = prc/a ; remIsSmall = r2 ; quotSmall = qSm2 } refl) b=c+d = identityOfIndiscernablesRight _∣_ a|b-c ex
       where
         c<b : c <N b
         c<b rewrite succExtracts c d | additionNIsCommutative c d = le d (equalityCommutative b=c+d)
         a|b-c : a ∣ subtractionNResult.result (-N (inl c<b))
         a|b-c = dividesBothImpliesDividesDifference (divides record { quot = b/a ; rem = 0 ; pr = prb/a ; remIsSmall = r1 ; quotSmall = qSm1 } refl) (divides record { quot = c/a ; rem = 0 ; pr = prc/a ; remIsSmall = r2 ; quotSmall = qSm2 } refl) c<b
         ex : subtractionNResult.result (-N {c} {b} (inl c<b)) ≡ subtractionNResult.result (-N {0} {succ d} (inl (succIsPositive d)))
-        ex = equivalentSubtraction c (succ d) b 0 (c<b) (succIsPositive d) (equalityCommutative (identityOfIndiscernablesLeft b (c +N succ d) (b +N 0) _≡_ b=c+d (equalityCommutative (addZeroRight b))))
-        ex' : subtractionNResult.result (-N {c} {b} (inl c<b)) ≡ succ d
-        ex' = identityOfIndiscernablesRight (subtractionNResult.result (-N (inl c<b))) (subtractionNResult.result (-N (inl (succIsPositive d)))) (succ d) _≡_ ex refl
+        ex = equivalentSubtraction c (succ d) b 0 (c<b) (succIsPositive d) (equalityCommutative (identityOfIndiscernablesLeft _≡_ b=c+d (equalityCommutative (addZeroRight b))))
 
     primesArePrime : {p : ℕ} → {a b : ℕ} → (Prime p) → p ∣ (a *N b) → (p ∣ a) || (p ∣ b)
     primesArePrime {p} {a} {b} pPrime pr with divisionDecidable p a

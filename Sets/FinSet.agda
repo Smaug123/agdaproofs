@@ -81,14 +81,14 @@ module Sets.FinSet where
   finNotEqualsFsucc {.0} {a} {b} (fne2 .(fsucc a) .(fsucc b) (inr (() ,, snd)))
   finNotEqualsFsucc {n} {a} {b} (fneN .(fsucc a) .(fsucc b) (inl (inl (() ,, snd))))
   finNotEqualsFsucc {n} {a} {b} (fneN .(fsucc a) .(fsucc b) (inl (inr (fst ,, ()))))
-  finNotEqualsFsucc {n} {a} {b} (fneN .(fsucc a) .(fsucc b) (inr ((fst ,, snd) , prf))) = identityOfIndiscernablesRight _ _ _ FinNotEquals ans (equalityCommutative b=snd)
+  finNotEqualsFsucc {n} {a} {b} (fneN .(fsucc a) .(fsucc b) (inr ((fst ,, snd) , prf))) = identityOfIndiscernablesRight FinNotEquals ans (equalityCommutative b=snd)
     where
       a=fst : a ≡ fst
       a=fst = fsuccInjective (_&_&_.one prf)
       b=snd : b ≡ snd
       b=snd = fsuccInjective (_&_&_.two prf)
       ans : FinNotEquals a snd
-      ans = identityOfIndiscernablesLeft _ _ _ FinNotEquals (_&_&_.three prf) (equalityCommutative a=fst)
+      ans = identityOfIndiscernablesLeft FinNotEquals (_&_&_.three prf) (equalityCommutative a=fst)
 
   finSetNotEquals' : {n : ℕ} → {a b : FinSet (succ n)} → FinNotEquals a b → (a ≡ b → False)
   finSetNotEquals' {n} {a} {.a} fne refl = finSetNotEqualsSame fne

@@ -54,7 +54,7 @@ module Setoids.Lists where
   appendWellDefined {S = S} {[]} {x :: ys} {[]} {x₁ :: bs} record {} ys=bs = ys=bs
   appendWellDefined {S = S} {[]} {ys} {x :: as} {bs} () ys=bs
   appendWellDefined {S = S} {x :: xs} {ys} {[]} {bs} () ys=bs
-  appendWellDefined {S = S} {x :: xs} {[]} {x₁ :: as} {[]} xs=as record {} = _&&_.fst xs=as ,, identityOfIndiscernablesRight (xs ++ []) (as) (as ++ []) (listEquality S) (identityOfIndiscernablesLeft xs as (xs ++ []) (listEquality S) (_&&_.snd xs=as) (equalityCommutative (appendEmptyList xs))) (equalityCommutative (appendEmptyList as))
+  appendWellDefined {S = S} {x :: xs} {[]} {x₁ :: as} {[]} xs=as record {} = _&&_.fst xs=as ,, identityOfIndiscernablesRight (listEquality S) (identityOfIndiscernablesLeft (listEquality S) (_&&_.snd xs=as) (equalityCommutative (appendEmptyList xs))) (equalityCommutative (appendEmptyList as))
   appendWellDefined {S = S} {x :: xs} {[]} {x₁ :: as} {x₂ :: bs} xs=as ()
   appendWellDefined {S = S} {x :: xs} {x₂ :: ys} {x₁ :: as} {[]} xs=as ()
   appendWellDefined {S = S} {x :: xs} {x₂ :: ys} {x₁ :: as} {x₃ :: bs} (fst ,, snd) ys=bs = fst ,, appendWellDefined snd ys=bs
