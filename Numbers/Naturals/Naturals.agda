@@ -10,6 +10,7 @@ open import Numbers.Naturals.Addition
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Multiplication
 open import Numbers.Naturals.Exponentiation
+open import Numbers.Naturals.Subtraction
 open import Semirings.Definition
 open import Monoids.Definition
 
@@ -20,6 +21,7 @@ module Numbers.Naturals.Naturals where
   open Numbers.Naturals.Multiplication using (_*N_ ; multiplicationNIsCommutative) public
   open Numbers.Naturals.Exponentiation using (_^N_) public
   open Numbers.Naturals.Order using (_<N_ ; le; succPreservesInequality; succIsPositive; addingIncreases; zeroNeverGreater; noIntegersBetweenXAndSuccX; a<SuccA; canRemoveSuccFrom<N) public
+  open Numbers.Naturals.Subtraction using (_-N'_) public
 
   ℕSemiring : Semiring 0 1 _+N_ _*N_
   Monoid.associative (Semiring.monoid ℕSemiring) a b c = equalityCommutative (additionNIsAssociative a b c)
