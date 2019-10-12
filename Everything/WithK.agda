@@ -22,4 +22,6 @@ open import Groups.FreeGroups
 open import Groups.Examples.ExampleSheet1
 open import Groups.LectureNotes.Lecture1
 
+open import LectureNotes.NumbersAndSets.Lecture1
+
 module Everything.WithK where

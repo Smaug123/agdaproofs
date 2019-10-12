@@ -49,5 +49,6 @@ open import ClassicalLogic.ClassicalFive
 open import Monoids.Definition
 
 open import Semirings.Definition
+open import Semirings.Solver
 
 module Everything.Safe where
