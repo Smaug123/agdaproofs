@@ -3,7 +3,6 @@
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
 open import Semirings.Definition
-open import Maybe
 
 module Semirings.Solver {a : _} {A : Set a} {Zero One : A} {_+_ : A → A → A} {_*_ : A → A → A} (S : Semiring Zero One _+_ _*_) (comm : (a b : A) → a * b ≡ b * a) where
 
@@ -215,5 +214,5 @@ simplifyPreserves (times (times a b) (succ c)) = transitivity (simplePlusIsPlus 
 simplifyPreserves (times (times a b) (plus c d)) = transitivity (simplePlusIsPlus (simplify (times (times a b) c)) (simplify (times (times a b) d))) (transitivity (equalPlus (simplifyPreserves (times (times a b) c)) (simplifyPreserves (times (times a b) d))) (equalityCommutative (+DistributesOver* _ _ _)))
 simplifyPreserves (times (times a b) (times c d)) = transitivity (equalTimes (simplifyPreserves a) (simplifyPreserves (times b (times c d)))) (*Associative (eval a) (eval b) _)
 
-_!!_ : (x y : Expr) (pr : eval (simplify x) ≡ eval (simplify y)) → eval x ≡ eval y
-_!!_ = λ a b c → transitivity (equalityCommutative (simplifyPreserves a)) (transitivity c (simplifyPreserves b))
+from_to_by_ : (x y : Expr) (pr : eval (simplify x) ≡ eval (simplify y)) → eval x ≡ eval y
+from a to b by pr = transitivity (equalityCommutative (simplifyPreserves a)) (transitivity pr (simplifyPreserves b))

@@ -27,7 +27,7 @@ module Rings.IntegralDomains where
       t1 : (a * b) + Group.inverse (Ring.additiveGroup R) (a * c) ∼ Ring.0R R
       t1 = transferToRight'' (Ring.additiveGroup R) ab=ac
       t2 : a * (b + Group.inverse (Ring.additiveGroup R) c) ∼ Ring.0R R
-      t2 = transitive (transitive (Ring.multDistributes R) (Group.wellDefined (Ring.additiveGroup R) reflexive (transferToRight' (Ring.additiveGroup R) (transitive (symmetric (Ring.multDistributes R)) (transitive (Ring.multWellDefined R reflexive (Group.invLeft (Ring.additiveGroup R))) (ringTimesZero R)))))) t1
+      t2 = transitive (transitive (Ring.*DistributesOver+ R) (Group.+WellDefined (Ring.additiveGroup R) reflexive (transferToRight' (Ring.additiveGroup R) (transitive (symmetric (Ring.*DistributesOver+ R)) (transitive (Ring.*WellDefined R reflexive (Group.invLeft (Ring.additiveGroup R))) (Ring.timesZero R)))))) t1
       t3 : (a ∼ Ring.0R R) || ((b + Group.inverse (Ring.additiveGroup R) c) ∼ Ring.0R R)
       t3 = IntegralDomain.intDom I t2
       t4 : (a ∼ Ring.0R R) || (b ∼ c)

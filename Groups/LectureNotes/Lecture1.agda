@@ -25,8 +25,8 @@ module Groups.LectureNotes.Lecture1 where
   -- TODO: R is a group with +
 
   integersMinusNotGroup : Group (reflSetoid ℤ) (_-Z_) → False
-  integersMinusNotGroup record { wellDefined = wellDefined ; identity = identity ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with multAssoc {nonneg 3} {nonneg 2} {nonneg 1}
-  integersMinusNotGroup record { wellDefined = wellDefined ; identity = identity ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | ()
+  integersMinusNotGroup record { +WellDefined = wellDefined ; 0G = identity ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with multAssoc {nonneg 3} {nonneg 2} {nonneg 1}
+  integersMinusNotGroup record { +WellDefined = wellDefined ; 0G = identity ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | ()
 
   negSuccInjective : {a b : ℕ} → (negSucc a ≡ negSucc b) → a ≡ b
   negSuccInjective {a} {.a} refl = refl
@@ -35,17 +35,17 @@ module Groups.LectureNotes.Lecture1 where
   nonnegInjective {a} {.a} refl = refl
 
   integersTimesNotGroup : Group (reflSetoid ℤ) (_*Z_) → False
-  integersTimesNotGroup record { wellDefined = wellDefined ; identity = (nonneg zero) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with multIdentLeft {negSucc 1}
+  integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (nonneg zero) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with multIdentLeft {negSucc 1}
   ... | ()
-  integersTimesNotGroup record { wellDefined = wellDefined ; identity = (nonneg (succ zero)) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with invLeft {nonneg zero}
+  integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (nonneg (succ zero)) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with invLeft {nonneg zero}
   ... | bl with inverse (nonneg zero)
-  integersTimesNotGroup record { wellDefined = wellDefined ; identity = (nonneg (succ zero)) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | () | nonneg zero
-  integersTimesNotGroup record { wellDefined = wellDefined ; identity = (nonneg (succ zero)) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | p | nonneg (succ x) = naughtE (nonnegInjective (transitivity (applyEquality nonneg (equalityCommutative (Semiring.productZeroRight ℕSemiring x))) p))
-  integersTimesNotGroup record { wellDefined = wellDefined ; identity = (nonneg (succ zero)) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | () | negSucc x
-  integersTimesNotGroup record { wellDefined = wellDefined ; identity = (nonneg (succ (succ x))) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with succInjective (negSuccInjective (multIdentLeft {negSucc 1}))
+  integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (nonneg (succ zero)) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | () | nonneg zero
+  integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (nonneg (succ zero)) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | p | nonneg (succ x) = naughtE (nonnegInjective (transitivity (applyEquality nonneg (equalityCommutative (Semiring.productZeroRight ℕSemiring x))) p))
+  integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (nonneg (succ zero)) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | () | negSucc x
+  integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (nonneg (succ (succ x))) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with succInjective (negSuccInjective (multIdentLeft {negSucc 1}))
   ... | ()
-  integersTimesNotGroup record { wellDefined = wellDefined ; identity = (negSucc x) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with multIdentLeft {nonneg 2}
-  integersTimesNotGroup record { wellDefined = wellDefined ; identity = (negSucc x) ; inverse = inverse ; multAssoc = multAssoc ; multIdentRight = multIdentRight ; multIdentLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | ()
+  integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (negSucc x) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with multIdentLeft {nonneg 2}
+  integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (negSucc x) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | ()
 
   -- TODO: Q is not a group with *Q
   -- TODO: Q without 0 is a group with *Q
@@ -119,18 +119,18 @@ module Groups.LectureNotes.Lecture1 where
   +WAssoc {c} {c} {c} = refl
 
   weirdGroup : Group (reflSetoid Weird) _+W_
-  Group.wellDefined weirdGroup = reflGroupWellDefined
-  Group.identity weirdGroup = e
+  Group.+WellDefined weirdGroup = reflGroupWellDefined
+  Group.0G weirdGroup = e
   Group.inverse weirdGroup t = t
-  Group.multAssoc weirdGroup {r} {s} {t} = +WAssoc {r} {s} {t}
-  Group.multIdentRight weirdGroup {e} = refl
-  Group.multIdentRight weirdGroup {a} = refl
-  Group.multIdentRight weirdGroup {b} = refl
-  Group.multIdentRight weirdGroup {c} = refl
-  Group.multIdentLeft weirdGroup {e} = refl
-  Group.multIdentLeft weirdGroup {a} = refl
-  Group.multIdentLeft weirdGroup {b} = refl
-  Group.multIdentLeft weirdGroup {c} = refl
+  Group.+Associative weirdGroup {r} {s} {t} = +WAssoc {r} {s} {t}
+  Group.identRight weirdGroup {e} = refl
+  Group.identRight weirdGroup {a} = refl
+  Group.identRight weirdGroup {b} = refl
+  Group.identRight weirdGroup {c} = refl
+  Group.identLeft weirdGroup {e} = refl
+  Group.identLeft weirdGroup {a} = refl
+  Group.identLeft weirdGroup {b} = refl
+  Group.identLeft weirdGroup {c} = refl
   Group.invLeft weirdGroup {e} = refl
   Group.invLeft weirdGroup {a} = refl
   Group.invLeft weirdGroup {b} = refl

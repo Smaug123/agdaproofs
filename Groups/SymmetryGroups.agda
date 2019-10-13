@@ -57,13 +57,13 @@ module Groups.SymmetryGroups where
       ans {x} | a , b = b
 
   symmetricGroup : {a b : _} {A : Set a} (S : Setoid {a} {b} A) → Group (symmetricSetoid S) (symmetricGroupOp {A = A})
-  Group.wellDefined (symmetricGroup A) {sym {m} bijM} {sym {n} bijN} {sym {x} bijX} {sym {y} bijY} (ExtensionallyEqual.eq m~x) (ExtensionallyEqual.eq n~y) = ExtensionallyEqual.eq (transitive m~x (SetoidBijection.wellDefined bijX n~y))
+  Group.+WellDefined (symmetricGroup A) {sym {m} bijM} {sym {n} bijN} {sym {x} bijX} {sym {y} bijY} (ExtensionallyEqual.eq m~x) (ExtensionallyEqual.eq n~y) = ExtensionallyEqual.eq (transitive m~x (SetoidBijection.wellDefined bijX n~y))
     where
       open Equivalence (Setoid.eq A)
-  Group.identity (symmetricGroup A) = sym setoidIdIsBijective
+  Group.0G (symmetricGroup A) = sym setoidIdIsBijective
   Group.inverse (symmetricGroup S) = symmetricGroupInv S
-  Group.multAssoc (symmetricGroup A) {sym {f} bijF} {sym {g} bijG} {sym {h} bijH} = ExtensionallyEqual.eq λ {x} → Equivalence.reflexive (Setoid.eq A)
-  Group.multIdentRight (symmetricGroup A) {sym {f} bijF} = ExtensionallyEqual.eq λ {x} → Equivalence.reflexive (Setoid.eq A)
-  Group.multIdentLeft (symmetricGroup A) {sym {f} bijF} = ExtensionallyEqual.eq λ {x} → Equivalence.reflexive (Setoid.eq A)
+  Group.+Associative (symmetricGroup A) {sym {f} bijF} {sym {g} bijG} {sym {h} bijH} = ExtensionallyEqual.eq λ {x} → Equivalence.reflexive (Setoid.eq A)
+  Group.identRight (symmetricGroup A) {sym {f} bijF} = ExtensionallyEqual.eq λ {x} → Equivalence.reflexive (Setoid.eq A)
+  Group.identLeft (symmetricGroup A) {sym {f} bijF} = ExtensionallyEqual.eq λ {x} → Equivalence.reflexive (Setoid.eq A)
   Group.invLeft (symmetricGroup S) {x} = symmetricGroupInvIsLeft S {x}
   Group.invRight (symmetricGroup S) {x} = symmetricGroupInvIsRight S {x}

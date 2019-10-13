@@ -1,5 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
+open import Numbers.Naturals.Naturals
 open import Numbers.Integers.Definition
 open import Numbers.Integers.Addition
 open import Numbers.Integers.Multiplication
@@ -15,3 +16,7 @@ open Numbers.Integers.Order using (_<Z_ ; ℤOrderedRing) public
 
 _-Z_ : ℤ → ℤ → ℤ
 a -Z b = a +Z (Group.inverse ℤGroup b)
+
+_^Z_ : ℤ → ℕ → ℤ
+a ^Z zero = nonneg 1
+a ^Z succ b = a *Z (a ^Z b)

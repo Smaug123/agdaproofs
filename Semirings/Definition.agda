@@ -21,3 +21,6 @@ record Semiring {a : _} {A : Set a} (Zero One : A) (_+_ : A → A → A) (_*_ : 
   productOneRight = Monoid.idRight multMonoid
   sumZeroLeft = Monoid.idLeft monoid
   sumZeroRight = Monoid.idRight monoid
+
+-- (b+c)(a+a) == b(a+a) + c(a+a) == ba+ba+ca+ca == (ba+ca) + (ba+ca)
+-- (b+c)(a+a) ==? (b+c)a+(b+c)a
