@@ -76,14 +76,14 @@ additiveInverse (nonneg (succ x)) = negSucc x
 additiveInverse (negSucc x) = nonneg (succ x)
 
 ℤGroup : Group (reflSetoid ℤ) (_+Z_)
-Group.wellDefined ℤGroup refl refl = refl
-Group.identity ℤGroup = nonneg 0
+Group.+WellDefined ℤGroup refl refl = refl
+Group.0G ℤGroup = nonneg 0
 Group.inverse ℤGroup = additiveInverse
-Group.multAssoc ℤGroup {a} {b} {c} = +ZAssociative a b c
-Group.multIdentRight ℤGroup {nonneg zero} = refl
-Group.multIdentRight ℤGroup {nonneg (succ x)} = applyEquality (λ i → nonneg (succ i)) (Semiring.commutative ℕSemiring x 0)
-Group.multIdentRight ℤGroup {negSucc x} = refl
-Group.multIdentLeft ℤGroup = refl
+Group.+Associative ℤGroup {a} {b} {c} = +ZAssociative a b c
+Group.identRight ℤGroup {nonneg zero} = refl
+Group.identRight ℤGroup {nonneg (succ x)} = applyEquality (λ i → nonneg (succ i)) (Semiring.commutative ℕSemiring x 0)
+Group.identRight ℤGroup {negSucc x} = refl
+Group.identLeft ℤGroup = refl
 Group.invLeft ℤGroup {nonneg zero} = refl
 Group.invLeft ℤGroup {nonneg (succ x)} = additiveInverseExists x
 Group.invLeft ℤGroup {negSucc x} = transitivity (+ZCommutative (nonneg (succ x)) (negSucc x)) (additiveInverseExists x)

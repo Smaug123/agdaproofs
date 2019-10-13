@@ -9,9 +9,9 @@ open import Numbers.Naturals.Exponentiation
 open import Numbers.Primes.PrimeNumbers
 open import Maybe
 open import Semirings.Definition
-open import Semirings.Solver
+import Semirings.Solver
 
-module NatSolver = Semirings.Solver ℕSemiring multiplicationNIsCommutative
+open module NatSolver = Semirings.Solver ℕSemiring multiplicationNIsCommutative
 
 module LectureNotes.NumbersAndSets.Lecture1 where
 
@@ -43,13 +43,13 @@ n3Bigger' zero = inr refl
 n3Bigger' (succ n) with n3Bigger (succ n)
 n3Bigger' (succ n) | inr f = f
 
-_!!N_ = NatSolver._!!_
-
 -- How to use the semiring solver
 -- The process is very mechanical; I haven't yet worked out how to do reflection,
 -- so there's quite a bit of transcribing expressions into the Expr form.
--- The first two arguments to !!N are totally mindless in construction.
+-- The first two arguments to from-to-by are totally mindless in construction.
 proof : (n : ℕ) → ((n *N n) +N ((2 *N n) +N 1)) ≡ (n +N 1) *N (n +N 1)
 proof n =
-  (plus (times (const n) (const n)) (plus (times (succ (succ zero)) (const n)) (succ zero)) !!N times (plus (const n) (succ zero)) (plus (const n) (succ zero)))
-    (applyEquality (λ i → succ (n *N n) +N (n +N i)) ((const n !!N plus (const n) zero) refl))
+  from plus (times (const n) (const n)) (plus (times (succ (succ zero)) (const n)) (succ zero))
+  to times (plus (const n) (succ zero)) (plus (const n) (succ zero))
+  by
+    applyEquality (λ i → succ (n *N n) +N (n +N i)) ((from (const n) to (plus (const n) zero) by refl))

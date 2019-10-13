@@ -680,7 +680,7 @@ module Numbers.Modulo.IntegersModN where
       ... | (inr n-a+sa=sn) = equalityZn _ _ refl
 
   ℤnGroup : (n : ℕ) → (pr : 0 <N n) → Group (reflSetoid (ℤn n pr)) _+n_
-  ℤnGroup n pr = record { identity = record { x = 0 ; xLess = pr } ; inverse = λ a → underlying (inverseZn a) ; multAssoc = λ {a} {b} {c} → plusZnAssociative a b c ; multIdentRight = λ {a} → plusZnIdentityRight a ; multIdentLeft = λ {a} → plusZnIdentityLeft a ; invLeft = λ {a} → helpInvLeft a  ; invRight = λ {a} → helpInvRight a ; wellDefined = reflGroupWellDefined }
+  ℤnGroup n pr = record { 0G = record { x = 0 ; xLess = pr } ; inverse = λ a → underlying (inverseZn a) ; +Associative = λ {a} {b} {c} → plusZnAssociative a b c ; identRight = λ {a} → plusZnIdentityRight a ; identLeft = λ {a} → plusZnIdentityLeft a ; invLeft = λ {a} → helpInvLeft a  ; invRight = λ {a} → helpInvRight a ; +WellDefined = reflGroupWellDefined }
     where
       helpInvLeft : (a : ℤn n pr) → underlying (inverseZn a) +n a ≡ record { x = 0 ; xLess = pr }
       helpInvLeft a with inverseZn a

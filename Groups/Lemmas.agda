@@ -17,8 +17,8 @@ module Groups.Lemmas where
       open Group G
       open Equivalence eq
 
-  invIdent : {a b : _} → {A : Set a} → {_·_ : A → A → A} → {S : Setoid {a} {b} A} → (G : Group S _·_) → Setoid._∼_ S (Group.inverse G (Group.identity G)) (Group.identity G)
-  invIdent {S = S} G = symmetric (transferToRight' G (Group.multIdentLeft G))
+  invIdent : {a b : _} → {A : Set a} → {_·_ : A → A → A} → {S : Setoid {a} {b} A} → (G : Group S _·_) → Setoid._∼_ S (Group.inverse G (Group.0G G)) (Group.0G G)
+  invIdent {S = S} G = symmetric (transferToRight' G (Group.identLeft G))
     where
       open Setoid S
       open Group G
@@ -31,9 +31,9 @@ module Groups.Lemmas where
       open Group G
       open Equivalence eq
 
-  identityIsUnique : {a b : _} → {A : Set a} → {S : Setoid {a} {b} A} → {_·_ : A → A → A} → (G : Group S _·_) → (e : A) → ((b : A) → (Setoid._∼_ S (b · e) b)) → (Setoid._∼_ S e (Group.identity G))
-  identityIsUnique {S = S} {_·_} g thing fb = transitive (symmetric multIdentLeft) (fb e)
+  identityIsUnique : {a b : _} → {A : Set a} → {S : Setoid {a} {b} A} → {_·_ : A → A → A} → (G : Group S _·_) → (e : A) → ((b : A) → (Setoid._∼_ S (b · e) b)) → (Setoid._∼_ S e (Group.0G G))
+  identityIsUnique {S = S} {_·_} g thing fb = transitive (symmetric identLeft) (fb 0G)
     where
-      open Group g renaming (inverse to _^-1) renaming (identity to e)
+      open Group g renaming (inverse to _^-1)
       open Setoid S
       open Equivalence eq

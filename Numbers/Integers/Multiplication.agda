@@ -180,13 +180,13 @@ distLemma a b rewrite Semiring.commutative ℕSemiring (a +N b *N a) b | Semirin
 
 ℤRing : Ring (reflSetoid ℤ) _+Z_ _*Z_
 Ring.additiveGroup ℤRing = ℤGroup
-Ring.multWellDefined ℤRing refl refl = refl
+Ring.*WellDefined ℤRing refl refl = refl
 Ring.1R ℤRing = nonneg 1
 Ring.groupIsAbelian ℤRing {a} {b} = +ZCommutative a b
-Ring.multAssoc ℤRing {a} {b} {c} = *ZAssociative a b c
-Ring.multCommutative ℤRing {a} {b} = *ZCommutative a b
-Ring.multDistributes ℤRing {a} {b} {c} = *ZDistributesOver+Z a b c
-Ring.multIdentIsIdent ℤRing {a} = *ZleftIdent a
+Ring.*Associative ℤRing {a} {b} {c} = *ZAssociative a b c
+Ring.*Commutative ℤRing {a} {b} = *ZCommutative a b
+Ring.*DistributesOver+ ℤRing {a} {b} {c} = *ZDistributesOver+Z a b c
+Ring.identIsIdent ℤRing {a} = *ZleftIdent a
 
 intDom : (a b : ℤ) → a *Z b ≡ nonneg 0 → (a ≡ nonneg 0) || (b ≡ nonneg 0)
 intDom (nonneg zero) (nonneg b) pr = inl refl

@@ -7,6 +7,7 @@ open import Numbers.Naturals.Naturals
 open import Setoids.Orders
 open import Setoids.Setoids
 open import Functions
+open import Sets.EquivalenceRelations
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
@@ -17,16 +18,21 @@ module Rings.Definition where
       additiveGroup : Group S _+_
     open Group additiveGroup
     open Setoid S
+    open Equivalence eq
     0R : A
-    0R = identity
+    0R = 0G
+    _-R_ : A → A → A
+    a -R b = a + (inverse b)
     field
-      multWellDefined : {r s t u : A} → (r ∼ t) → (s ∼ u) → r * s ∼ t * u
+      *WellDefined : {r s t u : A} → (r ∼ t) → (s ∼ u) → r * s ∼ t * u
       1R : A
       groupIsAbelian : {a b : A} → a + b ∼ b + a
-      multAssoc : {a b c : A} → (a * (b * c)) ∼ (a * b) * c
-      multCommutative : {a b : A} → a * b ∼ b * a
-      multDistributes : {a b c : A} → a * (b + c) ∼ (a * b) + (a * c)
-      multIdentIsIdent : {a : A} → 1R * a ∼ a
+      *Associative : {a b c : A} → (a * (b * c)) ∼ (a * b) * c
+      *Commutative : {a b : A} → a * b ∼ b * a
+      *DistributesOver+ : {a b c : A} → a * (b + c) ∼ (a * b) + (a * c)
+      identIsIdent : {a : A} → 1R * a ∼ a
+    timesZero : {a : A} → a * 0R ∼ 0R
+    timesZero {a} = symmetric (transitive (transitive (symmetric invLeft) (+WellDefined reflexive (transitive (*WellDefined {a} {a} reflexive (symmetric identRight)) *DistributesOver+))) (transitive +Associative (transitive (+WellDefined invLeft reflexive) identLeft)))
 
   record OrderedRing {n m p} {A : Set n} {S : Setoid {n} {m} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {_} {p} A} {pOrder : SetoidPartialOrder S _<_} (R : Ring S _+_ _*_) (order : SetoidTotalOrder pOrder) : Set (lsuc n ⊔ m ⊔ p) where
     open Ring R
@@ -42,10 +48,10 @@ module Rings.Definition where
   --Ring.multWellDefined (directSumRing r s) (a ,, b) (c ,, d) = Ring.multWellDefined r a c ,, Ring.multWellDefined s b d
   --Ring.1R (directSumRing r s) = Ring.1R r ,, Ring.1R s
   --Ring.groupIsAbelian (directSumRing r s) = Ring.groupIsAbelian r ,, Ring.groupIsAbelian s
-  --Ring.multAssoc (directSumRing r s) = Ring.multAssoc r ,, Ring.multAssoc s
+  --Ring.assoc (directSumRing r s) = Ring.assoc r ,, Ring.assoc s
   --Ring.multCommutative (directSumRing r s) = Ring.multCommutative r ,, Ring.multCommutative s
   --Ring.multDistributes (directSumRing r s) = Ring.multDistributes r ,, Ring.multDistributes s
-  --Ring.multIdentIsIdent (directSumRing r s) = Ring.multIdentIsIdent r ,, Ring.multIdentIsIdent s
+  --Ring.identIsIdent (directSumRing r s) = Ring.identIsIdent r ,, Ring.identIsIdent s
 
   record RingHom {m n o p : _} {A : Set m} {B : Set n} {SA : Setoid {m} {o} A} {SB : Setoid {n} {p} B} {_+A_ : A → A → A} {_*A_ : A → A → A} (R : Ring SA _+A_ _*A_) {_+B_ : B → B → B} {_*B_ : B → B → B} (S : Ring SB _+B_ _*B_) (f : A → B) : Set (m ⊔ n ⊔ o ⊔ p) where
     open Ring S

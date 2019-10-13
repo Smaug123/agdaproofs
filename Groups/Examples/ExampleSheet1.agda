@@ -19,15 +19,15 @@ module Groups.Examples.ExampleSheet1 where
   {-
     Question 1: e is the unique solution of x^2 = x
   -}
-  question1 : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} → (G : Group S _+_) → (x : A) → Setoid._∼_ S (x + x) x → Setoid._∼_ S x (Group.identity G)
-  question1 {S = S} {_+_ = _+_} G x x+x=x = transitive (symmetric multIdentRight) (transitive (wellDefined reflexive (symmetric invRight)) (transitive multAssoc (transitive (wellDefined x+x=x reflexive) invRight)))
+  question1 : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} → (G : Group S _+_) → (x : A) → Setoid._∼_ S (x + x) x → Setoid._∼_ S x (Group.0G G)
+  question1 {S = S} {_+_ = _+_} G x x+x=x = transitive (symmetric identRight) (transitive (+WellDefined reflexive (symmetric invRight)) (transitive +Associative (transitive (+WellDefined x+x=x reflexive) invRight)))
     where
       open Group G
       open Setoid S
       open Equivalence eq
 
-  question1' : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} → (G : Group S _+_) → Setoid._∼_ S ((Group.identity G) + (Group.identity G)) (Group.identity G)
-  question1' G = Group.multIdentRight G
+  question1' : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} → (G : Group S _+_) → Setoid._∼_ S ((Group.0G G) + (Group.0G G)) (Group.0G G)
+  question1' G = Group.identRight G
 
   {-
     Question 2: intersection of subgroups is a subgroup; union of subgroups is a subgroup iff one is contained in the other.
@@ -38,7 +38,7 @@ module Groups.Examples.ExampleSheet1 where
     ofElt : {x : A} → Sg B (λ b → Setoid._∼_ S (h1Inj b) x) → Sg C (λ c → Setoid._∼_ S (h2Inj c) x) → SubgroupIntersectionElement G H1 H2
 
   subgroupIntersectionOp : {a b c d e f : _} {A : Set a} {B : Set b} {C : Set c} {S : Setoid {a} {d} A} {T : Setoid {b} {e} B} {U : Setoid {c} {f} C} {_+_ : A → A → A} {_+H1_ : B → B → B} {_+H2_ : C → C → C} (G : Group S _+_) {H1grp : Group T _+H1_} {H2grp : Group U _+H2_} {h1Inj : B → A} {h2Inj : C → A} {h1Hom : GroupHom H1grp G h1Inj} {h2Hom : GroupHom H2grp G h2Inj} (H1 : Subgroup G H1grp h1Hom) (H2 : Subgroup G H2grp h2Hom) → (r : SubgroupIntersectionElement G H1 H2) → (s : SubgroupIntersectionElement G H1 H2) → SubgroupIntersectionElement G H1 H2
-  subgroupIntersectionOp {S = S} {_+_ = _+_} {_+H1_ = _+H1_} {_+H2_ = _+H2_} G {h1Hom = h1Hom} {h2Hom = h2Hom} H1 H2 (ofElt (b , prB) (c , prC)) (ofElt (b2 , prB2) (c2 , prC2)) = ofElt ((b +H1 b2) , GroupHom.groupHom h1Hom) ((c +H2 c2) , transitive (GroupHom.groupHom h2Hom) (transitive (Group.wellDefined G prC prC2) (Group.wellDefined G (symmetric prB) (symmetric prB2))))
+  subgroupIntersectionOp {S = S} {_+_ = _+_} {_+H1_ = _+H1_} {_+H2_ = _+H2_} G {h1Hom = h1Hom} {h2Hom = h2Hom} H1 H2 (ofElt (b , prB) (c , prC)) (ofElt (b2 , prB2) (c2 , prC2)) = ofElt ((b +H1 b2) , GroupHom.groupHom h1Hom) ((c +H2 c2) , transitive (GroupHom.groupHom h2Hom) (transitive (Group.+WellDefined G prC prC2) (Group.+WellDefined G (symmetric prB) (symmetric prB2))))
     where
       open Setoid S
       open Equivalence eq
@@ -50,20 +50,20 @@ module Groups.Examples.ExampleSheet1 where
   Equivalence.transitive (Setoid.eq (subgroupIntersectionSetoid {T = T} {U = U} G H1 H2)) {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} (fst1 ,, snd1) (fst2 ,, snd2) = Equivalence.transitive (Setoid.eq T) fst1 fst2 ,, Equivalence.transitive (Setoid.eq U) snd1 snd2
 
   subgroupIntersectionGroup : {a b c d e f : _} {A : Set a} {B : Set b} {C : Set c} {S : Setoid {a} {d} A} {T : Setoid {b} {e} B} {U : Setoid {c} {f} C} {_+_ : A → A → A} {_+H1_ : B → B → B} {_+H2_ : C → C → C} (G : Group S _+_) {H1grp : Group T _+H1_} {H2grp : Group U _+H2_} {h1Inj : B → A} {h2Inj : C → A} {h1Hom : GroupHom H1grp G h1Inj} {h2Hom : GroupHom H2grp G h2Inj} (H1 : Subgroup G H1grp h1Hom) (H2 : Subgroup G H2grp h2Hom) → Group (subgroupIntersectionSetoid G H1 H2) (subgroupIntersectionOp G H1 H2)
-  Group.wellDefined (subgroupIntersectionGroup {S = S} {T = T} {U = U} G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (_ , _) (_ , _)} {ofElt (_ , _ ) (_ , _)} {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} (pr1 ,, pr2) (pr3 ,, pr4) = transitiveT (Group.wellDefined h1 pr1 reflexiveT) (Group.wellDefined h1 reflexiveT pr3) ,, transitiveU (Group.wellDefined h2 pr2 reflexiveU) ((Group.wellDefined h2 reflexiveU pr4))
+  Group.+WellDefined (subgroupIntersectionGroup {S = S} {T = T} {U = U} G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (_ , _) (_ , _)} {ofElt (_ , _ ) (_ , _)} {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} (pr1 ,, pr2) (pr3 ,, pr4) = transitiveT (Group.+WellDefined h1 pr1 reflexiveT) (Group.+WellDefined h1 reflexiveT pr3) ,, transitiveU (Group.+WellDefined h2 pr2 reflexiveU) ((Group.+WellDefined h2 reflexiveU pr4))
     where
       open Group G
       open Setoid T
       open Equivalence (Setoid.eq T) renaming (transitive to transitiveT ; symmetric to symmetricT ; reflexive to reflexiveT)
       open Equivalence (Setoid.eq U) renaming (transitive to transitiveU ; symmetric to symmetricU ; reflexive to reflexiveU)
-  Group.identity (subgroupIntersectionGroup G {H1grp = H1grp} {H2grp = H2grp} {h1Hom = h1Hom} {h2Hom = h2Hom} H1 H2) = ofElt {x = Group.identity G} (Group.identity H1grp , imageOfIdentityIsIdentity h1Hom) (Group.identity H2grp , imageOfIdentityIsIdentity h2Hom)
+  Group.0G (subgroupIntersectionGroup G {H1grp = H1grp} {H2grp = H2grp} {h1Hom = h1Hom} {h2Hom = h2Hom} H1 H2) = ofElt {x = Group.0G G} (Group.0G H1grp , imageOfIdentityIsIdentity h1Hom) (Group.0G H2grp , imageOfIdentityIsIdentity h2Hom)
   Group.inverse (subgroupIntersectionGroup {S = S} G {H1grp = h1} {H2grp = h2} {h1Hom = h1hom} {h2Hom = h2hom} H1 H2) (ofElt (a , prA) (b , prB)) = ofElt (Group.inverse h1 a , homRespectsInverse h1hom) (Group.inverse h2 b , transitive (homRespectsInverse h2hom) (inverseWellDefined G (transitive prB (symmetric prA))))
     where
       open Setoid S
       open Equivalence eq
-  Group.multAssoc (subgroupIntersectionGroup G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (a , prA) (b , prB)} {ofElt (c , prC) (d , prD)} {ofElt (e , prE) (f , prF)} = Group.multAssoc h1 ,, Group.multAssoc h2
-  Group.multIdentRight (subgroupIntersectionGroup G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (_ , _) (_ , _)} = Group.multIdentRight h1 ,, Group.multIdentRight h2
-  Group.multIdentLeft (subgroupIntersectionGroup G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (_ , _) (_ , _)} = Group.multIdentLeft h1 ,, Group.multIdentLeft h2
+  Group.+Associative (subgroupIntersectionGroup G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (a , prA) (b , prB)} {ofElt (c , prC) (d , prD)} {ofElt (e , prE) (f , prF)} = Group.+Associative h1 ,, Group.+Associative h2
+  Group.identRight (subgroupIntersectionGroup G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (_ , _) (_ , _)} = Group.identRight h1 ,, Group.identRight h2
+  Group.identLeft (subgroupIntersectionGroup G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (_ , _) (_ , _)} = Group.identLeft h1 ,, Group.identLeft h2
   Group.invLeft (subgroupIntersectionGroup G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (_ , _) (_ , _)} = Group.invLeft h1 ,, Group.invLeft h2
   Group.invRight (subgroupIntersectionGroup G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (_ , _) (_ , _)} = Group.invRight h1 ,, Group.invRight h2
 
@@ -131,7 +131,7 @@ module Groups.Examples.ExampleSheet1 where
       open Equivalence eq
       bad : Setoid._∼_ S xCoeff2 0R
       bad with Field.allInvertible F xCoeff1 xCoeffNonzero1
-      ... | xinv , pr' = transitive (symmetric multIdentIsIdent) (transitive (multWellDefined (symmetric pr') reflexive) (transitive (symmetric multAssoc) (transitive (multWellDefined reflexive pr) (ringTimesZero R))))
+      ... | xinv , pr' = transitive (symmetric identIsIdent) (transitive (*WellDefined (symmetric pr') reflexive) (transitive (symmetric *Associative) (transitive (*WellDefined reflexive pr) (Ring.timesZero R))))
   LinearFunction.constant (composeLinearFunctions {_+_ = _+_} {_*_ = _*_} record { xCoeff = xCoeff1 ; xCoeffNonzero = xCoeffNonzero1 ; constant = constant1 } record { xCoeff = xCoeff2 ; xCoeffNonzero = xCoeffNonzero2 ; constant = constant2 }) = (xCoeff1 * constant2) + constant1
 
   compositionIsCorrect : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {F : Field R} (f1 : LinearFunction F) (f2 : LinearFunction F) → {r : A} → Setoid._∼_ S (interpretLinearFunction (composeLinearFunctions f1 f2) r) (((interpretLinearFunction f1) ∘ (interpretLinearFunction f2)) r)
@@ -141,7 +141,7 @@ module Groups.Examples.ExampleSheet1 where
       open Ring R
       open Equivalence eq
       ans : (((xCoeff * xCoeff') * r) + ((xCoeff * constant') + constant)) ∼ (xCoeff * ((xCoeff' * r) + constant')) + constant
-      ans = transitive (Group.multAssoc additiveGroup) (Group.wellDefined additiveGroup (transitive (Group.wellDefined additiveGroup (symmetric (Ring.multAssoc R)) reflexive) (symmetric (Ring.multDistributes R))) (reflexive {constant}))
+      ans = transitive (Group.+Associative additiveGroup) (Group.+WellDefined additiveGroup (transitive (Group.+WellDefined additiveGroup (symmetric (Ring.*Associative R)) reflexive) (symmetric (Ring.*DistributesOver+ R))) (reflexive {constant}))
 
   linearFunctionsSetoid : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} (I : Field R) → Setoid (LinearFunction I)
   Setoid._∼_ (linearFunctionsSetoid {S = S} I) f1 f2 = ((LinearFunction.xCoeff f1) ∼ (LinearFunction.xCoeff f2)) && ((LinearFunction.constant f1) ∼ (LinearFunction.constant f2))
@@ -152,38 +152,38 @@ module Groups.Examples.ExampleSheet1 where
   Equivalence.transitive (Setoid.eq (linearFunctionsSetoid {S = S} I)) (fst1 ,, snd1) (fst2 ,, snd2) = Equivalence.transitive (Setoid.eq S) fst1 fst2 ,, Equivalence.transitive (Setoid.eq S) snd1 snd2
 
   linearFunctionsGroup : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} (F : Field R) → Group (linearFunctionsSetoid F) (composeLinearFunctions)
-  Group.wellDefined (linearFunctionsGroup {R = R} F) {record { xCoeff = xCoeffM ; xCoeffNonzero = xCoeffNonzeroM ; constant = constantM }} {record { xCoeff = xCoeffN ; xCoeffNonzero = xCoeffNonzeroN ; constant = constantN }} {record { xCoeff = xCoeffX ; xCoeffNonzero = xCoeffNonzeroX ; constant = constantX }} {record { xCoeff = xCoeff ; xCoeffNonzero = xCoeffNonzero ; constant = constant }} (fst1 ,, snd1) (fst2 ,, snd2) = multWellDefined fst1 fst2 ,, Group.wellDefined additiveGroup (multWellDefined fst1 snd2) snd1
+  Group.+WellDefined (linearFunctionsGroup {R = R} F) {record { xCoeff = xCoeffM ; xCoeffNonzero = xCoeffNonzeroM ; constant = constantM }} {record { xCoeff = xCoeffN ; xCoeffNonzero = xCoeffNonzeroN ; constant = constantN }} {record { xCoeff = xCoeffX ; xCoeffNonzero = xCoeffNonzeroX ; constant = constantX }} {record { xCoeff = xCoeff ; xCoeffNonzero = xCoeffNonzero ; constant = constant }} (fst1 ,, snd1) (fst2 ,, snd2) = *WellDefined fst1 fst2 ,, Group.+WellDefined additiveGroup (*WellDefined fst1 snd2) snd1
     where
       open Ring R
-  Group.identity (linearFunctionsGroup {S = S} {R = R} F) = record { xCoeff = Ring.1R R ; constant = Ring.0R R ; xCoeffNonzero = λ p → Field.nontrivial F (Equivalence.symmetric (Setoid.eq S) p) }
+  Group.0G (linearFunctionsGroup {S = S} {R = R} F) = record { xCoeff = Ring.1R R ; constant = Ring.0R R ; xCoeffNonzero = λ p → Field.nontrivial F (Equivalence.symmetric (Setoid.eq S) p) }
   Group.inverse (linearFunctionsGroup {S = S} {_*_ = _*_} {R = R} F) record { xCoeff = xCoeff ; constant = c ; xCoeffNonzero = pr } with Field.allInvertible F xCoeff pr
-  ... | (inv , pr') = record { xCoeff = inv ; constant = inv * (Group.inverse (Ring.additiveGroup R) c) ; xCoeffNonzero = λ p → Field.nontrivial F (transitive (symmetric (transitive (Ring.multWellDefined R p reflexive) (transitive (Ring.multCommutative R) (ringTimesZero R)))) pr') }
+  ... | (inv , pr') = record { xCoeff = inv ; constant = inv * (Group.inverse (Ring.additiveGroup R) c) ; xCoeffNonzero = λ p → Field.nontrivial F (transitive (symmetric (transitive (Ring.*WellDefined R p reflexive) (transitive (Ring.*Commutative R) (Ring.timesZero R)))) pr') }
     where
       open Setoid S
       open Equivalence eq
-  Group.multAssoc (linearFunctionsGroup {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} F) {record { xCoeff = xA ; xCoeffNonzero = xANonzero ; constant = cA }} {record { xCoeff = xB ; xCoeffNonzero = xBNonzero ; constant = cB }} {record { xCoeff = xC ; xCoeffNonzero = xCNonzero ; constant = cC }} = Ring.multAssoc R ,, transitive (Group.wellDefined additiveGroup (transitive multDistributes (Group.wellDefined additiveGroup multAssoc reflexive)) reflexive) (symmetric (Group.multAssoc additiveGroup))
+  Group.+Associative (linearFunctionsGroup {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} F) {record { xCoeff = xA ; xCoeffNonzero = xANonzero ; constant = cA }} {record { xCoeff = xB ; xCoeffNonzero = xBNonzero ; constant = cB }} {record { xCoeff = xC ; xCoeffNonzero = xCNonzero ; constant = cC }} = Ring.*Associative R ,, transitive (Group.+WellDefined additiveGroup (transitive *DistributesOver+ (Group.+WellDefined additiveGroup *Associative reflexive)) reflexive) (symmetric (Group.+Associative additiveGroup))
     where
       open Setoid S
       open Equivalence eq
       open Ring R
-  Group.multIdentRight (linearFunctionsGroup {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} F) {record { xCoeff = xCoeff ; xCoeffNonzero = xCoeffNonzero ; constant = constant }} = transitive (Ring.multCommutative R) (Ring.multIdentIsIdent R) ,, transitive (Group.wellDefined additiveGroup (ringTimesZero R) reflexive) (Group.multIdentLeft additiveGroup)
+  Group.identRight (linearFunctionsGroup {S = S} {_+_ = _+_} {_*_ = _*_} {R = R} F) {record { xCoeff = xCoeff ; xCoeffNonzero = xCoeffNonzero ; constant = constant }} = transitive (Ring.*Commutative R) (Ring.identIsIdent R) ,, transitive (Group.+WellDefined additiveGroup (Ring.timesZero R) reflexive) (Group.identLeft additiveGroup)
     where
       open Ring R
       open Setoid S
       open Equivalence eq
-  Group.multIdentLeft (linearFunctionsGroup {S = S} {R = R} F) {record { xCoeff = xCoeff ; xCoeffNonzero = xCoeffNonzero ; constant = constant }} = multIdentIsIdent ,, transitive (Group.multIdentRight additiveGroup) multIdentIsIdent
+  Group.identLeft (linearFunctionsGroup {S = S} {R = R} F) {record { xCoeff = xCoeff ; xCoeffNonzero = xCoeffNonzero ; constant = constant }} = identIsIdent ,, transitive (Group.identRight additiveGroup) identIsIdent
     where
       open Setoid S
       open Ring R
       open Equivalence eq
   Group.invLeft (linearFunctionsGroup F) {record { xCoeff = xCoeff ; xCoeffNonzero = xCoeffNonzero ; constant = constant }} with Field.allInvertible F xCoeff xCoeffNonzero
-  Group.invLeft (linearFunctionsGroup {S = S} {R = R} F) {record { xCoeff = xCoeff ; xCoeffNonzero = xCoeffNonzero ; constant = constant }} | inv , prInv = prInv ,, transitive (symmetric multDistributes) (transitive (multWellDefined reflexive (Group.invRight additiveGroup)) (ringTimesZero R))
+  Group.invLeft (linearFunctionsGroup {S = S} {R = R} F) {record { xCoeff = xCoeff ; xCoeffNonzero = xCoeffNonzero ; constant = constant }} | inv , prInv = prInv ,, transitive (symmetric *DistributesOver+) (transitive (*WellDefined reflexive (Group.invRight additiveGroup)) (Ring.timesZero R))
     where
       open Setoid S
       open Ring R
       open Equivalence eq
   Group.invRight (linearFunctionsGroup {S = S} {R = R} F) {record { xCoeff = xCoeff ; xCoeffNonzero = xCoeffNonzero ; constant = constant }} with Field.allInvertible F xCoeff xCoeffNonzero
-  ... | inv , pr = transitive multCommutative pr  ,, transitive (Group.wellDefined additiveGroup multAssoc reflexive) (transitive (Group.wellDefined additiveGroup (multWellDefined (transitive multCommutative pr) reflexive) reflexive) (transitive (Group.wellDefined additiveGroup multIdentIsIdent reflexive) (Group.invLeft additiveGroup)))
+  ... | inv , pr = transitive *Commutative pr  ,, transitive (Group.+WellDefined additiveGroup *Associative reflexive) (transitive (Group.+WellDefined additiveGroup (*WellDefined (transitive *Commutative pr) reflexive) reflexive) (transitive (Group.+WellDefined additiveGroup identIsIdent reflexive) (Group.invLeft additiveGroup)))
     where
       open Setoid S
       open Ring R
@@ -213,10 +213,10 @@ module Groups.Examples.ExampleSheet1 where
       fg = record { xCoeff = 1R + 1R ; xCoeffNonzero = pr ; constant = 1R }
 
       oneWay : Setoid._∼_ (linearFunctionsSetoid F) gf (composeLinearFunctions g f)
-      oneWay = symmetricS (transitiveS multCommutative multIdentIsIdent) ,, transitiveS (symmetricS (transitiveS multCommutative multIdentIsIdent)) (symmetricS (Group.multIdentRight additiveGroup))
+      oneWay = symmetricS (transitiveS *Commutative identIsIdent) ,, transitiveS (symmetricS (transitiveS *Commutative identIsIdent)) (symmetricS (Group.identRight additiveGroup))
 
       otherWay : Setoid._∼_ (linearFunctionsSetoid F) fg (composeLinearFunctions f g)
-      otherWay = symmetricS multIdentIsIdent ,, transitiveS (symmetricS (Group.multIdentLeft additiveGroup)) (Group.wellDefined additiveGroup (symmetricS multIdentIsIdent) (reflexiveS {1R}))
+      otherWay = symmetricS identIsIdent ,, transitiveS (symmetricS (Group.identLeft additiveGroup)) (Group.+WellDefined additiveGroup (symmetricS identIsIdent) (reflexiveS {1R}))
 
       open Equivalence (Setoid.eq (linearFunctionsSetoid F))
       bad : Setoid._∼_ (linearFunctionsSetoid F) gf fg
@@ -224,4 +224,4 @@ module Groups.Examples.ExampleSheet1 where
 
       ans : False
       ans with bad
-      ans | _ ,, contr = Field.nontrivial F (symmetricS (transitiveS {1R} {1R + (1R + Group.inverse additiveGroup 1R)} (transitiveS (symmetricS (Group.multIdentRight additiveGroup)) (Group.wellDefined additiveGroup reflexiveS (symmetricS (Group.invRight additiveGroup)))) (transitiveS (Group.multAssoc additiveGroup) (transitiveS (Group.wellDefined additiveGroup contr reflexiveS) (Group.invRight additiveGroup)))))
+      ans | _ ,, contr = Field.nontrivial F (symmetricS (transitiveS {1R} {1R + (1R + Group.inverse additiveGroup 1R)} (transitiveS (symmetricS (Group.identRight additiveGroup)) (Group.+WellDefined additiveGroup reflexiveS (symmetricS (Group.invRight additiveGroup)))) (transitiveS (Group.+Associative additiveGroup) (transitiveS (Group.+WellDefined additiveGroup contr reflexiveS) (Group.invRight additiveGroup)))))
