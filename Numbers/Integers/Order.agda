@@ -7,6 +7,7 @@ open import Numbers.Integers.Addition
 open import Numbers.Integers.Multiplication
 open import Semirings.Definition
 open import Rings.Definition
+open import Rings.Order
 open import Setoids.Setoids
 open import Setoids.Orders
 open import Orders

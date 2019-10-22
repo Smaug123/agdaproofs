@@ -6,6 +6,7 @@ open import Numbers.Integers.Integers
 open import Groups.Groups
 open import Groups.Definition
 open import Rings.Definition
+open import Rings.Order
 open import Fields.Fields
 open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
@@ -17,53 +18,57 @@ open import Sets.EquivalenceRelations
 
 module Numbers.Rationals where
 
-  ℚ : Set
-  ℚ = fieldOfFractionsSet ℤIntDom
+ℚ : Set
+ℚ = fieldOfFractionsSet ℤIntDom
 
-  _+Q_ : ℚ → ℚ → ℚ
-  a +Q b = fieldOfFractionsPlus ℤIntDom a b
+_+Q_ : ℚ → ℚ → ℚ
+a +Q b = fieldOfFractionsPlus ℤIntDom a b
 
-  _*Q_ : ℚ → ℚ → ℚ
-  a *Q b = fieldOfFractionsTimes ℤIntDom a b
+_*Q_ : ℚ → ℚ → ℚ
+a *Q b = fieldOfFractionsTimes ℤIntDom a b
 
-  ℚRing : Ring (fieldOfFractionsSetoid ℤIntDom) _+Q_ _*Q_
-  ℚRing = fieldOfFractionsRing ℤIntDom
+ℚRing : Ring (fieldOfFractionsSetoid ℤIntDom) _+Q_ _*Q_
+ℚRing = fieldOfFractionsRing ℤIntDom
 
-  0Q : ℚ
-  0Q = Ring.0R ℚRing
+0Q : ℚ
+0Q = Ring.0R ℚRing
 
-  ℚField : Field ℚRing
-  ℚField = fieldOfFractions ℤIntDom
+ℚField : Field ℚRing
+ℚField = fieldOfFractions ℤIntDom
 
-  _<Q_ : ℚ → ℚ → Set
-  _<Q_ = fieldOfFractionsComparison ℤIntDom ℤOrderedRing
+_<Q_ : ℚ → ℚ → Set
+_<Q_ = fieldOfFractionsComparison ℤIntDom ℤOrderedRing
 
-  _=Q_ : ℚ → ℚ → Set
-  a =Q b = Setoid._∼_ (fieldOfFractionsSetoid ℤIntDom) a b
+_=Q_ : ℚ → ℚ → Set
+a =Q b = Setoid._∼_ (fieldOfFractionsSetoid ℤIntDom) a b
 
-  reflQ : {x : ℚ} → (x =Q x)
-  reflQ {x} = Equivalence.reflexive (Setoid.eq (fieldOfFractionsSetoid ℤIntDom)) {x}
+reflQ : {x : ℚ} → (x =Q x)
+reflQ {x} = Equivalence.reflexive (Setoid.eq (fieldOfFractionsSetoid ℤIntDom)) {x}
 
-  _≤Q_ : ℚ → ℚ → Set
-  a ≤Q b = (a <Q b) || (a =Q b)
+_≤Q_ : ℚ → ℚ → Set
+a ≤Q b = (a <Q b) || (a =Q b)
 
-  negateQ : ℚ → ℚ
-  negateQ a = Group.inverse (Ring.additiveGroup ℚRing) a
+negateQ : ℚ → ℚ
+negateQ a = Group.inverse (Ring.additiveGroup ℚRing) a
 
-  _-Q_ : ℚ → ℚ → ℚ
-  a -Q b = a +Q negateQ b
+_-Q_ : ℚ → ℚ → ℚ
+a -Q b = a +Q negateQ b
 
-  ℚPartialOrder : SetoidPartialOrder (fieldOfFractionsSetoid ℤIntDom) (fieldOfFractionsComparison ℤIntDom ℤOrderedRing)
-  ℚPartialOrder = fieldOfFractionsOrder ℤIntDom ℤOrderedRing
+a-A : (a : ℚ) → (a -Q a) =Q 0Q
+a-A a = Group.invRight (Ring.additiveGroup ℚRing) {a}
 
-  ℚTotalOrder : SetoidTotalOrder (fieldOfFractionsOrder ℤIntDom ℤOrderedRing)
-  ℚTotalOrder = fieldOfFractionsTotalOrder ℤIntDom ℤOrderedRing
+ℚPartialOrder : SetoidPartialOrder (fieldOfFractionsSetoid ℤIntDom) (fieldOfFractionsComparison ℤIntDom ℤOrderedRing)
+ℚPartialOrder = fieldOfFractionsOrder ℤIntDom ℤOrderedRing
 
-  absQ : ℚ → ℚ
-  absQ q with SetoidTotalOrder.totality (fieldOfFractionsTotalOrder ℤIntDom ℤOrderedRing) 0Q q
-  absQ q | inl (inl 0<q) = q
-  absQ q | inl (inr q<0) = Group.inverse (Ring.additiveGroup ℚRing) q
-  absQ q | inr x = 0Q
+ℚTotalOrder : SetoidTotalOrder (fieldOfFractionsOrder ℤIntDom ℤOrderedRing)
+ℚTotalOrder = fieldOfFractionsTotalOrder ℤIntDom ℤOrderedRing
 
-  ℚOrdered : OrderedRing ℚRing (fieldOfFractionsTotalOrder ℤIntDom ℤOrderedRing)
-  ℚOrdered = fieldOfFractionsOrderedRing ℤIntDom ℤOrderedRing
+open SetoidTotalOrder (fieldOfFractionsTotalOrder ℤIntDom ℤOrderedRing)
+open SetoidPartialOrder partial
+open Setoid (fieldOfFractionsSetoid ℤIntDom)
+
+negateQWellDefined : (a b : ℚ) → (a =Q b) → (negateQ a) =Q (negateQ b)
+negateQWellDefined a b a=b = inverseWellDefined (Ring.additiveGroup ℚRing) {a} {b} a=b
+
+ℚOrdered : OrderedRing ℚRing (fieldOfFractionsTotalOrder ℤIntDom ℤOrderedRing)
+ℚOrdered = fieldOfFractionsOrderedRing ℤIntDom ℤOrderedRing

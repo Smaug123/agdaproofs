@@ -1,4 +1,4 @@
-{-# OPTIONS --warning=error --safe --without-K #-}
+{-# OPTIONS --warning=error --safe --without-K --guardedness #-}
 
 -- This file contains everything that can be compiled in --safe mode.
 
@@ -24,6 +24,8 @@ open import Fields.FieldOfFractionsOrder
 
 open import Rings.Definition
 open import Rings.Lemmas
+open import Rings.Order
+open import Rings.Orders.Lemmas
 open import Rings.IntegralDomains
 
 open import Setoids.Setoids
@@ -50,5 +52,7 @@ open import Monoids.Definition
 
 open import Semirings.Definition
 open import Semirings.Solver
+
+open import CauchyCompletion
 
 module Everything.Safe where
