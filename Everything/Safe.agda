@@ -53,6 +53,7 @@ open import Monoids.Definition
 open import Semirings.Definition
 open import Semirings.Solver
 
-open import CauchyCompletion
+open import Fields.CauchyCompletion.Definition
+open import Fields.CauchyCompletion.Addition
 
 module Everything.Safe where
