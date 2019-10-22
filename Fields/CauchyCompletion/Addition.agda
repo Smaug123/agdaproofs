@@ -15,7 +15,7 @@ open import Functions
 open import LogicalFormulae
 open import Numbers.Naturals.Naturals
 
-module CauchyCompletion {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} (tOrder : SetoidTotalOrder {_<_ = _<_} pOrder) {R : Ring S _+_ _*_} (order : OrderedRing R tOrder) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
+module Fields.CauchyCompletion.Addition {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder {_<_ = _<_} pOrder} {R : Ring S _+_ _*_} (order : OrderedRing R tOrder) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
 
 open Setoid S
 open SetoidTotalOrder tOrder
@@ -26,22 +26,8 @@ open Ring R
 open Group additiveGroup
 open Field F
 
+open import Fields.CauchyCompletion.Definition order F
 open import Rings.Orders.Lemmas(order)
-
-cauchy : Sequence A → Set (m ⊔ o)
-cauchy s = ∀ (ε : A) → (0R < ε) → Sg ℕ (λ N → ∀ {m n : ℕ} → (N <N m) → (N <N n) → abs ((index s m) -R (index s n)) < ε)
-
-record CauchyCompletion : Set (m ⊔ o) where
-  field
-    elts : Sequence A
-    converges : cauchy elts
-
-injection : A → CauchyCompletion
-CauchyCompletion.elts (injection a) = constSequence a
-CauchyCompletion.converges (injection a) = λ ε 0<e → 0 , λ {m} {n} _ _ → <WellDefined (symmetric (identityOfIndiscernablesRight _∼_ (absWellDefined (index (constSequence a) m + inverse (index (constSequence a) n)) 0R (t m n)) (absZero order))) reflexive 0<e
-  where
-    t : (m n : ℕ) → index (constSequence a) m + inverse (index (constSequence a) n) ∼ 0R
-    t m n = identityOfIndiscernablesLeft _∼_ (identityOfIndiscernablesLeft _∼_ invRight (equalityCommutative (applyEquality (λ i → a + inverse i) (indexAndConst a n)))) (applyEquality (_+ inverse (index (constSequence a) n)) (equalityCommutative (indexAndConst a m)))
 
 halve : (a : A) → Sg A (λ i → i + i ∼ a)
 -- TODO: we need to know the characteristic already

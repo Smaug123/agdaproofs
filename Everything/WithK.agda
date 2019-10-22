@@ -5,6 +5,7 @@
 open import Numbers.Primes.PrimeNumbers
 open import Numbers.Primes.IntegerFactorisation
 open import Numbers.Rationals
+open import Numbers.RationalsLemmas
 
 open import Logic.PropositionalLogic
 open import Logic.PropositionalLogicExamples

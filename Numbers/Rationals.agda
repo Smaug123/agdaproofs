@@ -33,6 +33,9 @@ a *Q b = fieldOfFractionsTimes ℤIntDom a b
 0Q : ℚ
 0Q = Ring.0R ℚRing
 
+injectionQ : ℤ → ℚ
+injectionQ z = z ,, (nonneg 1 , λ ())
+
 ℚField : Field ℚRing
 ℚField = fieldOfFractions ℤIntDom
 
