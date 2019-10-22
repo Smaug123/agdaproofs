@@ -42,7 +42,3 @@ CauchyCompletion.converges (injection a) = λ ε 0<e → 0 , λ {m} {n} _ _ → 
   where
     t : (m n : ℕ) → index (constSequence a) m + inverse (index (constSequence a) n) ∼ 0R
     t m n = identityOfIndiscernablesLeft _∼_ (identityOfIndiscernablesLeft _∼_ invRight (equalityCommutative (applyEquality (λ i → a + inverse i) (indexAndConst a n)))) (applyEquality (_+ inverse (index (constSequence a) n)) (equalityCommutative (indexAndConst a m)))
-
-cSetoid : Setoid CauchyCompletion
-(cSetoid Setoid.∼ a) b = {!!}
-Setoid.eq cSetoid = {!!}
