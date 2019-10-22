@@ -4,6 +4,7 @@ open import LogicalFormulae
 open import Groups.Groups
 open import Groups.Definition
 open import Rings.Definition
+open import Rings.Order
 open import Rings.Lemmas
 open import Setoids.Setoids
 open import Setoids.Orders
@@ -31,7 +32,7 @@ module Fields.Fields where
       open Equivalence eq
       open Ring R
       a!=0 : (a ∼ Group.0G additiveGroup) → False
-      a!=0 pr = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.wellDefined pOrder (symmetric pr) reflexive x)
+      a!=0 pr = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<WellDefined pOrder (symmetric pr) reflexive x)
       invA : A
       invA = underlying (Field.allInvertible F a a!=0)
       q : 1R ∼ (invA * a)
@@ -47,7 +48,7 @@ module Fields.Fields where
       open Equivalence eq
       open Ring R
       a!=0 : (a ∼ Group.0G additiveGroup) → False
-      a!=0 pr = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.wellDefined pOrder reflexive (symmetric pr) x)
+      a!=0 pr = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<WellDefined pOrder reflexive (symmetric pr) x)
       invA : A
       invA = underlying (Field.allInvertible F a a!=0)
       q : 1R ∼ (invA * a)

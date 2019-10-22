@@ -34,13 +34,6 @@ module Rings.Definition where
     timesZero : {a : A} → a * 0R ∼ 0R
     timesZero {a} = symmetric (transitive (transitive (symmetric invLeft) (+WellDefined reflexive (transitive (*WellDefined {a} {a} reflexive (symmetric identRight)) *DistributesOver+))) (transitive +Associative (transitive (+WellDefined invLeft reflexive) identLeft)))
 
-  record OrderedRing {n m p} {A : Set n} {S : Setoid {n} {m} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {_} {p} A} {pOrder : SetoidPartialOrder S _<_} (R : Ring S _+_ _*_) (order : SetoidTotalOrder pOrder) : Set (lsuc n ⊔ m ⊔ p) where
-    open Ring R
-    open Group additiveGroup
-    open Setoid S
-    field
-      orderRespectsAddition : {a b : A} → (a < b) → (c : A) → (a + c) < (b + c)
-      orderRespectsMultiplication : {a b : A} → (0R < a) → (0R < b) → (0R < (a * b))
 
   --directSumRing : {m n : _} → {A : Set m} {B : Set n} (r : Ring A) (s : Ring B) → Ring (A && B)
   --Ring.additiveGroup (directSumRing r s) = directSumGroup (Ring.additiveGroup r) (Ring.additiveGroup s)
@@ -66,10 +59,3 @@ module Rings.Definition where
   --  field
   --    ringHom : RingHom R S f
   --    bijective : Bijection f
-
-
-  abs : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} (R : Ring S _+_ _*_) (order : SetoidTotalOrder pOrder) (x : A) → A
-  abs R order x with SetoidTotalOrder.totality order (Ring.0R R) x
-  ... | inl (inl 0<x) = x
-  ... | inl (inr x<0) = Group.inverse (Ring.additiveGroup R) x
-  ... | inr 0=x = Ring.0R R

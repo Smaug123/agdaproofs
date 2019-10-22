@@ -12,7 +12,7 @@ module Setoids.Orders where
   record SetoidPartialOrder {a b c : _} {A : Set a} (S : Setoid {a} {b} A) (_<_ : Rel {a} {c} A) : Set (a ⊔ b ⊔ c) where
     open Setoid S
     field
-      wellDefined : {a b c d : A} → (a ∼ b) → (c ∼ d) → a < c → b < d
+      <WellDefined : {a b c d : A} → (a ∼ b) → (c ∼ d) → a < c → b < d
       irreflexive : {x : A} → (x < x) → False
       transitive : {a b c : A} → (a < b) → (b < c) → (a < c)
 
@@ -20,6 +20,8 @@ module Setoids.Orders where
     open Setoid S
     field
       totality : (a b : A) → ((a < b) || (b < a)) || (a ∼ b)
+    partial : SetoidPartialOrder S _<_
+    partial = P
     min : A → A → A
     min a b with totality a b
     min a b | inl (inl a<b) = a
@@ -32,7 +34,7 @@ module Setoids.Orders where
     max a b | inr a=b = b
 
   partialOrderToSetoidPartialOrder : {a b : _} {A : Set a} (P : PartialOrder {a} {b} A) → SetoidPartialOrder (reflSetoid A) (PartialOrder._<_ P)
-  SetoidPartialOrder.wellDefined (partialOrderToSetoidPartialOrder P) a=b c=d a<c rewrite a=b | c=d = a<c
+  SetoidPartialOrder.<WellDefined (partialOrderToSetoidPartialOrder P) a=b c=d a<c rewrite a=b | c=d = a<c
   SetoidPartialOrder.irreflexive (partialOrderToSetoidPartialOrder P) = PartialOrder.irreflexive P
   SetoidPartialOrder.transitive (partialOrderToSetoidPartialOrder P) = PartialOrder.transitive P
 

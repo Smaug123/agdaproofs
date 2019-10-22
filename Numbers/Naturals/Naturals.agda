@@ -554,3 +554,9 @@ module Numbers.Naturals.Naturals where
 
   sumZeroImpliesOperandsZero : (a : ℕ) {b : ℕ} → a +N b ≡ 0 → (a ≡ 0) && (b ≡ 0)
   sumZeroImpliesOperandsZero zero {zero} pr = refl ,, refl
+
+  inequalityShrinkRight : {a b c : ℕ} → a +N b <N c → b <N c
+  inequalityShrinkRight {a} {b} {c} (le x proof) = le (x +N a) (transitivity (applyEquality succ (additionNIsAssociative x a b)) proof)
+
+  inequalityShrinkLeft : {a b c : ℕ} → a +N b <N c → a <N c
+  inequalityShrinkLeft {a} {b} {c} (le x proof) = le (x +N b) (transitivity (applyEquality succ (transitivity (additionNIsAssociative x b a) (applyEquality (x +N_) (additionNIsCommutative b a)))) proof)
