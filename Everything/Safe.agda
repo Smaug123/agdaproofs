@@ -55,5 +55,7 @@ open import Semirings.Solver
 
 open import Fields.CauchyCompletion.Definition
 open import Fields.CauchyCompletion.Addition
+open import Fields.CauchyCompletion.Setoid
+open import Fields.CauchyCompletion.Multiplication
 
 module Everything.Safe where
