@@ -100,15 +100,44 @@ evil' = rec <NWellfounded (λ z → (x x₁ : ℕ) (pr' : 0 <N x) (x₂ : z ≡ 
 evil : (a b : ℕ) → (0 <N a) → a *N a ≡ (b *N b) *N 2 → False
 evil a b 0<a = evil' (a +N b) a b 0<a refl
 
---sqrt2Irrational : (a : ℚ) → (a *Q a) =Q (injectionQ (nonneg 2)) → False
---sqrt2Irrational (numerator ,, (denominator , denom!=0)) pr = {!!}
---  where
---    -- We have in hand `pr`, which is the following (almost by definition):
---    pr' : (numerator *Z numerator) ≡ (denominator *Z denominator) *Z nonneg 2
---    pr' = transitivity (equalityCommutative (transitivity (Ring.*Commutative ℤRing) (Ring.identIsIdent ℤRing))) pr
---
---    -- Move into the naturals so that we can do nice divisibility things.
---    lemma1 : abs ((denominator *Z denominator) *Z nonneg 2) ≡ (abs denominator *Z abs denominator) *Z nonneg 2
---    lemma1 = transitivity (absRespectsTimes (denominator *Z denominator) (nonneg 2)) (applyEquality (_*Z nonneg 2) (absRespectsTimes denominator denominator))
---    amenableToNaturals : (abs numerator) *Z (abs numerator) ≡ ((abs denominator) *Z (abs denominator)) *Z nonneg 2
---    amenableToNaturals = transitivity (equalityCommutative (absRespectsTimes numerator numerator)) (transitivity (applyEquality abs pr') lemma1)
+absNonneg : (x : ℕ) → abs (nonneg x) ≡ nonneg x
+absNonneg x with totality (nonneg 0) (nonneg x)
+absNonneg x | inl (inl 0<x) = refl
+absNonneg x | inr 0=x = refl
+
+absNegsucc : (x : ℕ) → abs (negSucc x) ≡ nonneg (succ x)
+absNegsucc x with totality (nonneg 0) (negSucc x)
+absNegsucc x | inl (inr _) = refl
+
+toNats : (numerator denominator : ℤ) → (denominator ≡ nonneg 0 → False) → (abs numerator) *Z (abs numerator) ≡ ((abs denominator) *Z (abs denominator)) *Z nonneg 2 → Sg (ℕ && ℕ) (λ nats → ((_&&_.fst nats *N _&&_.fst nats) ≡ (_&&_.snd nats *N _&&_.snd nats) *N 2) && (_&&_.snd nats ≡ 0 → False))
+toNats (nonneg num) (nonneg 0) pr _ = exFalso (pr refl)
+toNats (nonneg num) (nonneg (succ denom)) _ pr = (num ,, (succ denom)) , (nonnegInjective (transitivity (transitivity (equalityCommutative (absNonneg (num *N num))) (absRespectsTimes (nonneg num) (nonneg num))) pr) ,, λ ())
+toNats (nonneg num) (negSucc denom) _ pr = (num ,, succ denom) , (nonnegInjective (transitivity (transitivity (equalityCommutative (absNonneg (num *N num))) (absRespectsTimes (nonneg num) (nonneg num))) pr) ,, λ ())
+toNats (negSucc num) (nonneg (succ denom)) _ pr = (succ num ,, succ denom) , (nonnegInjective pr ,, λ ())
+toNats (negSucc num) (negSucc denom) _ pr = (succ num ,, succ denom) , (nonnegInjective pr ,, λ ())
+
+sqrt2Irrational : (a : ℚ) → (a *Q a) =Q (injectionQ (nonneg 2)) → False
+sqrt2Irrational (numerator ,, (denominator , denom!=0)) pr = bad
+  where
+    -- We have in hand `pr`, which is the following (almost by definition):
+    pr' : (numerator *Z numerator) ≡ (denominator *Z denominator) *Z nonneg 2
+    pr' = transitivity (equalityCommutative (transitivity (Ring.*Commutative ℤRing) (Ring.identIsIdent ℤRing))) pr
+
+    -- Move into the naturals so that we can do nice divisibility things.
+    lemma1 : abs ((denominator *Z denominator) *Z nonneg 2) ≡ (abs denominator *Z abs denominator) *Z nonneg 2
+    lemma1 = transitivity (absRespectsTimes (denominator *Z denominator) (nonneg 2)) (applyEquality (_*Z nonneg 2) (absRespectsTimes denominator denominator))
+    amenableToNaturals : (abs numerator) *Z (abs numerator) ≡ ((abs denominator) *Z (abs denominator)) *Z nonneg 2
+    amenableToNaturals = transitivity (equalityCommutative (absRespectsTimes numerator numerator)) (transitivity (applyEquality abs pr') lemma1)
+
+    naturalsStatement : Sg (ℕ && ℕ) (λ nats → ((_&&_.fst nats *N _&&_.fst nats) ≡ (_&&_.snd nats *N _&&_.snd nats) *N 2) && (_&&_.snd nats ≡ 0 → False))
+    naturalsStatement = toNats numerator denominator denom!=0 amenableToNaturals
+
+    bad : False
+    bad with naturalsStatement
+    bad | (num ,, 0) , (pr1 ,, pr2) = exFalso (pr2 refl)
+    bad | (num ,, succ denom) , (pr1 ,, pr2) = evil num (succ denom) 0<num pr1
+      where
+        0<num : 0 <N num
+        0<num with TotalOrder.totality ℕTotalOrder 0 num
+        0<num | inl (inl 0<num) = 0<num
+        0<num | inr 0=num rewrite equalityCommutative 0=num = exFalso (naughtE pr1)
