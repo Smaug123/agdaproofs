@@ -66,36 +66,49 @@ injectionPreservesSetoid a b a=b ε 0<e = 0 , t
     t : {m : ℕ} → 0 <N m → abs (index (apply _+_ (constSequence a) (map inverse (constSequence b))) m) < ε
     t {m} 0<m = <WellDefined (identityOfIndiscernablesLeft _∼_ (absWellDefined 0G _ (identityOfIndiscernablesRight _∼_ (Equivalence.transitive eq (Equivalence.symmetric eq (transferToRight'' additiveGroup a=b)) (+WellDefined (identityOfIndiscernablesLeft _∼_ (Equivalence.reflexive eq) (indexAndConst a m)) (identityOfIndiscernablesRight _∼_ (Equivalence.reflexive eq) (transitivity (applyEquality inverse (equalityCommutative (indexAndConst _ m))) (mapAndIndex _ inverse m))))) (equalityCommutative (indexAndApply (constSequence a) _ _+_ {m})))) (absZero order)) (Equivalence.reflexive eq) 0<e
 
-absZeroImpliesZero : {a : A} → abs a ∼ 0R → a ∼ 0R
-absZeroImpliesZero {a} a=0 with totality 0R a
-absZeroImpliesZero {a} a=0 | inl (inl 0<a) = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) a=0 0<a))
-absZeroImpliesZero {a} a=0 | inl (inr a<0) = Equivalence.symmetric eq (lemm3 (inverse a) a (Equivalence.symmetric eq invLeft) (Equivalence.symmetric eq a=0))
-absZeroImpliesZero {a} a=0 | inr 0=a = a=0
+infinitesimalImplies0 : (a : A) → ({ε : A} → (0R < ε) → a < ε) → (a ∼ 0R) || (a < 0R)
+infinitesimalImplies0 a pr with SetoidTotalOrder.totality tOrder 0R a
+infinitesimalImplies0 a pr | inl (inl 0<a) with halve a
+infinitesimalImplies0 a pr | inl (inl 0<a) | a/2 , prA/2 with pr {a/2} (halvePositive a/2 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq prA/2) 0<a))
+... | bl with halvePositive a/2 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq prA/2) 0<a)
+... | 0<a/2 = exFalso (irreflexive {a} (<WellDefined identLeft prA/2 (ringAddInequalities 0<a/2 bl)))
+infinitesimalImplies0 a pr | inl (inr a<0) = inr a<0
+infinitesimalImplies0 a pr | inr 0=a = inl (Equivalence.symmetric eq 0=a)
 
-a-bPos : {a b : A} → ((a ∼ b) → False) → 0R < abs (a + inverse b)
-a-bPos {a} {b} a!=b with totality 0R (a + inverse b)
-a-bPos {a} {b} a!=b | inl (inl x) = x
-a-bPos {a} {b} a!=b | inl (inr x) = lemm2 _ x
-a-bPos {a} {b} a!=b | inr x = exFalso (a!=b (transferToRight additiveGroup (Equivalence.symmetric eq x)))
-
-injectionPreservesSetoid' : (a b : A) → ((a ∼ b) → False) → Setoid._∼_ cauchyCompletionSetoid (injection a) (injection b) → False
-injectionPreservesSetoid' a b (a!=b) a=b with halve (abs (a + inverse b))
-... | a-b/2 , pr with a=b a-b/2 (halvePositive a-b/2 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq pr) (a-bPos a!=b)))
-... | N , pr2 with pr2 {m = succ N} (le 0 refl)
-... | a-b<a-b/2 rewrite indexAndApply (constSequence a) (map inverse (constSequence b)) _+_ {N} | indexAndConst a N | equalityCommutative (mapAndIndex (constSequence b) inverse N) | indexAndConst b N = SetoidPartialOrder.irreflexive pOrder v
+injectionPreservesSetoid' : (a b : A) → Setoid._∼_ cauchyCompletionSetoid (injection a) (injection b) → a ∼ b
+injectionPreservesSetoid' a b a=b = transferToRight additiveGroup (absZeroImpliesZero ans)
   where
-    t : (abs (a + inverse b) + abs (a + inverse b)) < abs (a + inverse b)
-    t = <WellDefined (Equivalence.reflexive eq) pr (ringAddInequalities a-b<a-b/2 a-b<a-b/2)
-    u : 0R < abs (a + inverse b)
-    u = a-bPos a!=b
-    v : (abs (a + inverse b) + abs (a + inverse b)) < (abs (a + inverse b) + abs (a + inverse b))
-    v = SetoidPartialOrder.transitive pOrder t (<WellDefined identLeft (Equivalence.reflexive eq) (orderRespectsAddition u (abs (a + inverse b))))
+    infinitesimal : {ε : A} → 0G < ε → abs (a + inverse b) < ε
+    infinitesimal {ε} 0<e with a=b ε 0<e
+    ... | N , pr with pr {succ N} (le 0 refl)
+    ... | bl rewrite indexAndApply (constSequence a) (map inverse (constSequence b)) _+_ {N} | indexAndConst a N | equalityCommutative (mapAndIndex (constSequence b) inverse N) | indexAndConst b N = bl
+    ans : (abs (a + inverse b)) ∼ 0G
+    ans with infinitesimalImplies0 _ infinitesimal
+    ... | inl x = x
+    ... | inr x = exFalso (absNonnegative x)
+
++CCommutative : {a b : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid (a +C b) (b +C a)
++CCommutative {a} {b} ε 0<e = 0 , ans
+  where
+    foo : {x y : A} → (x + y) + inverse (y + x) ∼ 0G
+    foo = Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq) (inverseWellDefined additiveGroup groupIsAbelian)) invRight
+    ans : {m : ℕ} → 0 <N m → abs (index (apply _+_ (CauchyCompletion.elts (a +C b)) (map inverse (CauchyCompletion.elts (b +C a)))) m) < ε
+    ans {m} 0<m rewrite indexAndApply (CauchyCompletion.elts (a +C b)) (map inverse (CauchyCompletion.elts (b +C a))) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts b) _+_ {m} | equalityCommutative (mapAndIndex (apply _+_ (CauchyCompletion.elts b) (CauchyCompletion.elts a)) inverse m) | indexAndApply (CauchyCompletion.elts b) (CauchyCompletion.elts a) _+_ {m} = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ foo) (identityOfIndiscernablesRight _∼_ (Equivalence.reflexive eq) (absZero order)) )) (Equivalence.reflexive eq) 0<e
 
 additionWellDefinedLeft : (a b c : CauchyCompletion) → Setoid._∼_ cauchyCompletionSetoid a b → Setoid._∼_ cauchyCompletionSetoid (a +C c) (b +C c)
 additionWellDefinedLeft a b c a=b ε 0<e = {!!}
 
+additionPreservedLeft : {a b : A} {c : CauchyCompletion} → (a ∼ b) → Setoid._∼_ cauchyCompletionSetoid (injection a +C c) (injection b +C c)
+additionPreservedLeft {a} {b} {c} a=b = additionWellDefinedLeft (injection a) (injection b) c (injectionPreservesSetoid a b a=b)
+
+additionPreservedRight : {a b : A} {c : CauchyCompletion} → (a ∼ b) → Setoid._∼_ cauchyCompletionSetoid (c +C injection a) (c +C injection b)
+additionPreservedRight {a} {b} {c} a=b = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {c +C injection a} {injection a +C c} {c +C injection b} (+CCommutative {c} {injection a}) (Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {injection a +C c} {injection b +C c} {c +C injection b} (additionPreservedLeft {a} {b} {c} a=b) (+CCommutative {injection b} {c}))
+
+additionPreserved : {a b c d : A} → (a ∼ b) → (c ∼ d) → Setoid._∼_ cauchyCompletionSetoid (injection a +C injection c) (injection b +C injection d)
+additionPreserved {a} {b} {c} {d} a=b c=d = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {injection a +C injection c} {injection a +C injection d} {injection b +C injection d} (additionPreservedRight {c} {d} {injection a} c=d) (additionPreservedLeft {a} {b} {injection d} a=b)
+
 additionWellDefinedRight : (a b c : CauchyCompletion) → Setoid._∼_ cauchyCompletionSetoid b c → Setoid._∼_ cauchyCompletionSetoid (a +C b) (a +C c)
-additionWellDefinedRight a b c a=b ε 0<e = {!!}
+additionWellDefinedRight a b c b=c = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {a +C b} {b +C a} {a +C c} (+CCommutative {a} {b}) (Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {b +C a} {c +C a} {a +C c} (additionWellDefinedLeft b c a b=c) (+CCommutative {c} {a}))
 
 additionWellDefined : {a b c d : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid a b → Setoid._∼_ cauchyCompletionSetoid c d → Setoid._∼_ cauchyCompletionSetoid (a +C c) (b +C d)
 additionWellDefined {a} {b} {c} {d} a=b c=d = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {a +C c} {a +C d} {b +C d} (additionWellDefinedRight a c d c=d) (additionWellDefinedLeft a b d a=b)

@@ -296,3 +296,21 @@ absRespectsTimes a b | inr 0=a | inr 0=b with totality 0R (a * b)
 absRespectsTimes a b | inr 0=a | inr 0=b | inl (inl 0<ab) = exFalso (irreflexive {0R} (<WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (*WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq 0=b)) timesZero) 0<ab))
 absRespectsTimes a b | inr 0=a | inr 0=b | inl (inr ab<0) = exFalso (irreflexive {0R} (<WellDefined (Equivalence.transitive eq (*WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq 0=b)) timesZero) (Equivalence.reflexive eq) ab<0))
 absRespectsTimes a b | inr 0=a | inr 0=b | inr 0=ab = Equivalence.reflexive eq
+
+absNonnegative : {a : A} → (abs a < 0R) → False
+absNonnegative {a} pr with SetoidTotalOrder.totality tOrder 0R a
+absNonnegative {a} pr | inl (inl x) = irreflexive {0G} (SetoidPartialOrder.transitive pOrder x pr)
+absNonnegative {a} pr | inl (inr x) = irreflexive {0G} (SetoidPartialOrder.transitive pOrder (<WellDefined (Equivalence.reflexive eq) (invTwice additiveGroup a) (lemm2 (inverse a) pr)) x)
+absNonnegative {a} pr | inr x = irreflexive {0G} (<WellDefined (Equivalence.symmetric eq x) (Equivalence.reflexive eq) pr)
+
+a-bPos : {a b : A} → ((a ∼ b) → False) → 0R < abs (a + inverse b)
+a-bPos {a} {b} a!=b with totality 0R (a + inverse b)
+a-bPos {a} {b} a!=b | inl (inl x) = x
+a-bPos {a} {b} a!=b | inl (inr x) = lemm2 _ x
+a-bPos {a} {b} a!=b | inr x = exFalso (a!=b (transferToRight additiveGroup (Equivalence.symmetric eq x)))
+
+absZeroImpliesZero : {a : A} → abs a ∼ 0R → a ∼ 0R
+absZeroImpliesZero {a} a=0 with totality 0R a
+absZeroImpliesZero {a} a=0 | inl (inl 0<a) = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) a=0 0<a))
+absZeroImpliesZero {a} a=0 | inl (inr a<0) = Equivalence.symmetric eq (lemm3 (inverse a) a (Equivalence.symmetric eq invLeft) (Equivalence.symmetric eq a=0))
+absZeroImpliesZero {a} a=0 | inr 0=a = a=0
