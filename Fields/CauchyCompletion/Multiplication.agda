@@ -43,7 +43,10 @@ CauchyCompletion.converges (record { elts = a ; converges = aConv } *C record { 
     ans {m} 0<m rewrite indexAndApply (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts b)) (map inverse (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts a))) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts b) _*_ {m} | equalityCommutative (mapAndIndex (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts a)) inverse m) | indexAndApply (CauchyCompletion.elts b) (CauchyCompletion.elts a) _*_ {m} = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ foo) (identityOfIndiscernablesRight _∼_ (Equivalence.reflexive eq) (absZero order)))) (Equivalence.reflexive eq) 0<e
 
 multiplicationWellDefinedLeft : (a b c : CauchyCompletion) → Setoid._∼_ cauchyCompletionSetoid a b → Setoid._∼_ cauchyCompletionSetoid (a *C c) (b *C c)
-multiplicationWellDefinedLeft a b c a=b ε 0<e = {!!}
+multiplicationWellDefinedLeft a b c a=b ε 0<e = 0 , ans
+  where
+    ans : {m : ℕ} → 0 <N m → abs (index (apply _+_ (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts c)) (map inverse (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts c)))) m) < ε
+    ans {m} N<m rewrite indexAndApply (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts c)) (map inverse (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts c))) _+_ {m} | equalityCommutative (mapAndIndex (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts c)) inverse m) | indexAndApply (CauchyCompletion.elts b) (CauchyCompletion.elts c) _*_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts c) _*_ {m} = {!!}
 
 multiplicationPreservedLeft : {a b : A} {c : CauchyCompletion} → (a ∼ b) → Setoid._∼_ cauchyCompletionSetoid (injection a *C c) (injection b *C c)
 multiplicationPreservedLeft {a} {b} {c} a=b = multiplicationWellDefinedLeft (injection a) (injection b) c (injectionPreservesSetoid a b a=b)

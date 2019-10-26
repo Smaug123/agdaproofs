@@ -26,21 +26,9 @@ open Ring R
 open Group additiveGroup
 open Field F
 
+open import Fields.Lemmas F
 open import Fields.CauchyCompletion.Definition order F
 open import Rings.Orders.Lemmas(order)
-
-halve : (a : A) → Sg A (λ i → i + i ∼ a)
-halve a with allInvertible (1R + 1R) charNot2
-... | 1/2 , pr1/2 = (a * 1/2) , Equivalence.transitive eq (+WellDefined *Commutative *Commutative) (Equivalence.transitive eq (Equivalence.symmetric eq (*DistributesOver+ {1/2} {a} {a})) (Equivalence.transitive eq (*WellDefined (Equivalence.reflexive eq) r) (Equivalence.transitive eq (*Associative) (Equivalence.transitive eq (*WellDefined pr1/2 (Equivalence.reflexive eq)) identIsIdent))))
-  where
-    r : a + a ∼ (1R + 1R) * a
-    r = Equivalence.symmetric eq (Equivalence.transitive eq *Commutative (Equivalence.transitive eq *DistributesOver+ (+WellDefined (Equivalence.transitive eq *Commutative identIsIdent) (Equivalence.transitive eq *Commutative identIsIdent))))
-
-halvePositive : (a : A) → 0R < (a + a) → 0R < a
-halvePositive a 0<2a with totality 0R a
-halvePositive a 0<2a | inl (inl x) = x
-halvePositive a 0<2a | inl (inr a<0) = exFalso (irreflexive {a + a} (SetoidPartialOrder.transitive pOrder (<WellDefined (Equivalence.reflexive eq) identRight (ringAddInequalities a<0 a<0)) 0<2a))
-halvePositive a 0<2a | inr x = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (+WellDefined (Equivalence.symmetric eq x) (Equivalence.symmetric eq x)) identRight) 0<2a))
 
 lemm : (m : ℕ) (a b : Sequence A) → index (apply _+_ a b) m ≡ (index a m) + (index b m)
 lemm zero a b = refl
@@ -48,7 +36,7 @@ lemm (succ m) a b = lemm m (Sequence.tail a) (Sequence.tail b)
 
 _+C_ : CauchyCompletion → CauchyCompletion → CauchyCompletion
 CauchyCompletion.elts (record { elts = a ; converges = convA } +C record { elts = b ; converges = convB }) = apply _+_ a b
-CauchyCompletion.converges (record { elts = a ; converges = convA } +C record { elts = b ; converges = convB }) ε 0<e with halve ε
+CauchyCompletion.converges (record { elts = a ; converges = convA } +C record { elts = b ; converges = convB }) ε 0<e with halve charNot2 ε
 ... | e/2 , e/2Pr with convA e/2 (halvePositive e/2 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq e/2Pr) 0<e))
 CauchyCompletion.converges (record { elts = a ; converges = convA } +C record { elts = b ; converges = convB }) ε 0<e | e/2 , e/2Pr | Na , prA with convB e/2 (halvePositive e/2 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq e/2Pr) 0<e))
 CauchyCompletion.converges (record { elts = a ; converges = convA } +C record { elts = b ; converges = convB }) ε 0<e | e/2 , e/2Pr | Na , prA | Nb , prB = (Na +N Nb) , t

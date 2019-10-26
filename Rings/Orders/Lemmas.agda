@@ -25,7 +25,6 @@ open Group additiveGroup
 
 open import Rings.Lemmas R
 
-
 ringAddInequalities : {w x y z : A} → w < x → y < z → (w + y) < (x + z)
 ringAddInequalities {w = w} {x} {y} {z} w<x y<z = transitive (orderRespectsAddition w<x y) (<WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition y<z x))
 
@@ -188,6 +187,9 @@ ringSwapNegatives {x} {y} -x<-y = SetoidPartialOrder.<WellDefined pOrder (Equiva
     v : ((y + (Group.inverse additiveGroup x)) + x) < (0R + x)
     v = OrderedRing.orderRespectsAddition order u x
 
+ringSwapNegatives' : {x y : A} → x < y → (Group.inverse (Ring.additiveGroup R) y) < (Group.inverse (Ring.additiveGroup R) x)
+ringSwapNegatives' {x} {y} x<y = ringSwapNegatives (<WellDefined (Equivalence.symmetric eq (invTwice additiveGroup _)) (Equivalence.symmetric eq (invTwice additiveGroup _)) x<y)
+
 ringCanMultiplyByNegative : {x y c : A} → c < (Ring.0R R) → x < y → (y * c) < (x * c)
 ringCanMultiplyByNegative {x} {y} {c} c<0 x<y = ringSwapNegatives u
   where
@@ -246,12 +248,12 @@ absNegation a | inr 0=a | inl (inl 0<-a) = exFalso (irreflexive {0G} (<WellDefin
 absNegation a | inr 0=a | inl (inr -a<0) = exFalso (irreflexive {0G} (<WellDefined (Equivalence.transitive eq (inverseWellDefined additiveGroup (Equivalence.symmetric eq 0=a)) (invIdent additiveGroup)) (Equivalence.reflexive eq) -a<0))
 absNegation a | inr 0=a | inr 0=-a = Equivalence.transitive eq (Equivalence.symmetric eq 0=a) 0=-a
 
-lemm4 : (a b : A) → (0G < a) → (b < 0G) → (a * b) < 0G
-lemm4 a b 0<a b<0 with orderRespectsMultiplication 0<a (lemm2 _ b<0)
+posTimesNeg : (a b : A) → (0G < a) → (b < 0G) → (a * b) < 0G
+posTimesNeg a b 0<a b<0 with orderRespectsMultiplication 0<a (lemm2 _ b<0)
 ... | bl = <WellDefined (invTwice additiveGroup _) (Equivalence.reflexive eq) (lemm2' _ (<WellDefined (Equivalence.reflexive eq) ringMinusExtracts bl))
 
-lemm5 : (a b : A) → (a < 0G) → (b < 0G) → 0G < (a * b)
-lemm5 a b a<0 b<0 with orderRespectsMultiplication (lemm2 _ a<0) (lemm2 _ b<0)
+negTimesPos : (a b : A) → (a < 0G) → (b < 0G) → 0G < (a * b)
+negTimesPos a b a<0 b<0 with orderRespectsMultiplication (lemm2 _ a<0) (lemm2 _ b<0)
 ... | bl = <WellDefined (Equivalence.reflexive eq) twoNegativesTimes bl
 
 absRespectsTimes : (a b : A) → abs (a * b) ∼ (abs a) * (abs b)
@@ -265,20 +267,20 @@ absRespectsTimes a b | inl (inl 0<a) | inl (inr b<0) with totality 0R (a * b)
 absRespectsTimes a b | inl (inl 0<a) | inl (inr b<0) | inl (inl 0<ab) with <WellDefined (Equivalence.reflexive eq) ringMinusExtracts (orderRespectsMultiplication 0<a (lemm2 b b<0))
 ... | bl = exFalso (irreflexive {0G} (SetoidPartialOrder.transitive pOrder 0<ab (<WellDefined (invTwice additiveGroup _) (Equivalence.reflexive eq) (lemm2' _ bl))))
 absRespectsTimes a b | inl (inl 0<a) | inl (inr b<0) | inl (inr ab<0) = Equivalence.symmetric eq ringMinusExtracts
-absRespectsTimes a b | inl (inl 0<a) | inl (inr b<0) | inr 0=ab = exFalso (irreflexive {0G} (<WellDefined (Equivalence.symmetric eq 0=ab) (Equivalence.reflexive eq) (lemm4 a b 0<a b<0)))
+absRespectsTimes a b | inl (inl 0<a) | inl (inr b<0) | inr 0=ab = exFalso (irreflexive {0G} (<WellDefined (Equivalence.symmetric eq 0=ab) (Equivalence.reflexive eq) (posTimesNeg a b 0<a b<0)))
 absRespectsTimes a b | inl (inl 0<a) | inr 0=b with totality 0R (a * b)
 absRespectsTimes a b | inl (inl 0<a) | inr 0=b | inl (inl 0<ab) = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (*WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq 0=b)) (timesZero {a})) 0<ab))
 absRespectsTimes a b | inl (inl 0<a) | inr 0=b | inl (inr ab<0) = exFalso ((irreflexive {0G} (<WellDefined (Equivalence.transitive eq (*WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq 0=b)) (timesZero {a})) (Equivalence.reflexive eq) ab<0)))
 absRespectsTimes a b | inl (inl 0<a) | inr 0=b | inr 0=ab = Equivalence.reflexive eq
 absRespectsTimes a b | inl (inr a<0) with totality 0R b
 absRespectsTimes a b | inl (inr a<0) | inl (inl 0<b) with totality 0R (a * b)
-absRespectsTimes a b | inl (inr a<0) | inl (inl 0<b) | inl (inl 0<ab) = exFalso (irreflexive {0G} (SetoidPartialOrder.transitive pOrder 0<ab (<WellDefined *Commutative (Equivalence.reflexive eq) (lemm4 b a 0<b a<0))))
+absRespectsTimes a b | inl (inr a<0) | inl (inl 0<b) | inl (inl 0<ab) = exFalso (irreflexive {0G} (SetoidPartialOrder.transitive pOrder 0<ab (<WellDefined *Commutative (Equivalence.reflexive eq) (posTimesNeg b a 0<b a<0))))
 absRespectsTimes a b | inl (inr a<0) | inl (inl 0<b) | inl (inr ab<0) = Equivalence.symmetric eq ringMinusExtracts'
-absRespectsTimes a b | inl (inr a<0) | inl (inl 0<b) | inr 0=ab = exFalso (irreflexive {0G} (<WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq 0=ab *Commutative)) (Equivalence.reflexive eq) (lemm4 b a 0<b a<0)))
+absRespectsTimes a b | inl (inr a<0) | inl (inl 0<b) | inr 0=ab = exFalso (irreflexive {0G} (<WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq 0=ab *Commutative)) (Equivalence.reflexive eq) (posTimesNeg b a 0<b a<0)))
 absRespectsTimes a b | inl (inr a<0) | inl (inr b<0) with totality 0R (a * b)
 absRespectsTimes a b | inl (inr a<0) | inl (inr b<0) | inl (inl 0<ab) = Equivalence.symmetric eq twoNegativesTimes
-absRespectsTimes a b | inl (inr a<0) | inl (inr b<0) | inl (inr ab<0) = exFalso (irreflexive {0G} (SetoidPartialOrder.transitive pOrder (lemm5 a b a<0 b<0) ab<0))
-absRespectsTimes a b | inl (inr a<0) | inl (inr b<0) | inr 0=ab = exFalso (exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq 0=ab) (lemm5 a b a<0 b<0))))
+absRespectsTimes a b | inl (inr a<0) | inl (inr b<0) | inl (inr ab<0) = exFalso (irreflexive {0G} (SetoidPartialOrder.transitive pOrder (negTimesPos a b a<0 b<0) ab<0))
+absRespectsTimes a b | inl (inr a<0) | inl (inr b<0) | inr 0=ab = exFalso (exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq 0=ab) (negTimesPos a b a<0 b<0))))
 absRespectsTimes a b | inl (inr a<0) | inr 0=b with totality 0R (a * b)
 absRespectsTimes a b | inl (inr a<0) | inr 0=b | inl (inl 0<ab) = exFalso (irreflexive {0R} (<WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (*WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq 0=b)) (timesZero {a})) 0<ab))
 absRespectsTimes a b | inl (inr a<0) | inr 0=b | inl (inr ab<0) = exFalso (irreflexive {0R} (<WellDefined (Equivalence.transitive eq (*WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq 0=b)) timesZero) (Equivalence.reflexive eq) ab<0))
@@ -314,3 +316,15 @@ absZeroImpliesZero {a} a=0 with totality 0R a
 absZeroImpliesZero {a} a=0 | inl (inl 0<a) = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) a=0 0<a))
 absZeroImpliesZero {a} a=0 | inl (inr a<0) = Equivalence.symmetric eq (lemm3 (inverse a) a (Equivalence.symmetric eq invLeft) (Equivalence.symmetric eq a=0))
 absZeroImpliesZero {a} a=0 | inr 0=a = a=0
+
+halvePositive : (a : A) → 0R < (a + a) → 0R < a
+halvePositive a 0<2a with totality 0R a
+halvePositive a 0<2a | inl (inl x) = x
+halvePositive a 0<2a | inl (inr a<0) = exFalso (irreflexive {a + a} (SetoidPartialOrder.transitive pOrder (<WellDefined (Equivalence.reflexive eq) identRight (ringAddInequalities a<0 a<0)) 0<2a))
+halvePositive a 0<2a | inr x = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (+WellDefined (Equivalence.symmetric eq x) (Equivalence.symmetric eq x)) identRight) 0<2a))
+
+0<1 : (0R ∼ 1R → False) → 0R < 1R
+0<1 0!=1 with SetoidTotalOrder.totality tOrder 0R 1R
+0<1 0!=1 | inl (inl x) = x
+0<1 0!=1 | inl (inr x) = <WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq twoNegativesTimes identIsIdent) (orderRespectsMultiplication (lemm2 1R x) (lemm2 1R x))
+0<1 0!=1 | inr x = exFalso (0!=1 x)
