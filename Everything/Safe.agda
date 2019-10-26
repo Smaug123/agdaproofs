@@ -19,7 +19,8 @@ open import Groups.Groups2
 open import Groups.SymmetryGroups
 
 open import Fields.Fields
-open import Fields.Orders
+open import Fields.Orders.Definition
+open import Fields.Orders.Lemmas
 open import Fields.FieldOfFractions
 open import Fields.FieldOfFractionsOrder
 
