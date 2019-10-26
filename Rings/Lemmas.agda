@@ -21,7 +21,7 @@ ringMinusExtracts {x = x} {y} = transferToRight' additiveGroup (transitive (symm
   where
     open Equivalence eq
 
-ringMinusExtracts' : {x y : A} → Setoid._∼_ S ((Group.inverse (Ring.additiveGroup R) x) * y) (Group.inverse (Ring.additiveGroup R) (x * y))
+ringMinusExtracts' : {x y : A} → ((inverse x) * y) ∼ inverse (x * y)
 ringMinusExtracts' {x = x} {y} = transitive *Commutative (transitive ringMinusExtracts (inverseWellDefined additiveGroup *Commutative))
   where
     open Equivalence eq
@@ -40,3 +40,6 @@ groupLemmaMove0G {S = S} G {x} pr = transitive (symmetric (invInv G)) (transitiv
 
 groupLemmaMove0G' : {a b : _} → {A : Set a} → {_·_ : A → A → A} → {S : Setoid {a} {b} A} → (G : Group S _·_) → {x : A} → Setoid._∼_ S x (Group.0G G) → (Setoid._∼_ S (Group.0G G) (Group.inverse G x))
 groupLemmaMove0G' {S = S} G {x} pr = transferToRight' G (Equivalence.transitive (Setoid.eq S) (Group.identLeft G) pr)
+
+oneZeroImpliesAllZero : 0R ∼ 1R → {x : A} → x ∼ 0R
+oneZeroImpliesAllZero 0=1 = Equivalence.transitive eq (Equivalence.symmetric eq identIsIdent) (Equivalence.transitive eq (*WellDefined (Equivalence.symmetric eq 0=1) (Equivalence.reflexive eq)) (Equivalence.transitive eq *Commutative timesZero))

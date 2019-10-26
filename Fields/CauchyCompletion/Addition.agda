@@ -26,22 +26,9 @@ open Ring R
 open Group additiveGroup
 open Field F
 
+open import Fields.Lemmas F
 open import Fields.CauchyCompletion.Definition order F
 open import Rings.Orders.Lemmas(order)
-
-halve : (a : A) → Sg A (λ i → i + i ∼ a)
--- TODO: we need to know the characteristic already
-halve a with allInvertible (1R + 1R) charNot2
-... | 1/2 , pr1/2 = (a * 1/2) , Equivalence.transitive eq (+WellDefined *Commutative *Commutative) (Equivalence.transitive eq (Equivalence.symmetric eq (*DistributesOver+ {1/2} {a} {a})) (Equivalence.transitive eq (*WellDefined (Equivalence.reflexive eq) r) (Equivalence.transitive eq (*Associative) (Equivalence.transitive eq (*WellDefined pr1/2 (Equivalence.reflexive eq)) identIsIdent))))
-  where
-    r : a + a ∼ (1R + 1R) * a
-    r = Equivalence.symmetric eq (Equivalence.transitive eq *Commutative (Equivalence.transitive eq *DistributesOver+ (+WellDefined (Equivalence.transitive eq *Commutative identIsIdent) (Equivalence.transitive eq *Commutative identIsIdent))))
-
-halvePositive : (a : A) → 0R < (a + a) → 0R < a
-halvePositive a 0<2a with totality 0R a
-halvePositive a 0<2a | inl (inl x) = x
-halvePositive a 0<2a | inl (inr a<0) = exFalso (irreflexive {a + a} (SetoidPartialOrder.transitive pOrder (<WellDefined (Equivalence.reflexive eq) identRight (ringAddInequalities a<0 a<0)) 0<2a))
-halvePositive a 0<2a | inr x = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (+WellDefined (Equivalence.symmetric eq x) (Equivalence.symmetric eq x)) identRight) 0<2a))
 
 lemm : (m : ℕ) (a b : Sequence A) → index (apply _+_ a b) m ≡ (index a m) + (index b m)
 lemm zero a b = refl
@@ -49,7 +36,7 @@ lemm (succ m) a b = lemm m (Sequence.tail a) (Sequence.tail b)
 
 _+C_ : CauchyCompletion → CauchyCompletion → CauchyCompletion
 CauchyCompletion.elts (record { elts = a ; converges = convA } +C record { elts = b ; converges = convB }) = apply _+_ a b
-CauchyCompletion.converges (record { elts = a ; converges = convA } +C record { elts = b ; converges = convB }) ε 0<e with halve ε
+CauchyCompletion.converges (record { elts = a ; converges = convA } +C record { elts = b ; converges = convB }) ε 0<e with halve charNot2 ε
 ... | e/2 , e/2Pr with convA e/2 (halvePositive e/2 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq e/2Pr) 0<e))
 CauchyCompletion.converges (record { elts = a ; converges = convA } +C record { elts = b ; converges = convB }) ε 0<e | e/2 , e/2Pr | Na , prA with convB e/2 (halvePositive e/2 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq e/2Pr) 0<e))
 CauchyCompletion.converges (record { elts = a ; converges = convA } +C record { elts = b ; converges = convB }) ε 0<e | e/2 , e/2Pr | Na , prA | Nb , prB = (Na +N Nb) , t
@@ -60,3 +47,14 @@ CauchyCompletion.converges (record { elts = a ; converges = convA } +C record { 
     ... | bm-bn<e/2 with triangleInequality (index a m + inverse (index a n)) (index b m + inverse (index b n))
     ... | inl tri rewrite lemm m a b | lemm n a b = SetoidPartialOrder.<WellDefined pOrder (Equivalence.reflexive eq) e/2Pr (SetoidPartialOrder.transitive pOrder {_} {(abs ((index a m) + (inverse (index a n)))) + (abs ((index b m) + (inverse (index b n))))} (<WellDefined (absWellDefined _ _ (Equivalence.transitive eq (Equivalence.symmetric eq (+Associative {index a m})) (Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq {index a m}) (Equivalence.transitive eq groupIsAbelian (Equivalence.transitive eq (Equivalence.symmetric eq (+Associative {index b m})) (+WellDefined (Equivalence.reflexive eq {index b m}) (Equivalence.symmetric eq (invContravariant additiveGroup)))))) (+Associative {index a m})))) (Equivalence.reflexive eq) tri) (ringAddInequalities am-an<e/2 bm-bn<e/2))
     ... | inr tri rewrite lemm m a b | lemm n a b = SetoidPartialOrder.<WellDefined pOrder (Equivalence.reflexive eq) e/2Pr (<WellDefined (Equivalence.transitive eq (Equivalence.symmetric eq tri) (absWellDefined _ _ (Equivalence.transitive eq (Equivalence.symmetric eq (+Associative {index a m})) (Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq {index a m}) (Equivalence.transitive eq groupIsAbelian (Equivalence.transitive eq (Equivalence.symmetric eq (+Associative {index b m})) (+WellDefined (Equivalence.reflexive eq {index b m}) (Equivalence.symmetric eq (invContravariant additiveGroup)))))) (+Associative {index a m}))))) (Equivalence.reflexive eq) (ringAddInequalities am-an<e/2 bm-bn<e/2))
+
+inverseDistributes : {r s : A} → inverse (r + s) ∼ inverse r + inverse s
+inverseDistributes = Equivalence.transitive eq (invContravariant additiveGroup) groupIsAbelian
+
+-C_ : CauchyCompletion → CauchyCompletion
+CauchyCompletion.elts (-C a) = map inverse (CauchyCompletion.elts a)
+CauchyCompletion.converges (-C record { elts = elts ; converges = converges }) ε 0<e with converges ε 0<e
+CauchyCompletion.converges (-C record { elts = elts ; converges = converges }) ε 0<e | N , prN = N , ans
+  where
+    ans : {m n : ℕ} → (N <N m) → (N <N n) → abs ((index (map inverse elts) m) + inverse (index (map inverse elts) n)) < ε
+    ans {m} {n} N<m N<n = <WellDefined (Equivalence.transitive eq (absWellDefined _ _ (Equivalence.reflexive eq)) (Equivalence.transitive eq (absNegation (index elts m + inverse (index elts n))) (absWellDefined _ _ (Equivalence.transitive eq inverseDistributes (+WellDefined (identityOfIndiscernablesLeft _∼_ (Equivalence.reflexive eq) (equalityCommutative (mapAndIndex elts inverse m))) (inverseWellDefined additiveGroup (identityOfIndiscernablesLeft _∼_ (Equivalence.reflexive eq) (equalityCommutative (mapAndIndex elts inverse n))))))))) (Equivalence.reflexive eq) (prN N<m N<n)

@@ -19,6 +19,8 @@ open import Groups.Groups2
 open import Groups.SymmetryGroups
 
 open import Fields.Fields
+open import Fields.Orders.Definition
+open import Fields.Orders.Lemmas
 open import Fields.FieldOfFractions
 open import Fields.FieldOfFractionsOrder
 
@@ -53,7 +55,7 @@ open import Monoids.Definition
 open import Semirings.Definition
 open import Semirings.Solver
 
-open import Fields.CauchyCompletion.Definition
-open import Fields.CauchyCompletion.Addition
+open import Fields.CauchyCompletion.Group
+open import Fields.CauchyCompletion.Comparison
 
 module Everything.Safe where
