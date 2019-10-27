@@ -56,6 +56,6 @@ open import Semirings.Definition
 open import Semirings.Solver
 
 open import Fields.CauchyCompletion.Group
-open import Fields.CauchyCompletion.Comparison
+open import Fields.CauchyCompletion.Approximation
 
 module Everything.Safe where
