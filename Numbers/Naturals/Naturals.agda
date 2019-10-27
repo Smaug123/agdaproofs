@@ -560,3 +560,6 @@ module Numbers.Naturals.Naturals where
 
   inequalityShrinkLeft : {a b c : ℕ} → a +N b <N c → a <N c
   inequalityShrinkLeft {a} {b} {c} (le x proof) = le (x +N b) (transitivity (applyEquality succ (transitivity (additionNIsAssociative x b a) (applyEquality (x +N_) (additionNIsCommutative b a)))) proof)
+
+  <NWellDefined' : {a b c d : ℕ} → a ≡ c → b ≡ d → a <N b → c <N d
+  <NWellDefined' {a} {b} {c} {d} a=c b=d a<b rewrite a=c | b=d = a<b
