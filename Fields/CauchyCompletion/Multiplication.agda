@@ -1,4 +1,4 @@
-{-# OPTIONS --warning=error --without-K --guardedness #-}
+{-# OPTIONS --safe --warning=error --without-K --guardedness #-}
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
@@ -55,10 +55,7 @@ multiplicationWellDefinedLeft' : (0!=1 : 0R ∼ 1R → False) (a b c : CauchyCom
 multiplicationWellDefinedLeft' 0!=1 a b c a=b ε 0<e = N , ans
   where
     cBound : A
-    cBound with SetoidTotalOrder.totality tOrder 0R c
-    ... | inl (inl 0<c) = ?
-    ... | inl (inr 0<c) = ?
-    ... | inr 0=c = ?
+    cBound = ?
     0<cBound : 0G < cBound
     0<cBound = {!!}
     e/c : A
