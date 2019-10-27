@@ -138,6 +138,9 @@ ringCanMultiplyByPositive {x} {y} {c} 0<c x<y = SetoidPartialOrder.<WellDefined 
     q' : (x * c) < ((y * c) + 0R)
     q' = SetoidPartialOrder.<WellDefined pOrder (Group.identLeft additiveGroup) (Equivalence.transitive eq (symmetric (Group.+Associative additiveGroup)) (Group.+WellDefined additiveGroup reflexive (Group.invLeft additiveGroup))) q
 
+ringMultiplyPositives : {x y a b : A} → 0R < x → 0R < a → (x < y) → (a < b) → (x * a) < (y * b)
+ringMultiplyPositives {x} {y} {a} {b} 0<x 0<a x<y a<b = SetoidPartialOrder.transitive pOrder (ringCanMultiplyByPositive 0<a x<y) (<WellDefined *Commutative *Commutative (ringCanMultiplyByPositive (SetoidPartialOrder.transitive pOrder 0<x x<y) a<b))
+
 ringCanCancelPositive : {x y c : A} → (Ring.0R R) < c → (x * c) < (y * c) → x < y
 ringCanCancelPositive {x} {y} {c} 0<c xc<yc = SetoidPartialOrder.<WellDefined pOrder (Group.identLeft additiveGroup) (Equivalence.transitive eq (symmetric (Group.+Associative additiveGroup)) (Equivalence.transitive eq (Group.+WellDefined additiveGroup reflexive (Group.invLeft additiveGroup)) (Group.identRight additiveGroup))) q''
   where
@@ -328,3 +331,13 @@ halvePositive a 0<2a | inr x = exFalso (irreflexive {0G} (<WellDefined (Equivale
 0<1 0!=1 | inl (inl x) = x
 0<1 0!=1 | inl (inr x) = <WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq twoNegativesTimes identIsIdent) (orderRespectsMultiplication (lemm2 1R x) (lemm2 1R x))
 0<1 0!=1 | inr x = exFalso (0!=1 x)
+
+addingAbsCannotShrink : {a b : A} → 0G < b → 0G < ((abs a) + b)
+addingAbsCannotShrink {a} {b} 0<b with SetoidTotalOrder.totality tOrder 0G a
+addingAbsCannotShrink {a} {b} 0<b | inl (inl x) = <WellDefined identLeft (Equivalence.reflexive eq) (ringAddInequalities x 0<b)
+addingAbsCannotShrink {a} {b} 0<b | inl (inr x) = <WellDefined identLeft (Equivalence.reflexive eq) (ringAddInequalities (lemm2 a x) 0<b)
+addingAbsCannotShrink {a} {b} 0<b | inr x = <WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (Equivalence.symmetric eq identLeft) (+WellDefined x (Equivalence.reflexive eq))) 0<b
+
+1<0False : (1R < 0R) → False
+1<0False 1<0 with orderRespectsMultiplication (lemm2 _ 1<0) (lemm2 _ 1<0)
+... | bl = exFalso (irreflexive (SetoidPartialOrder.transitive pOrder 1<0 (<WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (twoNegativesTimes) identIsIdent) bl)))

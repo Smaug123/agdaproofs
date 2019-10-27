@@ -46,3 +46,7 @@ halveInequality' x y 1/2 pr1/2 x<2y with halveInequality (inverse y) (inverse x)
 dense : (charNot2 : ((1R + 1R) ∼ 0R) → False) {x y : A} → (x < y) → Sg A (λ i → (x < i) && (i < y))
 dense charNot2 {x} {y} x<y with halve charNot2 1R
 dense charNot2 {x} {y} x<y | 1/2 , pr1/2 = ((x + y) * 1/2) , (halveInequality x (x + y) 1/2 pr1/2 (<WellDefined (Equivalence.reflexive eq) groupIsAbelian (orderRespectsAddition x<y x)) ,, halveInequality' (x + y) y 1/2 pr1/2 (orderRespectsAddition x<y y))
+
+halfLess : (e/2 e : A) → (0<e : 0G < e) → (pr : e/2 + e/2 ∼ e) → e/2 < e
+halfLess e/2 e 0<e pr with halvePositive e/2 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq pr) 0<e)
+... | 0<e/2 = <WellDefined identLeft pr (orderRespectsAddition 0<e/2 e/2)

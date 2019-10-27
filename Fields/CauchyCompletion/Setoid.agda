@@ -131,3 +131,6 @@ additionHom x y ε 0<e = 0 , ans
 CInjection : SetoidInjection S cauchyCompletionSetoid injection
 SetoidInjection.wellDefined CInjection {x} {y} x=y = injectionPreservesSetoid x y x=y
 SetoidInjection.injective CInjection {x} {y} x=y = injectionPreservesSetoid' x y x=y
+
+trivialIfInputTrivial : (0R ∼ 1R) → (a : CauchyCompletion) → Setoid._∼_ cauchyCompletionSetoid (injection 0R) a
+trivialIfInputTrivial 0=1 a ε 0<e = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (oneZeroImpliesAllZero R 0=1) 0<e))
