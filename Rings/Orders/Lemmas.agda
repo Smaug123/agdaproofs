@@ -341,3 +341,27 @@ addingAbsCannotShrink {a} {b} 0<b | inr x = <WellDefined (Equivalence.reflexive 
 1<0False : (1R < 0R) → False
 1<0False 1<0 with orderRespectsMultiplication (lemm2 _ 1<0) (lemm2 _ 1<0)
 ... | bl = exFalso (irreflexive (SetoidPartialOrder.transitive pOrder 1<0 (<WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (twoNegativesTimes) identIsIdent) bl)))
+
+greaterZeroImpliesEqualAbs : {a : A} → 0R < a → a ∼ abs a
+greaterZeroImpliesEqualAbs {a} 0<a with totality 0R a
+... | inl (inl _) = Equivalence.reflexive eq
+... | inl (inr a<0) = exFalso (irreflexive (SetoidPartialOrder.transitive pOrder a<0 0<a))
+... | inr 0=a = exFalso (irreflexive (<WellDefined 0=a (Equivalence.reflexive eq) 0<a))
+
+lessZeroImpliesEqualNegAbs : {a : A} → a < 0R → abs a ∼ inverse a
+lessZeroImpliesEqualNegAbs {a} a<0 with totality 0R a
+... | inl (inr _) = Equivalence.reflexive eq
+... | inl (inl 0<a) = exFalso (irreflexive (SetoidPartialOrder.transitive pOrder a<0 0<a))
+... | inr 0=a = exFalso (irreflexive (<WellDefined (Equivalence.reflexive eq) 0=a a<0))
+
+absZeroIsZero : abs 0R ∼ 0R
+absZeroIsZero with totality 0R 0R
+... | inl (inl bad) = exFalso (irreflexive bad)
+... | inl (inr bad) = exFalso (irreflexive bad)
+... | inr _ = Equivalence.reflexive eq
+
+greaterThanAbsImpliesGreaterThan0 : {a b : A} → (abs a) < b → 0R < b
+greaterThanAbsImpliesGreaterThan0 {a} {b} a<b with totality 0R a
+greaterThanAbsImpliesGreaterThan0 {a} {b} a<b | inl (inl 0<a) = SetoidPartialOrder.transitive pOrder 0<a a<b
+greaterThanAbsImpliesGreaterThan0 {a} {b} a<b | inl (inr a<0) = SetoidPartialOrder.transitive pOrder (lemm2 _ a<0) a<b
+greaterThanAbsImpliesGreaterThan0 {a} {b} a<b | inr 0=a = <WellDefined (Equivalence.symmetric eq 0=a) (Equivalence.reflexive eq) a<b
