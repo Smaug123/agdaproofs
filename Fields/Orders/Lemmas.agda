@@ -50,3 +50,13 @@ dense charNot2 {x} {y} x<y | 1/2 , pr1/2 = ((x + y) * 1/2) , (halveInequality x 
 halfLess : (e/2 e : A) → (0<e : 0G < e) → (pr : e/2 + e/2 ∼ e) → e/2 < e
 halfLess e/2 e 0<e pr with halvePositive e/2 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq pr) 0<e)
 ... | 0<e/2 = <WellDefined identLeft pr (orderRespectsAddition 0<e/2 e/2)
+
+inversePositiveIsPositive : {a b : A} → (a * b) ∼ 1R → 0R < b → 0R < a
+inversePositiveIsPositive {a} {b} ab=1 0<b with SetoidTotalOrder.totality tOrder 0R a
+inversePositiveIsPositive {a} {b} ab=1 0<b | inl (inl 0<a) = 0<a
+inversePositiveIsPositive {a} {b} ab=1 0<b | inl (inr a<0) with <WellDefined *Commutative (Equivalence.reflexive eq) (posTimesNeg _ _ 0<b a<0)
+... | ab<0 = exFalso (1<0False (<WellDefined ab=1 (Equivalence.reflexive eq) ab<0))
+inversePositiveIsPositive {a} {b} ab=1 0<b | inr 0=a = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (oneZeroImpliesAllZero R 0=1) 0<b))
+  where
+    0=1 : 0R ∼ 1R
+    0=1 = Equivalence.transitive eq (Equivalence.symmetric eq (Equivalence.transitive eq (*WellDefined (Equivalence.symmetric eq 0=a) (Equivalence.reflexive eq)) (Equivalence.transitive eq *Commutative timesZero))) ab=1
