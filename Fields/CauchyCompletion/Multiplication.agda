@@ -54,10 +54,22 @@ absBoundedImpliesBounded {a} {b} a<b | inr x = a<b
 multiplicationWellDefinedLeft' : (0!=1 : 0R ∼ 1R → False) (a b c : CauchyCompletion) → Setoid._∼_ cauchyCompletionSetoid a b → Setoid._∼_ cauchyCompletionSetoid (a *C c) (b *C c)
 multiplicationWellDefinedLeft' 0!=1 a b c a=b ε 0<e = N , ans
   where
+    cBoundAndPr : Sg A (λ b → Sg ℕ (λ N → (m : ℕ) → (N <N m) → (abs (index (CauchyCompletion.elts c) m)) < b))
+    cBoundAndPr = boundModulus 0!=1 c
     cBound : A
-    cBound = ?
+    cBound with cBoundAndPr
+    ... | a , _ = a
+    cBoundN : ℕ
+    cBoundN with cBoundAndPr
+    ... | _ , (N , _) = N
+    cBoundPr : (m : ℕ) → (cBoundN <N m) → (abs (index (CauchyCompletion.elts c) m)) < cBound
+    cBoundPr with cBoundAndPr
+    ... | _ , (_ , pr) = pr
     0<cBound : 0G < cBound
-    0<cBound = {!!}
+    0<cBound with totality 0G cBound
+    0<cBound | inl (inl 0<cBound) = 0<cBound
+    0<cBound | inl (inr cBound<0) = exFalso (absNonnegative (SetoidPartialOrder.transitive pOrder (cBoundPr (succ cBoundN) (le 0 refl)) cBound<0))
+    0<cBound | inr 0=cBound = exFalso (absNonnegative (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq 0=cBound) (cBoundPr (succ cBoundN) (le 0 refl))))
     e/c : A
     e/c with allInvertible cBound (λ pr → irreflexive (<WellDefined (Equivalence.reflexive eq) pr 0<cBound))
     ... | (1/c , _) = ε * 1/c
@@ -73,9 +85,9 @@ multiplicationWellDefinedLeft' 0!=1 a b c a=b ε 0<e = N , ans
     abPr with a=b e/c 0<e/c
     ... | Na=b , pr = pr
     N : ℕ
-    N = abBound +N {!!}
+    N = abBound +N cBoundN
     cBounded : (m : ℕ) → (N <N m) → abs (index (CauchyCompletion.elts c) m) < cBound
-    cBounded m N<m = {!SetoidPartialOrder.transitive pOrder !}
+    cBounded m N<m = cBoundPr m (inequalityShrinkRight N<m)
     a-bSmall : (m : ℕ) → N <N m → abs ((index (CauchyCompletion.elts a) m) + inverse (index (CauchyCompletion.elts b) m)) < e/c
     a-bSmall m N<m with abPr {m} (inequalityShrinkLeft N<m)
     ... | f rewrite indexAndApply (CauchyCompletion.elts a) (map inverse (CauchyCompletion.elts b)) _+_ {m} | equalityCommutative (mapAndIndex (CauchyCompletion.elts b) inverse m) = f
