@@ -365,3 +365,15 @@ greaterThanAbsImpliesGreaterThan0 {a} {b} a<b with totality 0R a
 greaterThanAbsImpliesGreaterThan0 {a} {b} a<b | inl (inl 0<a) = SetoidPartialOrder.transitive pOrder 0<a a<b
 greaterThanAbsImpliesGreaterThan0 {a} {b} a<b | inl (inr a<0) = SetoidPartialOrder.transitive pOrder (lemm2 _ a<0) a<b
 greaterThanAbsImpliesGreaterThan0 {a} {b} a<b | inr 0=a = <WellDefined (Equivalence.symmetric eq 0=a) (Equivalence.reflexive eq) a<b
+
+anyComparisonImpliesNontrivial : {a b : A} → a < b → (0R ∼ 1R) → False
+anyComparisonImpliesNontrivial {a} {b} a<b 0=1 = irreflexive (<WellDefined (oneZeroImpliesAllZero 0=1) (oneZeroImpliesAllZero 0=1) a<b)
+
+abs1Is1 : abs 1R ∼ 1R
+abs1Is1 with totality 0R 1R
+abs1Is1 | inl (inl 0<1) = Equivalence.reflexive eq
+abs1Is1 | inl (inr 1<0) = exFalso (1<0False 1<0)
+abs1Is1 | inr 0=1 = Equivalence.reflexive eq
+
+charNot2ImpliesNontrivial : ((1R + 1R) ∼ 0R → False) → (0R ∼ 1R) → False
+charNot2ImpliesNontrivial charNot2 0=1 = charNot2 (Equivalence.transitive eq (+WellDefined (Equivalence.symmetric eq 0=1) (Equivalence.symmetric eq 0=1)) identRight)
