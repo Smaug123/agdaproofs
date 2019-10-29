@@ -1,4 +1,4 @@
-{-# OPTIONS --allow-unsolved-metas --warning=error --without-K --guardedness #-}
+{-# OPTIONS --safe --warning=error --without-K --guardedness #-}
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
@@ -44,6 +44,12 @@ c*Ident {a} ε 0<e = 0 , ans
     ans : {m : ℕ} → 0 <N m → abs (index (apply _+_ (CauchyCompletion.elts (injection (Ring.1R R) *C a)) (map inverse (CauchyCompletion.elts a))) m) < ε
     ans {m} 0<m rewrite indexAndApply (CauchyCompletion.elts (injection (Ring.1R R) *C a)) (map inverse (CauchyCompletion.elts a)) _+_ {m} | indexAndApply (constSequence (Ring.1R R)) (CauchyCompletion.elts a) _*_ {m} | equalityCommutative (mapAndIndex (CauchyCompletion.elts a) inverse m) | indexAndConst (Ring.1R R) m = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ (transferToRight'' (Ring.additiveGroup R) (Ring.identIsIdent R))) (identityOfIndiscernablesRight _∼_ (Equivalence.reflexive eq) (absZero order)))) (Equivalence.reflexive eq) 0<e
 
+*CDistribute : {a b c : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid (a *C (b +C c)) ((a *C b) +C (a *C c))
+*CDistribute {a} {b} {c} e 0<e = 0 , ans
+  where
+    ans : {m : ℕ} → 0 <N m → abs (index (apply _+_ (CauchyCompletion.elts (a *C (b +C c))) (map inverse (CauchyCompletion.elts ((a *C b) +C (a *C c))))) m) < e
+    ans {m} N<m rewrite indexAndApply (CauchyCompletion.elts (a *C (b +C c))) (map inverse (CauchyCompletion.elts ((a *C b) +C (a *C c)))) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (apply _+_ (CauchyCompletion.elts b) (CauchyCompletion.elts c)) _*_ {m} | equalityCommutative (mapAndIndex (apply _+_ (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts b)) (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts c))) inverse m) | indexAndApply (CauchyCompletion.elts b) (CauchyCompletion.elts c) _+_ {m} | indexAndApply (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts b)) (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts c)) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts b) _*_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts c) _*_ {m} = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ (transferToRight'' (Ring.additiveGroup R) (Ring.*DistributesOver+ R))) (absZeroIsZero))) (Equivalence.reflexive eq) 0<e
+
 CRing : Ring cauchyCompletionSetoid _+C_ _*C_
 Ring.additiveGroup CRing = CGroup
 Ring.*WellDefined CRing {a} {b} {c} {d} r=t s=u = multiplicationWellDefined {a} {c} {b} {d} r=t s=u
@@ -51,5 +57,5 @@ Ring.1R CRing = injection (Ring.1R R)
 Ring.groupIsAbelian CRing {a} {b} = +CCommutative {a} {b}
 Ring.*Associative CRing {a} {b} {c} = c*Assoc {a} {b} {c}
 Ring.*Commutative CRing {a} {b} = *CCommutative {a} {b}
-Ring.*DistributesOver+ CRing = {!!}
+Ring.*DistributesOver+ CRing {a} {b} {c} = *CDistribute {a} {b} {c}
 Ring.identIsIdent CRing {a} = c*Ident {a}
