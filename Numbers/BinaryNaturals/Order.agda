@@ -286,18 +286,18 @@ module Numbers.BinaryNaturals.Order where
   chopDouble a b i with orderIsTotal (binNatToN a) (binNatToN b)
   chopDouble a b zero | inl (inl a<b) with orderIsTotal (2 *N binNatToN a) (2 *N binNatToN b)
   chopDouble a b zero | inl (inl a<b) | inl (inl x) = refl
-  chopDouble a b zero | inl (inl a<b) | inl (inr b<a) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) b<a (lessRespectsMultiplicationLeft (binNatToN a) (binNatToN b) 2 a<b (le 1 refl))))
+  chopDouble a b zero | inl (inl a<b) | inl (inr b<a) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) b<a (lessRespectsMultiplicationLeft (binNatToN a) (binNatToN b) 2 a<b (le 1 refl))))
   chopDouble a b zero | inl (inl a<b) | inr a=b rewrite productCancelsLeft 2 (binNatToN a) (binNatToN b) (le 1 refl) a=b = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) a<b)
   chopDouble a b one | inl (inl a<b) with orderIsTotal (2 *N binNatToN a) (2 *N binNatToN b)
   chopDouble a b one | inl (inl a<b) | inl (inl 2a<2b) = refl
-  chopDouble a b one | inl (inl a<b) | inl (inr 2b<2a) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) a<b (cancelInequalityLeft {2} 2b<2a)))
+  chopDouble a b one | inl (inl a<b) | inl (inr 2b<2a) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) a<b (cancelInequalityLeft {2} 2b<2a)))
   chopDouble a b one | inl (inl a<b) | inr 2a=2b rewrite productCancelsLeft 2 (binNatToN a) (binNatToN b) (le 1 refl) 2a=2b = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) a<b)
   chopDouble a b zero | inl (inr b<a) with orderIsTotal (2 *N binNatToN a) (2 *N binNatToN b)
-  chopDouble a b zero | inl (inr b<a) | inl (inl 2a<2b) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) b<a (cancelInequalityLeft {2} {binNatToN a} {binNatToN b} 2a<2b)))
+  chopDouble a b zero | inl (inr b<a) | inl (inl 2a<2b) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) b<a (cancelInequalityLeft {2} {binNatToN a} {binNatToN b} 2a<2b)))
   chopDouble a b zero | inl (inr b<a) | inl (inr 2b<2a) = refl
   chopDouble a b zero | inl (inr b<a) | inr 2a=2b rewrite productCancelsLeft 2 (binNatToN a) (binNatToN b) (le 1 refl) 2a=2b = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) b<a)
   chopDouble a b one | inl (inr b<a) with orderIsTotal (2 *N binNatToN a) (2 *N binNatToN b)
-  chopDouble a b one | inl (inr b<a) | inl (inl 2a<2b) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) b<a (cancelInequalityLeft {2} 2a<2b)))
+  chopDouble a b one | inl (inr b<a) | inl (inl 2a<2b) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) b<a (cancelInequalityLeft {2} 2a<2b)))
   chopDouble a b one | inl (inr b<a) | inl (inr x) = refl
   chopDouble a b one | inl (inr b<a) | inr 2a=2b rewrite productCancelsLeft 2 (binNatToN a) (binNatToN b) (le 1 refl) 2a=2b = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) b<a)
   chopDouble a b i | inr x with orderIsTotal (binNatToN (i :: a)) (binNatToN (i :: b))
@@ -329,19 +329,19 @@ module Numbers.BinaryNaturals.Order where
        t : a <BInherited b ≡ FirstLess
        t with orderIsTotal (binNatToN a) (binNatToN b)
        t | inl (inl x) = refl
-       t | inl (inr x) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) x a<b))
+       t | inl (inr x) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) x a<b))
        t | inr x rewrite x = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) a<b)
        indHyp : FirstLess ≡ go<B Equal a b
        indHyp = transitivity (equalityCommutative t) (<BIsInherited a b)
   <BIsInherited (zero :: a) (one :: b) | inl (inl 2a<2b+1) | inl (inr b<a) = exFalso (noIntegersBetweenXAndSuccX {2 *N binNatToN a} (2 *N binNatToN b) (lessRespectsMultiplicationLeft (binNatToN b) (binNatToN a) 2 b<a (le 1 refl)) 2a<2b+1)
   <BIsInherited (zero :: a) (one :: b) | inl (inl 2a<2b+1) | inr a=b rewrite a=b | canonicalFirst a b FirstLess | canonicalSecond (canonical a) b FirstLess | transitivity (equalityCommutative (binToBin a)) (transitivity (applyEquality NToBinNat a=b) (binToBin b)) = equalityCommutative (lemma1 (canonical b))
   <BIsInherited (zero :: a) (one :: b) | inl (inr 2b+1<2a) with orderIsTotal (binNatToN a) (binNatToN b)
-  <BIsInherited (zero :: a) (one :: b) | inl (inr 2b+1<2a) | inl (inl a<b) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) 2b+1<2a (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) (lessRespectsMultiplicationLeft (binNatToN a) (binNatToN b) 2 a<b (le 1 refl)) (le zero refl))))
+  <BIsInherited (zero :: a) (one :: b) | inl (inr 2b+1<2a) | inl (inl a<b) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) 2b+1<2a (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) (lessRespectsMultiplicationLeft (binNatToN a) (binNatToN b) 2 a<b (le 1 refl)) (le zero refl))))
   <BIsInherited (zero :: a) (one :: b) | inl (inr 2b+1<2a) | inl (inr b<a) = equalityCommutative (equalToFirstGreater FirstLess a b (equalityCommutative indHyp))
     where
       t : a <BInherited b ≡ FirstGreater
       t with orderIsTotal (binNatToN a) (binNatToN b)
-      t | inl (inl x) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) x b<a))
+      t | inl (inl x) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) x b<a))
       t | inl (inr x) = refl
       t | inr x rewrite x = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) b<a)
       indHyp : FirstGreater ≡ go<B Equal a b
@@ -354,12 +354,12 @@ module Numbers.BinaryNaturals.Order where
     where
       t : a <BInherited b ≡ FirstLess
       t with orderIsTotal (binNatToN a) (binNatToN b)
-      t | inl (inr x) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) x a<b))
+      t | inl (inr x) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) x a<b))
       t | inl (inl x) = refl
       t | inr x rewrite x = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) a<b)
       indHyp : FirstLess ≡ go<B Equal a b
       indHyp = transitivity (equalityCommutative t) (<BIsInherited a b)
-  <BIsInherited (one :: a) (zero :: b) | inl (inl 2a+1<2b) | inl (inr b<a) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) 2a+1<2b (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) (lessRespectsMultiplicationLeft (binNatToN b) (binNatToN a) 2 b<a (le 1 refl)) (le zero refl))))
+  <BIsInherited (one :: a) (zero :: b) | inl (inl 2a+1<2b) | inl (inr b<a) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) 2a+1<2b (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) (lessRespectsMultiplicationLeft (binNatToN b) (binNatToN a) 2 b<a (le 1 refl)) (le zero refl))))
   <BIsInherited (one :: a) (zero :: b) | inl (inl 2a+1<2b) | inr a=b rewrite a=b = exFalso (succNotLess 2a+1<2b)
   <BIsInherited (one :: a) (zero :: b) | inl (inr 2b<2a+1) with orderIsTotal (binNatToN a) (binNatToN b)
   <BIsInherited (one :: a) (zero :: b) | inl (inr 2b<2a+1) | inl (inl a<b) = exFalso (noIntegersBetweenXAndSuccX {2 *N binNatToN b} (2 *N binNatToN a) (lessRespectsMultiplicationLeft (binNatToN a) (binNatToN b) 2 a<b (le 1 refl)) 2b<2a+1)
@@ -367,7 +367,7 @@ module Numbers.BinaryNaturals.Order where
     where
       t : a <BInherited b ≡ FirstGreater
       t with orderIsTotal (binNatToN a) (binNatToN b)
-      t | inl (inl x) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) x b<a))
+      t | inl (inl x) = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) x b<a))
       t | inl (inr x) = refl
       t | inr x rewrite x = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) b<a)
       indHyp : FirstGreater ≡ go<B Equal a b

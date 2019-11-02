@@ -27,7 +27,7 @@ abstract
   open import Rings.Lemmas R
 
   ringAddInequalities : {w x y z : A} → w < x → y < z → (w + y) < (x + z)
-  ringAddInequalities {w = w} {x} {y} {z} w<x y<z = transitive (orderRespectsAddition w<x y) (<WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition y<z x))
+  ringAddInequalities {w = w} {x} {y} {z} w<x y<z = <Transitive (orderRespectsAddition w<x y) (<WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition y<z x))
 
   ringCanMultiplyByPositive : {x y c : A} → (Ring.0R R) < c → x < y → (x * c) < (y * c)
   ringCanMultiplyByPositive {x} {y} {c} 0<c x<y = SetoidPartialOrder.<WellDefined pOrder reflexive (Group.identRight additiveGroup) q'
@@ -45,7 +45,7 @@ abstract
       q' = SetoidPartialOrder.<WellDefined pOrder (Group.identLeft additiveGroup) (Equivalence.transitive eq (symmetric (Group.+Associative additiveGroup)) (Group.+WellDefined additiveGroup reflexive (Group.invLeft additiveGroup))) q
 
   ringMultiplyPositives : {x y a b : A} → 0R < x → 0R < a → (x < y) → (a < b) → (x * a) < (y * b)
-  ringMultiplyPositives {x} {y} {a} {b} 0<x 0<a x<y a<b = SetoidPartialOrder.transitive pOrder (ringCanMultiplyByPositive 0<a x<y) (<WellDefined *Commutative *Commutative (ringCanMultiplyByPositive (SetoidPartialOrder.transitive pOrder 0<x x<y) a<b))
+  ringMultiplyPositives {x} {y} {a} {b} 0<x 0<a x<y a<b = SetoidPartialOrder.<Transitive pOrder (ringCanMultiplyByPositive 0<a x<y) (<WellDefined *Commutative *Commutative (ringCanMultiplyByPositive (SetoidPartialOrder.<Transitive pOrder 0<x x<y) a<b))
 
   ringSwapNegatives : {x y : A} → (Group.inverse (Ring.additiveGroup R) x) < (Group.inverse (Ring.additiveGroup R) y) → y < x
   ringSwapNegatives {x} {y} -x<-y = SetoidPartialOrder.<WellDefined pOrder (Equivalence.transitive eq (symmetric (Group.+Associative additiveGroup)) (Equivalence.transitive eq (Group.+WellDefined additiveGroup reflexive (Group.invLeft additiveGroup)) (Group.identRight additiveGroup))) (Group.identLeft additiveGroup) v

@@ -65,7 +65,7 @@ module Numbers.Modulo.IntegersModN where
   plusZnIdentityLeft {zero} {()}
   plusZnIdentityLeft {succ n} {pr} record { x = x ; xLess = xLess } with orderIsTotal x (succ n)
   plusZnIdentityLeft {succ n} {pr} record { x = x ; xLess = xLess } | inl (inl x<succn) rewrite <NRefl x<succn xLess = refl
-  plusZnIdentityLeft {succ n} {pr} record { x = x ; xLess = xLess } | inl (inr succn<x) = exFalso (TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder succn<x xLess))
+  plusZnIdentityLeft {succ n} {pr} record { x = x ; xLess = xLess } | inl (inr succn<x) = exFalso (TotalOrder.irreflexive ℕTotalOrder (TotalOrder.<Transitive ℕTotalOrder succn<x xLess))
   plusZnIdentityLeft {succ n} {pr} record { x = x ; xLess = xLess } | inr x=succn rewrite x=succn = exFalso (TotalOrder.irreflexive ℕTotalOrder xLess)
 
   subLemma : {a b c : ℕ} → (pr1 : a <N b) → (pr2 : a <N c) → (pr : b ≡ c) → (subtractionNResult.result (-N (inl pr1))) ≡ (subtractionNResult.result (-N (inl pr2)))

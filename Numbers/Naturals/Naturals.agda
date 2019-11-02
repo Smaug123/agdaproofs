@@ -541,7 +541,7 @@ module Numbers.Naturals.Naturals where
   ℕTotalOrder : TotalOrder ℕ
   PartialOrder._<_ (TotalOrder.order ℕTotalOrder) = _<N_
   PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) = lessIrreflexive
-  PartialOrder.transitive (TotalOrder.order ℕTotalOrder) = orderIsTransitive
+  PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) = orderIsTransitive
   TotalOrder.totality ℕTotalOrder = orderIsTotal
 
   doubleIsAddTwo : (a : ℕ) → a +N a ≡ 2 *N a

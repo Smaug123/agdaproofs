@@ -39,7 +39,7 @@ isZero record { elts = elts ; converges = converges } = ∀ ε → 0R < ε → S
 
 transitiveLemma : {a b c e/2 : A} → abs (a + inverse b) < e/2 → abs (b + inverse c) < e/2 → (abs (a + inverse c)) < (e/2 + e/2)
 transitiveLemma {a} {b} {c} {e/2} a-b<e/2 b-c<e/2 with triangleInequality (a + inverse b) (b + inverse c)
-transitiveLemma {a} {b} {c} {e/2} a-b<e/2 b-c<e/2 | inl x = SetoidPartialOrder.transitive pOrder (<WellDefined (absWellDefined _ _ (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq +Associative (Equivalence.transitive eq (+WellDefined invLeft (Equivalence.reflexive eq)) identLeft))))) (Equivalence.reflexive eq) x) (ringAddInequalities a-b<e/2 b-c<e/2)
+transitiveLemma {a} {b} {c} {e/2} a-b<e/2 b-c<e/2 | inl x = SetoidPartialOrder.<Transitive pOrder (<WellDefined (absWellDefined _ _ (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq +Associative (Equivalence.transitive eq (+WellDefined invLeft (Equivalence.reflexive eq)) identLeft))))) (Equivalence.reflexive eq) x) (ringAddInequalities a-b<e/2 b-c<e/2)
 transitiveLemma {a} {b} {c} {e/2} a-b<e/2 b-c<e/2 | inr x = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ (Equivalence.symmetric eq ((Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq +Associative (Equivalence.transitive eq (+WellDefined invLeft (Equivalence.reflexive eq)) identLeft))))))) x)) (Equivalence.reflexive eq) (ringAddInequalities a-b<e/2 b-c<e/2)
 
 cauchyCompletionSetoid : Setoid CauchyCompletion
