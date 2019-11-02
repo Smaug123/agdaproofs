@@ -28,17 +28,19 @@ record OrderedRing {p : _} {_<_ : Rel {_} {p} A} {pOrder : SetoidPartialOrder S 
   abs a | inl (inl 0<a) = a
   abs a | inl (inr a<0) = inverse a
   abs a | inr 0=a = a
-  absWellDefined : (a b : A) → a ∼ b → abs a ∼ abs b
-  absWellDefined a b a=b with SetoidTotalOrder.totality order 0R a
-  absWellDefined a b a=b | inl (inl 0<a) with SetoidTotalOrder.totality order 0R b
-  absWellDefined a b a=b | inl (inl 0<a) | inl (inl 0<b) = a=b
-  absWellDefined a b a=b | inl (inl 0<a) | inl (inr b<0) = exFalso (irreflexive {0G} (transitive 0<a (<WellDefined (Equivalence.symmetric eq a=b) (Equivalence.reflexive eq) b<0)))
-  absWellDefined a b a=b | inl (inl 0<a) | inr 0=b = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq a=b (Equivalence.symmetric eq 0=b)) 0<a))
-  absWellDefined a b a=b | inl (inr a<0) with SetoidTotalOrder.totality order 0R b
-  absWellDefined a b a=b | inl (inr a<0) | inl (inl 0<b) = exFalso (irreflexive {0G} (transitive 0<b (<WellDefined a=b (Equivalence.reflexive eq) a<0)))
-  absWellDefined a b a=b | inl (inr a<0) | inl (inr b<0) = inverseWellDefined additiveGroup a=b
-  absWellDefined a b a=b | inl (inr a<0) | inr 0=b = exFalso (irreflexive {0G} (<WellDefined (Equivalence.transitive eq a=b (Equivalence.symmetric eq 0=b)) (Equivalence.reflexive eq) a<0))
-  absWellDefined a b a=b | inr 0=a with SetoidTotalOrder.totality order 0R b
-  absWellDefined a b a=b | inr 0=a | inl (inl 0<b) = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq (Equivalence.transitive eq 0=a a=b)) 0<b))
-  absWellDefined a b a=b | inr 0=a | inl (inr b<0) = exFalso (irreflexive {0G} (<WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq 0=a a=b)) (Equivalence.reflexive eq) b<0))
-  absWellDefined a b a=b | inr 0=a | inr 0=b = a=b
+
+  abstract
+    absWellDefined : (a b : A) → a ∼ b → abs a ∼ abs b
+    absWellDefined a b a=b with SetoidTotalOrder.totality order 0R a
+    absWellDefined a b a=b | inl (inl 0<a) with SetoidTotalOrder.totality order 0R b
+    absWellDefined a b a=b | inl (inl 0<a) | inl (inl 0<b) = a=b
+    absWellDefined a b a=b | inl (inl 0<a) | inl (inr b<0) = exFalso (irreflexive {0G} (transitive 0<a (<WellDefined (Equivalence.symmetric eq a=b) (Equivalence.reflexive eq) b<0)))
+    absWellDefined a b a=b | inl (inl 0<a) | inr 0=b = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq a=b (Equivalence.symmetric eq 0=b)) 0<a))
+    absWellDefined a b a=b | inl (inr a<0) with SetoidTotalOrder.totality order 0R b
+    absWellDefined a b a=b | inl (inr a<0) | inl (inl 0<b) = exFalso (irreflexive {0G} (transitive 0<b (<WellDefined a=b (Equivalence.reflexive eq) a<0)))
+    absWellDefined a b a=b | inl (inr a<0) | inl (inr b<0) = inverseWellDefined additiveGroup a=b
+    absWellDefined a b a=b | inl (inr a<0) | inr 0=b = exFalso (irreflexive {0G} (<WellDefined (Equivalence.transitive eq a=b (Equivalence.symmetric eq 0=b)) (Equivalence.reflexive eq) a<0))
+    absWellDefined a b a=b | inr 0=a with SetoidTotalOrder.totality order 0R b
+    absWellDefined a b a=b | inr 0=a | inl (inl 0<b) = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq (Equivalence.transitive eq 0=a a=b)) 0<b))
+    absWellDefined a b a=b | inr 0=a | inl (inr b<0) = exFalso (irreflexive {0G} (<WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq 0=a a=b)) (Equivalence.reflexive eq) b<0))
+    absWellDefined a b a=b | inr 0=a | inr 0=b = a=b
