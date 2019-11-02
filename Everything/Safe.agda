@@ -22,8 +22,9 @@ open import Fields.Fields
 open import Fields.Orders.Partial.Definition
 open import Fields.Orders.Total.Definition
 open import Fields.Orders.Lemmas
-open import Fields.FieldOfFractions
-open import Fields.FieldOfFractionsOrder
+open import Fields.FieldOfFractions.Field
+open import Fields.FieldOfFractions.Lemmas
+open import Fields.FieldOfFractions.Order
 
 open import Rings.Definition
 open import Rings.Lemmas
