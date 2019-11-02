@@ -12,7 +12,7 @@ open import Rings.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-module Rings.Order {n m : _} {A : Set n} {S : Setoid {n} {m} A} {_+_ : A → A → A} {_*_ : A → A → A} (R : Ring S _+_ _*_) where
+module Rings.Orders.Definition {n m : _} {A : Set n} {S : Setoid {n} {m} A} {_+_ : A → A → A} {_*_ : A → A → A} (R : Ring S _+_ _*_) where
 
 open Ring R
 open Group additiveGroup

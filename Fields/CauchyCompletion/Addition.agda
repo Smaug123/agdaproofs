@@ -4,7 +4,7 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
 open import Rings.Definition
 open import Rings.Lemmas
-open import Rings.Order
+open import Rings.Orders.Definition
 open import Groups.Definition
 open import Groups.Groups
 open import Fields.Fields

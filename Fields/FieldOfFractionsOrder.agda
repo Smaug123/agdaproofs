@@ -5,7 +5,7 @@ open import Groups.Groups
 open import Groups.Definition
 open import Groups.Lemmas
 open import Rings.Definition
-open import Rings.Order
+open import Rings.Orders.Definition
 open import Rings.Orders.Lemmas
 open import Rings.Lemmas
 open import Rings.IntegralDomains

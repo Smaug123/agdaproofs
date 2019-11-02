@@ -26,7 +26,7 @@ open import Fields.FieldOfFractionsOrder
 
 open import Rings.Definition
 open import Rings.Lemmas
-open import Rings.Order
+open import Rings.Orders.Definition
 open import Rings.Orders.Lemmas
 open import Rings.IntegralDomains
 
@@ -59,3 +59,4 @@ open import Fields.CauchyCompletion.Group
 open import Fields.CauchyCompletion.Ring
 
 module Everything.Safe where
+

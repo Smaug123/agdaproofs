@@ -4,7 +4,7 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
 open import Rings.Definition
 open import Rings.Lemmas
-open import Rings.Order
+open import Rings.Orders.Definition
 open import Groups.Definition
 open import Groups.Groups
 open import Fields.Fields
@@ -44,8 +44,8 @@ littleLemma {a} {b} {c} {d} = Equivalence.transitive eq (Equivalence.transitive 
 
 _*C_ : CauchyCompletion → CauchyCompletion → CauchyCompletion
 CauchyCompletion.elts (record { elts = a ; converges = aConv } *C record { elts = b ; converges = bConv }) = apply _*_ a b
-CauchyCompletion.converges (record { elts = a ; converges = aConv } *C record { elts = b ; converges = bConv }) e 0<e with boundModulus (0!=1 0<e) record { elts = a ; converges = aConv }
-... | aBound , (Na , prABound) with boundModulus (0!=1 0<e) record { elts = b ; converges = bConv }
+CauchyCompletion.converges (record { elts = a ; converges = aConv } *C record { elts = b ; converges = bConv }) e 0<e with boundModulus record { elts = a ; converges = aConv }
+... | aBound , (Na , prABound) with boundModulus record { elts = b ; converges = bConv }
 ... | bBound , (Nb , prBBound) = N , ans
   where
     boundBoth : A
@@ -162,7 +162,7 @@ multiplicationWellDefinedLeft' : (0!=1 : 0R ∼ 1R → False) (a b c : CauchyCom
 multiplicationWellDefinedLeft' 0!=1 a b c a=b ε 0<e = N , ans
   where
     cBoundAndPr : Sg A (λ b → Sg ℕ (λ N → (m : ℕ) → (N <N m) → (abs (index (CauchyCompletion.elts c) m)) < b))
-    cBoundAndPr = boundModulus 0!=1 c
+    cBoundAndPr = boundModulus c
     cBound : A
     cBound with cBoundAndPr
     ... | a , _ = a
