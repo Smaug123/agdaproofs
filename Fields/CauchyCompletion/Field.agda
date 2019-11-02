@@ -45,8 +45,11 @@ boundedMap a | inl (inl x) = underlying (allInvertible a λ pr → irreflexive (
 boundedMap a | inl (inr x) = underlying (allInvertible a λ pr → irreflexive (<WellDefined pr (Equivalence.reflexive eq) x))
 boundedMap a | inr x = Ring.1R R
 
-aNonzeroImpliesBounded : (a : CauchyCompletion) → (Setoid._∼_ cauchyCompletionSetoid a (injection 0G) → False) → (a <C (injection 0G)) || (injection 0G) <C a
-aNonzeroImpliesBounded a a!=0 = ?
+-- TODO: make a real which is equivalent by approximating from above;
+-- make a real which is equivalent by approximating from below.
+-- Use not-zero to show that one of those sequences must pass 0 at some point.
+aNonzeroImpliesBounded : (a : CauchyCompletion) → (Setoid._∼_ cauchyCompletionSetoid a (injection 0G) → False) → (a <Cr 0G) || 0G r<C a
+aNonzeroImpliesBounded a a!=0 = {!!}
 
 1/aConverges : (a : CauchyCompletion) → (Setoid._∼_ cauchyCompletionSetoid a (injection 0G) → False) → cauchy (map boundedMap (CauchyCompletion.elts a))
 1/aConverges a a!=0 e 0<e = {!!}

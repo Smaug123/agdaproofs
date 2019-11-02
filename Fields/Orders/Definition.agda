@@ -4,7 +4,7 @@ open import LogicalFormulae
 open import Groups.Groups
 open import Groups.Definition
 open import Rings.Definition
-open import Rings.Order
+open import Rings.Orders.Definition
 open import Rings.Lemmas
 open import Setoids.Setoids
 open import Setoids.Orders

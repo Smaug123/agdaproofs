@@ -59,3 +59,7 @@ indexAndApply s1 s2 f {succ m} = indexAndApply (Sequence.tail s1) (Sequence.tail
 mapAndApply : {a b c d : _} {A : Set a} {B : Set b} {C : Set c} {D : Set d} (s1 : Sequence A) (s2 : Sequence B) (f : A → B → C) (g : C → D) → (m : ℕ) → index (map g (apply f s1 s2)) m ≡ g (f (index s1 m) (index s2 m))
 mapAndApply s1 s2 f g zero = refl
 mapAndApply s1 s2 f g (succ m) = mapAndApply (Sequence.tail s1) (Sequence.tail s2) f g m
+
+assemble : {a : _} {A : Set a} → (x : A) → (s : Sequence A) → Sequence A
+Sequence.head (assemble x s) = x
+Sequence.tail (assemble x s) = s

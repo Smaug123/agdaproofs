@@ -8,7 +8,7 @@ open import Numbers.Integers.Order
 open import Groups.Groups
 open import Groups.Definition
 open import Rings.Definition
-open import Rings.Order
+open import Rings.Orders.Definition
 open import Fields.Fields
 open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
