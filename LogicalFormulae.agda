@@ -46,6 +46,9 @@ data Sg {n : _} {m : _} (A : Set m) (B : A → Set n) : Set (m ⊔ n) where
 underlying : {n m : _} {A : _} {prop : _} → Sg {n} {m} A prop -> A
 underlying (a , b) = a
 
+underlyingRefl : {n m : _} {A : _} {prop : _} → {r s : Sg {n} {m} A prop} → r ≡ s → underlying r ≡ underlying s
+underlyingRefl {r = (a , b)} {(.a , .b)} refl = refl
+
 transitivity : {a : _} {A : Set a} {x y z : A} → (x ≡ y) → (y ≡ z) → (x ≡ z)
 transitivity refl refl = refl
 

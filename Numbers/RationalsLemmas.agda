@@ -8,7 +8,8 @@ open import Numbers.Integers.Order
 open import Groups.Groups
 open import Groups.Definition
 open import Rings.Definition
-open import Rings.Orders.Definition
+open import Rings.Orders.Partial.Definition
+open import Rings.Orders.Total.Definition
 open import Fields.Fields
 open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
@@ -23,8 +24,8 @@ open import Orders
 
 module Numbers.RationalsLemmas where
 
-open OrderedRing ℤOrderedRing
-open import Rings.Orders.Lemmas ℤOrderedRing
+open PartiallyOrderedRing ℤPOrderedRing
+open import Rings.Orders.Total.Lemmas ℤOrderedRing
 open SetoidTotalOrder (totalOrderToSetoidTotalOrder ℤOrder)
 
 evenOrOdd : (a : ℕ) → (Sg ℕ (λ i → i *N 2 ≡ a)) || (Sg ℕ (λ i → succ (i *N 2) ≡ a))

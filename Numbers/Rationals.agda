@@ -6,7 +6,8 @@ open import Numbers.Integers.Integers
 open import Groups.Groups
 open import Groups.Definition
 open import Rings.Definition
-open import Rings.Orders.Definition
+open import Rings.Orders.Total.Definition
+open import Rings.Orders.Partial.Definition
 open import Fields.Fields
 open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
@@ -73,5 +74,8 @@ open Setoid (fieldOfFractionsSetoid ℤIntDom)
 negateQWellDefined : (a b : ℚ) → (a =Q b) → (negateQ a) =Q (negateQ b)
 negateQWellDefined a b a=b = inverseWellDefined (Ring.additiveGroup ℚRing) {a} {b} a=b
 
-ℚOrdered : OrderedRing ℚRing (fieldOfFractionsTotalOrder ℤIntDom ℤOrderedRing)
+ℚPOrdered : PartiallyOrderedRing ℚRing partial
+ℚPOrdered = fieldOfFractionsPOrderedRing ℤIntDom ℤOrderedRing
+
+ℚOrdered : TotallyOrderedRing ℚPOrdered
 ℚOrdered = fieldOfFractionsOrderedRing ℤIntDom ℤOrderedRing

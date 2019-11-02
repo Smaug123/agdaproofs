@@ -19,15 +19,17 @@ open import Groups.Groups2
 open import Groups.SymmetryGroups
 
 open import Fields.Fields
-open import Fields.Orders.Definition
+open import Fields.Orders.Partial.Definition
+open import Fields.Orders.Total.Definition
 open import Fields.Orders.Lemmas
 open import Fields.FieldOfFractions
 open import Fields.FieldOfFractionsOrder
 
 open import Rings.Definition
 open import Rings.Lemmas
-open import Rings.Orders.Definition
-open import Rings.Orders.Lemmas
+open import Rings.Orders.Partial.Definition
+open import Rings.Orders.Total.Lemmas
+open import Rings.Orders.Partial.Lemmas
 open import Rings.IntegralDomains
 
 open import Setoids.Setoids
