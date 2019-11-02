@@ -67,6 +67,24 @@ decreasingHalving N with halve charNot2 1R
 decreasingHalving N | 1/2 , pr1/2 with (halfLess 1/2 1R (0<1 (charNot2ImpliesNontrivial charNot2)) pr1/2)
 ... | 1/2<1 = <WellDefined (Equivalence.transitive eq (identityOfIndiscernablesLeft _∼_ (Equivalence.reflexive eq) (equalityCommutative (mapAndIndex (halvingSequence 1R) (_*_ 1/2) N))) (Equivalence.symmetric eq (halvingSequenceMultiple 1/2 {N}))) identIsIdent (ringCanMultiplyByPositive {c = index (halvingSequence 1R) N} (halvingSequencePositive N) 1/2<1)
 
+imageOfN : ℕ → A
+imageOfN zero = 0R
+imageOfN (succ x) = 1R + imageOfN x
+
+nextImageOfN : (a : A) → 0R < a → ℕ
+nextImageOfN a 0<a = ?
+
+halvingToZero : (a : A) → (0G < a) → Sg ℕ (λ N → (index (halvingSequence 1R) N) < a)
+halvingToZero a 0<a with SetoidTotalOrder.totality tOrder a 1R
+halvingToZero a 0<a | inl (inl a<1) = {!!}
+halvingToZero a 0<a | inl (inr 1<a) = 0 , 1<a
+halvingToZero a 0<a | inr a=1 with halve charNot2 1R
+... | 1/2 , pr1/2 = 1 , <WellDefined ans (Equivalence.symmetric eq a=1) (halfLess 1/2 1R (0<1 (charNot2ImpliesNontrivial charNot2)) pr1/2)
+  where
+    ans : 1/2 ∼ Sequence.head (Sequence.tail (halvingSequence 1R))
+    ans with halve charNot2 1R
+    ans | 1/2' , pr1/2' = halvesEqual charNot2 1/2 1/2' pr1/2 pr1/2'
+
 halvesCauchy : cauchy (halvingSequence 1R)
 halvesCauchy e 0<e = {!!}
 

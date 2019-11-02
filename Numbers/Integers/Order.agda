@@ -7,7 +7,8 @@ open import Numbers.Integers.Addition
 open import Numbers.Integers.Multiplication
 open import Semirings.Definition
 open import Rings.Definition
-open import Rings.Orders.Definition
+open import Rings.Orders.Partial.Definition
+open import Rings.Orders.Total.Definition
 open import Setoids.Setoids
 open import Setoids.Orders
 open import Orders
@@ -95,6 +96,9 @@ orderRespectsAddition (negSucc a) (negSucc b) (le x proof) (negSucc c) = le x (t
 orderRespectsMultiplication : (a b : ℤ) → nonneg 0 <Z a → nonneg 0 <Z b → nonneg 0 <Z a *Z b
 orderRespectsMultiplication (nonneg (succ a)) (nonneg (succ b)) 0<a 0<b = lessInherits (succIsPositive (b +N a *N succ b))
 
-ℤOrderedRing : OrderedRing ℤRing (totalOrderToSetoidTotalOrder ℤOrder)
-OrderedRing.orderRespectsAddition ℤOrderedRing {a} {b} = orderRespectsAddition a b
-OrderedRing.orderRespectsMultiplication ℤOrderedRing {a} {b} = orderRespectsMultiplication a b
+ℤPOrderedRing : PartiallyOrderedRing ℤRing (SetoidTotalOrder.partial (totalOrderToSetoidTotalOrder ℤOrder))
+PartiallyOrderedRing.orderRespectsAddition ℤPOrderedRing {a} {b} = orderRespectsAddition a b
+PartiallyOrderedRing.orderRespectsMultiplication ℤPOrderedRing {a} {b} = orderRespectsMultiplication a b
+
+ℤOrderedRing : TotallyOrderedRing ℤPOrderedRing
+TotallyOrderedRing.total ℤOrderedRing = totalOrderToSetoidTotalOrder ℤOrder

@@ -4,7 +4,8 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
 open import Rings.Definition
 open import Rings.Lemmas
-open import Rings.Orders.Definition
+open import Rings.Orders.Partial.Definition
+open import Rings.Orders.Total.Definition
 open import Groups.Definition
 open import Groups.Groups
 open import Fields.Fields
@@ -15,20 +16,21 @@ open import Functions
 open import LogicalFormulae
 open import Numbers.Naturals.Naturals
 
-module Fields.CauchyCompletion.Addition {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder {_<_ = _<_} pOrder} {R : Ring S _+_ _*_} (order : OrderedRing R tOrder) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
+module Fields.CauchyCompletion.Addition {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
 
 open Setoid S
-open SetoidTotalOrder tOrder
+open SetoidTotalOrder (TotallyOrderedRing.total order)
 open SetoidPartialOrder pOrder
 open Equivalence eq
-open OrderedRing order
+open PartiallyOrderedRing pRing
 open Ring R
 open Group additiveGroup
 open Field F
 
 open import Fields.Lemmas F
 open import Fields.CauchyCompletion.Definition order F
-open import Rings.Orders.Lemmas(order)
+open import Rings.Orders.Partial.Lemmas pRing
+open import Rings.Orders.Total.Lemmas order
 
 lemm : (m : ℕ) (a b : Sequence A) → index (apply _+_ a b) m ≡ (index a m) + (index b m)
 lemm zero a b = refl

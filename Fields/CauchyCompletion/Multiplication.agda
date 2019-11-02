@@ -4,7 +4,8 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
 open import Rings.Definition
 open import Rings.Lemmas
-open import Rings.Orders.Definition
+open import Rings.Orders.Partial.Definition
+open import Rings.Orders.Total.Definition
 open import Groups.Definition
 open import Groups.Groups
 open import Fields.Fields
@@ -16,20 +17,21 @@ open import LogicalFormulae
 open import Numbers.Naturals.Naturals
 open import Semirings.Definition
 
-module Fields.CauchyCompletion.Multiplication {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder {_<_ = _<_} pOrder} {R : Ring S _+_ _*_} (order : OrderedRing R tOrder) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
+module Fields.CauchyCompletion.Multiplication {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
 
 open Setoid S
-open SetoidTotalOrder tOrder
+open SetoidTotalOrder (TotallyOrderedRing.total order)
 open SetoidPartialOrder pOrder
 open Equivalence eq
-open OrderedRing order
+open PartiallyOrderedRing pRing
 open Ring R
 open Group additiveGroup
 open Field F
 open import Fields.Orders.Lemmas {F = F} record { oRing = order }
 
 open import Fields.Lemmas F
-open import Rings.Orders.Lemmas(order)
+open import Rings.Orders.Partial.Lemmas pRing
+open import Rings.Orders.Total.Lemmas order
 open import Fields.CauchyCompletion.Definition order F
 open import Fields.CauchyCompletion.Setoid order F charNot2
 open import Fields.CauchyCompletion.Comparison order F charNot2
@@ -155,7 +157,7 @@ CauchyCompletion.converges (record { elts = a ; converges = aConv } *C record { 
     foo : {x y : A} → (x * y) + inverse (y * x) ∼ 0G
     foo = Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq) (inverseWellDefined additiveGroup *Commutative)) invRight
     ans : {m : ℕ} → 0 <N m → abs (index (apply _+_ (CauchyCompletion.elts (a *C b)) (map inverse (CauchyCompletion.elts (b *C a)))) m) < ε
-    ans {m} 0<m rewrite indexAndApply (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts b)) (map inverse (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts a))) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts b) _*_ {m} | equalityCommutative (mapAndIndex (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts a)) inverse m) | indexAndApply (CauchyCompletion.elts b) (CauchyCompletion.elts a) _*_ {m} = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ foo) (identityOfIndiscernablesRight _∼_ (Equivalence.reflexive eq) (absZero order)))) (Equivalence.reflexive eq) 0<e
+    ans {m} 0<m rewrite indexAndApply (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts b)) (map inverse (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts a))) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts b) _*_ {m} | equalityCommutative (mapAndIndex (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts a)) inverse m) | indexAndApply (CauchyCompletion.elts b) (CauchyCompletion.elts a) _*_ {m} = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ foo) (identityOfIndiscernablesRight _∼_ (Equivalence.reflexive eq) absZero))) (Equivalence.reflexive eq) 0<e
 
 abstract
 
@@ -203,7 +205,7 @@ abstract
       ans {m} N<m rewrite indexAndApply (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts c)) (map inverse (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts c))) _+_ {m} | equalityCommutative (mapAndIndex (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts c)) inverse m) | indexAndApply (CauchyCompletion.elts b) (CauchyCompletion.elts c) _*_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts c) _*_ {m} = <WellDefined (absWellDefined _ _ (+WellDefined (Equivalence.reflexive eq) (ringMinusExtracts' R))) (Equivalence.reflexive eq) (<WellDefined (absWellDefined ((index (CauchyCompletion.elts a) m + inverse (index (CauchyCompletion.elts b) m)) * index (CauchyCompletion.elts c) m) _ (Equivalence.transitive eq (Equivalence.transitive eq *Commutative *DistributesOver+) (+WellDefined *Commutative *Commutative))) (Equivalence.reflexive eq) (<WellDefined (Equivalence.symmetric eq (absRespectsTimes _ _)) (Equivalence.reflexive eq) (<WellDefined (Equivalence.reflexive eq) e/cPr (ans' (index (CauchyCompletion.elts a) m) (index (CauchyCompletion.elts b) m) (index (CauchyCompletion.elts c) m) (a-bSmall m N<m) (cBounded m N<m)))))
         where
           ans' : (a b c : A) → abs (a + inverse b) < e/c → abs c < cBound → (abs (a + inverse b) * abs c) < (e/c * cBound)
-          ans' a b c a-b<e/c c<bound with SetoidTotalOrder.totality tOrder 0R c
+          ans' a b c a-b<e/c c<bound with totality 0R c
           ans' a b c a-b<e/c c<bound | inl (inl 0<c) with totality 0G (a + inverse b)
           ans' a b c a-b<e/c c<bound | inl (inl 0<c) | inl (inl 0<a-b) = ringMultiplyPositives 0<a-b 0<c a-b<e/c c<bound
           ans' a b c a-b<e/c c<bound | inl (inl 0<c) | inl (inr a-b<0) = ringMultiplyPositives (lemm2 (a + inverse b) a-b<0) 0<c a-b<e/c c<bound
@@ -216,7 +218,7 @@ abstract
 
 
   multiplicationWellDefinedLeft : (a b c : CauchyCompletion) → Setoid._∼_ cauchyCompletionSetoid a b → Setoid._∼_ cauchyCompletionSetoid (a *C c) (b *C c)
-  multiplicationWellDefinedLeft with SetoidTotalOrder.totality tOrder 0R 1R
+  multiplicationWellDefinedLeft with totality 0R 1R
   ... | inl (inl 0<1') = multiplicationWellDefinedLeft' (λ pr → irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq pr) 0<1'))
   ... | inl (inr 1<0) = multiplicationWellDefinedLeft' (λ pr → irreflexive {0G} (<WellDefined (Equivalence.symmetric eq pr) (Equivalence.reflexive eq) 1<0))
   ... | inr (0=1) = λ a b c a=b → Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {a *C c} {injection 0G} {b *C c} (Equivalence.symmetric (Setoid.eq cauchyCompletionSetoid) {injection 0G} {a *C c} (trivialIfInputTrivial 0=1 (a *C c))) (trivialIfInputTrivial 0=1 (b *C c))

@@ -4,10 +4,12 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
 open import Rings.Definition
 open import Rings.Lemmas
-open import Rings.Orders.Definition
+open import Rings.Orders.Partial.Definition
+open import Rings.Orders.Total.Definition
 open import Groups.Definition
 open import Groups.Groups
 open import Fields.Fields
+open import Fields.Orders.Total.Definition
 open import Sets.EquivalenceRelations
 open import Sequences
 open import Setoids.Orders
@@ -16,19 +18,20 @@ open import LogicalFormulae
 open import Numbers.Naturals.Naturals
 open import Semirings.Definition
 
-module Fields.CauchyCompletion.Comparison {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder {_<_ = _<_} pOrder} {R : Ring S _+_ _*_} (order : OrderedRing R tOrder) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
+module Fields.CauchyCompletion.Comparison {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
 
 open Setoid S
-open SetoidTotalOrder tOrder
+open SetoidTotalOrder (TotallyOrderedRing.total order)
 open SetoidPartialOrder pOrder
 open Equivalence eq
-open OrderedRing order
+open PartiallyOrderedRing pRing
 open Ring R
 open Group additiveGroup
 open Field F
-open import Fields.Orders.Lemmas {F = F} record { oRing = order }
+open import Fields.Orders.Lemmas {F = F} {pRing} (record { oRing = order })
 
-open import Rings.Orders.Lemmas order
+open import Rings.Orders.Partial.Lemmas pRing
+open import Rings.Orders.Total.Lemmas order
 open import Fields.Lemmas F
 open import Fields.CauchyCompletion.Definition order F
 open import Fields.CauchyCompletion.Setoid order F charNot2
@@ -47,7 +50,7 @@ a <Cr b = Sg A (λ ε → (0G < ε) && Sg ℕ (λ N → ((m : ℕ) → (N<m : N 
 <CrWellDefinedRight a b c b=c (ε , (0<e ,, (N , pr))) = ε , (0<e ,, (N , λ m N<m → <WellDefined (Equivalence.reflexive eq) b=c (pr m N<m)))
 
 <CrWellDefinedLemma : (a b e/2 e : A) (0<e : 0G < e) (pr : e/2 + e/2 ∼ e) → abs (a + inverse b) < e/2 → (e/2 + b) < (e + a)
-<CrWellDefinedLemma a b e/2 e 0<e pr a-b<e with SetoidTotalOrder.totality tOrder 0G (a + inverse b)
+<CrWellDefinedLemma a b e/2 e 0<e pr a-b<e with totality 0G (a + inverse b)
 <CrWellDefinedLemma a b e/2 e 0<e pr a-b<e | inl (inl 0<a-b) = ringAddInequalities (halfLess e/2 e 0<e pr) (<WellDefined identLeft (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq) invLeft) identRight)) (orderRespectsAddition 0<a-b b))
 <CrWellDefinedLemma a b e/2 e 0<e pr a-b<e | inl (inr a-b<0) = <WellDefined (Equivalence.transitive eq (+WellDefined (invContravariant (Ring.additiveGroup R)) groupIsAbelian) (Equivalence.transitive eq (Equivalence.transitive eq +Associative (+WellDefined (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (Equivalence.transitive eq (+WellDefined (invTwice additiveGroup b) invLeft) identRight)) (Equivalence.reflexive eq))) groupIsAbelian)) (Equivalence.transitive eq +Associative (+WellDefined pr (Equivalence.reflexive eq))) (orderRespectsAddition a-b<e (e/2 + a))
 <CrWellDefinedLemma a b e/2 e 0<e pr a-b<e | inr 0=a-b = <WellDefined (Equivalence.reflexive eq) (+WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq (transferToRight (Ring.additiveGroup R) (Equivalence.symmetric eq 0=a-b)))) (orderRespectsAddition (halfLess e/2 e 0<e pr) b)
@@ -72,7 +75,7 @@ r<CWellDefinedLeft : (a b : A) (c : CauchyCompletion) → (a ∼ b) → (a r<C c
 r<CWellDefinedLeft a b c a=b (e , (0<e ,, (N , pr))) = e , (0<e ,, (N , λ m N<m → <WellDefined (+WellDefined a=b (Equivalence.reflexive eq)) (Equivalence.reflexive eq) (pr m N<m)))
 
 r<CWellDefinedLemma : (a b c e e/2 : A) (_ : e/2 + e/2 ∼ e) (0<e : 0G < e) (_ : abs (a + inverse b) < e/2) (_ : (c + e) < a) → (c + e/2) < b
-r<CWellDefinedLemma a b c e e/2 prE/2 0<e pr c+e<a with SetoidTotalOrder.totality tOrder 0G (a + inverse b)
+r<CWellDefinedLemma a b c e e/2 prE/2 0<e pr c+e<a with totality 0G (a + inverse b)
 r<CWellDefinedLemma a b c e e/2 prE/2 0<e pr c+e<a | inl (inl 0<a-b) = SetoidPartialOrder.transitive pOrder (<WellDefined (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (+WellDefined (Equivalence.symmetric eq prE/2) (Equivalence.reflexive eq)) (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) invRight)) identRight)))) (Equivalence.reflexive eq) (orderRespectsAddition c+e<a (inverse e/2))) (<WellDefined (Equivalence.transitive eq +Associative (+WellDefined (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq) invLeft) identRight)) (Equivalence.reflexive eq))) (Equivalence.transitive eq groupIsAbelian (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq) (invLeft)) identRight))) (orderRespectsAddition pr (b + inverse e/2)))
 r<CWellDefinedLemma a b c e e/2 prE/2 0<e pr c+e<a | inl (inr a-b<0) = SetoidPartialOrder.transitive pOrder (SetoidPartialOrder.transitive pOrder (<WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition (halfLess e/2 e 0<e prE/2) c)) c+e<a) (<WellDefined (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) invLeft)) identRight) identLeft (orderRespectsAddition a-b<0 b))
 r<CWellDefinedLemma a b c e e/2 prE/2 0<e pr c+e<a | inr 0=a-b = SetoidPartialOrder.transitive pOrder (<WellDefined groupIsAbelian (Equivalence.reflexive eq) (orderRespectsAddition (halfLess e/2 e 0<e prE/2) c)) (<WellDefined (groupIsAbelian {c} {e}) (transferToRight additiveGroup (Equivalence.symmetric eq 0=a-b)) c+e<a)

@@ -10,28 +10,47 @@ open import Setoids.Setoids
 open import Functions
 open import Sets.EquivalenceRelations
 open import Rings.Definition
-open import Rings.Orders.Definition
+open import Rings.Orders.Total.Definition
+open import Rings.Orders.Partial.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-module Rings.Orders.Lemmas {n m p : _} {A : Set n} {S : Setoid {n} {m} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {_} {p} A} {R : Ring S _+_ _*_} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder pOrder} (order : OrderedRing R tOrder) where
+module Rings.Orders.Total.Lemmas {n m p : _} {A : Set n} {S : Setoid {n} {m} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {p} A} {pOrder : SetoidPartialOrder S _<_} {pOrderRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pOrderRing) where
+
+open Ring R
+open Group additiveGroup
+open Setoid S
+open SetoidPartialOrder pOrder
+open TotallyOrderedRing order
+open SetoidTotalOrder total
+open PartiallyOrderedRing pOrderRing
+open import Rings.Lemmas R
+open import Rings.Orders.Partial.Lemmas pOrderRing
+
+abs : A → A
+abs a with totality 0R a
+abs a | inl (inl 0<a) = a
+abs a | inl (inr a<0) = inverse a
+abs a | inr 0=a = a
 
 abstract
-
-  open OrderedRing order
-  open Setoid S
-  open SetoidPartialOrder pOrder
-  open SetoidTotalOrder tOrder
-  open Ring R
-  open Group additiveGroup
-
-  open import Rings.Lemmas R
-
-  ringAddInequalities : {w x y z : A} → w < x → y < z → (w + y) < (x + z)
-  ringAddInequalities {w = w} {x} {y} {z} w<x y<z = transitive (orderRespectsAddition w<x y) (<WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition y<z x))
+  absWellDefined : (a b : A) → a ∼ b → abs a ∼ abs b
+  absWellDefined a b a=b with totality 0R a
+  absWellDefined a b a=b | inl (inl 0<a) with totality 0R b
+  absWellDefined a b a=b | inl (inl 0<a) | inl (inl 0<b) = a=b
+  absWellDefined a b a=b | inl (inl 0<a) | inl (inr b<0) = exFalso (irreflexive {0G} (transitive 0<a (<WellDefined (Equivalence.symmetric eq a=b) (Equivalence.reflexive eq) b<0)))
+  absWellDefined a b a=b | inl (inl 0<a) | inr 0=b = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq a=b (Equivalence.symmetric eq 0=b)) 0<a))
+  absWellDefined a b a=b | inl (inr a<0) with totality 0R b
+  absWellDefined a b a=b | inl (inr a<0) | inl (inl 0<b) = exFalso (irreflexive {0G} (transitive 0<b (<WellDefined a=b (Equivalence.reflexive eq) a<0)))
+  absWellDefined a b a=b | inl (inr a<0) | inl (inr b<0) = inverseWellDefined additiveGroup a=b
+  absWellDefined a b a=b | inl (inr a<0) | inr 0=b = exFalso (irreflexive {0G} (<WellDefined (Equivalence.transitive eq a=b (Equivalence.symmetric eq 0=b)) (Equivalence.reflexive eq) a<0))
+  absWellDefined a b a=b | inr 0=a with totality 0R b
+  absWellDefined a b a=b | inr 0=a | inl (inl 0<b) = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq (Equivalence.transitive eq 0=a a=b)) 0<b))
+  absWellDefined a b a=b | inr 0=a | inl (inr b<0) = exFalso (irreflexive {0G} (<WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq 0=a a=b)) (Equivalence.reflexive eq) b<0))
+  absWellDefined a b a=b | inr 0=a | inr 0=b = a=b
 
   lemm2 : (a : A) → a < 0G → 0G < inverse a
-  lemm2 a a<0 with SetoidTotalOrder.totality tOrder 0R (inverse a)
+  lemm2 a a<0 with totality 0R (inverse a)
   lemm2 a a<0 | inl (inl 0<-a) = 0<-a
   lemm2 a a<0 | inl (inr -a<0) = exFalso (irreflexive {0G} (SetoidPartialOrder.transitive pOrder (<WellDefined (invLeft {a}) (identLeft {a}) (orderRespectsAddition -a<0 a)) a<0))
   lemm2 a a<0 | inr 0=-a = exFalso (irreflexive {0G} (<WellDefined (Equivalence.transitive eq (Equivalence.symmetric eq identRight) t) (Equivalence.reflexive eq) a<0))
@@ -40,20 +59,13 @@ abstract
       t = Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq) 0=-a) (invRight {a})
 
   lemm2' : (a : A) → 0G < a → inverse a < 0G
-  lemm2' a 0<a with SetoidTotalOrder.totality tOrder 0R (inverse a)
+  lemm2' a 0<a with totality 0R (inverse a)
   lemm2' a 0<a | inl (inl 0<-a) = exFalso (irreflexive {0G} (SetoidPartialOrder.transitive pOrder 0<a (<WellDefined (identLeft {a}) (invLeft {a}) (orderRespectsAddition 0<-a a))))
   lemm2' a 0<a | inl (inr -a<0) = -a<0
   lemm2' a 0<a | inr 0=-a = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (Equivalence.symmetric eq identRight) t) 0<a))
     where
       t : a + 0G ∼ 0G
       t = Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq) 0=-a) (invRight {a})
-
-  lemm3 : (a b : A) → 0G ∼ (a + b) → 0G ∼ a → 0G ∼ b
-  lemm3 a b pr1 pr2 with transferToRight' additiveGroup (Equivalence.symmetric eq pr1)
-  ... | a=-b with Equivalence.transitive eq pr2 a=-b
-  ... | 0=-b with inverseWellDefined additiveGroup 0=-b
-  ... | -0=--b = Equivalence.transitive eq (Equivalence.symmetric eq (invIdentity additiveGroup)) (Equivalence.transitive eq -0=--b (invTwice additiveGroup b))
-
 
   triangleInequality : (a b : A) → ((abs (a + b)) < ((abs a) + (abs b))) || (abs (a + b) ∼ (abs a) + (abs b))
   triangleInequality a b with totality 0R (a + b)
@@ -98,26 +110,26 @@ abstract
   triangleInequality a b | inr 0=a+b | inr 0=a | inr 0=b = inr (Equivalence.reflexive eq)
 
   ringMinusFlipsOrder : {x : A} → (Ring.0R R) < x → (Group.inverse (Ring.additiveGroup R) x) < (Ring.0R R)
-  ringMinusFlipsOrder {x = x} 0<x with SetoidTotalOrder.totality tOrder (Ring.0R R) (Group.inverse (Ring.additiveGroup R) x)
+  ringMinusFlipsOrder {x = x} 0<x with totality (Ring.0R R) (Group.inverse (Ring.additiveGroup R) x)
   ringMinusFlipsOrder {x} 0<x | inl (inl 0<inv) = exFalso (SetoidPartialOrder.irreflexive pOrder bad')
     where
-      bad : (Group.0G (Ring.additiveGroup R) + Group.0G (Ring.additiveGroup R)) < (x + Group.inverse (Ring.additiveGroup R) x)
-      bad = ringAddInequalities 0<x 0<inv
-      bad' : (Group.0G (Ring.additiveGroup R)) < (Group.0G (Ring.additiveGroup R))
-      bad' = SetoidPartialOrder.<WellDefined pOrder (Group.identRight (Ring.additiveGroup R)) (Group.invRight (Ring.additiveGroup R)) bad
+    bad : (Group.0G (Ring.additiveGroup R) + Group.0G (Ring.additiveGroup R)) < (x + Group.inverse (Ring.additiveGroup R) x)
+    bad = ringAddInequalities 0<x 0<inv
+    bad' : (Group.0G (Ring.additiveGroup R)) < (Group.0G (Ring.additiveGroup R))
+    bad' = SetoidPartialOrder.<WellDefined pOrder (Group.identRight (Ring.additiveGroup R)) (Group.invRight (Ring.additiveGroup R)) bad
   ringMinusFlipsOrder {x} 0<x | inl (inr inv<0) = inv<0
   ringMinusFlipsOrder {x} 0<x | inr 0=inv = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<WellDefined pOrder (Equivalence.reflexive (Setoid.eq S)) (groupLemmaMove0G (Ring.additiveGroup R) 0=inv) 0<x))
 
   ringMinusFlipsOrder' : {x : A} → (Group.inverse (Ring.additiveGroup R) x) < (Ring.0R R) → (Ring.0R R) < x
-  ringMinusFlipsOrder' {x} -x<0 with SetoidTotalOrder.totality tOrder (Ring.0R R) x
+  ringMinusFlipsOrder' {x} -x<0 with totality (Ring.0R R) x
   ringMinusFlipsOrder' {x} -x<0 | inl (inl 0<x) = 0<x
   ringMinusFlipsOrder' {x} -x<0 | inl (inr x<0) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<WellDefined pOrder (Group.invLeft (Ring.additiveGroup R)) (Group.identRight (Ring.additiveGroup R)) bad))
     where
-      bad : ((Group.inverse (Ring.additiveGroup R) x) + x) < (Group.0G (Ring.additiveGroup R) + Group.0G (Ring.additiveGroup R))
-      bad = ringAddInequalities -x<0 x<0
+    bad : ((Group.inverse (Ring.additiveGroup R) x) + x) < (Group.0G (Ring.additiveGroup R) + Group.0G (Ring.additiveGroup R))
+    bad = ringAddInequalities -x<0 x<0
   ringMinusFlipsOrder' {x} -x<0 | inr 0=x = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<WellDefined pOrder (symmetric (groupLemmaMove0G' (Ring.additiveGroup R) (symmetric 0=x))) (Equivalence.reflexive (Setoid.eq S)) -x<0))
     where
-      open Equivalence eq
+    open Equivalence eq
 
   ringMinusFlipsOrder'' : {x : A} → x < (Ring.0R R) → (Ring.0R R) < Group.inverse (Ring.additiveGroup R) x
   ringMinusFlipsOrder'' {x} x<0 = ringMinusFlipsOrder' (SetoidPartialOrder.<WellDefined pOrder {x} {Group.inverse (Ring.additiveGroup R) (Group.inverse (Ring.additiveGroup R) x)} {Ring.0R R} {Ring.0R R} (Equivalence.symmetric (Setoid.eq S) (invInv (Ring.additiveGroup R))) (Equivalence.reflexive (Setoid.eq S)) x<0)
@@ -125,41 +137,23 @@ abstract
   ringMinusFlipsOrder''' : {x : A} → (Ring.0R R) < (Group.inverse (Ring.additiveGroup R) x) → x < (Ring.0R R)
   ringMinusFlipsOrder''' {x} 0<-x = SetoidPartialOrder.<WellDefined pOrder (invInv (Ring.additiveGroup R)) (Equivalence.reflexive (Setoid.eq S)) (ringMinusFlipsOrder 0<-x)
 
-  ringCanMultiplyByPositive : {x y c : A} → (Ring.0R R) < c → x < y → (x * c) < (y * c)
-  ringCanMultiplyByPositive {x} {y} {c} 0<c x<y = SetoidPartialOrder.<WellDefined pOrder reflexive (Group.identRight additiveGroup) q'
-    where
-      open Equivalence eq
-      have : 0R < (y + Group.inverse additiveGroup x)
-      have = SetoidPartialOrder.<WellDefined pOrder (Group.invRight additiveGroup) reflexive (OrderedRing.orderRespectsAddition order x<y (Group.inverse additiveGroup x))
-      p1 : 0R < ((y * c) + ((Group.inverse additiveGroup x) * c))
-      p1 = SetoidPartialOrder.<WellDefined pOrder reflexive (Equivalence.transitive eq *Commutative (Equivalence.transitive eq *DistributesOver+ ((Group.+WellDefined additiveGroup) *Commutative *Commutative))) (OrderedRing.orderRespectsMultiplication order have 0<c)
-      p' : 0R < ((y * c) + (Group.inverse additiveGroup (x * c)))
-      p' = SetoidPartialOrder.<WellDefined pOrder reflexive (Group.+WellDefined additiveGroup reflexive (Equivalence.transitive eq (Equivalence.transitive eq *Commutative ringMinusExtracts) (inverseWellDefined additiveGroup *Commutative))) p1
-      q : (0R + (x * c)) < (((y * c) + (Group.inverse additiveGroup (x * c))) + (x * c))
-      q = OrderedRing.orderRespectsAddition order p' (x * c)
-      q' : (x * c) < ((y * c) + 0R)
-      q' = SetoidPartialOrder.<WellDefined pOrder (Group.identLeft additiveGroup) (Equivalence.transitive eq (symmetric (Group.+Associative additiveGroup)) (Group.+WellDefined additiveGroup reflexive (Group.invLeft additiveGroup))) q
-
-  ringMultiplyPositives : {x y a b : A} → 0R < x → 0R < a → (x < y) → (a < b) → (x * a) < (y * b)
-  ringMultiplyPositives {x} {y} {a} {b} 0<x 0<a x<y a<b = SetoidPartialOrder.transitive pOrder (ringCanMultiplyByPositive 0<a x<y) (<WellDefined *Commutative *Commutative (ringCanMultiplyByPositive (SetoidPartialOrder.transitive pOrder 0<x x<y) a<b))
-
   ringCanCancelPositive : {x y c : A} → (Ring.0R R) < c → (x * c) < (y * c) → x < y
   ringCanCancelPositive {x} {y} {c} 0<c xc<yc = SetoidPartialOrder.<WellDefined pOrder (Group.identLeft additiveGroup) (Equivalence.transitive eq (symmetric (Group.+Associative additiveGroup)) (Equivalence.transitive eq (Group.+WellDefined additiveGroup reflexive (Group.invLeft additiveGroup)) (Group.identRight additiveGroup))) q''
     where
       open Equivalence (Setoid.eq S)
       have : 0R < ((y * c) + (Group.inverse additiveGroup (x * c)))
-      have = SetoidPartialOrder.<WellDefined pOrder (Group.invRight additiveGroup) reflexive (OrderedRing.orderRespectsAddition order xc<yc (Group.inverse additiveGroup _))
+      have = SetoidPartialOrder.<WellDefined pOrder (Group.invRight additiveGroup) reflexive (orderRespectsAddition xc<yc (Group.inverse additiveGroup _))
       p1 : 0R < ((y * c) + ((Group.inverse additiveGroup x) * c))
       p1 = SetoidPartialOrder.<WellDefined pOrder reflexive (Group.+WellDefined additiveGroup reflexive (symmetric (Equivalence.transitive eq (*Commutative) (Equivalence.transitive eq ringMinusExtracts (inverseWellDefined additiveGroup *Commutative))))) have
       q : 0R < ((y + Group.inverse additiveGroup x) * c)
       q = SetoidPartialOrder.<WellDefined pOrder reflexive (Equivalence.transitive eq (Equivalence.transitive eq (Group.+WellDefined additiveGroup *Commutative *Commutative) (symmetric *DistributesOver+)) *Commutative) p1
       q' : 0R < (y + Group.inverse additiveGroup x)
-      q' with SetoidTotalOrder.totality tOrder 0R (y + Group.inverse additiveGroup x)
+      q' with totality 0R (y + Group.inverse additiveGroup x)
       q' | inl (inl pr) = pr
       q' | inl (inr y-x<0) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<WellDefined pOrder reflexive (Equivalence.transitive eq *Commutative (Ring.timesZero R)) k))
         where
           f : ((y + inverse x) + (inverse (y + inverse x))) < (0G + inverse (y + inverse x))
-          f = OrderedRing.orderRespectsAddition order y-x<0 _
+          f = orderRespectsAddition y-x<0 _
           g : 0G < inverse (y + inverse x)
           g = SetoidPartialOrder.<WellDefined pOrder invRight identLeft f
           h : (0G * c) < ((inverse (y + inverse x)) * c)
@@ -179,47 +173,21 @@ abstract
           x=y : x ∼ y
           x=y = transferToRight additiveGroup (symmetric (Equivalence.transitive eq g groupIsAbelian))
       q'' : (0R + x) < ((y + Group.inverse additiveGroup x) + x)
-      q'' = OrderedRing.orderRespectsAddition order q' x
+      q'' = orderRespectsAddition q' x
 
-  ringSwapNegatives : {x y : A} → (Group.inverse (Ring.additiveGroup R) x) < (Group.inverse (Ring.additiveGroup R) y) → y < x
-  ringSwapNegatives {x} {y} -x<-y = SetoidPartialOrder.<WellDefined pOrder (Equivalence.transitive eq (symmetric (Group.+Associative additiveGroup)) (Equivalence.transitive eq (Group.+WellDefined additiveGroup reflexive (Group.invLeft additiveGroup)) (Group.identRight additiveGroup))) (Group.identLeft additiveGroup) v
-    where
-      open Equivalence eq
-      t : ((Group.inverse additiveGroup x) + y) < ((Group.inverse additiveGroup y) + y)
-      t = OrderedRing.orderRespectsAddition order -x<-y y
-      u : (y + (Group.inverse additiveGroup x)) < 0R
-      u = SetoidPartialOrder.<WellDefined pOrder (groupIsAbelian) (Group.invLeft additiveGroup) t
-      v : ((y + (Group.inverse additiveGroup x)) + x) < (0R + x)
-      v = OrderedRing.orderRespectsAddition order u x
-
-  ringSwapNegatives' : {x y : A} → x < y → (Group.inverse (Ring.additiveGroup R) y) < (Group.inverse (Ring.additiveGroup R) x)
-  ringSwapNegatives' {x} {y} x<y = ringSwapNegatives (<WellDefined (Equivalence.symmetric eq (invTwice additiveGroup _)) (Equivalence.symmetric eq (invTwice additiveGroup _)) x<y)
-
-  ringCanMultiplyByNegative : {x y c : A} → c < (Ring.0R R) → x < y → (y * c) < (x * c)
-  ringCanMultiplyByNegative {x} {y} {c} c<0 x<y = ringSwapNegatives u
-    where
-      open Equivalence eq
-      p1 : (c + Group.inverse additiveGroup c) < (0R + Group.inverse additiveGroup c)
-      p1 = OrderedRing.orderRespectsAddition order c<0 _
-      0<-c : 0R < (Group.inverse additiveGroup c)
-      0<-c = SetoidPartialOrder.<WellDefined pOrder (Group.invRight additiveGroup) (Group.identLeft additiveGroup) p1
-      t : (x * Group.inverse additiveGroup c) < (y * Group.inverse additiveGroup c)
-      t = ringCanMultiplyByPositive 0<-c x<y
-      u : (Group.inverse additiveGroup (x * c)) < Group.inverse additiveGroup (y * c)
-      u = SetoidPartialOrder.<WellDefined pOrder ringMinusExtracts ringMinusExtracts t
 
   ringCanCancelNegative : {x y c : A} → c < (Ring.0R R) → (x * c) < (y * c) → y < x
   ringCanCancelNegative {x} {y} {c} c<0 xc<yc = r
     where
       open Equivalence eq
       p0 : 0R < ((y * c) + inverse (x * c))
-      p0 = SetoidPartialOrder.<WellDefined pOrder invRight reflexive (OrderedRing.orderRespectsAddition order xc<yc (inverse (x * c)))
+      p0 = SetoidPartialOrder.<WellDefined pOrder invRight reflexive (orderRespectsAddition xc<yc (inverse (x * c)))
       p1 : 0R < ((y * c) + ((inverse x) * c))
       p1 = SetoidPartialOrder.<WellDefined pOrder reflexive (Group.+WellDefined additiveGroup reflexive (Equivalence.transitive eq (inverseWellDefined additiveGroup *Commutative) (Equivalence.transitive eq (symmetric ringMinusExtracts) *Commutative))) p0
       p2 : 0R < ((y + inverse x) * c)
       p2 = SetoidPartialOrder.<WellDefined pOrder reflexive (Equivalence.transitive eq (Group.+WellDefined additiveGroup *Commutative *Commutative) (Equivalence.transitive eq (symmetric *DistributesOver+) *Commutative)) p1
       q : (y + inverse x) < 0R
-      q with SetoidTotalOrder.totality tOrder 0R (y + inverse x)
+      q with totality 0R (y + inverse x)
       q | inl (inl pr) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.transitive pOrder bad c<0))
         where
           bad : 0R < c
@@ -230,13 +198,13 @@ abstract
           x=y : x ∼ y
           x=y = Equivalence.transitive eq (symmetric identLeft) (Equivalence.transitive eq (Group.+WellDefined additiveGroup 0=y-x reflexive) (Equivalence.transitive eq (symmetric (Group.+Associative additiveGroup)) (Equivalence.transitive eq (Group.+WellDefined additiveGroup reflexive invLeft) identRight)))
       r : y < x
-      r = SetoidPartialOrder.<WellDefined pOrder (Equivalence.transitive eq (symmetric (Group.+Associative additiveGroup)) (Equivalence.transitive eq (Group.+WellDefined additiveGroup reflexive (invLeft)) identRight)) (Group.identLeft additiveGroup) (OrderedRing.orderRespectsAddition order q x)
+      r = SetoidPartialOrder.<WellDefined pOrder (Equivalence.transitive eq (symmetric (Group.+Associative additiveGroup)) (Equivalence.transitive eq (Group.+WellDefined additiveGroup reflexive (invLeft)) identRight)) (Group.identLeft additiveGroup) (orderRespectsAddition q x)
 
-  absZero : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {a} {c} A} {p : SetoidPartialOrder S _<_} {t : SetoidTotalOrder p} (o : OrderedRing R t) → OrderedRing.abs o (Ring.0R R) ≡ Ring.0R R
-  absZero {R = R} {t = t} oR with SetoidTotalOrder.totality t (Ring.0R R) (Ring.0R R)
-  absZero {R = R} {t = t} oR | inl (inl x) = exFalso (SetoidPartialOrder.irreflexive (SetoidTotalOrder.partial t) x)
-  absZero {R = R} {t = t} oR | inl (inr x) = exFalso (SetoidPartialOrder.irreflexive (SetoidTotalOrder.partial t) x)
-  absZero {R = R} {t = t} oR | inr x = refl
+  absZero : abs (Ring.0R R) ≡ Ring.0R R
+  absZero with totality (Ring.0R R) (Ring.0R R)
+  absZero | inl (inl x) = exFalso (irreflexive x)
+  absZero | inl (inr x) = exFalso (irreflexive x)
+  absZero | inr x = refl
 
   absNegation : (a : A) → (abs a) ∼ (abs (inverse a))
   absNegation a with totality 0R a
@@ -305,7 +273,7 @@ abstract
   absRespectsTimes a b | inr 0=a | inr 0=b | inr 0=ab = Equivalence.reflexive eq
 
   absNonnegative : {a : A} → (abs a < 0R) → False
-  absNonnegative {a} pr with SetoidTotalOrder.totality tOrder 0R a
+  absNonnegative {a} pr with totality 0R a
   absNonnegative {a} pr | inl (inl x) = irreflexive {0G} (SetoidPartialOrder.transitive pOrder x pr)
   absNonnegative {a} pr | inl (inr x) = irreflexive {0G} (SetoidPartialOrder.transitive pOrder (<WellDefined (Equivalence.reflexive eq) (invTwice additiveGroup a) (lemm2 (inverse a) pr)) x)
   absNonnegative {a} pr | inr x = irreflexive {0G} (<WellDefined (Equivalence.symmetric eq x) (Equivalence.reflexive eq) pr)
@@ -329,13 +297,13 @@ abstract
   halvePositive a 0<2a | inr x = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (+WellDefined (Equivalence.symmetric eq x) (Equivalence.symmetric eq x)) identRight) 0<2a))
 
   0<1 : (0R ∼ 1R → False) → 0R < 1R
-  0<1 0!=1 with SetoidTotalOrder.totality tOrder 0R 1R
+  0<1 0!=1 with totality 0R 1R
   0<1 0!=1 | inl (inl x) = x
   0<1 0!=1 | inl (inr x) = <WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq twoNegativesTimes identIsIdent) (orderRespectsMultiplication (lemm2 1R x) (lemm2 1R x))
   0<1 0!=1 | inr x = exFalso (0!=1 x)
 
   addingAbsCannotShrink : {a b : A} → 0G < b → 0G < ((abs a) + b)
-  addingAbsCannotShrink {a} {b} 0<b with SetoidTotalOrder.totality tOrder 0G a
+  addingAbsCannotShrink {a} {b} 0<b with totality 0G a
   addingAbsCannotShrink {a} {b} 0<b | inl (inl x) = <WellDefined identLeft (Equivalence.reflexive eq) (ringAddInequalities x 0<b)
   addingAbsCannotShrink {a} {b} 0<b | inl (inr x) = <WellDefined identLeft (Equivalence.reflexive eq) (ringAddInequalities (lemm2 a x) 0<b)
   addingAbsCannotShrink {a} {b} 0<b | inr x = <WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (Equivalence.symmetric eq identLeft) (+WellDefined x (Equivalence.reflexive eq))) 0<b
@@ -368,20 +336,14 @@ abstract
   greaterThanAbsImpliesGreaterThan0 {a} {b} a<b | inl (inr a<0) = SetoidPartialOrder.transitive pOrder (lemm2 _ a<0) a<b
   greaterThanAbsImpliesGreaterThan0 {a} {b} a<b | inr 0=a = <WellDefined (Equivalence.symmetric eq 0=a) (Equivalence.reflexive eq) a<b
 
-  anyComparisonImpliesNontrivial : {a b : A} → a < b → (0R ∼ 1R) → False
-  anyComparisonImpliesNontrivial {a} {b} a<b 0=1 = irreflexive (<WellDefined (oneZeroImpliesAllZero 0=1) (oneZeroImpliesAllZero 0=1) a<b)
-
   abs1Is1 : abs 1R ∼ 1R
   abs1Is1 with totality 0R 1R
   abs1Is1 | inl (inl 0<1) = Equivalence.reflexive eq
   abs1Is1 | inl (inr 1<0) = exFalso (1<0False 1<0)
   abs1Is1 | inr 0=1 = Equivalence.reflexive eq
 
-  charNot2ImpliesNontrivial : ((1R + 1R) ∼ 0R → False) → (0R ∼ 1R) → False
-  charNot2ImpliesNontrivial charNot2 0=1 = charNot2 (Equivalence.transitive eq (+WellDefined (Equivalence.symmetric eq 0=1) (Equivalence.symmetric eq 0=1)) identRight)
-
   absBoundedImpliesBounded : {a b : A} → abs a < b → a < b
-  absBoundedImpliesBounded {a} {b} a<b with SetoidTotalOrder.totality tOrder 0G a
+  absBoundedImpliesBounded {a} {b} a<b with totality 0G a
   absBoundedImpliesBounded {a} {b} a<b | inl (inl x) = a<b
   absBoundedImpliesBounded {a} {b} a<b | inl (inr x) = SetoidPartialOrder.transitive pOrder x (SetoidPartialOrder.transitive pOrder (lemm2 a x) a<b)
   absBoundedImpliesBounded {a} {b} a<b | inr x = a<b
