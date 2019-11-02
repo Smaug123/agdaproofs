@@ -14,18 +14,20 @@ open import Fields.Fields
 open import Functions
 open import Setoids.Setoids
 open import Setoids.Orders
-open import Fields.FieldOfFractions
 open import Sets.EquivalenceRelations
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-module Fields.FieldOfFractionsOrder {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} {pRing : PartiallyOrderedRing R pOrder} (I : IntegralDomain R) (order : TotallyOrderedRing pRing) where
+module Fields.FieldOfFractions.Order {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} {pRing : PartiallyOrderedRing R pOrder} (I : IntegralDomain R) (order : TotallyOrderedRing pRing) where
+
+  open import Fields.FieldOfFractions.Setoid I
+  open import Fields.FieldOfFractions.Ring I
 
   open SetoidTotalOrder (TotallyOrderedRing.total order)
   open import Rings.Orders.Partial.Lemmas
   open PartiallyOrderedRing pRing
 
-  fieldOfFractionsComparison : Rel (fieldOfFractionsSet I)
+  fieldOfFractionsComparison : Rel fieldOfFractionsSet
   fieldOfFractionsComparison (numA ,, (denomA , denomA!=0)) (numB ,, (denomB , denomB!=0)) with totality (Ring.0R R) denomA
   fieldOfFractionsComparison (numA ,, (denomA , denomA!=0)) (numB ,, (denomB , denomB!=0)) | inl (inl 0<denomA) with totality (Ring.0R R) denomB
   fieldOfFractionsComparison (numA ,, (denomA , denomA!=0)) (numB ,, (denomB , denomB!=0)) | inl (inl 0<denomA) | inl (inl 0<denomB) = (numA * denomB) < (numB * denomA)
@@ -43,7 +45,7 @@ module Fields.FieldOfFractionsOrder {a b c : _} {A : Set a} {S : Setoid {a} {b} 
     where
       open Equivalence (Setoid.eq S)
 
-  fieldOfFractionsOrderWellDefinedLeft : {x y z : fieldOfFractionsSet I} → fieldOfFractionsComparison x y → Setoid._∼_ (fieldOfFractionsSetoid I) x z → fieldOfFractionsComparison z y
+  fieldOfFractionsOrderWellDefinedLeft : {x y z : fieldOfFractionsSet} → fieldOfFractionsComparison x y → Setoid._∼_ fieldOfFractionsSetoid x z → fieldOfFractionsComparison z y
   fieldOfFractionsOrderWellDefinedLeft {(numX ,, (denomX , denomX!=0))} {(numY ,, (denomY , denomY!=0))} {(numZ ,, (denomZ , denomZ!=0))} x<y x=z with totality (Ring.0R R) denomZ
   fieldOfFractionsOrderWellDefinedLeft {numX ,, (denomX , denomX!=0)} {numY ,, (denomY , denomY!=0)} {numZ ,, (denomZ , denomZ!=0)} x<y x=z | inl (inl 0<denomZ) with totality (Ring.0R R) denomY
   fieldOfFractionsOrderWellDefinedLeft {numX ,, (denomX , denomX!=0)} {numY ,, (denomY , denomY!=0)} {numZ ,, (denomZ , denomZ!=0)} x<y x=z | inl (inl 0<denomZ) | inl (inl 0<denomY) with totality (Ring.0R R) denomX
@@ -153,7 +155,7 @@ module Fields.FieldOfFractionsOrder {a b c : _} {A : Set a} {S : Setoid {a} {b} 
     where
       open Equivalence (Setoid.eq S)
 
-  fieldOfFractionsOrderWellDefinedRight : {x y z : fieldOfFractionsSet I} → fieldOfFractionsComparison x y → Setoid._∼_ (fieldOfFractionsSetoid I) y z → fieldOfFractionsComparison x z
+  fieldOfFractionsOrderWellDefinedRight : {x y z : fieldOfFractionsSet} → fieldOfFractionsComparison x y → Setoid._∼_ (fieldOfFractionsSetoid) y z → fieldOfFractionsComparison x z
   fieldOfFractionsOrderWellDefinedRight {numX ,, (denomX , denomX!=0)} {numY ,, (denomY , denomY!=0)} {numZ ,, (denomZ , denomZ!=0)} x<y y=z with totality (Ring.0R R) denomX
   fieldOfFractionsOrderWellDefinedRight {numX ,, (denomX , denomX!=0)} {numY ,, (denomY , denomY!=0)} {numZ ,, (denomZ , denomZ!=0)} x<y y=z | inl (inl 0<denomX) with totality (Ring.0R R) denomZ
   fieldOfFractionsOrderWellDefinedRight {numX ,, (denomX , denomX!=0)} {numY ,, (denomY , denomY!=0)} {numZ ,, (denomZ , denomZ!=0)} x<y y=z | inl (inl 0<denomX) | inl (inl 0<denomZ) with totality (Ring.0R R) denomY
@@ -208,7 +210,7 @@ module Fields.FieldOfFractionsOrder {a b c : _} {A : Set a} {S : Setoid {a} {b} 
       open Ring R
       open Equivalence (Setoid.eq S)
 
-  fieldOfFractionsOrder : SetoidPartialOrder (fieldOfFractionsSetoid I) fieldOfFractionsComparison
+  fieldOfFractionsOrder : SetoidPartialOrder fieldOfFractionsSetoid fieldOfFractionsComparison
   SetoidPartialOrder.<WellDefined (fieldOfFractionsOrder) {a} {b} {c} {d} a=b c=d a<c = fieldOfFractionsOrderWellDefinedRight {b} {c} {d} (fieldOfFractionsOrderWellDefinedLeft {a} {c} {b} a<c a=b) c=d
   SetoidPartialOrder.irreflexive (fieldOfFractionsOrder) {aNum ,, (aDenom , aDenom!=0)} pr with totality (Ring.0R R) aDenom
   SetoidPartialOrder.irreflexive (fieldOfFractionsOrder) {aNum ,, (aDenom , aDenom!=0)} pr | inl (inl 0<aDenom) with totality (Ring.0R R) aDenom
@@ -407,7 +409,7 @@ module Fields.FieldOfFractionsOrder {a b c : _} {A : Set a} {S : Setoid {a} {b} 
       open Ring R
       open Equivalence (Setoid.eq S)
 
-  fieldOfFractionsPOrderedRing : PartiallyOrderedRing (fieldOfFractionsRing I) (SetoidTotalOrder.partial fieldOfFractionsTotalOrder)
+  fieldOfFractionsPOrderedRing : PartiallyOrderedRing fieldOfFractionsRing (SetoidTotalOrder.partial fieldOfFractionsTotalOrder)
   PartiallyOrderedRing.orderRespectsAddition fieldOfFractionsPOrderedRing {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) with totality (Ring.0R R) (denomA * denomC)
   PartiallyOrderedRing.orderRespectsAddition (fieldOfFractionsPOrderedRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inl 0<dAdC) with totality (Ring.0R R) (denomB * denomC)
   PartiallyOrderedRing.orderRespectsAddition (fieldOfFractionsPOrderedRing) {numA ,, (denomA , denomA!=0)} {numB ,, (denomB , denomB!=0)} a<b (numC ,, (denomC , denomC!=0)) | inl (inl 0<dAdC) | inl (inl 0<dBdC) with totality (Ring.0R R) denomA

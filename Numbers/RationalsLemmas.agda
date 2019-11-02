@@ -15,8 +15,6 @@ open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
 open import Setoids.Orders
 open import Functions
-open import Fields.FieldOfFractions
-open import Fields.FieldOfFractionsOrder
 open import Sets.EquivalenceRelations
 open import Numbers.Rationals
 open import Semirings.Definition
