@@ -138,7 +138,7 @@ module Numbers.BinaryNaturals.Subtraction where
   subLemma2 : (a b : ℕ) → a <N b → 2 *N a <N succ (2 *N b)
   subLemma2 a b a<b with TotalOrder.totality ℕTotalOrder (2 *N a) (succ (2 *N b))
   subLemma2 a b a<b | inl (inl x) = x
-  subLemma2 a b a<b | inl (inr x) = exFalso (TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder x (TotalOrder.transitive ℕTotalOrder (lessRespectsMultiplicationLeft a b 2 a<b (le 1 refl)) (le 0 refl))))
+  subLemma2 a b a<b | inl (inr x) = exFalso (TotalOrder.irreflexive ℕTotalOrder (TotalOrder.<Transitive ℕTotalOrder x (TotalOrder.<Transitive ℕTotalOrder (lessRespectsMultiplicationLeft a b 2 a<b (le 1 refl)) (le 0 refl))))
   subLemma2 a b a<b | inr x = exFalso (parity b a (equalityCommutative x))
 
   subtraction : (a b : BinNat) → a -B b ≡ no → binNatToN a <N binNatToN b
@@ -457,7 +457,7 @@ module Numbers.BinaryNaturals.Subtraction where
   subtraction2'' a b pr with -N pr
   subtraction2'' a b pr | record { result = result ; pr = subPr } with inspect (go zero (NToBinNat a) (NToBinNat b))
   subtraction2'' a b (inl pr) | record { result = result ; pr = subPr } | no with≡ pr2 with subtraction (NToBinNat a) (NToBinNat b) pr2
-  ... | bl rewrite nToN a | nToN b = exFalso (TotalOrder.irreflexive ℕTotalOrder (TotalOrder.transitive ℕTotalOrder pr bl))
+  ... | bl rewrite nToN a | nToN b = exFalso (TotalOrder.irreflexive ℕTotalOrder (TotalOrder.<Transitive ℕTotalOrder pr bl))
   subtraction2'' a b (inr pr) | record { result = result ; pr = subPr } | no with≡ pr2 with subtraction (NToBinNat a) (NToBinNat b) pr2
   ... | bl rewrite nToN a | nToN b | pr = exFalso (TotalOrder.irreflexive ℕTotalOrder bl)
   subtraction2'' a b pr | record { result = result ; pr = subPr } | yes x with≡ pr2 with subtraction2 a b pr2

@@ -82,7 +82,7 @@ lessThanTotalZ {negSucc a} {negSucc .a} | inr refl = inr refl
 ℤOrder : TotalOrder ℤ
 PartialOrder._<_ (TotalOrder.order ℤOrder) = _<Z_
 PartialOrder.irreflexive (TotalOrder.order ℤOrder) {a} = irreflexive a
-PartialOrder.transitive (TotalOrder.order ℤOrder) = lessZTransitive
+PartialOrder.<Transitive (TotalOrder.order ℤOrder) = lessZTransitive
 TotalOrder.totality ℤOrder a b = lessThanTotalZ {a} {b}
 
 orderRespectsAddition : (a b : ℤ) → a <Z b → (c : ℤ) → a +Z c <Z b +Z c

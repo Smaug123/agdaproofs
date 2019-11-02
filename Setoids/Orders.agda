@@ -14,7 +14,7 @@ record SetoidPartialOrder {a b c : _} {A : Set a} (S : Setoid {a} {b} A) (_<_ : 
   field
     <WellDefined : {a b c d : A} → (a ∼ b) → (c ∼ d) → a < c → b < d
     irreflexive : {x : A} → (x < x) → False
-    transitive : {a b c : A} → (a < b) → (b < c) → (a < c)
+    <Transitive : {a b c : A} → (a < b) → (b < c) → (a < c)
 
 record SetoidTotalOrder {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_<_ : Rel {a} {c} A} (P : SetoidPartialOrder S _<_) : Set (a ⊔ b ⊔ c) where
   open Setoid S
@@ -36,7 +36,7 @@ record SetoidTotalOrder {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_<_ : Re
 partialOrderToSetoidPartialOrder : {a b : _} {A : Set a} (P : PartialOrder {a} {b} A) → SetoidPartialOrder (reflSetoid A) (PartialOrder._<_ P)
 SetoidPartialOrder.<WellDefined (partialOrderToSetoidPartialOrder P) a=b c=d a<c rewrite a=b | c=d = a<c
 SetoidPartialOrder.irreflexive (partialOrderToSetoidPartialOrder P) = PartialOrder.irreflexive P
-SetoidPartialOrder.transitive (partialOrderToSetoidPartialOrder P) = PartialOrder.transitive P
+SetoidPartialOrder.<Transitive (partialOrderToSetoidPartialOrder P) = PartialOrder.<Transitive P
 
 totalOrderToSetoidTotalOrder : {a b : _} {A : Set a} (T : TotalOrder {a} {b} A) → SetoidTotalOrder (partialOrderToSetoidPartialOrder (TotalOrder.order T))
 SetoidTotalOrder.totality (totalOrderToSetoidTotalOrder T) = TotalOrder.totality T

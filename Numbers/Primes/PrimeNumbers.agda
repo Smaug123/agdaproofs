@@ -229,16 +229,16 @@ module Numbers.Primes.PrimeNumbers where
     numberLessThanOrder : (n : ℕ) → TotalOrder (numberLessThan n)
     PartialOrder._<_ (TotalOrder.order (numberLessThanOrder n)) = λ a b → (numberLessThan.a a) <N numberLessThan.a b
     PartialOrder.irreflexive (TotalOrder.order (numberLessThanOrder n)) pr = TotalOrder.irreflexive ℕTotalOrder pr
-    PartialOrder.transitive (TotalOrder.order (numberLessThanOrder n)) pr1 pr2 = orderIsTransitive pr1 pr2
+    PartialOrder.<Transitive (TotalOrder.order (numberLessThanOrder n)) pr1 pr2 = orderIsTransitive pr1 pr2
     TotalOrder.totality (numberLessThanOrder n) a b with TotalOrder.totality ℕTotalOrder (numberLessThan.a a) (numberLessThan.a b)
     TotalOrder.totality (numberLessThanOrder n) a b | inl (inl x) = inl (inl x)
     TotalOrder.totality (numberLessThanOrder n) a b | inl (inr x) = inl (inr x)
     TotalOrder.totality (numberLessThanOrder n) a b | inr x rewrite x = inr (numberLessThanEquality a b x)
 
     numberLessThanInject : {newMax : ℕ} → (max : ℕ) → (n : numberLessThan max) → (max <N newMax) → (numberLessThan newMax)
-    numberLessThanInject max record { a = n ; a<n = n<max } max<newMax = record { a = n ; a<n = PartialOrder.transitive (TotalOrder.order ℕTotalOrder) n<max max<newMax }
+    numberLessThanInject max record { a = n ; a<n = n<max } max<newMax = record { a = n ; a<n = PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) n<max max<newMax }
 
-    numberLessThanInjectComp : {max : ℕ} (a b : ℕ) → (i : numberLessThan b) → (pr : b <N a) → (pr2 : a <N max) → numberLessThanInject {max} a (numberLessThanInject {a} b i pr) pr2 ≡ numberLessThanInject {max} b i (PartialOrder.transitive (TotalOrder.order ℕTotalOrder) pr pr2)
+    numberLessThanInjectComp : {max : ℕ} (a b : ℕ) → (i : numberLessThan b) → (pr : b <N a) → (pr2 : a <N max) → numberLessThanInject {max} a (numberLessThanInject {a} b i pr) pr2 ≡ numberLessThanInject {max} b i (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) pr pr2)
     numberLessThanInjectComp {max} a b record { a = i ; a<n = i<max } b<a a<max = numberLessThanEquality _ _ refl
 
     allNumbersLessThanDescending : (n : ℕ) → Vec (numberLessThan n) n
