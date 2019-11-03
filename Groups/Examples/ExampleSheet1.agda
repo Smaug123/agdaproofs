@@ -8,6 +8,12 @@ open import Numbers.Naturals.Naturals
 open import Numbers.Integers.Integers
 open import Sets.FinSet
 open import Groups.Definition
+open import Groups.Homomorphisms.Definition
+open import Groups.Homomorphisms.Lemmas
+open import Groups.Isomorphisms.Definition
+open import Groups.Abelian.Definition
+open import Groups.Subgroups.Definition
+open import Groups.Lemmas
 open import Groups.Groups
 open import Rings.Definition
 open import Rings.Lemmas

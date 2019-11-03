@@ -5,6 +5,7 @@ open import Numbers.Naturals.Naturals
 open import Numbers.Integers.Definition
 open import Semirings.Definition
 open import Groups.Groups
+open import Groups.Abelian.Definition
 open import Groups.Definition
 open import Setoids.Setoids
 

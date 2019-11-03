@@ -10,6 +10,12 @@ open import Sets.FinSet
 open import Functions
 open import Sets.EquivalenceRelations
 open import Numbers.Naturals.Naturals
+open import Groups.Homomorphisms.Definition
+open import Groups.Homomorphisms.Lemmas
+open import Groups.Isomorphisms.Definition
+open import Groups.Subgroups.Definition
+open import Groups.Lemmas
+open import Groups.Abelian.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
@@ -106,7 +112,7 @@ module Groups.Groups2 where
   groupKernelGroup : {a b c d : _} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} {f : A → B} (hom : GroupHom G H f) → Group (groupKernel G hom) (groupKernelGroupOp G hom)
   Group.+WellDefined (groupKernelGroup G fHom) {kerOfElt x prX} {kerOfElt y prY} {kerOfElt a prA} {kerOfElt b prB} = Group.+WellDefined G
   Group.0G (groupKernelGroup G fHom) = kerOfElt (Group.0G G) (imageOfIdentityIsIdentity fHom)
-  Group.inverse (groupKernelGroup {T = T} G {H = H} fHom) (kerOfElt x prX) = kerOfElt (Group.inverse G x) (transitive (homRespectsInverse fHom) (transitive (inverseWellDefined H prX) (invIdentity H)))
+  Group.inverse (groupKernelGroup {T = T} G {H = H} fHom) (kerOfElt x prX) = kerOfElt (Group.inverse G x) (transitive (homRespectsInverse fHom) (transitive (inverseWellDefined H prX) (invIdent H)))
     where
       open Setoid T
       open Equivalence eq
@@ -161,4 +167,3 @@ module Groups.Groups2 where
   identityHom : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+A_ : A → A → A} (G : Group S _+A_) → GroupHom G G id
   GroupHom.groupHom (identityHom {S = S} G) = Equivalence.reflexive (Setoid.eq S)
   GroupHom.wellDefined (identityHom G) = id
-

@@ -50,7 +50,7 @@ abstract
   lemm3 a b pr1 pr2 with transferToRight' additiveGroup (Equivalence.symmetric eq pr1)
   ... | a=-b with Equivalence.transitive eq pr2 a=-b
   ... | 0=-b with inverseWellDefined additiveGroup 0=-b
-  ... | -0=--b = Equivalence.transitive eq (Equivalence.symmetric eq (invIdentity additiveGroup)) (Equivalence.transitive eq -0=--b (invTwice additiveGroup b))
+  ... | -0=--b = Equivalence.transitive eq (Equivalence.symmetric eq (invIdent additiveGroup)) (Equivalence.transitive eq -0=--b (invTwice additiveGroup b))
 
   charNot2ImpliesNontrivial : ((1R + 1R) ∼ 0R → False) → (0R ∼ 1R) → False
   charNot2ImpliesNontrivial charNot2 0=1 = charNot2 (Equivalence.transitive eq (+WellDefined (Equivalence.symmetric eq 0=1) (Equivalence.symmetric eq 0=1)) identRight)

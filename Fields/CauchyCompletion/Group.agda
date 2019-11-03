@@ -7,6 +7,8 @@ open import Rings.Lemmas
 open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
 open import Groups.Definition
+open import Groups.Lemmas
+open import Groups.Homomorphisms.Definition
 open import Groups.Groups
 open import Fields.Fields
 open import Sets.EquivalenceRelations
@@ -50,7 +52,7 @@ CinvRight : {a : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid (a +C
 CinvRight {a} ε 0<e = 0 , ans
   where
     ans : {m : ℕ} → (0 <N m) → abs (index (apply _+_ (CauchyCompletion.elts (a +C (-C a))) (map inverse (CauchyCompletion.elts (injection 0G)))) m) < ε
-    ans {m} 0<m rewrite indexAndApply (CauchyCompletion.elts (a +C (-C a))) (map inverse (CauchyCompletion.elts (injection 0G))) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (map inverse (CauchyCompletion.elts a)) _+_ {m} | equalityCommutative (mapAndIndex (CauchyCompletion.elts a) inverse m) | equalityCommutative (mapAndIndex (constSequence 0G) inverse m) | indexAndConst 0G m = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ (Equivalence.transitive eq (+WellDefined invRight (invIdentity (Ring.additiveGroup R))) identRight)) (identityOfIndiscernablesRight _∼_ (Equivalence.reflexive eq) absZero))) (Equivalence.reflexive eq) 0<e
+    ans {m} 0<m rewrite indexAndApply (CauchyCompletion.elts (a +C (-C a))) (map inverse (CauchyCompletion.elts (injection 0G))) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (map inverse (CauchyCompletion.elts a)) _+_ {m} | equalityCommutative (mapAndIndex (CauchyCompletion.elts a) inverse m) | equalityCommutative (mapAndIndex (constSequence 0G) inverse m) | indexAndConst 0G m = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ (Equivalence.transitive eq (+WellDefined invRight (invIdent (Ring.additiveGroup R))) identRight)) (identityOfIndiscernablesRight _∼_ (Equivalence.reflexive eq) absZero))) (Equivalence.reflexive eq) 0<e
 
 CGroup : Group cauchyCompletionSetoid _+C_
 Group.+WellDefined CGroup {a} {b} {c} {d} x y = additionWellDefined {a} {c} {b} {d} x y

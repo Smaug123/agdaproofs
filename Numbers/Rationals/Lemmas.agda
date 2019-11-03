@@ -16,11 +16,11 @@ open import Setoids.Setoids
 open import Setoids.Orders
 open import Functions
 open import Sets.EquivalenceRelations
-open import Numbers.Rationals
+open import Numbers.Rationals.Definition
 open import Semirings.Definition
 open import Orders
 
-module Numbers.RationalsLemmas where
+module Numbers.Rationals.Lemmas where
 
 open PartiallyOrderedRing ℤPOrderedRing
 open import Rings.Orders.Total.Lemmas ℤOrderedRing

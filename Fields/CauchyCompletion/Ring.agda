@@ -8,6 +8,7 @@ open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
 open import Groups.Definition
 open import Groups.Groups
+open import Groups.Lemmas
 open import Fields.Fields
 open import Sets.EquivalenceRelations
 open import Sequences

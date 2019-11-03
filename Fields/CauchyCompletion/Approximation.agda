@@ -9,6 +9,7 @@ open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
 open import Groups.Definition
 open import Groups.Groups
+open import Groups.Lemmas
 open import Fields.Fields
 open import Sets.EquivalenceRelations
 open import Sequences
@@ -123,7 +124,7 @@ abstract
           ... | f with totality 0G (am + inverse aN)
           r | am-aN<e/4 | inl (inl 0<am-aN) = SetoidPartialOrder.<Transitive pOrder (<WellDefined (Equivalence.transitive eq (invContravariant additiveGroup) (Equivalence.transitive eq groupIsAbelian (+WellDefined (Equivalence.reflexive eq) (invTwice additiveGroup _)))) (Equivalence.reflexive eq) (lemm2' _ 0<am-aN)) 0<e/4
           r | f | inl (inr x) = <WellDefined (Equivalence.transitive eq (invContravariant additiveGroup) (Equivalence.transitive eq groupIsAbelian (+WellDefined (Equivalence.reflexive eq) (invTwice additiveGroup _)))) (Equivalence.reflexive eq) f
-          r | am-aN<e/4 | inr 0=am-aN = <WellDefined (Equivalence.transitive eq (Equivalence.symmetric eq 0=am-aN) (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq (invIdentity additiveGroup)) (inverseWellDefined additiveGroup 0=am-aN)) (inverseWellDefined additiveGroup groupIsAbelian)) (invContravariant additiveGroup)) (+WellDefined (Equivalence.reflexive eq) (invTwice additiveGroup _)))) (Equivalence.reflexive eq) am-aN<e/4
+          r | am-aN<e/4 | inr 0=am-aN = <WellDefined (Equivalence.transitive eq (Equivalence.symmetric eq 0=am-aN) (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq (invIdent additiveGroup)) (inverseWellDefined additiveGroup 0=am-aN)) (inverseWellDefined additiveGroup groupIsAbelian)) (invContravariant additiveGroup)) (+WellDefined (Equivalence.reflexive eq) (invTwice additiveGroup _)))) (Equivalence.reflexive eq) am-aN<e/4
           q : ((inverse (index (CauchyCompletion.elts a) m)) + (index (CauchyCompletion.elts a) (succ N) + e/2)) < (e/4 + e/2)
           q = <WellDefined (Equivalence.symmetric eq +Associative) (Equivalence.reflexive eq) (orderRespectsAddition r e/2)
 

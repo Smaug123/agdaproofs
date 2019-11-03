@@ -2,6 +2,7 @@
 
 open import LogicalFormulae
 open import Groups.Groups
+open import Groups.Lemmas
 open import Groups.Definition
 open import Rings.Definition
 open import Rings.Orders.Partial.Definition
