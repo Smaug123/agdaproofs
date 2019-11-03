@@ -2,6 +2,7 @@
 
 open import LogicalFormulae
 open import Groups.Groups
+open import Groups.Homomorphisms.Definition
 open import Groups.Definition
 open import Numbers.Naturals.Naturals
 open import Setoids.Orders

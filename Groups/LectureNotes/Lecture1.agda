@@ -6,12 +6,15 @@ open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals.Naturals
 open import Numbers.Integers.Integers
-open import Numbers.Rationals
+open import Numbers.Rationals.Definition
 open import Sets.FinSet
 open import Groups.Definition
 open import Groups.Groups
+open import Groups.Abelian.Definition
+open import Groups.FiniteGroups.Definition
 open import Rings.Definition
-open import Numbers.Modulo.IntegersModN
+open import Numbers.Modulo.Group
+open import Numbers.Modulo.Definition
 open import Semirings.Definition
 
 module Groups.LectureNotes.Lecture1 where

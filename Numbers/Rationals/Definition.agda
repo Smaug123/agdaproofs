@@ -5,6 +5,7 @@ open import Numbers.Naturals.Naturals
 open import Numbers.Integers.Integers
 open import Groups.Groups
 open import Groups.Definition
+open import Groups.Lemmas
 open import Rings.Definition
 open import Rings.Orders.Total.Definition
 open import Rings.Orders.Partial.Definition
@@ -15,7 +16,7 @@ open import Setoids.Orders
 open import Functions
 open import Sets.EquivalenceRelations
 
-module Numbers.Rationals where
+module Numbers.Rationals.Definition where
 
 open import Fields.FieldOfFractions.Setoid ℤIntDom
 open import Fields.FieldOfFractions.Addition ℤIntDom

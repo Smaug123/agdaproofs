@@ -4,14 +4,14 @@
 
 open import Numbers.Primes.PrimeNumbers
 open import Numbers.Primes.IntegerFactorisation
-open import Numbers.Rationals
-open import Numbers.RationalsLemmas
+open import Numbers.Rationals.Definition
+open import Numbers.Rationals.Lemmas
 
 open import Logic.PropositionalLogic
 open import Logic.PropositionalLogicExamples
 open import Logic.PropositionalAxiomsTautology
 
-open import Numbers.Modulo.IntegersModN
+open import Numbers.Modulo.Group
 
 open import Sets.FinSetWithK
 
@@ -23,5 +23,6 @@ open import Groups.Examples.ExampleSheet1
 open import Groups.LectureNotes.Lecture1
 
 open import LectureNotes.NumbersAndSets.Lecture1
+open import LectureNotes.Groups.Lecture1
 
 module Everything.WithK where

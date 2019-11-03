@@ -5,7 +5,8 @@ open import Groups.Groups
 open import Functions
 open import Numbers.Naturals.Naturals
 open import Numbers.Integers.Integers
-open import Numbers.Modulo.IntegersModN
+open import Numbers.Modulo.Group
+open import Numbers.Modulo.Definition
 open import Rings.Examples.Proofs
 open import Numbers.Primes.PrimeNumbers
 

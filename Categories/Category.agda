@@ -2,26 +2,19 @@
 
 open import LogicalFormulae
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals
+open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Order
 open import Vectors
+open import Semirings.Definition
+open import Categories.Definition
 
 module Categories.Category where
 
 postulate
   extensionality : {a b : _} {S : Set a}{T : S → Set b} {f g : (x : S) → T x} → ((x : S) → f x ≡ g x) → f ≡ g
 
-record Category {a b : _} : Set (lsuc (a ⊔ b)) where
-  field
-    objects : Set a
-    arrows : objects → objects → Set b
-    id : (x : objects) → arrows x x
-    _∘_ : {x y z : objects} → arrows y z → arrows x y → arrows x z
-    rightId : {x y : objects} → (f : arrows x y) → (id y) ∘ f ≡ f
-    leftId : {x y : objects} → (f : arrows x y) → f ∘ (id x) ≡ f
-    associative : {x y z w : objects} → (f : arrows z w) → (g : arrows y z) → (h : arrows x y) → (f ∘ (g ∘ h)) ≡ (f ∘ g) ∘ h
-
 dual : {a b : _} → Category {a} {b} → Category {a} {b}
-dual record { objects = objects ; arrows = arrows ; id = id ; _∘_ = _∘_ ; rightId = rightId ; leftId = leftId ; associative = associative } = record { objects = objects ; arrows = λ i j → arrows j i ; id = id ; _∘_ = λ {x y z} g f → f ∘ g ; rightId = λ {x y} f → leftId f ; leftId = λ {x y} f → rightId f ; associative = λ {x y z w} f g h → equalityCommutative (associative h g f) }
+dual record { objects = objects ; arrows = arrows ; id = id ; _∘_ = _∘_ ; rightId = rightId ; leftId = leftId ; compositionAssociative = associative } = record { objects = objects ; arrows = λ i j → arrows j i ; id = id ; _∘_ = λ {x y z} g f → f ∘ g ; rightId = λ {x y} f → leftId f ; leftId = λ {x y} f → rightId f ; associative = λ {x y z w} f g h → equalityCommutative (associative h g f) }
 
 SET : {a : _} → Category {lsuc a} {a}
 SET {a} = record { objects = Set a ; arrows = λ i j → (i → j) ; id = λ X x → x ; _∘_ = λ g f x → g (f x) ; rightId = λ f → refl ; leftId = λ f → refl ; associative = λ f g h → refl }
@@ -55,7 +48,7 @@ NatPreorder = record { objects = ℕ ; arrows = λ m n → m ≤N n ; id = λ x 
     leqUnique (inr a=b1) (inr a=b2) rewrite a=b1 | a=b2 = refl
 
 NatMonoid : Category {lzero} {lzero}
-NatMonoid = record { objects = True ; arrows = λ _ _ → ℕ ; id = λ x → 0 ; _∘_ = λ f g → f +N g ; rightId = λ f → refl ; leftId = λ f → addZeroRight f ; associative = λ a b c → equalityCommutative (additionNIsAssociative a b c) }
+NatMonoid = record { objects = True ; arrows = λ _ _ → ℕ ; id = λ x → 0 ; _∘_ = λ f g → f +N g ; rightId = λ f → refl ; leftId = λ f → Semiring.sumZeroRight ℕSemiring f ; associative = λ a b c → Semiring.+Associative ℕSemiring a b c }
 
 DISCRETE : {a : _} (X : Set a) → Category {a} {a}
 DISCRETE X = record { objects = X ; arrows = _≡_ ; id = λ x → refl ; _∘_ = λ f g → transitivity g f ; rightId = λ f → ≡Unique (transitivity f refl) f ; leftId = λ f → ≡Unique (transitivity refl f) f ; associative = λ f g h → ≡Unique (transitivity (transitivity h g) f) (transitivity h (transitivity g f)) }

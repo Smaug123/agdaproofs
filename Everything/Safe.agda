@@ -13,6 +13,11 @@ open import Numbers.Integers.Integers
 open import Lists.Lists
 
 open import Groups.Groups
+open import Groups.Abelian.Lemmas
+open import Groups.DirectSum.Definition
+open import Groups.FiniteGroups.Definition
+open import Groups.Homomorphisms.Lemmas
+open import Groups.Isomorphisms.Lemmas
 open import Groups.FinitePermutations
 open import Groups.Lemmas
 open import Groups.Groups2
@@ -62,4 +67,3 @@ open import Fields.CauchyCompletion.Group
 open import Fields.CauchyCompletion.Ring
 
 module Everything.Safe where
-

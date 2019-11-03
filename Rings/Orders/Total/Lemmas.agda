@@ -90,10 +90,10 @@ abstract
   triangleInequality a b | inl (inr a+b<0) | inl (inr a<0) with totality 0G b
   triangleInequality a b | inl (inr a+b<0) | inl (inr a<0) | inl (inl 0<b) = inl (<WellDefined (Equivalence.symmetric eq (invContravariant additiveGroup)) groupIsAbelian (orderRespectsAddition (SetoidPartialOrder.<Transitive pOrder (lemm2' _ 0<b) 0<b) (inverse a)))
   triangleInequality a b | inl (inr a+b<0) | inl (inr a<0) | inl (inr b<0) = inr (Equivalence.transitive eq (invContravariant additiveGroup) groupIsAbelian)
-  triangleInequality a b | inl (inr a+b<0) | inl (inr a<0) | inr 0=b = inr (Equivalence.transitive eq (invContravariant additiveGroup) (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.transitive eq (+WellDefined (Equivalence.transitive eq (inverseWellDefined additiveGroup (Equivalence.symmetric eq 0=b)) (invIdentity additiveGroup)) (Equivalence.reflexive eq)) identLeft) (Equivalence.symmetric eq identRight)) (+WellDefined (Equivalence.reflexive eq) 0=b)))
+  triangleInequality a b | inl (inr a+b<0) | inl (inr a<0) | inr 0=b = inr (Equivalence.transitive eq (invContravariant additiveGroup) (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.transitive eq (+WellDefined (Equivalence.transitive eq (inverseWellDefined additiveGroup (Equivalence.symmetric eq 0=b)) (invIdent additiveGroup)) (Equivalence.reflexive eq)) identLeft) (Equivalence.symmetric eq identRight)) (+WellDefined (Equivalence.reflexive eq) 0=b)))
   triangleInequality a b | inl (inr a+b<0) | inr 0=a with totality 0G b
   triangleInequality a b | inl (inr a+b<0) | inr 0=a | inl (inl 0<b) = exFalso (irreflexive {0G} (SetoidPartialOrder.<Transitive pOrder 0<b (<WellDefined (Equivalence.transitive eq (+WellDefined (Equivalence.symmetric eq 0=a) (Equivalence.reflexive eq)) identLeft) (Equivalence.reflexive eq) a+b<0)))
-  triangleInequality a b | inl (inr a+b<0) | inr 0=a | inl (inr b<0) = inr (Equivalence.transitive eq (invContravariant additiveGroup) (Equivalence.transitive eq groupIsAbelian (+WellDefined (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq (inverseWellDefined additiveGroup 0=a)) (invIdentity additiveGroup)) 0=a) (Equivalence.reflexive eq))))
+  triangleInequality a b | inl (inr a+b<0) | inr 0=a | inl (inr b<0) = inr (Equivalence.transitive eq (invContravariant additiveGroup) (Equivalence.transitive eq groupIsAbelian (+WellDefined (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq (inverseWellDefined additiveGroup 0=a)) (invIdent additiveGroup)) 0=a) (Equivalence.reflexive eq))))
   triangleInequality a b | inl (inr a+b<0) | inr 0=a | inr 0=b = exFalso (irreflexive {0G} (<WellDefined (Equivalence.transitive eq (+WellDefined (Equivalence.symmetric eq 0=a) (Equivalence.symmetric eq 0=b)) identLeft) (Equivalence.reflexive eq) a+b<0))
   triangleInequality a b | inr 0=a+b with totality 0G a
   triangleInequality a b | inr 0=a+b | inl (inl 0<a) with totality 0G b
@@ -169,7 +169,7 @@ abstract
           f : inverse 0G ∼ inverse (y + inverse x)
           f = inverseWellDefined additiveGroup 0=y-x
           g : 0G ∼ (inverse y) + x
-          g = Equivalence.transitive eq (symmetric (invIdentity additiveGroup)) (Equivalence.transitive eq f (Equivalence.transitive eq (Equivalence.transitive eq (invContravariant additiveGroup) groupIsAbelian) (+WellDefined reflexive (invInv additiveGroup))))
+          g = Equivalence.transitive eq (symmetric (invIdent additiveGroup)) (Equivalence.transitive eq f (Equivalence.transitive eq (Equivalence.transitive eq (invContravariant additiveGroup) groupIsAbelian) (+WellDefined reflexive (invInv additiveGroup))))
           x=y : x ∼ y
           x=y = transferToRight additiveGroup (symmetric (Equivalence.transitive eq g groupIsAbelian))
       q'' : (0R + x) < ((y + Group.inverse additiveGroup x) + x)
