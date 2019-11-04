@@ -1,4 +1,4 @@
-{-# OPTIONS --warning=error --safe #-}
+{-# OPTIONS --warning=error --safe --guardedness #-}
 
 -- This file contains everything that is --safe, but uses K.
 
