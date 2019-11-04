@@ -37,12 +37,6 @@ open import Fields.Lemmas F
 open import Fields.CauchyCompletion.Definition order F
 open import Fields.CauchyCompletion.Setoid order F charNot2
 
-shrinkInequality : {a b c : ℕ} → a +N b <N c → a <N c
-shrinkInequality {a} {b} {c} (le x pr) = le (x +N b) (transitivity (applyEquality succ (transitivity (equalityCommutative (Semiring.+Associative ℕSemiring x _ _)) (applyEquality (x +N_) (Semiring.commutative ℕSemiring b a)))) pr)
-
-shrinkInequality' : {a b c : ℕ} → a +N b <N c → b <N c
-shrinkInequality' {a} {b} {c} (le x pr) = le (x +N a) (transitivity (applyEquality succ (equalityCommutative (Semiring.+Associative ℕSemiring x _ _))) pr)
-
 -- "<C rational", where the r indicates where the rational number goes
 _<Cr_ : CauchyCompletion → A → Set (m ⊔ o)
 a <Cr b = Sg A (λ ε → (0G < ε) && Sg ℕ (λ N → ((m : ℕ) → (N<m : N <N m) → (ε + index (CauchyCompletion.elts a) m) < b)))
@@ -63,8 +57,8 @@ a <Cr b = Sg A (λ ε → (0G < ε) && Sg ℕ (λ N → ((m : ℕ) → (N<m : N 
 ... | N2 , prN2 = e/2 , (0<e/2 ,, ((N +N N2) , ans))
   where
     ans : (m : ℕ) → (N<m : (N +N N2) <N m) → (e/2 + index (CauchyCompletion.elts b) m) < c
-    ans m N<m with prN2 {m} (shrinkInequality' N<m)
-    ... | bl rewrite indexAndApply (CauchyCompletion.elts a) (map inverse (CauchyCompletion.elts b)) _+_ {m} | equalityCommutative (mapAndIndex (CauchyCompletion.elts b) inverse m) = SetoidPartialOrder.<Transitive pOrder (<CrWellDefinedLemma (index (CauchyCompletion.elts a) m) (index (CauchyCompletion.elts b) m) e/2 ε 0<e prE/2 bl) (pr m (shrinkInequality N<m))
+    ans m N<m with prN2 {m} (inequalityShrinkRight N<m)
+    ... | bl rewrite indexAndApply (CauchyCompletion.elts a) (map inverse (CauchyCompletion.elts b)) _+_ {m} | equalityCommutative (mapAndIndex (CauchyCompletion.elts b) inverse m) = SetoidPartialOrder.<Transitive pOrder (<CrWellDefinedLemma (index (CauchyCompletion.elts a) m) (index (CauchyCompletion.elts b) m) e/2 ε 0<e prE/2 bl) (pr m (inequalityShrinkLeft N<m))
 
 <CrWellDefined : (a b : CauchyCompletion) (c d : A) → Setoid._∼_ cauchyCompletionSetoid a b → c ∼ d → a <Cr c → b <Cr d
 <CrWellDefined a b c d a=b c=d a<c = <CrWellDefinedLeft a b d a=b (<CrWellDefinedRight a c d c=d a<c)
@@ -88,8 +82,8 @@ r<CWellDefinedRight a b c a=b (e , (0<e ,, (N , pr))) with halve charNot2 e
 ... | N2 , prN2 = e/2 , (0<e/2 ,, ((N +N N2) , ans))
   where
     ans : (m : ℕ) → (N<m : (N +N N2) <N m) → (c + e/2) < index (CauchyCompletion.elts b) m
-    ans m N<m with prN2 {m} (shrinkInequality' N<m)
-    ... | bl rewrite indexAndApply (CauchyCompletion.elts a) (map inverse (CauchyCompletion.elts b)) _+_ {m} | equalityCommutative (mapAndIndex (CauchyCompletion.elts b) inverse m) = r<CWellDefinedLemma (index (CauchyCompletion.elts a) m) (index (CauchyCompletion.elts b) m) c e e/2 prE/2 0<e bl (pr m (shrinkInequality N<m))
+    ans m N<m with prN2 {m} (inequalityShrinkRight N<m)
+    ... | bl rewrite indexAndApply (CauchyCompletion.elts a) (map inverse (CauchyCompletion.elts b)) _+_ {m} | equalityCommutative (mapAndIndex (CauchyCompletion.elts b) inverse m) = r<CWellDefinedLemma (index (CauchyCompletion.elts a) m) (index (CauchyCompletion.elts b) m) c e e/2 prE/2 0<e bl (pr m (inequalityShrinkLeft N<m))
 
 _<C_ : CauchyCompletion → CauchyCompletion → Set (m ⊔ o)
 a <C b = Sg A (λ i → (a <Cr i) && (i r<C b))
@@ -124,7 +118,7 @@ r<CPreserves {a} {b} a<b with dense charNot2 a<b
 ... | bad = irreflexive (SetoidPartialOrder.<Transitive pOrder (<WellDefined identLeft +Associative (<WellDefined (Equivalence.reflexive eq) groupIsAbelian (orderRespectsAddition (<WellDefined identLeft (Equivalence.reflexive eq) (ringAddInequalities 0<bA 0<bB)) (index (CauchyCompletion.elts a) (succ Na +N Nb) + bound)))) bad)
 
 <CTransitive : {a b c : CauchyCompletion} → a <C b → b <C c → a <C c
-<CTransitive {a} {b} {c} (boundA , ((eL , (0<eL ,, prL)) ,, (eR , (0<eR ,, (Nr , prR))))) (boundB , ((fL , (0<fL ,, (Nfl , prFl))) ,, (fR , (0<fR ,, (N , prFR))))) = boundA , ((eL , (0<eL ,, prL)) ,, (eR , (0<eR ,, (((Nr +N Nfl) +N N) , λ m N<m → SetoidPartialOrder.<Transitive pOrder (SetoidPartialOrder.<Transitive pOrder (SetoidPartialOrder.<Transitive pOrder (SetoidPartialOrder.<Transitive pOrder (prR m (shrinkInequality {Nr} (shrinkInequality N<m))) (<WellDefined identLeft (Equivalence.reflexive eq) (orderRespectsAddition 0<fL (index (CauchyCompletion.elts b) m)))) (prFl m (shrinkInequality' {Nr} (shrinkInequality N<m)))) (<WellDefined identLeft groupIsAbelian (orderRespectsAddition 0<fR boundB))) (prFR m (shrinkInequality' N<m))))))
+<CTransitive {a} {b} {c} (boundA , ((eL , (0<eL ,, prL)) ,, (eR , (0<eR ,, (Nr , prR))))) (boundB , ((fL , (0<fL ,, (Nfl , prFl))) ,, (fR , (0<fR ,, (N , prFR))))) = boundA , ((eL , (0<eL ,, prL)) ,, (eR , (0<eR ,, (((Nr +N Nfl) +N N) , λ m N<m → SetoidPartialOrder.<Transitive pOrder (SetoidPartialOrder.<Transitive pOrder (SetoidPartialOrder.<Transitive pOrder (SetoidPartialOrder.<Transitive pOrder (prR m (inequalityShrinkLeft {Nr} (inequalityShrinkLeft N<m))) (<WellDefined identLeft (Equivalence.reflexive eq) (orderRespectsAddition 0<fL (index (CauchyCompletion.elts b) m)))) (prFl m (inequalityShrinkRight {Nr} (inequalityShrinkLeft N<m)))) (<WellDefined identLeft groupIsAbelian (orderRespectsAddition 0<fR boundB))) (prFR m (inequalityShrinkRight N<m))))))
 
 <COrder : SetoidPartialOrder cauchyCompletionSetoid _<C_
 SetoidPartialOrder.<WellDefined <COrder {a} {b} {c} {d} a=b c=d a<c = <CWellDefined {a} {b} {c} {d} a=b c=d a<c

@@ -63,7 +63,6 @@ open import Monoids.Definition
 open import Semirings.Definition
 open import Semirings.Solver
 
-open import Fields.CauchyCompletion.Group
-open import Fields.CauchyCompletion.Ring
+open import Fields.CauchyCompletion.PartiallyOrderedRing
 
 module Everything.Safe where
