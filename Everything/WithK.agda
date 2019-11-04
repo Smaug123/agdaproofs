@@ -7,6 +7,8 @@ open import Numbers.Primes.IntegerFactorisation
 open import Numbers.Rationals.Definition
 open import Numbers.Rationals.Lemmas
 
+open import Numbers.Reals.Definition
+
 open import Logic.PropositionalLogic
 open import Logic.PropositionalLogicExamples
 open import Logic.PropositionalAxiomsTautology
