@@ -22,7 +22,10 @@ open import Groups.Isomorphisms.Lemmas
 open import Groups.FinitePermutations
 open import Groups.Lemmas
 open import Groups.Groups2
-open import Groups.SymmetryGroups
+open import Groups.SymmetricGroups.Definition
+open import Groups.Actions.Stabiliser
+open import Groups.Actions.Orbit
+open import Groups.SymmetricGroups.Lemmas
 
 open import Fields.Fields
 open import Fields.Orders.Partial.Definition

@@ -9,7 +9,7 @@ open import Sets.FinSet
 open import Groups.Definition
 open import Groups.Lemmas
 open import Groups.Groups
-open import Groups.SymmetryGroups
+open import Groups.SymmetricGroups.Definition
 open import Groups.Groups2
 open import Groups.Actions
 
