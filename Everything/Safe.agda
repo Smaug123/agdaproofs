@@ -15,6 +15,7 @@ open import Lists.Lists
 open import Groups.Groups
 open import Groups.Abelian.Lemmas
 open import Groups.DirectSum.Definition
+open import Groups.QuotientGroup.Definition
 open import Groups.FiniteGroups.Definition
 open import Groups.Homomorphisms.Lemmas
 open import Groups.Isomorphisms.Lemmas
