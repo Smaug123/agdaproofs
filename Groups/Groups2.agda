@@ -16,6 +16,7 @@ open import Groups.Isomorphisms.Definition
 open import Groups.Subgroups.Definition
 open import Groups.Lemmas
 open import Groups.Abelian.Definition
+open import Groups.QuotientGroup.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
