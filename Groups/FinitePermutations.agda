@@ -4,7 +4,7 @@ open import LogicalFormulae
 open import Numbers.Naturals.Naturals -- for length
 open import Lists.Lists
 open import Functions
-open import Groups.SymmetryGroups
+open import Groups.SymmetricGroups.Definition
 open import Sets.FinSet
 open import Setoids.Setoids
 --open import Groups.Actions

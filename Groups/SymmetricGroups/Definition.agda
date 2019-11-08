@@ -10,7 +10,7 @@ open import Groups.Groups
 open import Groups.Definition
 open import Sets.EquivalenceRelations
 
-module Groups.SymmetryGroups where
+module Groups.SymmetricGroups.Definition where
   data SymmetryGroupElements {a b : _} {A : Set a} (S : Setoid {a} {b} A) : Set (a ⊔ b) where
     sym : {f : A → A} → SetoidBijection S S f → SymmetryGroupElements S
 
