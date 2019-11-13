@@ -11,18 +11,15 @@ open import Numbers.Integers.Addition
 open import Sets.FinSet
 open import Groups.Homomorphisms.Definition
 open import Groups.Groups
+open import Groups.Lemmas
 open import Groups.Subgroups.Definition
 open import Groups.Abelian.Definition
 open import Groups.Definition
 open import Groups.Cyclic.Definition
+open import Groups.Cyclic.DefinitionLemmas
+open import Semirings.Definition
 
 module Groups.Cyclic.Lemmas where
-
-elementPowerCollapse : {m n : _} {A : Set m} {S : Setoid {m} {n} A} {_·_ : A → A → A} (G : Group S _·_) (x : A) (i j : ℤ) → Setoid._∼_ S ((elementPower G x i) · (elementPower G x j)) (elementPower G x (i +Z j))
-elementPowerCollapse G x (nonneg a) (nonneg b) rewrite equalityCommutative (+Zinherits a b) = positiveEltPowerCollapse G x a b
-elementPowerCollapse G x (nonneg a) (negSucc b) = {!!}
-elementPowerCollapse G x (negSucc a) (nonneg b) = {!!}
-elementPowerCollapse G x (negSucc a) (negSucc b) = {!!}
 
 elementPowerHom : {m n : _} {A : Set m} {S : Setoid {m} {n} A} {_·_ : A → A → A} (G : Group S _·_) (x : A) → GroupHom ℤGroup G (λ i → elementPower G x i)
 GroupHom.groupHom (elementPowerHom {S = S} G x) {a} {b} = symmetric (elementPowerCollapse G x a b)
