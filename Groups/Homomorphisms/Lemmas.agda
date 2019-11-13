@@ -40,3 +40,7 @@ homRespectsInverse {T = T} {_·A_ = _·A_} {_·B_ = _·B_} {G = G} {H = H} {unde
   where
     open Setoid T
     open Equivalence eq
+
+identityHom : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+A_ : A → A → A} (G : Group S _+A_) → GroupHom G G id
+GroupHom.groupHom (identityHom {S = S} G) = Equivalence.reflexive (Setoid.eq S)
+GroupHom.wellDefined (identityHom G) = id

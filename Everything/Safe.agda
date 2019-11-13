@@ -27,6 +27,7 @@ open import Groups.Actions.Stabiliser
 open import Groups.Actions.Orbit
 open import Groups.SymmetricGroups.Lemmas
 open import Groups.ActionIsSymmetry
+open import Groups.Cyclic.Definition
 
 open import Fields.Fields
 open import Fields.Orders.Partial.Definition
