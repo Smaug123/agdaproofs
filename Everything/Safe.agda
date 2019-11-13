@@ -26,6 +26,7 @@ open import Groups.SymmetricGroups.Definition
 open import Groups.Actions.Stabiliser
 open import Groups.Actions.Orbit
 open import Groups.SymmetricGroups.Lemmas
+open import Groups.ActionIsSymmetry
 open import Groups.Cyclic.Definition
 
 open import Fields.Fields
@@ -46,6 +47,8 @@ open import Rings.IntegralDomains
 open import Setoids.Setoids
 open import Setoids.Lists
 open import Setoids.Orders
+open import Setoids.Functions.Definition
+open import Setoids.Functions.Extension
 
 open import Sets.Cardinality
 open import Sets.FinSet
