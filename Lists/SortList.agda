@@ -1,7 +1,7 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Numbers.Naturals -- for length
+open import Numbers.Naturals.Naturals -- for length
 open import Lists.Lists
 open import Orders
 open import Functions
@@ -98,7 +98,7 @@ module Lists.SortList where
   lexIrrefl : {a b : _} {A : Set a} (o : TotalOrder {a} {b} A) → {x : List A} → lexicographicOrderRel o x x → False
   lexIrrefl o {[]} ()
   lexIrrefl o {x :: l} (inl x<x) = PartialOrder.irreflexive (TotalOrder.order o) x<x
-  lexIrrefl o {x :: l} (inr (refl ,, l=l)) = lexIrrefl o {l} l=l
+  lexIrrefl o {x :: l} (inr (pr ,, l=l)) = lexIrrefl o {l} l=l
 
   lexTransitive : {a b : _} {A : Set a} (o : TotalOrder {a} {b} A) → {x y z : List A} → lexicographicOrderRel o x y → lexicographicOrderRel o y z → lexicographicOrderRel o x z
   lexTransitive o {[]} {[]} {z} x<y y<z = y<z
@@ -106,7 +106,7 @@ module Lists.SortList where
   lexTransitive o {[]} {x :: y} {x₁ :: z} record {} y<z = record {}
   lexTransitive o {x :: xs} {[]} {z} () y<z
   lexTransitive o {x :: xs} {y :: ys} {[]} (inl x<y) ()
-  lexTransitive o {x :: xs} {y :: ys} {z :: zs} (inl x<y) (inl y<z) = inl (PartialOrder.transitive (TotalOrder.order o) x<y y<z)
+  lexTransitive o {x :: xs} {y :: ys} {z :: zs} (inl x<y) (inl y<z) = inl (PartialOrder.<Transitive (TotalOrder.order o) x<y y<z)
   lexTransitive o {x :: xs} {y :: ys} {.y :: zs} (inl x<y) (inr (refl ,, ys<zs)) = inl x<y
   lexTransitive o {x :: xs} {.x :: ys} {[]} (inr (refl ,, xs<ys)) ()
   lexTransitive o {x :: xs} {.x :: ys} {z :: zs} (inr (refl ,, xs<ys)) (inl y<z) = inl y<z
@@ -127,7 +127,7 @@ module Lists.SortList where
   lexicographicOrder : {a b : _} {A : Set a} → (TotalOrder {a} {b} A) → TotalOrder (List A)
   PartialOrder._<_ (TotalOrder.order (lexicographicOrder order)) = lexicographicOrderRel order
   PartialOrder.irreflexive (TotalOrder.order (lexicographicOrder order)) = lexIrrefl order
-  PartialOrder.transitive (TotalOrder.order (lexicographicOrder order)) = lexTransitive order
+  PartialOrder.<Transitive (TotalOrder.order (lexicographicOrder order)) = lexTransitive order
   TotalOrder.totality (lexicographicOrder order) = lexTotal order
 
   badSort : {a b : _} {A : Set a} (order : TotalOrder {a} {b} A) → ℕ → List A → List A
@@ -146,7 +146,7 @@ module Lists.SortList where
       bsNonempty | bl :: _ = succIsPositive _
 
   allTrueRespectsBadsort order n [] pred record {} = {!!}
-  allTrueRespectsBadsort order n (x :: l) pred (fst ,, snd) = ?
+  allTrueRespectsBadsort order n (x :: l) pred (fst ,, snd) = {!!}
   badSortLength order zero [] = refl
   badSortLength order zero (x :: l) = transitivity (insertionIncreasesLength order (insertionSort order l) x (insertionSortIsSorted order l)) (applyEquality succ (equalityCommutative (insertionSortLength order l)))
   badSortLength order (succ n) [] = refl
