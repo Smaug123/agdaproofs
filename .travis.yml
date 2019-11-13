@@ -11,4 +11,4 @@ git:
 
 script:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
-  - docker run smaug451/agda:basic /bin/sh -c "cd ~/; git clone https://github.com/Smaug123/agdaproofs.git; cd agdaproofs; git fetch; git checkout $BRANCH; agda Everything/Safe.agda && agda Everything/WithK.agda"
+  - docker run smaug451/agda:basic /bin/sh -c "cd ~/; git clone https://github.com/Smaug123/agdaproofs.git; cd agdaproofs; git fetch; git checkout $BRANCH; agda Everything/Safe.agda && agda Everything/WithK.agda; find . -type f -name '*.agda' | sort > /tmp/agdas.txt; find . -type f -name '*.agdai' | sort > /tmp/compiled.txt; diff /tmp/agdas.txt /tmp/compiled.txt"
