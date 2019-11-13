@@ -74,4 +74,9 @@ open import Semirings.Solver
 open import Fields.CauchyCompletion.Group
 open import Fields.CauchyCompletion.Ring
 
+open import Categories.Definition
+open import Categories.Functor.Definition
+open import Categories.Functor.Lemmas
+open import Categories.Dual.Definition
+
 module Everything.Safe where

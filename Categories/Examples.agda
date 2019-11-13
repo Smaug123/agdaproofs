@@ -20,11 +20,20 @@ Category.rightId (SET {a}) = λ f → refl
 Category.leftId (SET {a}) = λ f → refl
 Category.compositionAssociative (SET {a}) = λ f g h → refl
 
-GROUP : {a : _} → Category {lsuc a} {a}
-Category.objects (GROUP {a}) = Group {!   !} {!   !}
-Category.arrows (GROUP {a}) = {!   !}
-Category.id (GROUP {a}) = {!   !}
-Category._∘_ (GROUP {a}) = {!   !}
-Category.rightId (GROUP {a}) = {!   !}
-Category.leftId (GROUP {a}) = {!   !}
-Category.compositionAssociative (GROUP {a}) = {!   !}
+GROUP : {a b : _} → Category {lsuc a ⊔ b} {a ⊔ b}
+Category.objects (GROUP {a}) = Group {!!} {!!}
+Category.arrows (GROUP {a}) = {!!}
+Category.id (GROUP {a}) = {!!}
+Category._∘_ (GROUP {a}) = {!!}
+Category.rightId (GROUP {a}) = {!!}
+Category.leftId (GROUP {a}) = {!!}
+Category.compositionAssociative (GROUP {a}) = {!!}
+
+DISCRETE : {a : _} (X : Set a) → Category {a} {a}
+Category.objects (DISCRETE X) = X
+Category.arrows (DISCRETE X) = λ a b → a ≡ b
+Category.id (DISCRETE X) = λ x → refl
+Category._∘_ (DISCRETE X) = λ y=z x=y → transitivity x=y y=z
+Category.rightId (DISCRETE X) = {!!}
+Category.leftId (DISCRETE X) = {!!}
+Category.compositionAssociative (DISCRETE X) = {!!}
