@@ -1,4 +1,4 @@
-{-# OPTIONS --warning=error --safe #-}
+{-# OPTIONS --warning=error --safe --guardedness #-}
 
 -- This file contains everything that is --safe, but uses K.
 
@@ -6,6 +6,8 @@ open import Numbers.Primes.PrimeNumbers
 open import Numbers.Primes.IntegerFactorisation
 open import Numbers.Rationals.Definition
 open import Numbers.Rationals.Lemmas
+
+open import Numbers.Reals.Definition
 
 open import Logic.PropositionalLogic
 open import Logic.PropositionalLogicExamples

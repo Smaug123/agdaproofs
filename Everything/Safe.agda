@@ -15,13 +15,20 @@ open import Lists.Lists
 open import Groups.Groups
 open import Groups.Abelian.Lemmas
 open import Groups.DirectSum.Definition
+open import Groups.QuotientGroup.Definition
 open import Groups.FiniteGroups.Definition
 open import Groups.Homomorphisms.Lemmas
 open import Groups.Isomorphisms.Lemmas
 open import Groups.FinitePermutations
 open import Groups.Lemmas
 open import Groups.Groups2
-open import Groups.SymmetryGroups
+open import Groups.SymmetricGroups.Definition
+open import Groups.Actions.Stabiliser
+open import Groups.Actions.Orbit
+open import Groups.SymmetricGroups.Lemmas
+open import Groups.ActionIsSymmetry
+open import Groups.Cyclic.Definition
+open import Groups.Cyclic.DefinitionLemmas
 
 open import Fields.Fields
 open import Fields.Orders.Partial.Definition
@@ -41,6 +48,8 @@ open import Rings.IntegralDomains
 open import Setoids.Setoids
 open import Setoids.Lists
 open import Setoids.Orders
+open import Setoids.Functions.Definition
+open import Setoids.Functions.Extension
 
 open import Sets.Cardinality
 open import Sets.FinSet
@@ -64,5 +73,10 @@ open import Semirings.Definition
 open import Semirings.Solver
 
 open import Fields.CauchyCompletion.PartiallyOrderedRing
+
+open import Categories.Definition
+open import Categories.Functor.Definition
+open import Categories.Functor.Lemmas
+open import Categories.Dual.Definition
 
 module Everything.Safe where

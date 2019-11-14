@@ -9,7 +9,7 @@ open import Numbers.Naturals.Naturals
 open import Numbers.Naturals.WithK
 open import Sets.FinSet
 open import Groups.Definition
-open import Groups.SymmetryGroups
+open import Groups.SymmetricGroups.Definition
 open import DecidableSet
 
 module Groups.FreeGroups where
