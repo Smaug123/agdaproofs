@@ -59,6 +59,7 @@ open import Sets.FinSet
 open import DecidableSet
 
 open import Vectors
+open import Vectors.VectorSpace
 
 open import KeyValue.KeyValue
 open import KeyValue.LinearStore.Definition
