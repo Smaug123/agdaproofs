@@ -81,5 +81,6 @@ open import Categories.Functor.Lemmas
 open import Categories.Dual.Definition
 
 open import Modules.Examples
+open import Modules.Lemmas
 
 module Everything.Safe where
