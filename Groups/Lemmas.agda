@@ -140,3 +140,6 @@ invContravariant {x} {y} = ans
     otherInvIsInverse = transitive oneMult invRight
     ans : (x · y) ^-1 ∼ (y ^-1) · (x ^-1)
     ans = symmetric (leftInversesAreUnique otherInvIsInverse)
+
+equalsDoubleImpliesZero : {x : A} → (x · x) ∼ x → x ∼ 0G
+equalsDoubleImpliesZero 2x=x = transitive (symmetric identLeft) (transitive (+WellDefined (symmetric invLeft) reflexive) (transitive (symmetric +Associative) (transitive (+WellDefined reflexive 2x=x) invLeft)))
