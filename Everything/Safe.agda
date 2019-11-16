@@ -44,8 +44,10 @@ open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Lemmas
 open import Rings.Orders.Partial.Lemmas
 open import Rings.IntegralDomains
+open import Rings.DirectSum
 
 open import Setoids.Setoids
+open import Setoids.DirectSum
 open import Setoids.Lists
 open import Setoids.Orders
 open import Setoids.Functions.Definition
@@ -57,6 +59,7 @@ open import Sets.FinSet
 open import DecidableSet
 
 open import Vectors
+open import Vectors.VectorSpace
 
 open import KeyValue.KeyValue
 open import KeyValue.LinearStore.Definition
@@ -82,5 +85,6 @@ open import Categories.Dual.Definition
 
 open import Modules.Examples
 open import Modules.Lemmas
+open import Modules.DirectSum
 
 module Everything.Safe where

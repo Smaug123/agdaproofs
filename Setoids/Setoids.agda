@@ -41,12 +41,6 @@ module Setoids.Setoids where
   Equivalence.symmetric (eq (reflSetoid A)) {b} {.b} refl = refl
   Equivalence.transitive (eq (reflSetoid A)) {b} {.b} {.b} refl refl = refl
 
-  directSumSetoid : {m n o p : _} → {A : Set m} {B : Set n} → (r : Setoid {m} {o} A) → (s : Setoid {n} {p} B) → Setoid (A && B)
-  _∼_ (directSumSetoid r s) (a ,, b) (c ,, d) = (Setoid._∼_ r a c) && (Setoid._∼_ s b d)
-  Equivalence.reflexive (eq (directSumSetoid r s)) {(a ,, b)} = Equivalence.reflexive (Setoid.eq r) ,, Equivalence.reflexive (Setoid.eq s)
-  Equivalence.symmetric (eq (directSumSetoid r s)) {(a ,, b)} {(c ,, d)} (fst ,, snd) = Equivalence.symmetric (Setoid.eq r) fst ,, Equivalence.symmetric (Setoid.eq s) snd
-  Equivalence.transitive (eq (directSumSetoid r s)) {a ,, b} {c ,, d} {e ,, f} (fst1 ,, snd1) (fst2 ,, snd2) = Equivalence.transitive (Setoid.eq r) fst1 fst2 ,, Equivalence.transitive (Setoid.eq s) snd1 snd2
-
   record SetoidInjection {a b c d : _} {A : Set a} {B : Set b} (S : Setoid {a} {c} A) (T : Setoid {b} {d} B) (f : A → B) : Set (a ⊔ b ⊔ c ⊔ d) where
     open Setoid S renaming (_∼_ to _∼A_)
     open Setoid T renaming (_∼_ to _∼B_)
