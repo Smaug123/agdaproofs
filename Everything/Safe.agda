@@ -80,4 +80,6 @@ open import Categories.Functor.Definition
 open import Categories.Functor.Lemmas
 open import Categories.Dual.Definition
 
+open import Modules.Examples
+
 module Everything.Safe where
