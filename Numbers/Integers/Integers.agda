@@ -11,7 +11,9 @@ module Numbers.Integers.Integers where
 
 open Numbers.Integers.Definition using (ℤ ; nonneg ; negSucc) public
 open Numbers.Integers.Addition using (_+Z_ ; ℤGroup ; ℤAbGrp) public
-open Numbers.Integers.Multiplication using (_*Z_ ; ℤIntDom ; ℤRing) public
+open Numbers.Integers.Multiplication using (_*Z_) public
+open import Numbers.Integers.RingStructure.IntegralDomain public using (ℤIntDom) public
+open import Numbers.Integers.RingStructure.Ring public using (ℤRing) public
 open Numbers.Integers.Order using (_<Z_ ; ℤOrderedRing) public
 
 _-Z_ : ℤ → ℤ → ℤ
