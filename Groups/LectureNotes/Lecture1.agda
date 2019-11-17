@@ -4,7 +4,8 @@ open import LogicalFormulae
 open import Setoids.Setoids
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
 open import Numbers.Integers.Integers
 open import Numbers.Rationals.Definition
 open import Sets.FinSet

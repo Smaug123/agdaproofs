@@ -5,7 +5,7 @@ open import Setoids.Setoids
 open import Sets.EquivalenceRelations
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
 open import Numbers.Integers.Integers
 open import Numbers.Integers.Addition
 open import Sets.FinSet

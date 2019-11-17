@@ -15,7 +15,8 @@ open import Sequences
 open import Setoids.Orders
 open import Functions
 open import LogicalFormulae
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
 open import Semirings.Definition
 
 module Fields.CauchyCompletion.Setoid {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where

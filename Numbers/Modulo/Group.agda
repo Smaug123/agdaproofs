@@ -7,8 +7,10 @@ open import Groups.Definition
 open import Groups.Groups
 open import Groups.Abelian.Definition
 open import Groups.FiniteGroups.Definition
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
+open import Numbers.Naturals.Order.Lemmas
 open import Numbers.Naturals.Naturals
-open import Numbers.Naturals.Addition -- TODO remove this dependency
 open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
 open import Sets.FinSet
@@ -22,8 +24,10 @@ open import Numbers.Modulo.Addition
 
 module Numbers.Modulo.Group where
 
+open TotalOrder ℕTotalOrder
+
 help30 : {a b c n : ℕ} → (c <N n) → (a +N b ≡ n) → (n<b+c : n <N b +N c) → (n <N a +N subtractionNResult.result (-N (inl n<b+c))) → False
-help30 {a} {b} {c} {n} c<n a+b=n n<b+c x = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive pr5 c<n)
+help30 {a} {b} {c} {n} c<n a+b=n n<b+c x = TotalOrder.irreflexive ℕTotalOrder (<Transitive pr5 c<n)
   where
     pr : n +N n <N a +N (subtractionNResult.result (-N (inl n<b+c)) +N n)
     pr = identityOfIndiscernablesRight _<N_ (additionPreservesInequality n x) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
@@ -92,7 +96,7 @@ help25 : {a b c n : ℕ} → (a +N b ≡ n) → (b +N c ≡ n) → (a +N 0 ≡ c
 help25 {a} {b} {c} {n} a+b=n b+c=n rewrite Semiring.commutative ℕSemiring a 0 | Semiring.commutative ℕSemiring a b | equalityCommutative a+b=n = equalityCommutative (canSubtractFromEqualityLeft b+c=n)
 
 help24 : {a n : ℕ} → (a <N n) → (n <N a +N 0) → False
-help24 {a} {n} a<n n<a+0 rewrite Semiring.commutative ℕSemiring a 0 = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive a<n n<a+0)
+help24 {a} {n} a<n n<a+0 rewrite Semiring.commutative ℕSemiring a 0 = TotalOrder.irreflexive ℕTotalOrder (<Transitive a<n n<a+0)
 
 help23 : {a n : ℕ} → (a <N n) → (a +N 0 ≡ n) → False
 help23 {a} {n} a<n a+0=n rewrite Semiring.commutative ℕSemiring a 0 | a+0=n = TotalOrder.irreflexive ℕTotalOrder a<n
@@ -154,7 +158,7 @@ help19 {a} {b} {c} {n} b+c<n n<a+b a<n pr = TotalOrder.irreflexive ℕTotalOrder
     r = addStrongInequalities a<n b+c<n
 
 help18 : {a b c n : ℕ} → (b+c<n : b +N c <N n) → (n<a+b : n <N a +N b) → (a <N n) → (n <N subtractionNResult.result (-N (inl n<a+b)) +N c) → False
-help18 {a} {b} {c} {n} b+c<n n<a+b a<n pr = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive p4 a<n)
+help18 {a} {b} {c} {n} b+c<n n<a+b a<n pr = TotalOrder.irreflexive ℕTotalOrder (<Transitive p4 a<n)
   where
     p : n +N n <N (n +N subtractionNResult.result (-N (inl n<a+b))) +N c
     p = identityOfIndiscernablesRight _<N_ (additionPreservesInequalityOnLeft n pr) (Semiring.+Associative ℕSemiring n _ c)
@@ -163,7 +167,7 @@ help18 {a} {b} {c} {n} b+c<n n<a+b a<n pr = TotalOrder.irreflexive ℕTotalOrder
     p2 : n +N n <N a +N (b +N c)
     p2 = identityOfIndiscernablesRight _<N_ p' (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
     p3 : n +N n <N a +N n
-    p3 = orderIsTransitive p2 (additionPreservesInequalityOnLeft a b+c<n)
+    p3 = <Transitive p2 (additionPreservesInequalityOnLeft a b+c<n)
     p4 : n <N a
     p4 = subtractionPreservesInequality n p3
 
@@ -182,7 +186,7 @@ help17 {a} {b} {c} {n} n<b+c n<a+b p1 p2 = TotalOrder.irreflexive ℕTotalOrder 
     pr3 = identityOfIndiscernablesLeft _≡_ pr2'' (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
 
 help16 : {a b c n : ℕ} → (n<b+c : n <N b +N c) → (n<a+b : n <N a +N b) → (a +N subtractionNResult.result (-N (inl n<b+c))) <N n → (pr : n <N subtractionNResult.result (-N (inl n<a+b)) +N c) → a +N subtractionNResult.result (-N (inl n<b+c)) ≡ subtractionNResult.result (-N (inl pr))
-help16 {a} {b} {c} {n} n<b+c n<a+b pr1 pr2 = exFalso (TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive pr3 pr1''))
+help16 {a} {b} {c} {n} n<b+c n<a+b pr1 pr2 = exFalso (TotalOrder.irreflexive ℕTotalOrder (<Transitive pr3 pr1''))
   where
     pr1' : a +N (subtractionNResult.result (-N (inl n<b+c)) +N n) <N n +N n
     pr1' = identityOfIndiscernablesLeft _<N_ (additionPreservesInequality n pr1) (equalityCommutative (Semiring.+Associative ℕSemiring a _ n))
@@ -196,7 +200,7 @@ help16 {a} {b} {c} {n} n<b+c n<a+b pr1 pr2 = exFalso (TotalOrder.irreflexive ℕ
     pr3 = identityOfIndiscernablesRight _<N_ pr2'' (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
 
 help15 : {a b c n : ℕ} → (n<b+c : n <N b +N c) → (n<a+b : n <N a +N b) → (n <N a +N subtractionNResult.result (-N (inl n<b+c))) → (subtractionNResult.result (-N (inl n<a+b)) +N c) <N n → False
-help15 {a} {b} {c} {n} n<b+c n<a+b pr1 pr2 = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive p2'' p1')
+help15 {a} {b} {c} {n} n<b+c n<a+b pr1 pr2 = TotalOrder.irreflexive ℕTotalOrder (<Transitive p2'' p1')
   where
     p1 : (n +N subtractionNResult.result (-N (inl n<a+b))) +N c <N n +N n
     p1 = identityOfIndiscernablesLeft _<N_ (additionPreservesInequalityOnLeft n pr2) (Semiring.+Associative ℕSemiring n _ c)
@@ -250,7 +254,7 @@ help12 {a} {b} {c} {n} n<b+c n<a+b pr1 pr2 = TotalOrder.irreflexive ℕTotalOrde
     lemm4 = identityOfIndiscernablesRight _<N_ lemm2 (equalityCommutative lemm3)
 
 help11 : {a b c n : ℕ} → (a <N n) → (b +N c ≡ n) → (n<a+b : n <N a +N b) → (n <N subtractionNResult.result (-N (inl n<a+b)) +N c) → False
-help11 {a} {b} {c} {n} a<n b+c=n n<a+b pr1 = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive a<n lemm5)
+help11 {a} {b} {c} {n} a<n b+c=n n<a+b pr1 = TotalOrder.irreflexive ℕTotalOrder (<Transitive a<n lemm5)
   where
     pr : {a b c : ℕ} → a +N (b +N c) ≡ b +N (a +N c)
     pr {a} {b} {c} rewrite Semiring.+Associative ℕSemiring a b c | Semiring.commutative ℕSemiring a b | equalityCommutative (Semiring.+Associative ℕSemiring b a c) = refl
@@ -287,7 +291,7 @@ help9 : {a n : ℕ} → (a +N 0 ≡ n) → (a <N n) → False
 help9 {a} {n} n=a+0 a<n rewrite Semiring.commutative ℕSemiring a 0 | n=a+0 = TotalOrder.irreflexive ℕTotalOrder a<n
 
 help8 : {a n : ℕ} → (n <N a +N 0) → (a <N n) → False
-help8 {a} {n} n<a+0 a<n rewrite Semiring.commutative ℕSemiring a 0 = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive a<n n<a+0)
+help8 {a} {n} n<a+0 a<n rewrite Semiring.commutative ℕSemiring a 0 = TotalOrder.irreflexive ℕTotalOrder (<Transitive a<n n<a+0)
 
 help6 : {a b c n : ℕ} → (b +N c ≡ n) → (n<a+b : n <N a +N b) → (a +N 0 ≡ subtractionNResult.result (-N (inl n<a+b)) +N c)
 help6 {a} {b} {c} {n} b+c=n n<a+b rewrite Semiring.commutative ℕSemiring a 0 = canSubtractFromEqualityLeft {n} lem'
@@ -319,7 +323,7 @@ help4 {a} {b} {c} {n} n<a+'b+c n<a+b = canSubtractFromEqualityLeft lemma'
     lemma' = identityOfIndiscernablesRight _≡_ lemma (equalityCommutative (Semiring.+Associative ℕSemiring n (subtractionNResult.result (-N (inl n<a+b))) c))
 
 help3 : {a b c n : ℕ} → (a <N n) → (b <N n) → (c <N n) → (a +N b <N n) → (pr : n <N b +N c) → a +N subtractionNResult.result (-N (inl pr)) ≡ n → False
-help3 {a} {b} {c} {n} a<n b<n c<n a+b<n n<b+c pr = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive (inter4 inter3) c<n)
+help3 {a} {b} {c} {n} a<n b<n c<n a+b<n n<b+c pr = TotalOrder.irreflexive ℕTotalOrder (<Transitive (inter4 inter3) c<n)
   where
     inter : a +N (n +N subtractionNResult.result (-N (inl n<b+c))) ≡ n +N n
     inter = identityOfIndiscernablesLeft _≡_ (applyEquality (n +N_) pr) (lemma n a (subtractionNResult.result (-N (inl n<b+c))))
@@ -356,27 +360,27 @@ help1 {a} {b} {c} {n} sn<b+c pr1 a+b<sn a<sn b<sn c<sn | record { result = b+c-s
     eep2 : a +N (b +N c) <N succ n +N c
     eep2 rewrite Semiring.+Associative ℕSemiring a b c = additionPreservesInequality c a+b<sn
     eep2' : a +N (b +N c) <N succ n +N succ n
-    eep2' = orderIsTransitive eep2 (additionPreservesInequalityOnLeft (succ n) c<sn)
+    eep2' = <Transitive eep2 (additionPreservesInequalityOnLeft (succ n) c<sn)
     ans : False
-    ans = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive eep eep2')
+    ans = TotalOrder.irreflexive ℕTotalOrder (<Transitive eep eep2')
 
 plusZnAssociative : {n : ℕ} → {pr : 0 <N n} → (a b c : ℤn n pr) → a +n (b +n c) ≡ ((a +n b) +n c)
 plusZnAssociative {zero} {()}
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess} record { x = c ; xLess = cLess } with orderIsTotal (a +N b) (succ n)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) with orderIsTotal ((a +N b) +N c) (succ n)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) with orderIsTotal (b +N c) (succ n)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) | inl (inl b+c<sn) with orderIsTotal (a +N (b +N c)) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess} record { x = c ; xLess = cLess } with totality (a +N b) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) with totality ((a +N b) +N c) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) with totality (b +N c) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) | inl (inl b+c<sn) with totality (a +N (b +N c)) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) | inl (inl b+c<sn) | inl (inl a+'b+c<sn) = equalityZn _ _ (Semiring.+Associative ℕSemiring a b c)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) | inl (inl b+c<sn) | inl (inr sn<a+'b+c) = exFalso (false {succ n} a+b+c<sn sn<a+'b+c)
   where
     false : {x : ℕ} → (a +N b) +N c <N succ n → succ n <N a +N (b +N c) → False
-    false pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive pr1 pr2)
+    false pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = TotalOrder.irreflexive ℕTotalOrder (<Transitive pr1 pr2)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) | inl (inl b+c<sn) | inr sn=a+b+c = exFalso (false a+b+c<sn sn=a+b+c)
   where
     false : {x : ℕ} → (a +N b) +N c <N x → (a +N (b +N c)) ≡ x → False
     false p1 p2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) | p2 = TotalOrder.irreflexive ℕTotalOrder p1
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) | inl (inr sn<b+c) with orderIsTotal (a +N (b +N c)) (succ n)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) | inl (inr sn<b+c) | inl (inl _) with orderIsTotal (a +N subtractionNResult.result (-N (inl sn<b+c))) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) | inl (inr sn<b+c) with totality (a +N (b +N c)) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) | inl (inr sn<b+c) | inl (inl _) with totality (a +N subtractionNResult.result (-N (inl sn<b+c))) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) | inl (inr sn<b+c) | inl (inl _) | inl (inl x) with -N (inl sn<b+c)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) | inl (inr sn<b+c) | inl (inl a+'b+c<sn) | inl (inl x) | record { result = result ; pr = pr } = exFalso (false a+'b+c<sn pr)
   where
@@ -405,7 +409,7 @@ plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ;
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) | inl (inr sn<b+c) | inl (inr x) = equalityZn _ _ (exFalso (false {succ n} a+b+c<sn x))
   where
     false : {x : ℕ} → (a +N b) +N c <N succ n → succ n <N a +N (b +N c) → False
-    false pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive pr1 pr2)
+    false pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = TotalOrder.irreflexive ℕTotalOrder (<Transitive pr1 pr2)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inl a+b+c<sn) | inl (inr sn<b+c) | inr x = exFalso (false a+b+c<sn x)
   where
     false : (a +N b) +N c <N succ n → a +N (b +N c) ≡ succ n → False
@@ -414,12 +418,12 @@ plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ;
   where
     false : (a +N b) +N c <N succ n → b +N c ≡ succ n → False
     false pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) | pr2 | Semiring.commutative ℕSemiring a (succ n) = cannotAddAndEnlarge' a+b+c<sn
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) with orderIsTotal (b +N c) (succ n)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inl (inl b+c<sn) with orderIsTotal (a +N (b +N c)) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) with totality (b +N c) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inl (inl b+c<sn) with totality (a +N (b +N c)) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inl (inl b+c<sn) | inl (inl a+'b+c<sn) = exFalso (false sn<a+b+c a+'b+c<sn)
   where
     false : (succ n <N (a +N b) +N c) → a +N (b +N c) <N succ n → False
-    false pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive pr1 pr2)
+    false pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = TotalOrder.irreflexive ℕTotalOrder (<Transitive pr1 pr2)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inl (inl b+c<sn) | inl (inr sn<a+'b+c) = equalityZn _ _ ans
   where
     lemma : succ n +N ((a +N b) +N c) ≡ (a +N (b +N c)) +N succ n
@@ -430,12 +434,12 @@ plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ;
   where
     false : succ n <N (a +N b) +N c → (a +N (b +N c)) ≡ succ n → False
     false pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) | pr2 = TotalOrder.irreflexive ℕTotalOrder sn<a+b+c
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inl (inr sn<b+c) with orderIsTotal (a +N (b +N c)) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inl (inr sn<b+c) with totality (a +N (b +N c)) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inl (inr sn<b+c) | inl (inl a+b+c<sn) = exFalso (false sn<a+b+c a+b+c<sn)
   where
     false : succ n <N (a +N b) +N c → (a +N (b +N c)) <N succ n → False
-    false pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive pr1 pr2)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inl (inr sn<b+c) | inl (inr _) with orderIsTotal (a +N subtractionNResult.result (-N (inl sn<b+c))) (succ n)
+    false pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = TotalOrder.irreflexive ℕTotalOrder (<Transitive pr1 pr2)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inl (inr sn<b+c) | inl (inr _) with totality (a +N subtractionNResult.result (-N (inl sn<b+c))) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inl (inr sn<b+c) | inl (inr _) | inl (inl x) = equalityZn _ _ (help2 {a} {b} {c} {n} sn<b+c sn<a+b+c)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inl (inr sn<b+c) | inl (inr _) | inl (inr x) = equalityZn _ _ (exFalso (help1 sn<b+c x a+b<sn aLess bLess cLess))
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inl (inr sn<b+c) | inl (inr _) | inr x = exFalso (help3 aLess bLess cLess a+b<sn sn<b+c x)
@@ -443,12 +447,12 @@ plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ;
   where
     false : (succ n <N (a +N b) +N c) → (a +N (b +N c) ≡ succ n) → False
     false pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) | pr2 = TotalOrder.irreflexive ℕTotalOrder pr1
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inr sn=b+c with orderIsTotal (a +N (b +N c)) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inr sn=b+c with totality (a +N (b +N c)) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inr sn=b+c | inl (inl x) = exFalso (false sn<a+b+c x)
   where
     false : succ n <N (a +N b) +N c → a +N (b +N c) <N succ n → False
-    false p1 p2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive p1 p2)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inr sn=b+c | inl (inr _) with orderIsTotal (a +N 0) (succ n)
+    false p1 p2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) = TotalOrder.irreflexive ℕTotalOrder (<Transitive p1 p2)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inr sn=b+c | inl (inr _) with totality (a +N 0) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inr sn=b+c | inl (inr _) | inl (inl x) = equalityZn _ _ (ans sn=b+c)
   where
     ans : b +N c ≡ succ n → a +N 0 ≡ subtractionNResult.result (-N (inl sn<a+b+c))
@@ -457,8 +461,8 @@ plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ;
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inr sn=b+c | inl (inr _) | inl (inr x) = exFalso (false b a+b<sn x)
   where
     false : (b : ℕ) → a +N b <N succ n → succ n <N a +N 0 → False
-    false zero pr1 pr2 rewrite Semiring.commutative ℕSemiring a 0 = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive pr1 pr2)
-    false (succ b) pr1 pr2 rewrite Semiring.commutative ℕSemiring a 0 = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive pr2 (orderIsTransitive (le b (Semiring.commutative ℕSemiring (succ b) a)) pr1))
+    false zero pr1 pr2 rewrite Semiring.commutative ℕSemiring a 0 = TotalOrder.irreflexive ℕTotalOrder (<Transitive pr1 pr2)
+    false (succ b) pr1 pr2 rewrite Semiring.commutative ℕSemiring a 0 = TotalOrder.irreflexive ℕTotalOrder (<Transitive pr2 (<Transitive (le b (Semiring.commutative ℕSemiring (succ b) a)) pr1))
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inl (inr sn<a+b+c) | inr sn=b+c | inl (inr _) | inr x = exFalso (false b a+b<sn x)
   where
     false : (b : ℕ) → a +N b <N succ n → a +N 0 ≡ succ n → False
@@ -468,8 +472,8 @@ plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ;
   where
     false : succ n <N (a +N b) +N c → a +N (b +N c) ≡ succ n → False
     false pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) | pr2 = TotalOrder.irreflexive ℕTotalOrder pr1
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inr sn=a+b+c with orderIsTotal (b +N c) (succ n)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inr sn=a+b+c | inl (inl b+c<sn) with orderIsTotal (a +N (b +N c)) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inr sn=a+b+c with totality (b +N c) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inr sn=a+b+c | inl (inl b+c<sn) with totality (a +N (b +N c)) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inr sn=a+b+c | inl (inl b+c<sn) | inl (inl a+'b+c<sn) = exFalso (false sn=a+b+c a+'b+c<sn)
   where
     false : (a +N b) +N c ≡ succ n → a +N (b +N c) <N succ n → False
@@ -483,8 +487,8 @@ plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ;
   where
     false : (a : ℕ) → (a +N b) +N c ≡ succ n → succ n <N b +N c → False
     false zero pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) | equalityCommutative pr1 = TotalOrder.irreflexive ℕTotalOrder pr2
-    false (succ a) pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) | equalityCommutative pr1 = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive pr2 (le a refl))
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inr sn=a+b+c | inr b+c=sn with orderIsTotal (a +N 0) (succ n)
+    false (succ a) pr1 pr2 rewrite equalityCommutative (Semiring.+Associative ℕSemiring a b c) | equalityCommutative pr1 = TotalOrder.irreflexive ℕTotalOrder (<Transitive pr2 (le a refl))
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inr sn=a+b+c | inr b+c=sn with totality (a +N 0) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inl a+b<sn) | inr sn=a+b+c | inr b+c=sn | inl (inl a+0<sn) = equalityZn _ _ ans
   where
     a=0 : (a : ℕ) → (a +N b) +N c ≡ succ n → b +N c ≡ succ n → a ≡ 0
@@ -508,13 +512,13 @@ plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ;
         a=0 : (a : ℕ) → (a +N a ≡ a) → a ≡ 0
         a=0 zero pr = refl
         a=0 (succ a) pr = exFalso (naughtE {a} (equalityCommutative (canSubtractFromEqualityRight pr)))
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) with orderIsTotal (b +N c) (succ n)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inl b+c<sn) with orderIsTotal (a +N (b +N c)) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) with totality (b +N c) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inl b+c<sn) with totality (a +N (b +N c)) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inl b+c<sn) | inl (inl a+'b+c<sn) = exFalso (false sn<a+b a+'b+c<sn)
   where
     false : succ n <N a +N b → a +N (b +N c) <N succ n → False
-    false pr1 pr2 rewrite Semiring.+Associative ℕSemiring a b c = cannotAddAndEnlarge' (orderIsTransitive pr2 pr1)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inl b+c<sn) | inl (inr sn<a+'b+c) with orderIsTotal (subtractionNResult.result (-N (inl sn<a+b)) +N c) (succ n)
+    false pr1 pr2 rewrite Semiring.+Associative ℕSemiring a b c = cannotAddAndEnlarge' (<Transitive pr2 pr1)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inl b+c<sn) | inl (inr sn<a+'b+c) with totality (subtractionNResult.result (-N (inl sn<a+b)) +N c) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inl b+c<sn) | inl (inr sn<a+'b+c) | inl (inl x) = equalityZn _ _ (help4 {a} {b} {c} {succ n} sn<a+'b+c sn<a+b)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inl b+c<sn) | inl (inr sn<a+'b+c) | inl (inr x) = exFalso (help18 {a} {b} {c} {succ n} b+c<sn sn<a+b aLess x)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inl b+c<sn) | inl (inr sn<a+'b+c) | inr x = exFalso (help19 {a} {b} {c} {succ n} b+c<sn sn<a+b aLess x)
@@ -522,47 +526,47 @@ plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ;
   where
     false : (succ n <N a +N b) → a +N (b +N c) ≡ succ n → False
     false pr1 pr2 rewrite Semiring.+Associative ℕSemiring a b c | equalityCommutative pr2 = cannotAddAndEnlarge' pr1
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) with orderIsTotal (a +N subtractionNResult.result (-N (inl sn<b+c))) (succ n)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inl (inl x) with orderIsTotal (subtractionNResult.result (-N (inl sn<a+b)) +N c) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) with totality (a +N subtractionNResult.result (-N (inl sn<b+c))) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inl (inl x) with totality (subtractionNResult.result (-N (inl sn<a+b)) +N c) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inl (inl x) | inl (inl x₁) = equalityZn _ _ (help5 {a} {b} {c} {succ n} sn<b+c sn<a+b)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inl (inl x) | inl (inr x1) = equalityZn _ _ (help16 {a} {b} {c} {succ n} sn<b+c sn<a+b x x1)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inl (inl x) | inr x1 = exFalso (help17 {a} {b} {c} {succ n} sn<b+c sn<a+b x x1)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inl (inr x) with orderIsTotal (subtractionNResult.result (-N (inl sn<a+b)) +N c) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inl (inr x) with totality (subtractionNResult.result (-N (inl sn<a+b)) +N c) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inl (inr x) | inl (inl x1) = equalityZn _ _ (exFalso (help15 {a} {b} {c} {succ n} sn<b+c sn<a+b x x1))
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inl (inr x) | inl (inr x1) = equalityZn _ _ (help14 {a} {b} {c} {succ n} sn<b+c sn<a+b x x1)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inl (inr x) | inr x1 = equalityZn _ _ (exFalso (help13 {a} {b} {c} {succ n} sn<b+c sn<a+b x x1))
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inr x with orderIsTotal (subtractionNResult.result (-N (inl sn<a+b)) +N c) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inr x with totality (subtractionNResult.result (-N (inl sn<a+b)) +N c) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inr x | inl (inl x1) = equalityZn _ _ (exFalso (help12 {a} {b} {c} {succ n} sn<b+c sn<a+b x x1))
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inr x | inl (inr x1) = equalityZn _ _ (exFalso (help10 {a} {b} {c} {succ n} sn<b+c sn<a+b x x1))
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inl (inr sn<b+c) | inr x | inr x₁ = equalityZn _ _ refl
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inr b+c=sn with orderIsTotal (a +N 0) (succ n)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inr b+c=sn | inl (inl a+0<sn) with orderIsTotal (subtractionNResult.result (-N (inl sn<a+b)) +N c) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inr b+c=sn with totality (a +N 0) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inr b+c=sn | inl (inl a+0<sn) with totality (subtractionNResult.result (-N (inl sn<a+b)) +N c) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inr b+c=sn | inl (inl a+0<sn) | inl (inl x) = equalityZn _ _ (help6 {a} {b} {c} {succ n} b+c=sn sn<a+b)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inr b+c=sn | inl (inl _) | inl (inr x) = equalityZn _ _ (exFalso (help11 {a} {b} {c} {succ n} aLess b+c=sn sn<a+b x))
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inr b+c=sn | inl (inl a+0<sn) | inr x = equalityZn _ _ (exFalso (help7 {a} {b} {c} {succ n} b+c=sn aLess sn<a+b x))
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inr b+c=sn | inl (inr sn<a+0) = exFalso (help8 {a} {succ n} sn<a+0 aLess)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inl (inr sn<a+b) | inr b+c=sn | inr a+0=sn = exFalso (help9 {a} {succ n} a+0=sn aLess)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b with orderIsTotal c (succ n)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) with orderIsTotal (b +N c) (succ n)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inl (inl b+c<sn) with orderIsTotal (a +N (b +N c)) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b with totality c (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) with totality (b +N c) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inl (inl b+c<sn) with totality (a +N (b +N c)) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inl (inl b+c<sn) | inl (inl a+'b+c<sn) = equalityZn _ _ (help27 {a} {b} {c} {n} sn=a+b a+'b+c<sn)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inl (inl b+c<sn) | inl (inr sn<a+'b+c) = equalityZn _ _ (help28 {a} {b} {c} {succ n} sn<a+'b+c sn=a+b)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inl (inl b+c<sn) | inr a+'b+c=sn = equalityZn _ _ (help26 {a} {b} {c} {succ n} sn=a+b a+'b+c=sn)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inl (inr sn<b+c) with orderIsTotal (a +N subtractionNResult.result (-N (inl sn<b+c))) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inl (inr sn<b+c) with totality (a +N subtractionNResult.result (-N (inl sn<b+c))) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inl (inr sn<b+c) | inl (inl x) = equalityZn _ _ (help31 {a} {b} {c} {succ n} sn=a+b sn<b+c)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inl (inr sn<b+c) | inl (inr x) = exFalso (help30 {a} {b} {c} {succ n} cLess sn=a+b sn<b+c x)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inl (inr sn<b+c) | inr x = exFalso (help29 {a} {b} {c} {succ n} cLess sn<b+c x sn=a+b)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inr b+c=sn with orderIsTotal (a +N 0) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inr b+c=sn with totality (a +N 0) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inr b+c=sn | inl (inl a+0<sn) = equalityZn _ _ (help25 {a} {b} {c} {succ n} sn=a+b b+c=sn)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inr b+c=sn | inl (inr sn<a+0) = exFalso (help24 {a} {succ n} aLess sn<a+0)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inl c<sn) | inr b+c=sn | inr a+0=sn = exFalso (help23 {a} {succ n} aLess a+0=sn)
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inr sn<c) = exFalso (TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive sn<c cLess))
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inr c=sn with orderIsTotal (b +N c) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inl (inr sn<c) = exFalso (TotalOrder.irreflexive ℕTotalOrder (<Transitive sn<c cLess))
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inr c=sn with totality (b +N c) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inr c=sn | inl (inl b+c<sn) = exFalso (help b+c<sn)
   where
     help : (b +N c <N succ n) → False
     help b+c<sn rewrite equalityCommutative c=sn | Semiring.commutative ℕSemiring b c = cannotAddAndEnlarge' b+c<sn
-plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inr c=sn | inl (inr sn<b+c) with orderIsTotal (a +N subtractionNResult.result (-N (inl sn<b+c))) (succ n)
+plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inr c=sn | inl (inr sn<b+c) with totality (a +N subtractionNResult.result (-N (inl sn<b+c))) (succ n)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inr c=sn | inl (inr sn<b+c) | inl (inl x) = exFalso (help20 {a} {b} {c} {succ n} c=sn sn=a+b sn<b+c x)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inr c=sn | inl (inr sn<b+c) | inl (inr x) = exFalso (help22 {a} {b} {c} {succ n} sn=a+b c=sn sn<b+c x)
 plusZnAssociative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } | inr sn=a+b | inr c=sn | inl (inr sn<b+c) | inr x = equalityZn _ _ refl
@@ -580,7 +584,7 @@ inverseZn {succ n} {0<n} record { x = (succ a) ; xLess = aLess } = ans , pr
   where
     ans = record { x = subtractionNResult.result (-N (inl (canRemoveSuccFrom<N aLess))) ; xLess = subLess (succIsPositive a) aLess }
     pr : ans +n record { x = (succ a) ; xLess = aLess } ≡ record { x = 0 ; xLess = 0<n }
-    pr with orderIsTotal (subtractionNResult.result (-N (inl (canRemoveSuccFrom<N aLess))) +N (succ a)) (succ n)
+    pr with totality (subtractionNResult.result (-N (inl (canRemoveSuccFrom<N aLess))) +N (succ a)) (succ n)
     ... | inl (inl x) = exFalso f
       where
         h : subtractionNResult.result (-N (inl (canRemoveSuccFrom<N aLess))) +N succ a ≡ succ n

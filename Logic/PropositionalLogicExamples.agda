@@ -4,7 +4,7 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
 open import Logic.PropositionalLogic
 open import Functions
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Order
 open import Vectors
 
 module Logic.PropositionalLogicExamples where
@@ -81,7 +81,7 @@ Injection.property (pQQRSubsetInj {P = P} {Q} {R} p!=q) {Two} {One} pr | q=p ,, 
 Injection.property (pQQRSubsetInj {P = P} {Q} {R} p!=q) {Two} {Two} refl = refl
 
 syntacticEntailmentExample : {a : _} {A : Set a} {P Q R : Propositions A} → (p!=q : P ≡ Q → False) → Proof propositionalAxioms (record { ofElt = pQQR {P = P} {Q} {R} }) 7
-syntacticEntailmentExample {P = P} {Q} {R} p!=q = nextStep 6 (nextStep 5 (nextStep 4 (nextStep 3 (nextStep 2 (nextStep 1 (nextStep 0 empty (axiom (Two , record { one = P ; two = Q ; three = R }))) (given Two)) (axiom (One , ((implies Q R) ,, P)))) (modusPonens (record { element = implies (implies Q R) (implies P (implies Q R)) ; position = 0 ; pos<N = succIsPositive _ ; elementIsAt = refl }) (record { element = implies Q R ; position = 1 ; elementIsAt = refl ; pos<N = succPreservesInequality (succIsPositive _) }) (implies P (implies Q R)) refl)) (modusPonens (record { element = implies (implies P (implies Q R)) (implies (implies P Q) (implies P R)) ; position = 3 ; pos<N = le 0 refl ; elementIsAt = refl }) (record { element = implies P (implies Q R) ; position = 0 ; pos<N = succIsPositive _ ; elementIsAt = refl }) (implies (implies P Q) (implies P R)) refl)) (given One)) (modusPonens (record { element = implies (implies P Q) (implies P R) ; position = 1 ; pos<N = succPreservesInequality (succIsPositive _) ; elementIsAt = refl }) (record { element = implies P Q ; position = 0 ; pos<N = succIsPositive _ ; elementIsAt = refl }) (implies P R) refl)
+syntacticEntailmentExample {P = P} {Q} {R} p!=q = nextStep 6 (nextStep 5 (nextStep 4 (nextStep 3 (nextStep 2 (nextStep 1 (nextStep 0 empty (axiom (Two , record { one = P ; two = Q ; three = R }))) (given Two)) (axiom (One , ((implies Q R) ,, P)))) (modusPonens (record { element = implies (implies Q R) (implies P (implies Q R)) ; position = 0 ; pos<N = le 2 refl ; elementIsAt = refl }) (record { element = implies Q R ; position = 1 ; elementIsAt = refl ; pos<N = le 1 refl }) (implies P (implies Q R)) refl)) (modusPonens (record { element = implies (implies P (implies Q R)) (implies (implies P Q) (implies P R)) ; position = 3 ; pos<N = le 0 refl ; elementIsAt = refl }) (record { element = implies P (implies Q R) ; position = 0 ; pos<N = succIsPositive _ ; elementIsAt = refl }) (implies (implies P Q) (implies P R)) refl)) (given One)) (modusPonens (record { element = implies (implies P Q) (implies P R) ; position = 1 ; pos<N = succPreservesInequality (succIsPositive _) ; elementIsAt = refl }) (record { element = implies P Q ; position = 0 ; pos<N = succIsPositive _ ; elementIsAt = refl }) (implies P R) refl)
 
 pQQRProof : {a : _} {A : Set a} {P Q R : Propositions A} → (p!=q : P ≡ Q → False) → Proves propositionalAxioms (record { ofElt = pQQR {P = P} {Q} {R} }) (implies P R)
 pQQRProof p!=q = record { n = 6 ; proof = syntacticEntailmentExample p!=q ; ofStatement = refl }

@@ -3,7 +3,8 @@
 open import LogicalFormulae
 open import Groups.Groups
 open import Functions
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
 open import Numbers.Integers.Integers
 open import Numbers.Modulo.Group
 open import Numbers.Modulo.Definition

@@ -4,7 +4,9 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 open import LogicalFormulae
 open import Functions
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
+open import Numbers.Naturals.Order.WellFounded
 open import Sets.FinSet
 open import Semirings.Definition
 open import Orders

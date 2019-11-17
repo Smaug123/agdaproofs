@@ -3,7 +3,8 @@
 open import LogicalFormulae
 open import Functions
 open import Lists.Lists
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
 open import Numbers.Naturals.Definition
 open import Groups.Definition
 open import Semirings.Definition
@@ -98,7 +99,7 @@ module Numbers.BinaryNaturals.Definition where
   canonicalAscends' {i} a pr = canonicalAscends {i} a (t a pr)
     where
       t : (a : BinNat) → (canonical a ≡ [] → False) → 0 <N binNatToN a
-      t a pr with orderIsTotal 0 (binNatToN a)
+      t a pr with TotalOrder.totality ℕTotalOrder 0 (binNatToN a)
       t a pr | inl (inl x) = x
       t a pr | inr x = exFalso (pr (binNatToNZero a (equalityCommutative x)))
 

@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Multiplication
 open import Numbers.Integers.Definition
 open import Numbers.Integers.Addition

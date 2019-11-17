@@ -2,6 +2,7 @@
 
 open import LogicalFormulae
 open import Lists.Lists
+open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Naturals
 open import Numbers.Naturals.Order
 open import Numbers.BinaryNaturals.Definition

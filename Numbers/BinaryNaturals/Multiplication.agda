@@ -3,6 +3,7 @@
 open import LogicalFormulae
 open import Functions
 open import Lists.Lists
+open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Naturals
 open import Groups.Definition
 open import Numbers.BinaryNaturals.Definition
@@ -77,7 +78,7 @@ module Numbers.BinaryNaturals.Multiplication where
       t : binNatToN (as *B (zero :: bs)) +N binNatToN bs ≡ 0
       t = transitivity (equalityCommutative (nToN _)) (applyEquality binNatToN x)
       u : (binNatToN (as *B (zero :: bs)) ≡ 0) && (binNatToN bs ≡ 0)
-      u = sumZeroImpliesOperandsZero _ t
+      u = sumZeroImpliesSummandsZero t
       v : canonical bs ≡ []
       v with u
       ... | fst ,, snd = binNatToNZero bs snd

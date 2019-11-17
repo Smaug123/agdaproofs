@@ -2,7 +2,8 @@
 
 open import LogicalFormulae
 open import Functions
-open import Numbers.Naturals.Naturals -- for length
+open import Numbers.Naturals.Semiring -- for length
+open import Numbers.Naturals.Order
 open import Semirings.Definition
 
 module Lists.Lists where

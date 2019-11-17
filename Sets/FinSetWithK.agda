@@ -1,6 +1,6 @@
 {-# OPTIONS --safe --warning=error #-}
 
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Sets.FinSet
 open import LogicalFormulae
