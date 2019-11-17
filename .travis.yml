@@ -12,7 +12,7 @@ git:
 script:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
   - docker run --detach --name agda smaug451/agda:basic
-  - docker exec agda "cd ~/; git clone https://github.com/Smaug123/agdaproofs.git; cd agdaproofs; git fetch; git checkout $BRANCH"
-  - docker exec agda "cd ~/; agda Everything/Safe.agda && agda Everything/WithK.agda"
-  - docker exec agda "find . -type f -name '*.agda' | sort > /tmp/agdas.txt; find . -type f -name '*.agdai' | sort | rev | cut -c 2- | rev > /tmp/compiled.txt; diff /tmp/agdas.txt /tmp/compiled.txt | grep '<' || true"
+  - docker exec agda bash -c "cd ~/; git clone https://github.com/Smaug123/agdaproofs.git; cd agdaproofs; git fetch; git checkout $BRANCH"
+  - docker exec agda bash -c "cd ~/; agda Everything/Safe.agda && agda Everything/WithK.agda"
+  - docker exec agda bash -c "find . -type f -name '*.agda' | sort > /tmp/agdas.txt; find . -type f -name '*.agdai' | sort | rev | cut -c 2- | rev > /tmp/compiled.txt; diff /tmp/agdas.txt /tmp/compiled.txt | grep '<' || true"
   - docker stop agda
