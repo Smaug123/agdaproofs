@@ -4,6 +4,7 @@ open import LogicalFormulae
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Numbers.Integers.Definition
+open import Numbers.Integers.RingStructure.Ring
 open import Numbers.Integers.Addition
 open import Numbers.Integers.Multiplication
 open import Semirings.Definition
@@ -29,9 +30,6 @@ lessLemma (succ a) x pr = lessLemma a x q
   where
     q : succ x +N a ≡ a
     q rewrite Semiring.commutative ℕSemiring a (succ x) | Semiring.commutative ℕSemiring x a | Semiring.commutative ℕSemiring (succ a) x = succInjective pr
-
-nonnegInjective : {a b : ℕ} → (nonneg a ≡ nonneg b) → (a ≡ b)
-nonnegInjective {a} {.a} refl = refl
 
 irreflexive : (x : ℤ) → x <Z x → False
 irreflexive (nonneg x) record { x = y ; proof = proof } = lessLemma x y (nonnegInjective proof)

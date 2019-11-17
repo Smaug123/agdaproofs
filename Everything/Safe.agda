@@ -29,6 +29,7 @@ open import Groups.SymmetricGroups.Lemmas
 open import Groups.ActionIsSymmetry
 open import Groups.Cyclic.Definition
 open import Groups.Cyclic.DefinitionLemmas
+open import Groups.Polynomials.Examples
 
 open import Fields.Fields
 open import Fields.Orders.Partial.Definition
@@ -45,6 +46,9 @@ open import Rings.Orders.Total.Lemmas
 open import Rings.Orders.Partial.Lemmas
 open import Rings.IntegralDomains
 open import Rings.DirectSum
+open import Rings.Polynomial.Ring
+open import Rings.Ideals.Definition
+open import Rings.Isomorphisms.Definition
 
 open import Setoids.Setoids
 open import Setoids.DirectSum
