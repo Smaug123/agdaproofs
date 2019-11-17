@@ -6,6 +6,7 @@ open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.WellFounded
 open import Numbers.Naturals.Order.Lemmas
+open import Numbers.Integers.Definition
 open import Numbers.Integers.Integers
 open import Numbers.Integers.Order
 open import Groups.Groups
