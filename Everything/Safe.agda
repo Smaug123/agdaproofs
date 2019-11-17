@@ -47,6 +47,8 @@ open import Rings.Orders.Partial.Lemmas
 open import Rings.IntegralDomains
 open import Rings.DirectSum
 open import Rings.Polynomial.Ring
+open import Rings.Ideals.Definition
+open import Rings.Isomorphisms.Definition
 
 open import Setoids.Setoids
 open import Setoids.DirectSum
