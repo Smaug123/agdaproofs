@@ -6,7 +6,7 @@ open import Maybe
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Vectors
 
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 
 module KeyValue.KeyValue where

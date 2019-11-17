@@ -3,6 +3,8 @@
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
 open import Numbers.Integers.Integers
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Subtraction
 open import Numbers.Naturals.Naturals
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Exponentiation

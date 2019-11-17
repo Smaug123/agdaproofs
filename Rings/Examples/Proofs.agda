@@ -6,7 +6,9 @@ open import Groups.Groups
 open import Groups.Definition
 open import Orders
 open import Rings.Definition
+open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Order
 open import Numbers.Integers.Integers
 open import Numbers.Primes.PrimeNumbers
 open import Numbers.Modulo.Definition

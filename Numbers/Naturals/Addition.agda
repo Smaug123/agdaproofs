@@ -14,9 +14,10 @@ addZeroRight : (x : ℕ) → (x +N zero) ≡ x
 addZeroRight zero = refl
 addZeroRight (succ x) rewrite addZeroRight x = refl
 
-succExtracts : (x y : ℕ) → (x +N succ y) ≡ (succ (x +N y))
-succExtracts zero y = refl
-succExtracts (succ x) y = applyEquality succ (succExtracts x y)
+private
+  succExtracts : (x y : ℕ) → (x +N succ y) ≡ (succ (x +N y))
+  succExtracts zero y = refl
+  succExtracts (succ x) y = applyEquality succ (succExtracts x y)
 
 succCanMove : (x y : ℕ) → (x +N succ y) ≡ (succ x +N y)
 succCanMove x y = transitivity (succExtracts x y) refl

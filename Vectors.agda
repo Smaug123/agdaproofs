@@ -1,10 +1,11 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Functions
 open import Semirings.Definition
+open import Orders
 
 data Vec {a : _} (X : Set a) : ℕ -> Set a where
   [] : Vec X zero
@@ -175,7 +176,7 @@ all4<=4 : Vec (4 <= 4) 1
 all4<=4 = os (os (os (os oz))) ,- []
 
 <=Is≤N : {n m : ℕ} → (n <= m) → n ≤N m
-<=Is≤N {n} {m} thm with orderIsTotal n m
+<=Is≤N {n} {m} thm with TotalOrder.totality ℕTotalOrder n m
 <=Is≤N {n} {m} thm | inl (inl n<m) = inl n<m
 <=Is≤N {n} {.n} thm | inr refl = inr refl
 <=Is≤N {zero} {zero} thm | inl (inr m<n) = inl m<n

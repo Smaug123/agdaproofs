@@ -7,8 +7,8 @@ open import Groups.Definition
 open import Groups.Groups
 open import Groups.Abelian.Definition
 open import Groups.FiniteGroups.Definition
-open import Numbers.Naturals.Naturals
-open import Numbers.Naturals.Addition -- TODO remove this dependency
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
 open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
 open import Sets.FinSet

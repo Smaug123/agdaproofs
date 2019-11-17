@@ -1,6 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Definition
 open import Numbers.Integers.Definition
 open import Numbers.Integers.Addition
 open import Numbers.Integers.Multiplication

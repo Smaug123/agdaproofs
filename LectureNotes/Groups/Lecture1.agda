@@ -8,7 +8,8 @@ open import Groups.Groups
 open import Groups.FiniteGroups.Definition
 open import Groups.Abelian.Definition
 open import Setoids.Setoids
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
 open import Numbers.Integers.Integers
 open import Numbers.Rationals.Definition
 open import Rings.Definition

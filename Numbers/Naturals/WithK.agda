@@ -5,7 +5,8 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import WellFoundedInduction
 open import Functions
 open import Orders
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
 
 module Numbers.Naturals.WithK where
 

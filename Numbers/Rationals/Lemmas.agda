@@ -2,7 +2,10 @@
 
 open import WellFoundedInduction
 open import LogicalFormulae
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
+open import Numbers.Naturals.Order.WellFounded
+open import Numbers.Naturals.Order.Lemmas
 open import Numbers.Integers.Integers
 open import Numbers.Integers.Order
 open import Groups.Groups
@@ -21,6 +24,8 @@ open import Semirings.Definition
 open import Orders
 
 module Numbers.Rationals.Lemmas where
+
+open import Semirings.Lemmas ℕSemiring
 
 open PartiallyOrderedRing ℤPOrderedRing
 open import Rings.Orders.Total.Lemmas ℤOrderedRing
