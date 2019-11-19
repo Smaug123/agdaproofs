@@ -25,7 +25,6 @@ open Setoid S
 open Equivalence eq
 open import Groups.Polynomials.Group additiveGroup
 open import Groups.Polynomials.Definition additiveGroup
-open import Rings.Polynomial.Definition R
 open import Rings.Polynomial.Multiplication R
 
 polyRing : Ring naivePolySetoid _+P_ _*P_
@@ -40,6 +39,6 @@ Ring.identIsIdent polyRing {a} = *Pident {a}
 
 polyInjectionIsHom : RingHom R polyRing polyInjection
 RingHom.preserves1 polyInjectionIsHom = reflexive ,, record {}
-RingHom.ringHom polyInjectionIsHom = reflexive ,, record {}
+RingHom.ringHom polyInjectionIsHom = reflexive ,, (reflexive ,, record {})
 GroupHom.groupHom (RingHom.groupHom polyInjectionIsHom) = reflexive ,, record {}
 GroupHom.wellDefined (RingHom.groupHom polyInjectionIsHom) = SetoidInjection.wellDefined polyInjectionIsInj
