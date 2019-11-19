@@ -47,6 +47,7 @@ open import Rings.Orders.Partial.Lemmas
 open import Rings.IntegralDomains
 open import Rings.DirectSum
 open import Rings.Polynomial.Ring
+open import Rings.Polynomial.Evaluation
 open import Rings.Ideals.Definition
 open import Rings.Isomorphisms.Definition
 
