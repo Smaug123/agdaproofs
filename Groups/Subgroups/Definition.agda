@@ -9,10 +9,9 @@ open import Sets.FinSet
 open import Groups.Definition
 open import Groups.Homomorphisms.Definition
 
-module Groups.Subgroups.Definition where
+module Groups.Subgroups.Definition {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} (G : Group S _+_) where
 
-record Subgroup {a} {b} {c} {d} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) (H : Group T _·B_) {f : B → A} (hom : GroupHom H G f) : Set (a ⊔ b ⊔ c ⊔ d) where
-  open Setoid T renaming (_∼_ to _∼G_)
-  open Setoid S renaming (_∼_ to _∼H_)
-  field
-    fInj : SetoidInjection T S f
+open Group G
+
+subgroup : {c : _} {pred : A → Set c} → (wd : {x y : A} → (Setoid._∼_ S x y) → (pred x → pred y)) → Set (a ⊔ c)
+subgroup {pred = pred} wd = ({g h : A} → (pred g) → (pred h) → pred (g + h)) & pred 0G & ({g : A} → (pred g) → (pred (inverse g)))

@@ -20,10 +20,7 @@ open import Groups.QuotientGroup.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-module Groups.Subgroups.Normal.Definition where
+module Groups.Subgroups.Normal.Definition {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} (G : Group S _+_) where
 
-record NormalSubgroup {a} {b} {c} {d} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) (H : Group T _·B_) {f : B → A} (hom : GroupHom H G f) : Set (a ⊔ b ⊔ c ⊔ d) where
-  open Setoid S
-  field
-    subgroup : Subgroup G H hom
-    normal : {g : A} {h : B} → Sg B (λ fromH → (g ·A (f h)) ·A (Group.inverse G g) ∼ f fromH)
+normalSubgroup : {c : _} {pred : A → Set c} (wd : {x y : A} → (Setoid._∼_ S x y) → (pred x → pred y)) (sub : subgroup G wd) → Set (a ⊔ c)
+normalSubgroup {pred = pred} wd sub = {g k : A} → pred k → pred (g + (k + Group.inverse G g))

@@ -58,25 +58,29 @@ injectionFromKernelToGIsHom : {a b c d : _} {A : Set a} {B : Set c} {S : Setoid 
 GroupHom.groupHom (injectionFromKernelToGIsHom {S = S} G hom) {kerOfElt x prX} {kerOfElt y prY} = Equivalence.reflexive (Setoid.eq S)
 GroupHom.wellDefined (injectionFromKernelToGIsHom G hom) {kerOfElt x prX} {kerOfElt y prY} i = i
 
-groupKernelGroupIsSubgroup : {a b c d : _} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} {f : A → B} (hom : GroupHom G H f) → Subgroup G (groupKernelGroup G hom) (injectionFromKernelToGIsHom G hom)
-Subgroup.fInj (groupKernelGroupIsSubgroup {S = S} {T = T} G {f = f} hom) = record { wellDefined = λ {x} {y} → GroupHom.wellDefined (injectionFromKernelToGIsHom G hom) {x} {y} ; injective = λ {x} {y} → inj {x} {y} }
-  where
-    inj : {x : GroupKernelElement G hom} → {y : GroupKernelElement G hom} → Setoid._∼_ S (injectionFromKernelToG G hom x) (injectionFromKernelToG G hom y) → Setoid._∼_ (groupKernel G hom) x y
-    inj {kerOfElt x prX} {kerOfElt y prY} = id
+groupKernelGroupPred : {a b c d : _} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} {f : A → B} (hom : GroupHom G H f) → A → Set d
+groupKernelGroupPred {T = T} G {H = H} {f = f} hom a = Setoid._∼_ T (f a) (Group.0G H)
 
-groupKernelGroupIsNormalSubgroup : {a b c d : _} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} {f : A → B} (hom : GroupHom G H f) → NormalSubgroup G (groupKernelGroup G hom) (injectionFromKernelToGIsHom G hom)
-NormalSubgroup.subgroup (groupKernelGroupIsNormalSubgroup G hom) = groupKernelGroupIsSubgroup G hom
-NormalSubgroup.normal (groupKernelGroupIsNormalSubgroup {S = S} {T = T} {_·A_ = _·A_} G {H = H} {f = f} hom) {g} {kerOfElt h prH} = kerOfElt ((g ·A h) ·A Group.inverse G g) ans , Equivalence.reflexive (Setoid.eq S)
+groupKernelGroupPredWd : {a b c d : _} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} {f : A → B} (hom : GroupHom G H f) → {x y : A} → (Setoid._∼_ S x y) → (groupKernelGroupPred G hom x → groupKernelGroupPred G hom y)
+groupKernelGroupPredWd {S = S} {T = T} G hom {x} {y} x=y fx=0 = Equivalence.transitive (Setoid.eq T) (GroupHom.wellDefined hom (Equivalence.symmetric (Setoid.eq S) x=y)) fx=0
+
+groupKernelGroupIsSubgroup : {a b c d : _} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} {f : A → B} (hom : GroupHom G H f) → subgroup G (groupKernelGroupPredWd G hom)
+_&_&_.one (groupKernelGroupIsSubgroup {S = S} {T = T} G {H = H} hom) g=0 h=0 = Equivalence.transitive (Setoid.eq T) (GroupHom.groupHom hom) (Equivalence.transitive (Setoid.eq T) (Group.+WellDefined H g=0 h=0) (Group.identLeft H))
+_&_&_.two (groupKernelGroupIsSubgroup G hom) = imageOfIdentityIsIdentity hom
+_&_&_.three (groupKernelGroupIsSubgroup {S = S} {T = T} G {H = H} hom) g=0 = Equivalence.transitive (Setoid.eq T) (homRespectsInverse hom) (Equivalence.transitive (Setoid.eq T) (inverseWellDefined H g=0) (invIdent H))
+
+groupKernelGroupIsNormalSubgroup : {a b c d : _} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} {f : A → B} (hom : GroupHom G H f) → normalSubgroup G (groupKernelGroupPredWd G hom) (groupKernelGroupIsSubgroup G hom)
+groupKernelGroupIsNormalSubgroup {T = T} G {H = H} hom k=0 = transitive groupHom (transitive (+WellDefined reflexive groupHom) (transitive (+WellDefined reflexive (transitive (+WellDefined k=0 reflexive) identLeft)) (transitive (symmetric groupHom) (transitive (wellDefined (Group.invRight G)) (imageOfIdentityIsIdentity hom)))))
   where
     open Setoid T
+    open Group H
     open Equivalence eq
-    ans : f ((g ·A h) ·A Group.inverse G g) ∼ Group.0G H
-    ans = transitive (GroupHom.groupHom hom) (transitive (Group.+WellDefined H (GroupHom.groupHom hom) reflexive) (transitive (Group.+WellDefined H (Group.+WellDefined H reflexive prH) reflexive) (transitive (Group.+WellDefined H (Group.identRight H) reflexive) (transitive (symmetric (GroupHom.groupHom hom)) (transitive (GroupHom.wellDefined hom (Group.invRight G)) (imageOfIdentityIsIdentity hom))))))
+    open GroupHom hom
 
-abelianGroupSubgroupIsNormal : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+A_ : A → A → A} {_+B_ : B → B → B} {underG : Group S _+A_} (G : AbelianGroup underG) {H : Group T _+B_} {f : B → A} {hom : GroupHom H underG f} (s : Subgroup underG H hom) → NormalSubgroup underG H hom
-NormalSubgroup.subgroup (abelianGroupSubgroupIsNormal G H) = H
-NormalSubgroup.normal (abelianGroupSubgroupIsNormal {S = S} {underG = G} record { commutative = commutative } H) {g} {h} = h , transitive (+WellDefined commutative reflexive) (transitive (symmetric +Associative) (transitive (+WellDefined reflexive invRight) identRight))
+abelianGroupSubgroupIsNormal : {a b c : _} {A : Set a} {B : Set b} {S : Setoid {a} {b} A} {_+_ : A → A → A} {G : Group S _+_} {pred : A → Set c} (predWd : {x y : A} → (Setoid._∼_ S x y) → (pred x → pred y)) → (s : subgroup G predWd) → AbelianGroup G → normalSubgroup G predWd s
+abelianGroupSubgroupIsNormal {S = S} {_+_ = _+_} {G = G} predWd record { one = respectsPlus ; two = respectsId ; three = respectsInv } abelian {k} {l} prK = predWd (transitive (transitive (transitive (symmetric identLeft) (+WellDefined (symmetric invRight) reflexive)) (symmetric +Associative)) (+WellDefined reflexive commutative)) prK
   where
-    open Setoid S
     open Group G
-    open Equivalence (Setoid.eq S)
+    open AbelianGroup abelian
+    open Setoid S
+    open Equivalence eq
