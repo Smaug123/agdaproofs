@@ -56,8 +56,8 @@ groupHomImageIncludes : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c
 GroupHom.groupHom (groupHomImageIncludes fHom) {ofElt x} {ofElt y} = GroupHom.groupHom fHom
 GroupHom.wellDefined (groupHomImageIncludes fHom) {ofElt x} {ofElt y} x~y = x~y
 
-groupHomImageIsSubgroup : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+G_ : A → A → A} {_+H_ : B → B → B} {G : Group S _+G_} {H : Group T _+H_} {f : A → B} (fHom : GroupHom G H f) → Subgroup H (imageGroup fHom) (groupHomImageIncludes fHom)
-Subgroup.fInj (groupHomImageIsSubgroup {S = S} {T} {_+G_} {_+H_} {G} {H} {f} fHom) = record { wellDefined = λ {x} {y} → GroupHom.wellDefined (groupHomImageIncludes fHom) {x} {y} ; injective = λ {x} {y} → inj {x} {y} }
+groupHomImageInjects : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+G_ : A → A → A} {_+H_ : B → B → B} {G : Group S _+G_} {H : Group T _+H_} {f : A → B} (fHom : GroupHom G H f) → SetoidInjection (imageGroupSetoid fHom) T (groupHomImageInclusion fHom)
+groupHomImageInjects {S = S} {T} {_+G_} {_+H_} {G} {H} {f} fHom = record { wellDefined = λ {x} {y} → GroupHom.wellDefined (groupHomImageIncludes fHom) {x} {y} ; injective = λ {x} {y} → inj {x} {y} }
   where
     inj : {x y : GroupHomImageElement fHom} → (Setoid._∼_ T (groupHomImageInclusion fHom x) (groupHomImageInclusion fHom y)) → Setoid._∼_ (imageGroupSetoid fHom) x y
     inj {ofElt x} {ofElt y} x~y = x~y
