@@ -13,7 +13,6 @@ open import Groups.Subgroups.Definition
 open import Groups.Homomorphisms.Definition
 open import Groups.Homomorphisms.Lemmas
 open import Groups.Actions.Definition
-open import Groups.Groups2
 open import Sets.EquivalenceRelations
 
 module Groups.SymmetricGroups.Lemmas where
