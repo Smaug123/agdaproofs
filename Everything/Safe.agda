@@ -16,12 +16,14 @@ open import Groups.Groups
 open import Groups.Abelian.Lemmas
 open import Groups.DirectSum.Definition
 open import Groups.QuotientGroup.Definition
+open import Groups.QuotientGroup.Lemmas
 open import Groups.FiniteGroups.Definition
 open import Groups.Homomorphisms.Lemmas
+open import Groups.Homomorphisms.Examples
 open import Groups.Isomorphisms.Lemmas
 open import Groups.FinitePermutations
 open import Groups.Lemmas
-open import Groups.Groups2
+open import Groups.FirstIsomorphismTheorem
 open import Groups.SymmetricGroups.Definition
 open import Groups.Actions.Stabiliser
 open import Groups.Actions.Orbit
@@ -30,6 +32,7 @@ open import Groups.ActionIsSymmetry
 open import Groups.Cyclic.Definition
 open import Groups.Cyclic.DefinitionLemmas
 open import Groups.Polynomials.Examples
+open import Groups.Cosets
 
 open import Fields.Fields
 open import Fields.Orders.Partial.Definition
@@ -50,6 +53,7 @@ open import Rings.Polynomial.Ring
 open import Rings.Polynomial.Evaluation
 open import Rings.Ideals.Definition
 open import Rings.Isomorphisms.Definition
+open import Rings.Quotients.Definition
 
 open import Setoids.Setoids
 open import Setoids.DirectSum

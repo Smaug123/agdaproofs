@@ -73,6 +73,20 @@ quotientGroupSetoid {A = A} {S = S} {T = T} {_·A_ = _·A_} {_·B_ = _·B_} G {H
         k : f (m ·A ((Group.0G G) ·A Group.inverse G o)) ∼ 0G
         k = transitive (GroupHom.wellDefined fHom (Group.+WellDefined G (Equivalence.reflexive (Setoid.eq S)) (Group.+WellDefined G (Equivalence.symmetric (Setoid.eq S) (Group.invLeft G)) (Equivalence.reflexive (Setoid.eq S))))) j
 
+quotientGroupLemma : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} → {underf : A → B} → (f : GroupHom G H underf) → {x y : A} → Setoid._∼_ T (underf x) (underf y) → Setoid._∼_ (quotientGroupSetoid G f) x y
+quotientGroupLemma {S = S} {T = T} G {H = H} fHom {x} {y} fx=fy = transitive (GroupHom.groupHom fHom) (transitive (Group.+WellDefined H (Equivalence.reflexive (Setoid.eq T)) (homRespectsInverse fHom)) (transferToRight'' H fx=fy))
+  where
+    open Group G
+    open Setoid T
+    open Equivalence eq
+
+quotientGroupLemma' : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} → {underf : A → B} → (f : GroupHom G H underf) → {x y : A} → Setoid._∼_ (quotientGroupSetoid G f) x y → Setoid._∼_ T (underf x) (underf y)
+quotientGroupLemma' {S = S} {T = T} G {H = H} f fx=fy = transferToRight H (transitive (transitive (Group.+WellDefined H (Equivalence.reflexive (Setoid.eq T)) (symmetric (homRespectsInverse f))) (symmetric (GroupHom.groupHom f))) fx=fy)
+  where
+    open Group G
+    open Setoid T
+    open Equivalence eq
+
 {-
 quotientHom : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} → {f : A → B} → (fHom : GroupHom G H f) → A → A
 quotientHom {S = S} {T = T} {_·A_ = _·A_} {_·B_ = _·B_} G {f = f} fHom a = {!!}

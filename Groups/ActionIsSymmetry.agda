@@ -11,7 +11,6 @@ open import Groups.Lemmas
 open import Groups.Homomorphisms.Definition
 open import Groups.Groups
 open import Groups.SymmetricGroups.Definition
-open import Groups.Groups2
 open import Groups.Actions.Definition
 open import Sets.EquivalenceRelations
 

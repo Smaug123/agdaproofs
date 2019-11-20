@@ -12,7 +12,6 @@ open import Groups.Groups
 open import Groups.Subgroups.Definition
 open import Groups.Homomorphisms.Definition
 open import Groups.Actions.Definition
-open import Groups.Groups2
 open import Sets.EquivalenceRelations
 open import Groups.Actions.Definition
 
@@ -29,12 +28,13 @@ stabiliserWellDefined x {g} {h} g=h gx=x = transitive (actionWellDefined1 (Equiv
   where
     open Equivalence eq
 
-stabiliserSubgroup : (x : B) → subgroup G (stabiliserWellDefined x)
-_&_&_.one (stabiliserSubgroup x) gx=x hx=x = transitive associativeAction (transitive (actionWellDefined2 hx=x) gx=x)
+open Setoid T
+open Equivalence (Setoid.eq T)
+
+stabiliserSubgroup : (x : B) → subgroup G (stabiliserPred x)
+_&&_.fst (stabiliserSubgroup x) = stabiliserWellDefined x
+_&_&_.one (_&&_.snd (stabiliserSubgroup x)) gx=x hx=x = transitive associativeAction (transitive (actionWellDefined2 hx=x) gx=x)
+_&_&_.two (_&&_.snd (stabiliserSubgroup x)) = identityAction
+_&_&_.three (_&&_.snd (stabiliserSubgroup x)) {g} gx=x = transitive (transitive (transitive (actionWellDefined2 (symmetric gx=x)) (symmetric associativeAction)) (actionWellDefined1 (invLeft {g}))) identityAction
   where
-    open Equivalence eq
-_&_&_.two (stabiliserSubgroup x) = identityAction
-_&_&_.three (stabiliserSubgroup x) {g = g} gx=x = transitive (transitive (transitive (actionWellDefined2 (symmetric gx=x)) (symmetric associativeAction)) (actionWellDefined1 (invLeft {g}))) identityAction
-  where
-    open Equivalence eq
     open Group G

@@ -10,7 +10,6 @@ open import Groups.Definition
 open import Groups.Lemmas
 open import Groups.Groups
 open import Groups.Actions.Definition
-open import Groups.Groups2
 open import Sets.EquivalenceRelations
 
 module Groups.Actions.Orbit where
