@@ -32,14 +32,14 @@ imageGroupSubset {x} {y} x=y (a , fa=x) = a , transitive fa=x x=y
     open Setoid T
     open Equivalence eq
 
-imageGroupSubgroup : subgroup H imageGroupPred
-_&&_.fst imageGroupSubgroup = imageGroupSubset
-_&_&_.one (_&&_.snd imageGroupSubgroup) {x} {y} (a , fa=x) (b , fb=y) = (a +A b) , transitive (GroupHom.groupHom fHom) (Group.+WellDefined H fa=x fb=y)
+imageGroupSubgroup : Subgroup H imageGroupPred
+Subgroup.isSubset imageGroupSubgroup = imageGroupSubset
+Subgroup.closedUnderPlus imageGroupSubgroup {x} {y} (a , fa=x) (b , fb=y) = (a +A b) , transitive (GroupHom.groupHom fHom) (Group.+WellDefined H fa=x fb=y)
   where
     open Setoid T
     open Equivalence eq
-_&_&_.two (_&&_.snd imageGroupSubgroup) = Group.0G G , imageOfIdentityIsIdentity fHom
-_&_&_.three (_&&_.snd imageGroupSubgroup) {x} (a , fa=x) = Group.inverse G a , transitive (homRespectsInverse fHom) (inverseWellDefined H fa=x)
+Subgroup.containsIdentity imageGroupSubgroup = Group.0G G , imageOfIdentityIsIdentity fHom
+Subgroup.closedUnderInverse imageGroupSubgroup {x} (a , fa=x) = Group.inverse G a , transitive (homRespectsInverse fHom) (inverseWellDefined H fa=x)
   where
     open Setoid T
     open Equivalence eq

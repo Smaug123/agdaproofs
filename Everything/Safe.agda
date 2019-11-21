@@ -54,6 +54,7 @@ open import Rings.Polynomial.Evaluation
 open import Rings.Ideals.Definition
 open import Rings.Isomorphisms.Definition
 open import Rings.Quotients.Definition
+open import Rings.Cosets
 
 open import Setoids.Setoids
 open import Setoids.DirectSum
