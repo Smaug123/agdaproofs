@@ -34,11 +34,11 @@ groupKernelPred a = Setoid._∼_ T (f a) (Group.0G H)
 groupKernelPredWd : {x y : A} → (Setoid._∼_ S x y) → groupKernelPred x → groupKernelPred y
 groupKernelPredWd x=y fx=0 = transitive (GroupHom.wellDefined fHom (Equivalence.symmetric (Setoid.eq S) x=y)) fx=0
 
-groupKernelIsSubgroup : subgroup G groupKernelPred
-_&_&_.one (_&&_.snd groupKernelIsSubgroup) fg=0 fh=0 = transitive (transitive (GroupHom.groupHom fHom) (Group.+WellDefined H fg=0 fh=0)) (Group.identLeft H)
-_&_&_.two (_&&_.snd groupKernelIsSubgroup) = imageOfIdentityIsIdentity fHom
-_&_&_.three (_&&_.snd groupKernelIsSubgroup) fg=0 = transitive (homRespectsInverse fHom) (transitive (inverseWellDefined H fg=0) (invIdent H))
-_&&_.fst groupKernelIsSubgroup = groupKernelPredWd
+groupKernelIsSubgroup : Subgroup G groupKernelPred
+Subgroup.closedUnderPlus groupKernelIsSubgroup fg=0 fh=0 = transitive (transitive (GroupHom.groupHom fHom) (Group.+WellDefined H fg=0 fh=0)) (Group.identLeft H)
+Subgroup.containsIdentity groupKernelIsSubgroup = imageOfIdentityIsIdentity fHom
+Subgroup.closedUnderInverse groupKernelIsSubgroup fg=0 = transitive (homRespectsInverse fHom) (transitive (inverseWellDefined H fg=0) (invIdent H))
+Subgroup.isSubset groupKernelIsSubgroup = groupKernelPredWd
 
 groupKernelIsNormalSubgroup : normalSubgroup G groupKernelIsSubgroup
 groupKernelIsNormalSubgroup {g} fk=0 = transitive (transitive (transitive (GroupHom.groupHom fHom) (transitive (Group.+WellDefined H reflexive (transitive (GroupHom.groupHom fHom) (transitive (Group.+WellDefined H fk=0 reflexive) (Group.identLeft H)))) (symmetric (GroupHom.groupHom fHom)))) (GroupHom.wellDefined fHom (Group.invRight G {g}))) (imageOfIdentityIsIdentity fHom)

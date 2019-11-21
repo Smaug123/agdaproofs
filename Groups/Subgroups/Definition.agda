@@ -14,16 +14,20 @@ module Groups.Subgroups.Definition {a b : _} {A : Set a} {S : Setoid {a} {b} A} 
 open import Setoids.Subset S
 open Group G
 
-subgroup : {c : _} (pred : A → Set c) → Set (a ⊔ b ⊔ c)
-subgroup pred = subset pred && (({g h : A} → (pred g) → (pred h) → pred (g + h)) & pred 0G & ({g : A} → (pred g) → (pred (inverse g))))
+record Subgroup {c : _} (pred : A → Set c) : Set (a ⊔ b ⊔ c) where
+  field
+    isSubset : subset pred
+    closedUnderPlus : {g h : A} → (pred g) → (pred h) → pred (g + h)
+    containsIdentity : pred 0G
+    closedUnderInverse : ({g : A} → (pred g) → (pred (inverse g)))
 
-subgroupOp : {c : _} {pred : A → Set c} → (s : subgroup pred) → Sg A pred → Sg A pred → Sg A pred
-subgroupOp {pred = pred} (_ ,, record { one = one ; two = two ; three = three }) (a , prA) (b , prB) = (a + b) , one prA prB
+subgroupOp : {c : _} {pred : A → Set c} → (s : Subgroup pred) → Sg A pred → Sg A pred → Sg A pred
+subgroupOp {pred = pred} record { closedUnderPlus = one } (a , prA) (b , prB) = (a + b) , one prA prB
 
-subgroupIsGroup : {c : _} {pred : A → Set c} → (subs : subset pred) → (s : subgroup pred) → Group (subsetSetoid subs) (subgroupOp s)
+subgroupIsGroup : {c : _} {pred : A → Set c} → (subs : subset pred) → (s : Subgroup pred) → Group (subsetSetoid subs) (subgroupOp s)
 Group.+WellDefined (subgroupIsGroup _ s) {m , prM} {n , prN} {x , prX} {y , prY} m=x n=y = +WellDefined m=x n=y
-Group.0G (subgroupIsGroup _ (_ ,, record { two = two })) = 0G , two
-Group.inverse (subgroupIsGroup _ (_ ,, record { three = three })) (a , prA) = (inverse a) , three prA
+Group.0G (subgroupIsGroup _ record { containsIdentity = two }) = 0G , two
+Group.inverse (subgroupIsGroup _ record { closedUnderInverse = three }) (a , prA) = (inverse a) , three prA
 Group.+Associative (subgroupIsGroup _ s) {a , prA} {b , prB} {c , prC} = +Associative
 Group.identRight (subgroupIsGroup _ s) {a , prA} = identRight
 Group.identLeft (subgroupIsGroup _ s) {a , prA} = identLeft

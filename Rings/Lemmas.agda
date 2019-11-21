@@ -3,6 +3,7 @@
 open import LogicalFormulae
 open import Functions
 open import Groups.Groups
+open import Groups.Abelian.Definition
 open import Groups.Definition
 open import Groups.Lemmas
 open import Rings.Definition
@@ -54,3 +55,6 @@ abstract
 
   charNot2ImpliesNontrivial : ((1R + 1R) ∼ 0R → False) → (0R ∼ 1R) → False
   charNot2ImpliesNontrivial charNot2 0=1 = charNot2 (Equivalence.transitive eq (+WellDefined (Equivalence.symmetric eq 0=1) (Equivalence.symmetric eq 0=1)) identRight)
+
+abelianUnderlyingGroup : AbelianGroup additiveGroup
+abelianUnderlyingGroup = record { commutative = groupIsAbelian }
