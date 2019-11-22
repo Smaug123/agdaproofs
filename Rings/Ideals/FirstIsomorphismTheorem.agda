@@ -14,6 +14,7 @@ open import Rings.Homomorphisms.Definition
 open import Groups.Homomorphisms.Lemmas
 open import Rings.Subrings.Definition
 open import Rings.Isomorphisms.Definition
+open import Groups.Isomorphisms.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
@@ -23,10 +24,11 @@ open import Rings.Quotients.Definition R1 R2 hom
 open import Rings.Homomorphisms.Image hom
 open Setoid T
 open Equivalence eq
+open import Groups.FirstIsomorphismTheorem (RingHom.groupHom hom)
 
-ringFirstIsomorphismTheorem : RingsIsomorphic quotientByRingHom (subringIsRing R2 imageGroupSubring)
-RingsIsomorphic.f ringFirstIsomorphismTheorem a = f a , (a , reflexive)
-RingHom.preserves1 (RingIso.ringHom (RingsIsomorphic.iso ringFirstIsomorphismTheorem)) = RingHom.preserves1 hom
-RingHom.ringHom (RingIso.ringHom (RingsIsomorphic.iso ringFirstIsomorphismTheorem)) {r} {s} = RingHom.ringHom hom
-RingHom.groupHom (RingIso.ringHom (RingsIsomorphic.iso ringFirstIsomorphismTheorem)) = {!!} -- this is the group iso thm
-RingIso.bijective (RingsIsomorphic.iso ringFirstIsomorphismTheorem) = {!!} -- do this from group iso thm
+ringFirstIsomorphismTheorem' : RingsIsomorphic quotientByRingHom (subringIsRing R2 imageGroupSubring)
+RingsIsomorphic.f ringFirstIsomorphismTheorem' a = f a , (a , reflexive)
+RingHom.preserves1 (RingIso.ringHom (RingsIsomorphic.iso ringFirstIsomorphismTheorem')) = RingHom.preserves1 hom
+RingHom.ringHom (RingIso.ringHom (RingsIsomorphic.iso ringFirstIsomorphismTheorem')) {r} {s} = RingHom.ringHom hom
+RingHom.groupHom (RingIso.ringHom (RingsIsomorphic.iso ringFirstIsomorphismTheorem')) = GroupIso.groupHom (GroupsIsomorphic.proof (groupFirstIsomorphismTheorem'))
+RingIso.bijective (RingsIsomorphic.iso ringFirstIsomorphismTheorem') = GroupIso.bij (GroupsIsomorphic.proof groupFirstIsomorphismTheorem')

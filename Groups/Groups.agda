@@ -43,50 +43,6 @@ fourWay+Associative'' {S = S} {_·_ = _·_} G = transitive +Associative (symmetr
     open Setoid S
     open Equivalence eq
 
-quotientGroupSetoid : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} → {underf : A → B} → (f : GroupHom G H underf) → (Setoid {a} {d} A)
-quotientGroupSetoid {A = A} {S = S} {T = T} {_·A_ = _·A_} {_·B_ = _·B_} G {H} {f} fHom = ansSetoid
-  where
-    open Setoid T
-    open Group H
-    open Equivalence eq
-    ansSetoid : Setoid A
-    Setoid._∼_ ansSetoid r s = (f (r ·A (Group.inverse G s))) ∼ 0G
-    Equivalence.reflexive (Setoid.eq ansSetoid) {b} = transitive (GroupHom.wellDefined fHom (Group.invRight G)) (imageOfIdentityIsIdentity fHom)
-    Equivalence.symmetric (Setoid.eq ansSetoid) {m} {n} pr = i
-      where
-        g : f (Group.inverse G (m ·A Group.inverse G n)) ∼ 0G
-        g = transitive (homRespectsInverse fHom {m ·A Group.inverse G n}) (transitive (inverseWellDefined H pr) (invIdent H))
-        h : f (Group.inverse G (Group.inverse G n) ·A Group.inverse G m) ∼ 0G
-        h = transitive (GroupHom.wellDefined fHom (Equivalence.symmetric (Setoid.eq S) (invContravariant G))) g
-        i : f (n ·A Group.inverse G m) ∼ 0G
-        i = transitive (GroupHom.wellDefined fHom (Group.+WellDefined G (Equivalence.symmetric (Setoid.eq S) (invTwice G n)) (Equivalence.reflexive (Setoid.eq S)))) h
-    Equivalence.transitive (Setoid.eq ansSetoid) {m} {n} {o} prmn prno = transitive (GroupHom.wellDefined fHom (Group.+WellDefined G (Equivalence.reflexive (Setoid.eq S)) (Equivalence.symmetric (Setoid.eq S) (Group.identLeft G)))) k
-      where
-        g : f (m ·A Group.inverse G n) ·B f (n ·A Group.inverse G o) ∼ 0G ·B 0G
-        g = replaceGroupOp H reflexive reflexive prmn prno reflexive
-        h : f (m ·A Group.inverse G n) ·B f (n ·A Group.inverse G o) ∼ 0G
-        h = transitive g identLeft
-        i : f ((m ·A Group.inverse G n) ·A (n ·A Group.inverse G o)) ∼ 0G
-        i = transitive (GroupHom.groupHom fHom) h
-        j : f (m ·A (((Group.inverse G n) ·A n) ·A Group.inverse G o)) ∼ 0G
-        j = transitive (GroupHom.wellDefined fHom (fourWay+Associative G)) i
-        k : f (m ·A ((Group.0G G) ·A Group.inverse G o)) ∼ 0G
-        k = transitive (GroupHom.wellDefined fHom (Group.+WellDefined G (Equivalence.reflexive (Setoid.eq S)) (Group.+WellDefined G (Equivalence.symmetric (Setoid.eq S) (Group.invLeft G)) (Equivalence.reflexive (Setoid.eq S))))) j
-
-quotientGroupLemma : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} → {underf : A → B} → (f : GroupHom G H underf) → {x y : A} → Setoid._∼_ T (underf x) (underf y) → Setoid._∼_ (quotientGroupSetoid G f) x y
-quotientGroupLemma {S = S} {T = T} G {H = H} fHom {x} {y} fx=fy = transitive (GroupHom.groupHom fHom) (transitive (Group.+WellDefined H (Equivalence.reflexive (Setoid.eq T)) (homRespectsInverse fHom)) (transferToRight'' H fx=fy))
-  where
-    open Group G
-    open Setoid T
-    open Equivalence eq
-
-quotientGroupLemma' : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} → {underf : A → B} → (f : GroupHom G H underf) → {x y : A} → Setoid._∼_ (quotientGroupSetoid G f) x y → Setoid._∼_ T (underf x) (underf y)
-quotientGroupLemma' {S = S} {T = T} G {H = H} f fx=fy = transferToRight H (transitive (transitive (Group.+WellDefined H (Equivalence.reflexive (Setoid.eq T)) (symmetric (homRespectsInverse f))) (symmetric (GroupHom.groupHom f))) fx=fy)
-  where
-    open Group G
-    open Setoid T
-    open Equivalence eq
-
 {-
 quotientHom : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} → {f : A → B} → (fHom : GroupHom G H f) → A → A
 quotientHom {S = S} {T = T} {_·A_ = _·A_} {_·B_ = _·B_} G {f = f} fHom a = {!!}

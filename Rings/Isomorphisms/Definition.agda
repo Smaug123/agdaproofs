@@ -19,7 +19,7 @@ module Rings.Isomorphisms.Definition {a b c d : _} {A : Set a} {S : Setoid {a} {
 record RingIso (f : A → B) : Set (a ⊔ b ⊔ c ⊔ d) where
   field
     ringHom : RingHom R1 R2 f
-    bijective : Bijection f
+    bijective : SetoidBijection S T f
 
 record RingsIsomorphic : Set (a ⊔ b ⊔ c ⊔ d) where
   field
