@@ -11,7 +11,7 @@ open import Rings.Lemmas
 open import Setoids.Setoids
 open import Setoids.Orders
 open import Orders
-open import Rings.IntegralDomains
+open import Rings.IntegralDomains.Definition
 open import Functions
 open import Sets.EquivalenceRelations
 open import Fields.Fields
@@ -84,35 +84,39 @@ abstract
       r : (1/2 * ((1R + 1R) * x)) ∼ (1/2' * ((1R + 1R) * x))
       r = Equivalence.transitive eq *Associative (Equivalence.transitive eq q (Equivalence.symmetric eq *Associative))
 
+  private
+    orderedFieldIntDom : {a b : A} → (a * b ∼ 0R) → (a ∼ 0R) || (b ∼ 0R)
+    orderedFieldIntDom {a} {b} ab=0 with totality 0R a
+    ... | inl (inl x) = inr (Equivalence.transitive eq (Equivalence.transitive eq (symmetric identIsIdent) (*WellDefined q reflexive)) p')
+      where
+        open Equivalence eq
+        a!=0 : (a ∼ Group.0G additiveGroup) → False
+        a!=0 pr = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<WellDefined pOrder (symmetric pr) reflexive x)
+        invA : A
+        invA = underlying (Field.allInvertible F a a!=0)
+        q : 1R ∼ (invA * a)
+        q with Field.allInvertible F a a!=0
+        ... | invA , pr = symmetric pr
+        p : invA * (a * b) ∼ invA * Group.0G additiveGroup
+        p = *WellDefined reflexive ab=0
+        p' : (invA * a) * b ∼ Group.0G additiveGroup
+        p' = Equivalence.transitive eq (symmetric *Associative) (Equivalence.transitive eq p (Ring.timesZero R))
+    orderedFieldIntDom {a} {b} ab=0 | inl (inr x) = inr (Equivalence.transitive eq (Equivalence.transitive eq (symmetric identIsIdent) (*WellDefined q reflexive)) p')
+      where
+        open Equivalence eq
+        a!=0 : (a ∼ Group.0G additiveGroup) → False
+        a!=0 pr = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<WellDefined pOrder reflexive (symmetric pr) x)
+        invA : A
+        invA = underlying (Field.allInvertible F a a!=0)
+        q : 1R ∼ (invA * a)
+        q with Field.allInvertible F a a!=0
+        ... | invA , pr = symmetric pr
+        p : invA * (a * b) ∼ invA * Group.0G additiveGroup
+        p = *WellDefined reflexive ab=0
+        p' : (invA * a) * b ∼ Group.0G additiveGroup
+        p' = Equivalence.transitive eq (symmetric *Associative) (Equivalence.transitive eq p (Ring.timesZero R))
+    orderedFieldIntDom {a} {b} ab=0 | inr x = inl (Equivalence.symmetric (Setoid.eq S) x)
+
   orderedFieldIsIntDom :  IntegralDomain R
-  IntegralDomain.intDom orderedFieldIsIntDom {a} {b} ab=0 with totality (Ring.0R R) a
-  IntegralDomain.intDom orderedFieldIsIntDom {a} {b} ab=0 | inl (inl x) = inr (Equivalence.transitive eq (Equivalence.transitive eq (symmetric identIsIdent) (*WellDefined q reflexive)) p')
-    where
-      open Equivalence eq
-      a!=0 : (a ∼ Group.0G additiveGroup) → False
-      a!=0 pr = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<WellDefined pOrder (symmetric pr) reflexive x)
-      invA : A
-      invA = underlying (Field.allInvertible F a a!=0)
-      q : 1R ∼ (invA * a)
-      q with Field.allInvertible F a a!=0
-      ... | invA , pr = symmetric pr
-      p : invA * (a * b) ∼ invA * Group.0G additiveGroup
-      p = *WellDefined reflexive ab=0
-      p' : (invA * a) * b ∼ Group.0G additiveGroup
-      p' = Equivalence.transitive eq (symmetric *Associative) (Equivalence.transitive eq p (Ring.timesZero R))
-  IntegralDomain.intDom orderedFieldIsIntDom {a} {b} ab=0 | inl (inr x) = inr (Equivalence.transitive eq (Equivalence.transitive eq (symmetric identIsIdent) (*WellDefined q reflexive)) p')
-    where
-      open Equivalence eq
-      a!=0 : (a ∼ Group.0G additiveGroup) → False
-      a!=0 pr = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<WellDefined pOrder reflexive (symmetric pr) x)
-      invA : A
-      invA = underlying (Field.allInvertible F a a!=0)
-      q : 1R ∼ (invA * a)
-      q with Field.allInvertible F a a!=0
-      ... | invA , pr = symmetric pr
-      p : invA * (a * b) ∼ invA * Group.0G additiveGroup
-      p = *WellDefined reflexive ab=0
-      p' : (invA * a) * b ∼ Group.0G additiveGroup
-      p' = Equivalence.transitive eq (symmetric *Associative) (Equivalence.transitive eq p (Ring.timesZero R))
-  IntegralDomain.intDom orderedFieldIsIntDom {a} {b} ab=0 | inr x = inl (Equivalence.symmetric (Setoid.eq S) x)
+  IntegralDomain.intDom orderedFieldIsIntDom = decidedIntDom R orderedFieldIntDom
   IntegralDomain.nontrivial orderedFieldIsIntDom pr = Field.nontrivial F (Equivalence.symmetric (Setoid.eq S) pr)

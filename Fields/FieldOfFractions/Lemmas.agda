@@ -8,7 +8,7 @@ open import Groups.Lemmas
 open import Rings.Definition
 open import Rings.Lemmas
 open import Rings.Homomorphisms.Definition
-open import Rings.IntegralDomains
+open import Rings.IntegralDomains.Definition
 open import Fields.Fields
 open import Functions
 open import Setoids.Setoids

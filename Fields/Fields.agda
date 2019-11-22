@@ -8,7 +8,7 @@ open import Rings.Lemmas
 open import Setoids.Setoids
 open import Setoids.Orders
 open import Orders
-open import Rings.IntegralDomains
+open import Rings.IntegralDomains.Definition
 open import Functions
 open import Sets.EquivalenceRelations
 
@@ -23,6 +23,8 @@ record Field {m n : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} 
   field
     allInvertible : (a : A) → ((a ∼ Group.0G (Ring.additiveGroup R)) → False) → Sg A (λ t → t * a ∼ 1R)
     nontrivial : (0R ∼ 1R) → False
+  0F : A
+  0F = Ring.0R R
 
 record Field' {m n : _} : Set (lsuc m ⊔ lsuc n) where
   field

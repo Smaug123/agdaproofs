@@ -7,6 +7,7 @@ open import Setoids.Subset
 open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Groups.Definition
+open import Groups.Homomorphisms.Definition
 open import Groups.Subgroups.Definition
 open import Groups.Subgroups.Normal.Definition
 
@@ -45,3 +46,7 @@ Group.identRight (cosetGroup norm) = isSubset (symmetric (transitive +Associativ
 Group.identLeft (cosetGroup norm) = isSubset (symmetric (transitive (+WellDefined reflexive identLeft) invLeft)) containsIdentity
 Group.invLeft (cosetGroup norm) = isSubset (symmetric (transitive (+WellDefined reflexive invLeft) invLeft)) containsIdentity
 Group.invRight (cosetGroup norm) = isSubset (symmetric (transitive (+WellDefined reflexive invRight) invLeft)) containsIdentity
+
+cosetGroupHom : (norm : normalSubgroup G subgrp) → GroupHom G (cosetGroup norm) id
+GroupHom.groupHom (cosetGroupHom norm) = isSubset (symmetric (transitive (+WellDefined invContravariant reflexive) (transitive +Associative (transitive (+WellDefined (transitive (symmetric +Associative) (+WellDefined reflexive invLeft)) reflexive) (transitive (+WellDefined identRight reflexive) invLeft))))) (Subgroup.containsIdentity subgrp)
+GroupHom.wellDefined (cosetGroupHom norm) {x} {y} x=y = isSubset (symmetric (transitive (+WellDefined reflexive x=y) invLeft)) (Subgroup.containsIdentity subgrp)

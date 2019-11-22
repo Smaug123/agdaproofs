@@ -18,7 +18,6 @@ open import Groups.Subgroups.Normal.Definition
 open import Groups.Subgroups.Normal.Lemmas
 open import Groups.Lemmas
 open import Groups.Abelian.Definition
-open import Groups.QuotientGroup.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
@@ -27,6 +26,7 @@ module Groups.FirstIsomorphismTheorem {a b c d : _} {A : Set a} {B : Set b} {S :
 open import Groups.Homomorphisms.Image fHom
 open import Groups.Homomorphisms.Kernel fHom
 open import Groups.Cosets G groupKernelIsSubgroup
+open import Groups.QuotientGroup.Definition G fHom
 open Setoid T
 open Equivalence eq
 open import Setoids.Subset T
@@ -39,7 +39,7 @@ groupFirstIsomorphismTheoremWellDefined {x} {y} pr = transitive (symmetric (invT
     u : Setoid._∼_ T (Group.inverse H (Group.inverse H (f y))) (Group.inverse H (Group.inverse H (f x)))
     u = inverseWellDefined H (transferToRight' H t)
 
-groupFirstIsomorphismTheorem : GroupsIsomorphic (cosetGroup groupKernelIsNormalSubgroup) (subgroupIsGroup H imageGroupSubset imageGroupSubgroup)
+groupFirstIsomorphismTheorem : GroupsIsomorphic (cosetGroup groupKernelIsNormalSubgroup) (subgroupIsGroup H imageGroupSubgroup)
 GroupsIsomorphic.isomorphism groupFirstIsomorphismTheorem x = f x , (x , reflexive)
 GroupHom.groupHom (GroupIso.groupHom (GroupsIsomorphic.proof groupFirstIsomorphismTheorem)) {x} {y} = GroupHom.groupHom fHom
 GroupHom.wellDefined (GroupIso.groupHom (GroupsIsomorphic.proof groupFirstIsomorphismTheorem)) {x} {y} = groupFirstIsomorphismTheoremWellDefined {x} {y}
@@ -47,3 +47,15 @@ SetoidInjection.wellDefined (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic
 SetoidInjection.injective (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.proof groupFirstIsomorphismTheorem))) fx=fy = transitive (GroupHom.groupHom fHom) (transitive (Group.+WellDefined H reflexive fx=fy) (transitive (symmetric (GroupHom.groupHom fHom)) (transitive (GroupHom.wellDefined fHom (Group.invLeft G)) (imageOfIdentityIsIdentity fHom))))
 SetoidSurjection.wellDefined (SetoidBijection.surj (GroupIso.bij (GroupsIsomorphic.proof groupFirstIsomorphismTheorem))) = groupFirstIsomorphismTheoremWellDefined
 SetoidSurjection.surjective (SetoidBijection.surj (GroupIso.bij (GroupsIsomorphic.proof groupFirstIsomorphismTheorem))) {b , (a , fa=b)} = a , fa=b
+
+groupFirstIsomorphismTheoremWellDefined' : {x y : A} → f (x +G (Group.inverse G y)) ∼ Group.0G H → Setoid._∼_ (subsetSetoid imageGroupSubset) (f x , (x , reflexive)) (f y , (y , reflexive))
+groupFirstIsomorphismTheoremWellDefined' {x} {y} pr = transferToRight H (transitive (symmetric (transitive (GroupHom.groupHom fHom) (Group.+WellDefined H reflexive (homRespectsInverse fHom)))) pr)
+
+groupFirstIsomorphismTheorem' : GroupsIsomorphic (quotientGroupByHom) (subgroupIsGroup H imageGroupSubgroup)
+GroupsIsomorphic.isomorphism groupFirstIsomorphismTheorem' a = f a , (a , reflexive)
+GroupHom.groupHom (GroupIso.groupHom (GroupsIsomorphic.proof groupFirstIsomorphismTheorem')) {x} {y} = GroupHom.groupHom fHom
+GroupHom.wellDefined (GroupIso.groupHom (GroupsIsomorphic.proof groupFirstIsomorphismTheorem')) {x} {y} = groupFirstIsomorphismTheoremWellDefined'
+SetoidInjection.wellDefined (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.proof groupFirstIsomorphismTheorem'))) {x} {y} = groupFirstIsomorphismTheoremWellDefined' {x} {y}
+SetoidInjection.injective (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.proof groupFirstIsomorphismTheorem'))) {x} {y} fx=fy = transitive (GroupHom.groupHom fHom) (transitive (Group.+WellDefined H reflexive (homRespectsInverse fHom)) (transferToRight'' H fx=fy))
+SetoidSurjection.wellDefined (SetoidBijection.surj (GroupIso.bij (GroupsIsomorphic.proof groupFirstIsomorphismTheorem'))) {x} {y} = groupFirstIsomorphismTheoremWellDefined'
+SetoidSurjection.surjective (SetoidBijection.surj (GroupIso.bij (GroupsIsomorphic.proof groupFirstIsomorphismTheorem'))) {b , (a , fa=b)} = a , fa=b

@@ -11,6 +11,7 @@ open import Groups.Lemmas
 open import Groups.Groups
 open import Groups.Subgroups.Definition
 open import Groups.Homomorphisms.Definition
+open import Groups.QuotientGroup.Definition
 open import Groups.Homomorphisms.Lemmas
 open import Groups.Actions.Definition
 open import Sets.EquivalenceRelations

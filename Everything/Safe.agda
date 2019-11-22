@@ -47,7 +47,7 @@ open import Rings.Lemmas
 open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Lemmas
 open import Rings.Orders.Partial.Lemmas
-open import Rings.IntegralDomains
+open import Rings.IntegralDomains.Definition
 open import Rings.DirectSum
 open import Rings.Polynomial.Ring
 open import Rings.Polynomial.Evaluation
@@ -55,6 +55,17 @@ open import Rings.Ideals.Definition
 open import Rings.Isomorphisms.Definition
 open import Rings.Quotients.Definition
 open import Rings.Cosets
+open import Rings.EuclideanDomains.Definition
+open import Rings.EuclideanDomains.Examples
+open import Rings.Homomorphisms.Image
+open import Rings.Homomorphisms.Kernel
+open import Rings.Ideals.FirstIsomorphismTheorem
+open import Rings.Ideals.Lemmas
+open import Rings.Ideals.Prime.Definition
+open import Rings.Ideals.Principal.Definition
+open import Rings.IntegralDomains.Examples
+open import Rings.PrincipalIdealDomain
+open import Rings.Subrings.Definition
 
 open import Setoids.Setoids
 open import Setoids.DirectSum
