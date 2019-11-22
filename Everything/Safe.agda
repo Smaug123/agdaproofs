@@ -47,7 +47,7 @@ open import Rings.Lemmas
 open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Lemmas
 open import Rings.Orders.Partial.Lemmas
-open import Rings.IntegralDomains
+open import Rings.IntegralDomains.Definition
 open import Rings.DirectSum
 open import Rings.Polynomial.Ring
 open import Rings.Polynomial.Evaluation

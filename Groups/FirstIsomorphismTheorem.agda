@@ -39,7 +39,7 @@ groupFirstIsomorphismTheoremWellDefined {x} {y} pr = transitive (symmetric (invT
     u : Setoid._∼_ T (Group.inverse H (Group.inverse H (f y))) (Group.inverse H (Group.inverse H (f x)))
     u = inverseWellDefined H (transferToRight' H t)
 
-groupFirstIsomorphismTheorem : GroupsIsomorphic (cosetGroup groupKernelIsNormalSubgroup) (subgroupIsGroup H imageGroupSubset imageGroupSubgroup)
+groupFirstIsomorphismTheorem : GroupsIsomorphic (cosetGroup groupKernelIsNormalSubgroup) (subgroupIsGroup H imageGroupSubgroup)
 GroupsIsomorphic.isomorphism groupFirstIsomorphismTheorem x = f x , (x , reflexive)
 GroupHom.groupHom (GroupIso.groupHom (GroupsIsomorphic.proof groupFirstIsomorphismTheorem)) {x} {y} = GroupHom.groupHom fHom
 GroupHom.wellDefined (GroupIso.groupHom (GroupsIsomorphic.proof groupFirstIsomorphismTheorem)) {x} {y} = groupFirstIsomorphismTheoremWellDefined {x} {y}

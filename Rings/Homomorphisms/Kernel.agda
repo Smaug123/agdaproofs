@@ -11,17 +11,11 @@ open import Functions
 open import Sets.EquivalenceRelations
 open import Rings.Definition
 open import Rings.Homomorphisms.Definition
+open import Groups.Homomorphisms.Lemmas
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-module Rings.Isomorphisms.Definition {a b c d : _} {A : Set a} {S : Setoid {a} {b} A} {_+1_ _*1_ : A → A → A} (R1 : Ring S _+1_ _*1_) {B : Set c} {T : Setoid {c} {d} B} {_+2_ _*2_ : B → B → B} (R2 : Ring T _+2_ _*2_) where
+module Rings.Homomorphisms.Kernel {a b c d : _} {A : Set a} {B : Set c} {S : Setoid {a} {b} A} {T : Setoid {c} {d} B} {_+1_ _*1_ : A → A → A} {_+2_ _*2_ : B → B → B} {R1 : Ring S _+1_ _*1_} {R2 : Ring T _+2_ _*2_} {f : A → B} (fHom : RingHom R1 R2 f) where
 
-record RingIso (f : A → B) : Set (a ⊔ b ⊔ c ⊔ d) where
-  field
-    ringHom : RingHom R1 R2 f
-    bijective : Bijection f
-
-record RingsIsomorphic : Set (a ⊔ b ⊔ c ⊔ d) where
-  field
-    f : A → B
-    iso : RingIso f
+ringKernel : Set (a ⊔ d)
+ringKernel = Sg A (λ a → Setoid._∼_ T (f a) (Ring.0R R2))

@@ -11,17 +11,14 @@ open import Functions
 open import Sets.EquivalenceRelations
 open import Rings.Definition
 open import Rings.Homomorphisms.Definition
+open import Groups.Homomorphisms.Lemmas
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-module Rings.Isomorphisms.Definition {a b c d : _} {A : Set a} {S : Setoid {a} {b} A} {_+1_ _*1_ : A → A → A} (R1 : Ring S _+1_ _*1_) {B : Set c} {T : Setoid {c} {d} B} {_+2_ _*2_ : B → B → B} (R2 : Ring T _+2_ _*2_) where
+module Rings.PrincipalIdealDomain {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} (R : Ring S _+_ _*_) where
 
-record RingIso (f : A → B) : Set (a ⊔ b ⊔ c ⊔ d) where
-  field
-    ringHom : RingHom R1 R2 f
-    bijective : Bijection f
+open import Rings.Ideals.Principal.Definition R
+open import Rings.Ideals.Definition R
 
-record RingsIsomorphic : Set (a ⊔ b ⊔ c ⊔ d) where
-  field
-    f : A → B
-    iso : RingIso f
+PrincipalIdealDomain : {c : _} → Set (a ⊔ b ⊔ lsuc c)
+PrincipalIdealDomain {c} = {pred : A → Set c} → (ideal : Ideal pred) → PrincipalIdeal ideal

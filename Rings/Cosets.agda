@@ -47,3 +47,8 @@ Ring.*Associative cosetRing = isSubset (transitive (symmetric invLeft) (+WellDef
 Ring.*Commutative cosetRing {a} {b} = isSubset (transitive (symmetric invLeft) (+WellDefined (inverseWellDefined additiveGroup *Commutative) reflexive)) containsIdentity
 Ring.*DistributesOver+ cosetRing = isSubset (symmetric (transitive (+WellDefined (inverseWellDefined additiveGroup (symmetric *DistributesOver+)) reflexive) invLeft)) containsIdentity
 Ring.identIsIdent cosetRing = isSubset (symmetric (transitive (Group.+WellDefined additiveGroup reflexive identIsIdent) invLeft)) containsIdentity
+
+cosetRingHom : RingHom R cosetRing id
+RingHom.preserves1 cosetRingHom = isSubset (symmetric invLeft) (Ideal.containsIdentity ideal)
+RingHom.ringHom cosetRingHom = isSubset (symmetric invLeft) (Ideal.containsIdentity ideal)
+RingHom.groupHom cosetRingHom = cosetGroupHom (abelianGroupSubgroupIsNormal (Ideal.isSubgroup ideal) abelianUnderlyingGroup)

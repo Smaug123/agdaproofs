@@ -9,7 +9,6 @@ open import Rings.Lemmas
 open import Setoids.Setoids
 open import Setoids.Orders
 open import Orders
-open import Rings.IntegralDomains
 open import Functions
 open import Sets.EquivalenceRelations
 open import Fields.Fields

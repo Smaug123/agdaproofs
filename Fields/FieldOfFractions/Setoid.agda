@@ -6,15 +6,16 @@ open import Groups.Definition
 open import Groups.Lemmas
 open import Rings.Definition
 open import Rings.Lemmas
-open import Rings.IntegralDomains
 open import Fields.Fields
 open import Functions
 open import Setoids.Setoids
 open import Sets.EquivalenceRelations
+open import Rings.IntegralDomains.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Fields.FieldOfFractions.Setoid {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} (I : IntegralDomain R) where
+
 
 fieldOfFractionsSet : Set (a ⊔ b)
 fieldOfFractionsSet = (A && (Sg A (λ a → (Setoid._∼_ S a (Ring.0R R) → False))))
@@ -36,9 +37,7 @@ Equivalence.transitive (Setoid.eq fieldOfFractionsSetoid) {a ,, (b , b!=0)} {c ,
     p2 = transitive (transitive (symmetric *Associative) (transitive (*WellDefined reflexive *Commutative) *Associative)) (transitive p (transitive (symmetric *Associative) (*WellDefined reflexive cf=de)))
     p3 : (a * f) * d ∼ (b * e) * d
     p3 = transitive p2 (transitive (*WellDefined reflexive *Commutative) *Associative)
-    p4 : (d ∼ 0R) || ((a * f) ∼ (b * e))
-    p4 = cancelIntDom I (transitive *Commutative (transitive p3 *Commutative))
+    p4 : ((d ∼ 0R) → False) → ((a * f) ∼ (b * e))
+    p4 = cancelIntDom R I (transitive *Commutative (transitive p3 *Commutative))
     p5 : (a * f) ∼ (b * e)
-    p5 with p4
-    p5 | inl d=0 = exFalso (d!=0 d=0)
-    p5 | inr x = x
+    p5 = p4 d!=0

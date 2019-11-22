@@ -9,7 +9,6 @@ open import Semirings.Definition
 open import Groups.Definition
 open import Rings.Definition
 open import Setoids.Setoids
-open import Rings.IntegralDomains
 
 module Numbers.Integers.Multiplication where
 

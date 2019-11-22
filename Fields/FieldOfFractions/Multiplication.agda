@@ -6,7 +6,7 @@ open import Groups.Definition
 open import Groups.Lemmas
 open import Rings.Definition
 open import Rings.Lemmas
-open import Rings.IntegralDomains
+open import Rings.IntegralDomains.Definition
 open import Fields.Fields
 open import Functions
 open import Setoids.Setoids
@@ -25,8 +25,7 @@ fieldOfFractionsTimes (a ,, (b , b!=0)) (c ,, (d , d!=0)) = (a * c) ,, ((b * d) 
     open Ring R
     ans : ((b * d) ∼ Ring.0R R) → False
     ans pr with IntegralDomain.intDom I pr
-    ans pr | inl x = b!=0 x
-    ans pr | inr x = d!=0 x
+    ans pr | f = exFalso (d!=0 (f b!=0))
 
 fieldOfFractionsTimesWellDefined : {a b c d : fieldOfFractionsSet} → (Setoid._∼_ fieldOfFractionsSetoid a c) → (Setoid._∼_ fieldOfFractionsSetoid b d) → (Setoid._∼_ fieldOfFractionsSetoid (fieldOfFractionsTimes a b) (fieldOfFractionsTimes c d))
 fieldOfFractionsTimesWellDefined {a ,, (b , _)} {c ,, (d , _)} {e ,, (f , _)} {g ,, (h , _)} af=be ch=dg = need
