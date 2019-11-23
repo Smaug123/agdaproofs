@@ -62,10 +62,12 @@ open import Rings.Homomorphisms.Kernel
 open import Rings.Ideals.FirstIsomorphismTheorem
 open import Rings.Ideals.Lemmas
 open import Rings.Ideals.Prime.Definition
+open import Rings.Ideals.Prime.Lemmas
 open import Rings.Ideals.Principal.Definition
 open import Rings.IntegralDomains.Examples
 open import Rings.PrincipalIdealDomain
 open import Rings.Subrings.Definition
+open import Rings.Ideals.Maximal.Lemmas
 
 open import Setoids.Setoids
 open import Setoids.DirectSum

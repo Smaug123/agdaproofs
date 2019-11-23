@@ -15,12 +15,13 @@ open import Groups.Homomorphisms.Lemmas
 open import Groups.Subgroups.Definition
 open import Rings.Homomorphisms.Kernel
 open import Rings.Cosets
+open import Groups.Lemmas
+open import Setoids.Functions.Lemmas
+open import Rings.Ideals.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Rings.Ideals.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} (R : Ring S _+_ _*_) where
-
-open import Rings.Ideals.Definition R
 
 idealPredForKernel : {c d : _} {C : Set c} {T : Setoid {c} {d} C} {_+2_ _*2_ : C → C → C} (R2 : Ring T _+2_ _*2_) {f : A → C} (fHom : RingHom R R2 f) → A → Set d
 idealPredForKernel {T = T} R2 {f} fHom a = Setoid._∼_ T (f a) (Ring.0R R2)
@@ -28,7 +29,7 @@ idealPredForKernel {T = T} R2 {f} fHom a = Setoid._∼_ T (f a) (Ring.0R R2)
 idealPredForKernelWellDefined : {c d : _} {C : Set c} {T : Setoid {c} {d} C} {_+2_ _*2_ : C → C → C} (R2 : Ring T _+2_ _*2_) {f : A → C} (fHom : RingHom R R2 f) → {x y : A} → (Setoid._∼_ S x y) → (idealPredForKernel R2 fHom x → idealPredForKernel R2 fHom y)
 idealPredForKernelWellDefined {T = T} R2 {f} fHom a x=0 = Equivalence.transitive (Setoid.eq T) (GroupHom.wellDefined (RingHom.groupHom fHom) (Equivalence.symmetric (Setoid.eq S) a)) x=0
 
-kernelIdealIsIdeal : {c d : _} {C : Set c} {T : Setoid {c} {d} C} {_+2_ _*2_ : C → C → C} {R2 : Ring T _+2_ _*2_} {f : A → C} (fHom : RingHom R R2 f) → Ideal (idealPredForKernel R2 fHom)
+kernelIdealIsIdeal : {c d : _} {C : Set c} {T : Setoid {c} {d} C} {_+2_ _*2_ : C → C → C} {R2 : Ring T _+2_ _*2_} {f : A → C} (fHom : RingHom R R2 f) → Ideal R (idealPredForKernel R2 fHom)
 Subgroup.isSubset (Ideal.isSubgroup (kernelIdealIsIdeal {R2 = R2} fHom)) = idealPredForKernelWellDefined R2 fHom
 Subgroup.closedUnderPlus (Ideal.isSubgroup (kernelIdealIsIdeal {T = T} {R2 = R2} fHom)) {x} {y} fx=0 fy=0 = transitive (transitive (GroupHom.groupHom (RingHom.groupHom fHom)) (+WellDefined fx=0 fy=0)) identLeft
   where
@@ -48,11 +49,19 @@ Ideal.accumulatesTimes (kernelIdealIsIdeal {T = T} {R2 = R2} {f = f} fHom) {x} {
     open Setoid T
     open Equivalence eq
 
-open Setoid S
 open Ring R
 open Group additiveGroup
+open Setoid S
 open Equivalence eq
-open import Groups.Lemmas additiveGroup
 
-idealIsKernelMap : {c : _} {pred : A → Set c} → (i : Ideal pred) → {x : A} → pred x → ringKernel {R1 = R} {R2 = cosetRing R i} (cosetRingHom R i)
-idealIsKernelMap {c} {pred} i {x} predX = x , (Ideal.isSubset i (transitive (symmetric identLeft) (+WellDefined (symmetric invIdent) reflexive)) predX)
+translate : {c : _} {pred : A → Set c} → (i : Ideal R pred) → {a : A} → pred a → pred (inverse (Ring.0R (cosetRing R i)) + a)
+translate {a} i predA = Ideal.isSubset i (transitive (symmetric identLeft) (+WellDefined (symmetric (invIdent additiveGroup)) reflexive)) predA
+translate' : {c : _} {pred : A → Set c} → (i : Ideal R pred) → {a : A} → pred (inverse (Ring.0R (cosetRing R i)) + a) → pred a
+translate' i = Ideal.isSubset i (transitive (+WellDefined (invIdent additiveGroup) reflexive) identLeft)
+
+inverseImageIsIdeal : {c d : _} {C : Set c} {T : Setoid {c} {d} C} {_+2_ _*2_ : C → C → C} {R2 : Ring T _+2_ _*2_} {f : C → A} (fHom : RingHom R2 R f) → {e : _} {pred : A → Set e} → (i : Ideal R pred) → Ideal R2 (inverseImagePred {S = T} {S} {f} (GroupHom.wellDefined (RingHom.groupHom fHom)) (Ideal.isSubset i))
+Subgroup.isSubset (Ideal.isSubgroup (inverseImageIsIdeal {T = T} fHom i)) = inverseImageWellDefined {S = T} {S} (GroupHom.wellDefined (RingHom.groupHom fHom)) (Ideal.isSubset i)
+Subgroup.closedUnderPlus (Ideal.isSubgroup (inverseImageIsIdeal fHom i)) {g} {h} (c , (prC ,, fg=c)) (d , (prD ,, fh=d)) = (c + d) , (Ideal.closedUnderPlus i prC prD ,, transitive (GroupHom.groupHom (RingHom.groupHom fHom)) (+WellDefined fg=c fh=d))
+Subgroup.containsIdentity (Ideal.isSubgroup (inverseImageIsIdeal fHom i)) = 0G , (Ideal.containsIdentity i ,, imageOfIdentityIsIdentity (RingHom.groupHom fHom))
+Subgroup.closedUnderInverse (Ideal.isSubgroup (inverseImageIsIdeal fHom i)) (a , (prA ,, fg=a)) = inverse a , (Ideal.closedUnderInverse i prA ,, transitive (homRespectsInverse (RingHom.groupHom fHom)) (inverseWellDefined additiveGroup fg=a))
+Ideal.accumulatesTimes (inverseImageIsIdeal {_*2_ = _*2_} {f = f} fHom i) {g} {h} (a , (prA ,, fg=a)) = (a * f h) , (Ideal.accumulatesTimes i prA ,, transitive (RingHom.ringHom fHom) (*WellDefined fg=a reflexive))
