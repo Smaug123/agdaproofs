@@ -11,7 +11,7 @@ open import Numbers.Naturals.WithK
 open import Sets.FinSet
 open import Groups.Definition
 open import Groups.SymmetricGroups.Definition
-open import DecidableSet
+open import Decidable.Sets
 
 module Groups.FreeGroups where
 
@@ -107,7 +107,7 @@ badPrepend' {decA = decA} {x} (wordEnding pr x₁) | inr pr2 = pr2 refl
 freeGroupGenerators : {a : _} (A : Set a) (decA : DecidableSet A) (w : FreeGroupGenerators A) → SymmetryGroupElements (reflSetoid (ReducedWord decA))
 freeGroupGenerators A decA (χ x) = sym {f = f} bij
   where
-    open DecidableSet.DecidableSet decA
+    open DecidableSet decA
     f : ReducedWord decA → ReducedWord decA
     f empty = prependLetter (ofLetter x) empty (wordEmpty refl)
     f (prependLetter (ofLetter startLetter) w pr) = prependLetter (ofLetter x) (prependLetter (ofLetter startLetter) w pr) (wordEnding (succIsPositive _) ans)
