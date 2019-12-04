@@ -29,13 +29,3 @@ decidedIntDom : ({a b : A} → (a * b) ∼ (Ring.0R R) → (a ∼ 0R) || (b ∼ 
 decidedIntDom f ab=0 a!=0 with f ab=0
 decidedIntDom f ab=0 a!=0 | inl x = exFalso (a!=0 x)
 decidedIntDom f ab=0 a!=0 | inr x = x
-
-cancelIntDom : (I : IntegralDomain) {a b c : A} → (a * b) ∼ (a * c) → ((a ∼ (Ring.0R R)) → False) → (b ∼ c)
-cancelIntDom I {a} {b} {c} ab=ac a!=0 = transferToRight (Ring.additiveGroup R) t3
-  where
-    t1 : (a * b) + Group.inverse (Ring.additiveGroup R) (a * c) ∼ Ring.0R R
-    t1 = transferToRight'' (Ring.additiveGroup R) ab=ac
-    t2 : a * (b + Group.inverse (Ring.additiveGroup R) c) ∼ Ring.0R R
-    t2 = transitive (transitive (Ring.*DistributesOver+ R) (Group.+WellDefined (Ring.additiveGroup R) reflexive (transferToRight' (Ring.additiveGroup R) (transitive (symmetric (Ring.*DistributesOver+ R)) (transitive (Ring.*WellDefined R reflexive (Group.invLeft (Ring.additiveGroup R))) (Ring.timesZero R)))))) t1
-    t3 : (b + Group.inverse (Ring.additiveGroup R) c) ∼ Ring.0R R
-    t3 = IntegralDomain.intDom I t2 a!=0

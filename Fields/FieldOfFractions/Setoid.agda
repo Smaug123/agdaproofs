@@ -11,11 +11,11 @@ open import Functions
 open import Setoids.Setoids
 open import Sets.EquivalenceRelations
 open import Rings.IntegralDomains.Definition
+open import Rings.IntegralDomains.Lemmas
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Fields.FieldOfFractions.Setoid {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} (I : IntegralDomain R) where
-
 
 fieldOfFractionsSet : Set (a ⊔ b)
 fieldOfFractionsSet = (A && (Sg A (λ a → (Setoid._∼_ S a (Ring.0R R) → False))))

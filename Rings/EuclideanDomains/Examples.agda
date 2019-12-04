@@ -17,6 +17,7 @@ open import Rings.IntegralDomains.Definition
 open import Rings.IntegralDomains.Examples
 open import Rings.EuclideanDomains.Definition
 open import Fields.Fields
+open import Fields.Lemmas
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 

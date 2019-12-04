@@ -9,6 +9,7 @@ open import Rings.Definition
 open import Sets.EquivalenceRelations
 open import Rings.Ideals.Definition
 open import Rings.IntegralDomains.Definition
+open import Rings.IntegralDomains.Lemmas
 open import Rings.Ideals.Prime.Definition
 open import Rings.Cosets
 
