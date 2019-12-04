@@ -16,12 +16,6 @@ numbers<N : (N : ℕ) → List ℕ
 numbers<N zero = []
 numbers<N (succ N) = N :: numbers<N N
 
-filter' : {a b : _} {A : Set a} {f : A → Set b} (decidable : (x : A) → (f x) || (f x → False)) → List A → List A
-filter' {f} decid [] = []
-filter' {f} decid (x :: xs) with decid x
-filter' {f} decid (x :: xs) | inl fx = x :: filter' decid xs
-filter' {f} decid (x :: xs) | inr Notfx = filter' decid xs
-
 filtered : (N : ℕ) → List ℕ
 filtered N = filter' (orDecidable (divisionDecidable 3) (divisionDecidable 5)) (numbers<N N)
 

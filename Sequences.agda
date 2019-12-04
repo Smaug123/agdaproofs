@@ -3,6 +3,7 @@
 open import LogicalFormulae
 open import Numbers.Naturals.Definition
 open import Setoids.Setoids
+open import Vectors
 
 module Sequences where
 
@@ -63,3 +64,15 @@ mapAndApply s1 s2 f g (succ m) = mapAndApply (Sequence.tail s1) (Sequence.tail s
 assemble : {a : _} {A : Set a} → (x : A) → (s : Sequence A) → Sequence A
 Sequence.head (assemble x s) = x
 Sequence.tail (assemble x s) = s
+
+unfold : {a : _} {A : Set a} → (A → A) → A → Sequence A
+Sequence.head (unfold f a) = a
+Sequence.tail (unfold f a) = unfold f (f a)
+
+indexAndUnfold : {a : _} {A : Set a} (f : A → A) (start : A) (n : ℕ) → index (unfold f start) (succ n) ≡ f (index (unfold f start) n)
+indexAndUnfold f start zero = refl
+indexAndUnfold f start (succ n) rewrite indexAndUnfold f (f start) n = refl
+
+take : {a : _} {A : Set a} (s : Sequence A) (n : ℕ) → Vec A n
+take s zero = []
+take s (succ n) = Sequence.head s ,- take (Sequence.tail s) n

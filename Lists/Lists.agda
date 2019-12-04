@@ -179,3 +179,9 @@ listZip f f1 f2 (x :: l1) (y :: l2) = (f x y) :: listZip f f1 f2 l1 l2
 mapId : {a : _} {A : Set a} (l : List A) → map id l ≡ l
 mapId [] = refl
 mapId (x :: l) rewrite mapId l = refl
+
+filter' : {a b : _} {A : Set a} {f : A → Set b} (decidable : (x : A) → (f x) || (f x → False)) → List A → List A
+filter' {f} decid [] = []
+filter' {f} decid (x :: xs) with decid x
+filter' {f} decid (x :: xs) | inl fx = x :: filter' decid xs
+filter' {f} decid (x :: xs) | inr Notfx = filter' decid xs

@@ -28,5 +28,6 @@ open import LectureNotes.NumbersAndSets.Lecture1
 open import LectureNotes.Groups.Lecture1
 
 open import ProjectEuler.Problem1
+open import ProjectEuler.Problem2
 
 module Everything.WithK where
