@@ -94,6 +94,10 @@ boolAnd : Bool → Bool → Bool
 boolAnd BoolTrue y = y
 boolAnd BoolFalse y = BoolFalse
 
+boolOr : Bool → Bool → Bool
+boolOr BoolTrue y = BoolTrue
+boolOr BoolFalse y = y
+
 typeCast : {a : _} {A : Set a} {B : Set a} (el : A) (pr : A ≡ B) → B
 typeCast {a} {A} {.A} elt refl = elt
 

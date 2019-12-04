@@ -79,7 +79,8 @@ open import Setoids.Functions.Extension
 open import Sets.Cardinality
 open import Sets.FinSet
 
-open import DecidableSet
+open import Decidable.Sets
+open import Decidable.Relations
 
 open import Vectors
 open import Vectors.VectorSpace
