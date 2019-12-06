@@ -29,13 +29,34 @@ concatAssoc : {a : _} → {A : Set a} → (x : List A) → (y : List A) → (z :
 concatAssoc [] m n = refl
 concatAssoc (x :: l) m n = applyEquality (_::_ x) (concatAssoc l m n)
 
-canMovePrepend : {a : _} → {A : Set a} → (l : A) → {m n : ℕ} → (x : List A) (y : List A) → ((l :: x) ++ y ≡ l :: (x ++ y))
+canMovePrepend : {a : _} → {A : Set a} → (l : A) → (x : List A) (y : List A) → ((l :: x) ++ y ≡ l :: (x ++ y))
 canMovePrepend l [] n = refl
 canMovePrepend l (x :: m) n = refl
 
 rev : {a : _} → {A : Set a} → List A → List A
 rev [] = []
 rev (x :: l) = (rev l) ++ [ x ]
+
+private
+  goRev2 : {a : _} {A : Set a} → List A → List A → List A && List A
+  goRev2 ans [] = ans ,, []
+  goRev2 ans (x :: xs) = goRev2 (x :: ans) xs
+
+rev2 : {a : _} → {A : Set a} → List A → List A
+rev2 {A = A} l with goRev2 [] l
+... | (ans ,, _) = ans
+
+rev2IsRevLemma' : {a : _} {A : Set a} (l1 l2 : List A) (x : A) → (_&&_.fst (goRev2 l1 l2)) ++ (x :: []) ≡ _&&_.fst (goRev2 (l1 ++ (x :: [])) l2)
+rev2IsRevLemma' l1 [] x = refl
+rev2IsRevLemma' l1 (l :: l2) x rewrite rev2IsRevLemma' (l :: l1) l2 x = refl
+
+rev2IsRevLemma : {a : _} {A : Set a} (l2 : List A) (x : A) → (_&&_.fst (goRev2 [] l2)) ++ (x :: []) ≡ _&&_.fst (goRev2 (x :: []) l2)
+rev2IsRevLemma [] x = refl
+rev2IsRevLemma (l :: ls) x = rev2IsRevLemma' (l :: []) ls x
+
+rev2IsRev : {a : _} {A : Set a} (l : List A) → rev l ≡ rev2 l
+rev2IsRev [] = refl
+rev2IsRev (x :: l) rewrite rev2IsRev l = rev2IsRevLemma l x
 
 revIsHom : {a : _} → {A : Set a} → (l1 : List A) → (l2 : List A) → (rev (l1 ++ l2) ≡ (rev l2) ++ (rev l1))
 revIsHom l1 [] = applyEquality rev (appendEmptyList l1)

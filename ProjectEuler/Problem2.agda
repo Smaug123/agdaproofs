@@ -70,7 +70,12 @@ fibStart = refl
 fibsMatch : (n : ℕ) → binNatToN (index fib n) ≡ fibUnary n
 fibsMatch zero = refl
 fibsMatch (succ zero) = refl
-fibsMatch (succ (succ n)) rewrite equalityCommutative (fibsMatch n) | equalityCommutative (fibsMatch (succ n)) | equalityCommutative (mapAndIndex (unfold nextFib record { prev = NToBinNat 0 ; curr = NToBinNat 1 }) FibEntry.curr (succ (succ n))) | indexAndUnfold nextFib (record { prev = [] ; curr = one :: [] }) (succ n) = {!!}
+fibsMatch (succ (succ n)) rewrite equalityCommutative (fibsMatch n) | equalityCommutative (fibsMatch (succ n)) | equalityCommutative (mapAndIndex (unfold nextFib record { prev = NToBinNat 0 ; curr = NToBinNat 1 }) FibEntry.curr (succ (succ n))) | indexAndUnfold nextFib (record { prev = [] ; curr = one :: [] }) (succ n) | equalityCommutative (mapAndIndex (unfold nextFib (nextFib (record { prev = [] ; curr = one :: [] }))) FibEntry.curr n) | equalityCommutative (mapAndIndex (unfold nextFib (record { prev = [] ; curr = one :: [] })) FibEntry.curr n) | indexAndUnfold nextFib (nextFib (record { prev = [] ; curr = one :: [] })) n | indexAndUnfold nextFib (record { prev = [] ; curr = one :: [] }) n = ans
+  where
+    x = FibEntry.curr (index (unfold nextFib (record { prev = [] ; curr = one :: [] })) n)
+    y = FibEntry.prev (index (unfold nextFib (record { prev = [] ; curr = one :: [] })) n)
+    ans : binNatToN (x +B (y +B x)) ≡ binNatToN (y +B x) +N binNatToN x
+    ans rewrite +BCommutative x (y +B x) = +BIsHom (y +B x) x
 
 IncreasingSequence : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_<_ : Rel {a} {c} A} {pOrder : SetoidPartialOrder S _<_} (tOrder : SetoidTotalOrder pOrder) (S : Sequence A) → Set c
 IncreasingSequence {_<_ = _<_} tOrder s = (n : ℕ) → (index s n) < (index s (succ n))
@@ -78,28 +83,39 @@ IncreasingSequence {_<_ = _<_} tOrder s = (n : ℕ) → (index s n) < (index s (
 ArchimedeanSequence : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_<_ : Rel {a} {c} A} {pOrder : SetoidPartialOrder S _<_} (tOrder : SetoidTotalOrder pOrder) (S : Sequence A) → Set (a ⊔ c)
 ArchimedeanSequence {A = A} {_<_ = _<_} tOrder S = (x : A) → Sg ℕ (λ n → x < (index S n))
 
+archimImpliesTailArchim : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_<_ : Rel {a} {c} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder pOrder} {S : Sequence A} → ArchimedeanSequence tOrder S → (Sg ℕ (λ i → index S 0 < index S i)) → ArchimedeanSequence tOrder (Sequence.tail S)
+archimImpliesTailArchim {tOrder = tOrder} {S} arch 0small x with arch x
+archimImpliesTailArchim {pOrder = pOrder} {tOrder = tOrder} {S} arch (zero , S0<SN) x | zero , pr = exFalso (SetoidPartialOrder.irreflexive pOrder S0<SN)
+archimImpliesTailArchim {pOrder = pOrder} {tOrder = tOrder} {S} arch (succ N , S0<SN) x | zero , pr = N , SetoidPartialOrder.<Transitive pOrder pr S0<SN
+archimImpliesTailArchim {tOrder = tOrder} {S} arch 0small x | succ N , pr = N , pr
+
 takeUpTo : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_<_ : Rel {a} {c} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder pOrder} {seq : Sequence A} → (arch : ArchimedeanSequence tOrder seq) → (lim : A) → List A
 takeUpTo {seq = S} arch lim with arch lim
 takeUpTo {seq = S} arch lim | zero , pr = []
 takeUpTo {seq = S} arch lim | succ N , pr = vecToList (take S N)
 
 takeUpToMonotone : {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_<_ : Rel {a} {c} A} {pOrder : SetoidPartialOrder S _<_} {tOrder : SetoidTotalOrder pOrder} {seq : Sequence A} → (arch : ArchimedeanSequence tOrder seq) → (incr : IncreasingSequence tOrder seq) → (lim : A) → List A
-takeUpToMonotone {seq = S} arch increasing lim = {!!}
+takeUpToMonotone {tOrder = tOrder} {seq = S} arch increasing lim with Sequence.head S
+... | head with SetoidTotalOrder.totality tOrder head lim
+takeUpToMonotone {tOrder = tOrder} {S} arch increasing lim | head | inl (inl head<lim) = head :: {!takeUpToMonotone {tOrder = tOrder} {seq = S} arch increasing lim!}
+takeUpToMonotone {tOrder = tOrder} {S} arch increasing lim | head | inl (inr lim<head) = []
+takeUpToMonotone {tOrder = tOrder} {S} arch increasing lim | head | inr head=lim = {!!}
 
-increasing : IncreasingSequence BinNatTOrder fib
-increasing n = {!!}
+increasing : IncreasingSequence BinNatTOrder (Sequence.tail fib)
+increasing n with ordersAgree (fibUnary (succ n)) (fibUnary (succ (succ n))) (fibUnaryIncreasing n)
+... | bl rewrite fibsMatch n | fibsMatch (succ n) = {!!}
 
 archim : ArchimedeanSequence BinNatTOrder fib
 archim x with fibUnaryArchimedean (binNatToN x)
-archim x | N , pr = N , need
+archim x | N , pr = N , u
   where
-    t : PartialOrder._<_ BinNatOrder (NToBinNat (binNatToN x)) (NToBinNat (binNatToN (index (Sequences.map FibEntry.curr (unfold nextFib (record { prev = [] ; curr = one :: [] }))) N)))
-    t rewrite (fibsMatch N) = ordersAgree (binNatToN x) (fibUnary N) pr
-    need : PartialOrder._<_ BinNatOrder x (index (Sequences.map FibEntry.curr (unfold nextFib (record { prev = [] ; curr = one :: [] }))) N)
-    need = {!!}
+    t : PartialOrder._<_ BinNatOrder (canonical x) (NToBinNat (binNatToN (index (Sequences.map FibEntry.curr (unfold nextFib (record { prev = [] ; curr = one :: [] }))) N)))
+    t rewrite (fibsMatch N) = identityOfIndiscernablesLeft (PartialOrder._<_ BinNatOrder) (ordersAgree (binNatToN x) (fibUnary N) pr) (binToBin x)
+    u : PartialOrder._<_ BinNatOrder x (index (Sequences.map FibEntry.curr (unfold nextFib (record { prev = [] ; curr = one :: [] }))) N)
+    u = SetoidPartialOrder.<WellDefined BinNatPOrder {canonical x} {x} (equalityCommutative (canonicalIdempotent x)) (transitivity (applyEquality canonical (binToBin (index (Sequences.map FibEntry.curr (unfold nextFib (record { prev = [] ; curr = one :: [] }))) N))) (equalityCommutative (canonicalIdempotent (index (Sequences.map FibEntry.curr (unfold nextFib (record { prev = [] ; curr = one :: [] }))) N)))) t
 
 fibsLessThan4Mil : List BinNat
-fibsLessThan4Mil = takeUpToMonotone {tOrder = BinNatTOrder} archim increasing (one :: one :: one :: one :: zero :: one :: zero :: zero :: zero :: zero :: one :: zero :: zero :: one :: zero :: zero :: zero :: zero :: zero :: zero :: zero :: one :: [])
+fibsLessThan4Mil = takeUpToMonotone {tOrder = BinNatTOrder} (archimImpliesTailArchim {tOrder = BinNatTOrder} archim (2 , ordersAgree 1 2 (le zero refl))) increasing (one :: one :: one :: one :: zero :: one :: zero :: zero :: zero :: zero :: one :: zero :: zero :: one :: zero :: zero :: zero :: zero :: zero :: zero :: zero :: one :: [])
 
 isEven : BinNat → Set
 isEven [] = True

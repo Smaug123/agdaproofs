@@ -200,3 +200,6 @@ _+B_ : BinNat → BinNat → BinNat
       where
         ans2 : zero :: incr (as +Binherit bs) ≡ canonical (zero :: incr (as +B bs))
         ans2 rewrite +BIsInherited' as bs | equalityCommutative (incrPreservesCanonical' (as +B bs)) | canonicalAscends' {zero} (incr (as +B bs)) (incrNonzero (as +B bs)) = refl
+
++BIsHom : (a b : BinNat) → binNatToN (a +B b) ≡ (binNatToN a) +N (binNatToN b)
++BIsHom a b = transitivity (equalityCommutative (binNatToNIsCanonical (a +B b))) (transitivity (equalityCommutative (applyEquality binNatToN (+BIsInherited' a b))) (nToN _))
