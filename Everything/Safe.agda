@@ -65,9 +65,13 @@ open import Rings.Ideals.Prime.Definition
 open import Rings.Ideals.Prime.Lemmas
 open import Rings.Ideals.Principal.Definition
 open import Rings.IntegralDomains.Examples
-open import Rings.PrincipalIdealDomain
+open import Rings.PrincipalIdealDomains.Definition
 open import Rings.Subrings.Definition
 open import Rings.Ideals.Maximal.Lemmas
+open import Rings.Primes.Lemmas
+open import Rings.Irreducibles.Definition
+open import Rings.Divisible.Definition
+open import Rings.Associates.Lemmas
 
 open import Setoids.Setoids
 open import Setoids.DirectSum

@@ -15,7 +15,7 @@ open import Rings.IntegralDomains.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-module Rings.IntegralDomains.Lemmas {m n : _} {A : Set n} {S : Setoid {n} {m} A} {_+_ _*_ : A → A → A} (R : Ring S _+_ _*_) (I : IntegralDomain R) where
+module Rings.IntegralDomains.Lemmas {m n : _} {A : Set n} {S : Setoid {n} {m} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} (I : IntegralDomain R) where
 
 open Setoid S
 open Equivalence eq

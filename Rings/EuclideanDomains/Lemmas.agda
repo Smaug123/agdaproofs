@@ -23,7 +23,8 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Rings.EuclideanDomains.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} (E : EuclideanDomain R) where
 
-open import Rings.PrincipalIdealDomain
+open import Rings.PrincipalIdealDomain R
+open import Rings.Ideals.Principal.Definition R
 
-euclideanDomainIsPid : {c : _} → PrincipalIdealDomain R {c}
+euclideanDomainIsPid : {c : _} → PrincipalIdealDomain {c}
 euclideanDomainIsPid ideal = {!!}

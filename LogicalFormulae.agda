@@ -15,7 +15,6 @@ data False' {a : _} : Set a where
 
 record True : Set where
 record True' {a : _} : Set a where
-record Unit : Set where
 
 infix 10 _||_
 data _||_ {a b} (A : Set a) (B : Set b) : Set (a ⊔ b) where

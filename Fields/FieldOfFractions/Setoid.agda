@@ -38,6 +38,6 @@ Equivalence.transitive (Setoid.eq fieldOfFractionsSetoid) {a ,, (b , b!=0)} {c ,
     p3 : (a * f) * d ∼ (b * e) * d
     p3 = transitive p2 (transitive (*WellDefined reflexive *Commutative) *Associative)
     p4 : ((d ∼ 0R) → False) → ((a * f) ∼ (b * e))
-    p4 = cancelIntDom R I (transitive *Commutative (transitive p3 *Commutative))
+    p4 = cancelIntDom I (transitive *Commutative (transitive p3 *Commutative))
     p5 : (a * f) ∼ (b * e)
     p5 = p4 d!=0

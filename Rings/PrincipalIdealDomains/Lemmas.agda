@@ -12,8 +12,9 @@ open import Sets.EquivalenceRelations
 open import Rings.Definition
 open import Rings.Homomorphisms.Definition
 open import Groups.Homomorphisms.Lemmas
+open import Rings.PrincipalIdealDomains.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-module Rings.Ideals.Principal.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} (R : Ring S _+_ _*_) where
+module Rings.PrincipalIdealDomains.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} (R : Ring S _+_ _*_) where
 

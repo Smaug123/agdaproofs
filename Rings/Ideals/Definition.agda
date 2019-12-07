@@ -25,6 +25,7 @@ open Equivalence eq
 open Group additiveGroup
 
 open import Rings.Lemmas R
+open import Rings.Divisible.Definition R
 
 record Ideal {c : _} (pred : A → Set c) : Set (a ⊔ b ⊔ c) where
   field
@@ -37,7 +38,7 @@ record Ideal {c : _} (pred : A → Set c) : Set (a ⊔ b ⊔ c) where
   predicate = pred
 
 generatedIdealPred : A → A → Set (a ⊔ b)
-generatedIdealPred a b = Sg A (λ c → Setoid._∼_ S (a * c) b)
+generatedIdealPred a b = a ∣ b
 
 generatedIdeal : (a : A) → Ideal (generatedIdealPred a)
 Subgroup.isSubset (Ideal.isSubgroup (generatedIdeal a)) {x} {y} x=y (c , prC) = c , transitive prC x=y
