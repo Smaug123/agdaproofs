@@ -13,6 +13,7 @@ open import Numbers.Integers.Integers
 open import Numbers.Primes.PrimeNumbers
 open import Numbers.Modulo.Definition
 open import Numbers.Modulo.Group
+open import Numbers.Naturals.EuclideanAlgorithm
 
 module Rings.Examples.Proofs where
   nToZn' : (n : ℕ) (pr : 0 <N n) (x : ℕ) → ℤn n pr
