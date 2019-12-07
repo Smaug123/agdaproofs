@@ -9,6 +9,7 @@ open import Numbers.BinaryNaturals.Order
 open import Numbers.BinaryNaturals.Subtraction
 
 open import Numbers.Integers.Integers
+open import Numbers.Integers.RingStructure.EuclideanDomain
 
 open import Lists.Lists
 
@@ -33,6 +34,7 @@ open import Groups.Cyclic.Definition
 open import Groups.Cyclic.DefinitionLemmas
 open import Groups.Polynomials.Examples
 open import Groups.Cosets
+open import Groups.Subgroups.Normal.Examples
 
 open import Fields.Fields
 open import Fields.Orders.Partial.Definition
@@ -65,9 +67,13 @@ open import Rings.Ideals.Prime.Definition
 open import Rings.Ideals.Prime.Lemmas
 open import Rings.Ideals.Principal.Definition
 open import Rings.IntegralDomains.Examples
-open import Rings.PrincipalIdealDomain
+open import Rings.PrincipalIdealDomains.Definition
 open import Rings.Subrings.Definition
 open import Rings.Ideals.Maximal.Lemmas
+open import Rings.Primes.Lemmas
+open import Rings.Irreducibles.Definition
+open import Rings.Divisible.Definition
+open import Rings.Associates.Lemmas
 
 open import Setoids.Setoids
 open import Setoids.DirectSum

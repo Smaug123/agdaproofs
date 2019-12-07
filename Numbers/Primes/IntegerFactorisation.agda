@@ -9,6 +9,7 @@ open import Numbers.Primes.PrimeNumbers
 open import WellFoundedInduction
 open import Semirings.Definition
 open import Orders
+open import Numbers.Naturals.EuclideanAlgorithm
 
 module Numbers.Primes.IntegerFactorisation where
 open TotalOrder ℕTotalOrder

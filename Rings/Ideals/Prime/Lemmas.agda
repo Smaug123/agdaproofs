@@ -9,6 +9,7 @@ open import Rings.Definition
 open import Sets.EquivalenceRelations
 open import Rings.Ideals.Definition
 open import Rings.IntegralDomains.Definition
+open import Rings.IntegralDomains.Lemmas
 open import Rings.Ideals.Prime.Definition
 open import Rings.Cosets
 
@@ -48,3 +49,18 @@ quotientIntDomImpliesIdealPrime intDom = record { isPrime = isPrime ; notContain
       notCon 1=0 = IntegralDomain.nontrivial intDom (translate i 1=0)
       isPrime : {a b : A} → pred (a * b) → (pred a → False) → pred b
       isPrime {a} {b} predAB !predA = translate' i (IntegralDomain.intDom intDom (translate i predAB) λ t → !predA (translate' i t))
+
+private
+  dividesZero : {a : A} → generatedIdealPred R 0R a → a ∼ 0R
+  dividesZero (c , pr) = symmetric (transitive (symmetric (transitive *Commutative timesZero)) pr)
+
+zeroIdealPrimeImpliesIntDom : PrimeIdeal (generatedIdeal R 0R) → IntegralDomain R
+IntegralDomain.intDom (zeroIdealPrimeImpliesIntDom record { isPrime = isPrime ; notContained = notContained ; notContainedIsNotContained = notContainedIsNotContained }) {a} {b} ab=0 a!=0 with isPrime {a} {b} (1R , transitive (transitive *Commutative timesZero) (symmetric ab=0)) λ 0|a → a!=0 (dividesZero 0|a)
+... | c , 0c=b = transitive (symmetric 0c=b) (transitive *Commutative timesZero)
+IntegralDomain.nontrivial (zeroIdealPrimeImpliesIntDom record { isPrime = isPrime ; notContained = notContained ; notContainedIsNotContained = notContainedIsNotContained }) 1=0 = notContainedIsNotContained (notContained , transitive (*WellDefined (symmetric 1=0) reflexive) identIsIdent)
+
+intDomImpliesZeroIdealPrime : IntegralDomain R → PrimeIdeal (generatedIdeal R 0R)
+PrimeIdeal.isPrime (intDomImpliesZeroIdealPrime intDom) (c , 0=ab) 0not|a with IntegralDomain.intDom intDom (transitive (symmetric 0=ab) (transitive *Commutative timesZero)) λ a=0 → 0not|a (0R , transitive timesZero (symmetric a=0))
+... | b=0 = 0R , transitive timesZero (symmetric b=0)
+PrimeIdeal.notContained (intDomImpliesZeroIdealPrime intDom) = 1R
+PrimeIdeal.notContainedIsNotContained (intDomImpliesZeroIdealPrime intDom) (c , 0c=1) = IntegralDomain.nontrivial intDom (symmetric (transitive (symmetric (transitive *Commutative timesZero)) 0c=1))

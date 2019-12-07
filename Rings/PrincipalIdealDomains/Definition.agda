@@ -15,7 +15,7 @@ open import Groups.Homomorphisms.Lemmas
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-module Rings.PrincipalIdealDomain {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} (R : Ring S _+_ _*_) where
+module Rings.PrincipalIdealDomains.Definition {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} (R : Ring S _+_ _*_) where
 
 open import Rings.Ideals.Principal.Definition R
 open import Rings.Ideals.Definition R

@@ -16,9 +16,13 @@ open import Rings.Lemmas
 open import Sets.EquivalenceRelations
 open import Rings.Ideals.Definition
 open import Fields.Fields
+open import Fields.Lemmas
 open import Rings.Cosets
 open import Rings.Ideals.Maximal.Definition
 open import Rings.Ideals.Lemmas
+open import Rings.Ideals.Prime.Definition
+open import Rings.IntegralDomains.Definition
+open import Rings.Ideals.Prime.Lemmas
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
@@ -77,3 +81,11 @@ MaximalIdeal.isMaximal (quotientFieldImpliesIdealMaximal f) {bigger} biggerIdeal
     u = Ideal.closedUnderInverse biggerIdeal (Ideal.isSubset biggerIdeal *Commutative (Ideal.accumulatesTimes biggerIdeal biggerA))
     v : bigger 1R
     v = Ideal.isSubset biggerIdeal (invTwice additiveGroup 1R) (Ideal.closedUnderInverse biggerIdeal (Ideal.isSubset biggerIdeal (transitive (symmetric +Associative) (transitive (+WellDefined reflexive invRight) identRight)) (Ideal.closedUnderPlus biggerIdeal t u)))
+
+idealMaximalImpliesIdealPrime : ({d : _} → MaximalIdeal i {d}) → PrimeIdeal i
+idealMaximalImpliesIdealPrime max = quotientIntDomImpliesIdealPrime i f'
+  where
+    f : Field (cosetRing R i)
+    f = idealMaximalImpliesQuotientField max
+    f' : IntegralDomain (cosetRing R i)
+    f' = fieldIsIntDom f (λ p → Field.nontrivial f (Equivalence.symmetric (Setoid.eq (cosetSetoid additiveGroup (Ideal.isSubgroup i))) p))
