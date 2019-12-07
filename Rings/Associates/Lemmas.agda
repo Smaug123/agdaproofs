@@ -22,6 +22,7 @@ open import Rings.Divisible.Definition R
 open import Rings.IntegralDomains.Lemmas intDom
 open import Rings.Associates.Definition intDom
 open import Rings.Units.Definition R
+open import Rings.Ideals.Definition R
 open Setoid S
 open Ring R
 open Equivalence eq
@@ -42,3 +43,9 @@ mutualDivisionImpliesAssociate' {a} {b} (r , ar=b) (s , bs=a) a=0 = 1R , ((1R , 
   where
     b=0 : b ∼ 0R
     b=0 = transitive (symmetric ar=b) (transitive (transitive *Commutative (*WellDefined reflexive a=0)) (timesZero {r}))
+
+associateImpliesGeneratedIdealsEqual : {a b : A} → Associates a b → {x : A} → generatedIdealPred a x → generatedIdealPred b x
+associateImpliesGeneratedIdealsEqual {a} {b} (r , ((s , rs=1) ,, a=br)) {x} (c , ac=x) = (r * c) , transitive *Associative (transitive (*WellDefined (symmetric a=br) reflexive) ac=x)
+
+associateImpliesGeneratedIdealsEqual' : {a b : A} → Associates a b → {x : A} → generatedIdealPred b x → generatedIdealPred a x
+associateImpliesGeneratedIdealsEqual' assoc = associateImpliesGeneratedIdealsEqual (Equivalence.symmetric associatesEquiv assoc)

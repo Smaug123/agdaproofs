@@ -67,7 +67,7 @@ open import Rings.Ideals.Prime.Definition
 open import Rings.Ideals.Prime.Lemmas
 open import Rings.Ideals.Principal.Definition
 open import Rings.IntegralDomains.Examples
-open import Rings.PrincipalIdealDomains.Definition
+open import Rings.PrincipalIdealDomains.Lemmas
 open import Rings.Subrings.Definition
 open import Rings.Ideals.Maximal.Lemmas
 open import Rings.Primes.Lemmas
