@@ -94,11 +94,11 @@ private
   divAlg {negSucc a} {negSucc b} _ _ with divisionAlg (succ b) (succ a)
   divAlg {negSucc a} {negSucc b} _ _ | record { quot = zero ; rem = zero ; pr = pr ; remIsSmall = inl remIsSmall ; quotSmall = quotSmall } = exFalso (naughtE (transitivity (equalityCommutative (transitivity (Semiring.sumZeroRight ℕSemiring (b *N 0)) (multiplicationNIsCommutative b 0))) pr))
   divAlg {negSucc a} {negSucc b} _ _ | record { quot = zero ; rem = succ rem ; pr = pr ; remIsSmall = inl remIsSmall ; quotSmall = quotSmall } rewrite multiplicationNIsCommutative b 0 | equalityCommutative (succInjective pr) = record { quotient = nonneg 0 ; rem = negSucc rem ; remSmall = inr ((λ ()) , remIsSmall) ; divAlg = refl }
-  divAlg {negSucc a} {negSucc b} _ _ | record { quot = succ quot ; rem = zero ; pr = pr ; remIsSmall = inl remIsSmall ; quotSmall = quotSmall } = record { quotient = nonneg (succ quot) ; rem = nonneg 0 ; remSmall = inl refl ; divAlg = applyEquality negSucc (succInjective (transitivity (equalityCommutative pr) t)) }
+  divAlg {negSucc a} {negSucc b} _ _ | record { quot = succ quot ; rem = zero ; pr = pr ; remIsSmall = inl remIsSmall ; quotSmall = quotSmall } rewrite Semiring.sumZeroRight ℕSemiring (quot +N b *N succ quot) | Semiring.commutative ℕSemiring b (succ quot) = record { quotient = nonneg (succ quot) ; rem = nonneg 0 ; remSmall = inl refl ; divAlg = applyEquality negSucc (succInjective (transitivity (equalityCommutative pr) t)) }
     where
-      t : succ ((quot +N b *N succ quot) +N 0) ≡ succ ((b +N quot *N b) +N quot)
-      t = {!!}
-  divAlg {negSucc a} {negSucc b} _ _ | record { quot = succ quot ; rem = succ rem ; pr = pr ; remIsSmall = inl remIsSmall ; quotSmall = quotSmall } = {!!}
+      t : succ (quot +N b *N succ quot) ≡ succ ((b +N quot *N b) +N quot)
+      t rewrite Semiring.commutative ℕSemiring quot (b *N succ quot) | multiplicationNIsCommutative b (succ quot) = refl
+  divAlg {negSucc a} {negSucc b} _ _ | record { quot = succ quot ; rem = succ rem ; pr = pr ; remIsSmall = inl remIsSmall ; quotSmall = quotSmall } rewrite multiplicationNIsCommutative b (succ quot) | Semiring.commutative ℕSemiring quot (b +N quot *N b) | Semiring.commutative ℕSemiring ((b +N quot *N b) +N quot) (succ rem) | Semiring.commutative ℕSemiring rem ((b +N quot *N b) +N quot) = record { quotient = nonneg (succ quot) ; rem = negSucc rem ; remSmall = inr (((λ ()) , remIsSmall)) ; divAlg = applyEquality negSucc (equalityCommutative (succInjective pr)) }
 
 ℤEuclideanDomain : EuclideanDomain ℤRing
 EuclideanDomain.isIntegralDomain ℤEuclideanDomain = ℤIntDom

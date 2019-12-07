@@ -9,6 +9,7 @@ open import Numbers.BinaryNaturals.Order
 open import Numbers.BinaryNaturals.Subtraction
 
 open import Numbers.Integers.Integers
+open import Numbers.Integers.RingStructure.EuclideanDomain
 
 open import Lists.Lists
 
