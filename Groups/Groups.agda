@@ -42,30 +42,3 @@ fourWay+Associative'' {S = S} {_·_ = _·_} G = transitive +Associative (symmetr
     open Group G
     open Setoid S
     open Equivalence eq
-
-{-
-quotientHom : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} → {f : A → B} → (fHom : GroupHom G H f) → A → A
-quotientHom {S = S} {T = T} {_·A_ = _·A_} {_·B_ = _·B_} G {f = f} fHom a = {!!}
-
-quotientInjection : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} → {f : A → B} → (fHom : GroupHom G H f) → GroupHom (quotientGroup G fHom) G (quotientHom G fHom)
-GroupHom.groupHom (quotientInjection {S = S} {T = T} {_·A_ = _·A_} {_·B_ = _·B_} G {f = f} fHom) {x} {y} = {!!}
-  where
-    open Setoid S
-    open Equivalence eq
-    open Reflexive reflexiveEq
-GroupHom.wellDefined (quotientInjection {S = S} {T = T} {_·A_ = _·A_} G {H = H} {f = f} fHom) {x} {y} x~y = {!!}
-  where
-    open Group G
-    open Setoid S
-    open Setoid T renaming (_∼_ to _∼T_)
-    open Equivalence (Setoid.eq S)
-    open Reflexive reflexiveEq
-    have : f (x ·A inverse y) ∼T Group.0G H
-    have = x~y
-    need : x ∼ y
-    need = {!!}
-
-quotientIsSubgroup : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} {G : Group S _·A_} {H : Group T _·B_} → {f : A → B} → {fHom : GroupHom G H f} → Subgroup G (quotientGroup G fHom) (quotientInjection G fHom)
-quotientIsSubgroup = {!!}
-
--}

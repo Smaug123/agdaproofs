@@ -33,6 +33,7 @@ open import Groups.Cyclic.Definition
 open import Groups.Cyclic.DefinitionLemmas
 open import Groups.Polynomials.Examples
 open import Groups.Cosets
+open import Groups.NormalSubgroups.Examples
 
 open import Fields.Fields
 open import Fields.Orders.Partial.Definition
