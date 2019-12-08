@@ -32,6 +32,10 @@ mapExtension : {a b : _} {A : Set a} {B : Set b} (l : List A) (f g : A → B) �
 mapExtension [] f g pr = refl
 mapExtension (x :: l) f g pr rewrite mapExtension l f g pr | pr {x} = refl
 
+mapConcat : {a b : _} {A : Set a} {B : Set b} (l1 l2 : List A) (f : A → B) → map f (l1 ++ l2) ≡ (map f l1) ++ (map f l2)
+mapConcat [] l2 f = refl
+mapConcat (x :: l1) l2 f rewrite mapConcat l1 l2 f = refl
+
 lengthMap : {a b : _} {A : Set a} {B : Set b} → (l : List A) → {f : A → B} → length l ≡ length (map f l)
 lengthMap [] {f} = refl
 lengthMap (x :: l) {f} rewrite lengthMap l {f} = refl
