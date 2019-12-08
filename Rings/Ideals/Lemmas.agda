@@ -70,3 +70,6 @@ Ideal.accumulatesTimes (inverseImageIsIdeal {_*2_ = _*2_} {f = f} fHom i) {g} {h
 
 memberDividesImpliesMember : {a b : A} → {c : _} → {pred : A → Set c} → (i : Ideal R pred) → pred a → a ∣ b → pred b
 memberDividesImpliesMember {a} {b} i pA (s , as=b) = Ideal.isSubset i as=b (Ideal.accumulatesTimes i pA)
+
+generatorZeroImpliesMembersZero : {x : A} → generatedIdealPred R 0R x → x ∼ 0R
+generatorZeroImpliesMembersZero {x} (a , b) = transitive (symmetric b) (transitive *Commutative timesZero)

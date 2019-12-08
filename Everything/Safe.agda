@@ -12,6 +12,7 @@ open import Numbers.Integers.Integers
 open import Numbers.Integers.RingStructure.EuclideanDomain
 
 open import Lists.Lists
+open import Lists.Filter.AllTrue
 
 open import Groups.Groups
 open import Groups.Abelian.Lemmas
