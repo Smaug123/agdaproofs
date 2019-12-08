@@ -64,3 +64,8 @@ PrimeIdeal.isPrime (intDomImpliesZeroIdealPrime intDom) (c , 0=ab) 0not|a with I
 ... | b=0 = 0R , transitive timesZero (symmetric b=0)
 PrimeIdeal.notContained (intDomImpliesZeroIdealPrime intDom) = 1R
 PrimeIdeal.notContainedIsNotContained (intDomImpliesZeroIdealPrime intDom) (c , 0c=1) = IntegralDomain.nontrivial intDom (symmetric (transitive (symmetric (transitive *Commutative timesZero)) 0c=1))
+
+primeIdealWellDefined : {c : _} {pred2 : A → Set c} (ideal2 : Ideal R pred2) → ({x : A} → pred x → pred2 x) → ({x : A} → pred2 x → pred x) → PrimeIdeal i → PrimeIdeal ideal2
+PrimeIdeal.isPrime (primeIdealWellDefined ideal2 predToPred2 pred2ToPred record { isPrime = isPrime ; notContained = notContained ; notContainedIsNotContained = notContainedIsNotContained }) p2ab notP2a = predToPred2 (isPrime (pred2ToPred p2ab) λ p → notP2a (predToPred2 p))
+PrimeIdeal.notContained (primeIdealWellDefined ideal2 predToPred2 pred2ToPred record { isPrime = isPrime ; notContained = notContained ; notContainedIsNotContained = notContainedIsNotContained }) = notContained
+PrimeIdeal.notContainedIsNotContained (primeIdealWellDefined ideal2 predToPred2 pred2ToPred record { isPrime = isPrime ; notContained = notContained ; notContainedIsNotContained = notContainedIsNotContained }) pred2Not = notContainedIsNotContained (pred2ToPred pred2Not)
