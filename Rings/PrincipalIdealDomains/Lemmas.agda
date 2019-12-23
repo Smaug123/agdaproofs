@@ -26,6 +26,7 @@ open import Rings.Primes.Definition intDom
 open import Rings.Primes.Lemmas intDom
 open import Rings.Ideals.Principal.Lemmas R
 open import Rings.Ideals.Maximal.Lemmas {R = R}
+open import Rings.UniqueFactorisationDomains.Definition intDom
 
 open Ring R
 open Setoid S

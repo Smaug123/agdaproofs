@@ -21,7 +21,7 @@ record Factorisation {r : A} (nonzero : (r ∼ 0R) → False) (nonunit : (Unit r
     factoriseIsFactorisation : fold (_*_) 1R factorise ∼ r
     factoriseIsIrreducibles : allTrue Irreducible factorise
 
-record UFD : Set (a ⊔ b) where
-  field
-    factorisation : {r : A} → (nonzero : (r ∼ 0R) → False) → (nonunit : (Unit r) → False) → Factorisation nonzero nonunit
-    uniqueFactorisation : {r : A} → (nonzero : (r ∼ 0R) → False) → (nonunit : (Unit r) → False) → (f1 f2 : Factorisation nonzero nonunit) → {!Sg !}
+--record UFD : Set (a ⊔ b) where
+--  field
+--    factorisation : {r : A} → (nonzero : (r ∼ 0R) → False) → (nonunit : (Unit r) → False) → Factorisation nonzero nonunit
+--    uniqueFactorisation : {r : A} → (nonzero : (r ∼ 0R) → False) → (nonunit : (Unit r) → False) → (f1 f2 : Factorisation nonzero nonunit) → {!Sg !}
