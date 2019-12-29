@@ -18,9 +18,9 @@ open import Sets.FinSetWithK
 open import Functions
 open import Numbers.Naturals.WithK
 open import Semirings.Definition
-open import Orders
 open import Numbers.Modulo.Definition
 open import Numbers.Modulo.Addition
+open import Orders.Total.Definition
 
 module Numbers.Modulo.Group where
 

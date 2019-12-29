@@ -9,9 +9,8 @@ open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.Lemmas
 open import Sets.FinSet
 open import Semirings.Definition
-open import Orders
-open import WellFoundedInduction
 open import Sets.CantorBijection.CantorBijection
+open import Orders.Total.Definition
 
 module Sets.Cardinality where
 

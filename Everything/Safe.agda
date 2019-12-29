@@ -96,8 +96,8 @@ open import KeyValue.KeyValue
 open import KeyValue.LinearStore.Definition
 
 open import Maybe
-open import Orders
-open import WellFoundedInduction
+open import Orders.Total.Lemmas
+open import Orders.WellFounded.Induction
 
 open import ClassicalLogic.ClassicalFive
 

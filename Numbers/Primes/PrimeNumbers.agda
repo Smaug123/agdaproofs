@@ -7,9 +7,9 @@ open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.Lemmas
 open import Numbers.Naturals.Order.WellFounded
 open import Numbers.Naturals.WithK
-open import WellFoundedInduction
 open import KeyValue.KeyValue
-open import Orders
+open import Orders.Total.Definition
+open import Orders.Partial.Definition
 open import Vectors
 open import Maybe
 open import WithK

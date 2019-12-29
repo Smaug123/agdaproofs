@@ -14,7 +14,7 @@ open import Rings.Definition
 open import Rings.Homomorphisms.Definition
 open import Groups.Homomorphisms.Lemmas
 open import Rings.IntegralDomains.Definition
-open import Orders
+open import Orders.Total.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 

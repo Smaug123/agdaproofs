@@ -6,9 +6,9 @@ open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.Lemmas
 open import Numbers.Naturals.Order.WellFounded
 open import Numbers.Primes.PrimeNumbers
-open import WellFoundedInduction
 open import Semirings.Definition
-open import Orders
+open import Orders.Total.Definition
+open import Orders.WellFounded.Induction
 open import Numbers.Naturals.EuclideanAlgorithm
 
 module Numbers.Primes.IntegerFactorisation where

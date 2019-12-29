@@ -5,8 +5,10 @@ open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Functions
 open import Semirings.Definition
-open import Orders
+open import Orders.Total.Definition
 open import Lists.Lists
+
+module Vectors where
 
 data Vec {a : _} (X : Set a) : ℕ -> Set a where
   [] : Vec X zero
