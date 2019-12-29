@@ -1,7 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K --guardedness #-}
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Orders
 open import Setoids.Setoids
 open import Rings.Definition
 open import Rings.Lemmas

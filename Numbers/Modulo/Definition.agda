@@ -16,7 +16,6 @@ open import Sets.FinSetWithK
 open import Functions
 open import Numbers.Naturals.WithK
 open import Semirings.Definition
-open import Orders
 
 module Numbers.Modulo.Definition where
   record ℤn (n : ℕ) (pr : 0 <N n) : Set where

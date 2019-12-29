@@ -13,7 +13,7 @@ open import Groups.Definition
 open import Rings.Definition
 open import Setoids.Setoids
 open import Rings.EuclideanDomains.Definition
-open import Orders
+open import Orders.Total.Definition
 open import Numbers.Naturals.EuclideanAlgorithm
 
 module Numbers.Integers.RingStructure.EuclideanDomain where

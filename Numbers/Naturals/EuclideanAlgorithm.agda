@@ -6,9 +6,9 @@ open import Numbers.Naturals.Naturals
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.Lemmas
 open import Numbers.Naturals.Order.WellFounded
-open import WellFoundedInduction
+open import Orders.WellFounded.Induction
 open import KeyValue.KeyValue
-open import Orders
+open import Orders.Total.Definition
 open import Vectors
 open import Maybe
 open import Semirings.Definition

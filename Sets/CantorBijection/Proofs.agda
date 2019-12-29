@@ -8,9 +8,9 @@ open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Sets.FinSet
 open import Semirings.Definition
-open import Orders
-open import WellFoundedInduction
 open import Sets.CantorBijection.Order
+open import Orders.Total.Definition
+open import Orders.WellFounded.Induction
 
 module Sets.CantorBijection.Proofs where
 

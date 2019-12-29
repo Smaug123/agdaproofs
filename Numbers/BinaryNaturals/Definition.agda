@@ -8,7 +8,7 @@ open import Numbers.Naturals.Order
 open import Numbers.Naturals.Definition
 open import Groups.Definition
 open import Semirings.Definition
-open import Orders
+open import Orders.Total.Definition
 
 module Numbers.BinaryNaturals.Definition where
 

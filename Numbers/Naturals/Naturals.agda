@@ -2,7 +2,6 @@
 
 open import LogicalFormulae
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import WellFoundedInduction
 open import Functions
 open import Numbers.Naturals.Definition
 open import Numbers.Naturals.Semiring
@@ -13,7 +12,7 @@ open import Numbers.Naturals.Exponentiation
 open import Numbers.Naturals.Subtraction
 open import Semirings.Definition
 open import Monoids.Definition
-open import Orders
+open import Orders.Total.Definition
 
 module Numbers.Naturals.Naturals where
 

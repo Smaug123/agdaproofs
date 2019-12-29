@@ -4,7 +4,6 @@ open import LogicalFormulae
 open import Semirings.Definition
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Semiring
-open import Orders
 
 module Numbers.Naturals.Order.Lemmas where
 open Semiring ℕSemiring

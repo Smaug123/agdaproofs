@@ -6,7 +6,6 @@ open import LogicalFormulae
 open import Numbers.Naturals.Naturals
 open import Numbers.Naturals.Definition
 open import Numbers.Naturals.Order
-open import Orders
 
 module Sets.FinSet where
   data FinSet : (n : ℕ) → Set where

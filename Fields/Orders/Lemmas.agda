@@ -10,7 +10,6 @@ open import Rings.Orders.Total.Definition
 open import Rings.Lemmas
 open import Setoids.Setoids
 open import Setoids.Orders
-open import Orders
 open import Rings.IntegralDomains.Definition
 open import Functions
 open import Sets.EquivalenceRelations

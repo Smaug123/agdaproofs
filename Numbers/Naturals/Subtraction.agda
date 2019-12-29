@@ -2,9 +2,7 @@
 
 open import LogicalFormulae
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import WellFoundedInduction
 open import Functions
-open import Orders
 open import Numbers.Naturals.Definition
 open import Numbers.Naturals.Addition
 open import Numbers.Naturals.Order

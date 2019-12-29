@@ -7,8 +7,6 @@ open import Functions
 open import Numbers.Naturals.Naturals
 open import Sets.FinSet
 open import Semirings.Definition
-open import Orders
-open import WellFoundedInduction
 open import Sets.CantorBijection.Proofs
 
 module Sets.CantorBijection.CantorBijection where

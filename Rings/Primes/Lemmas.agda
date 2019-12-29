@@ -5,7 +5,6 @@ open import Groups.Groups
 open import Groups.Lemmas
 open import Groups.Definition
 open import Numbers.Naturals.Naturals
-open import Orders
 open import Setoids.Setoids
 open import Functions
 open import Rings.Definition

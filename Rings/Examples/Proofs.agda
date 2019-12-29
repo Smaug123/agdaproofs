@@ -4,7 +4,6 @@ open import LogicalFormulae
 open import Functions
 open import Groups.Groups
 open import Groups.Definition
-open import Orders
 open import Rings.Definition
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Naturals
@@ -14,6 +13,7 @@ open import Numbers.Primes.PrimeNumbers
 open import Numbers.Modulo.Definition
 open import Numbers.Modulo.Group
 open import Numbers.Naturals.EuclideanAlgorithm
+open import Orders.Total.Definition
 
 module Rings.Examples.Proofs where
   nToZn' : (n : ℕ) (pr : 0 <N n) (x : ℕ) → ℤn n pr
@@ -28,7 +28,7 @@ module Rings.Examples.Proofs where
   mod' (succ n) pr (negSucc x) = Group.inverse (ℤnGroup (succ n) pr) (nToZn' (succ n) pr (succ x))
 
   subtractionEquiv : (a : ℕ) → {b c : ℕ} → (c<b : c <N b) → a +N c ≡ b → a ≡ subtractionNResult.result (-N (inl c<b))
-  subtractionEquiv 0 {b} {c} c<b pr rewrite pr = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) c<b)
+  subtractionEquiv 0 {b} {c} c<b pr rewrite pr = exFalso (TotalOrder.irreflexive ℕTotalOrder c<b)
   subtractionEquiv (succ a) {b} {c} c<b pr = equivalentSubtraction 0 b (succ a) c (succIsPositive a) c<b (equalityCommutative pr)
 
   modNExampleSurjective' : (n : ℕ) → (pr : 0 <N n) → Surjection (mod' n pr)

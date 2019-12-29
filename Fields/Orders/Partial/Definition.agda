@@ -8,7 +8,6 @@ open import Rings.Orders.Partial.Definition
 open import Rings.Lemmas
 open import Setoids.Setoids
 open import Setoids.Orders
-open import Orders
 open import Functions
 open import Sets.EquivalenceRelations
 open import Fields.Fields
