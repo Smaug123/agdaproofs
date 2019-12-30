@@ -83,8 +83,10 @@ open import Setoids.Orders
 open import Setoids.Functions.Definition
 open import Setoids.Functions.Extension
 
-open import Sets.Cardinality
-open import Sets.FinSet
+open import Sets.Cardinality.Infinite.Examples
+open import Sets.Cardinality.Infinite.Lemmas
+open import Sets.Cardinality.Finite.Lemmas
+open import Sets.FinSet.Lemmas
 
 open import Decidable.Sets
 open import Decidable.Relations

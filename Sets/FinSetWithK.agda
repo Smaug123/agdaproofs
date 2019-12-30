@@ -2,11 +2,17 @@
 
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
-open import Sets.FinSet
+open import Sets.FinSet.Definition
 open import LogicalFormulae
 open import Numbers.Naturals.WithK
+open import Sets.FinSet.Lemmas
 
 module Sets.FinSetWithK where
+
+private
+  sgEq : {l m : _} {L : Set l} → {pr : L → Set m} → {a b : Sg L pr} → (underlying a ≡ underlying b) → ({c : L} → (r s : pr c) → r ≡ s) → (a ≡ b)
+  sgEq {l} {m} {L} {prop} {(a , b1)} {(.a , b)} refl pr2 with pr2 {a} b b1
+  sgEq {l} {m} {L} {prop} {(a , b1)} {(.a , .b1)} refl pr2 | refl = refl
 
 finNotEqualsRefl : {n : ℕ} {a b : FinSet (succ n)} → (p1 p2 : FinNotEquals a b) → p1 ≡ p2
 finNotEqualsRefl {.1} {.fzero} {.(fsucc fzero)} (fne2 .fzero .(fsucc fzero) (inl (refl ,, refl))) (fne2 .fzero .(fsucc fzero) (inl (refl ,, refl))) = refl

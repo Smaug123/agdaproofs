@@ -13,7 +13,6 @@ open import Numbers.Naturals.Order.Lemmas
 open import Numbers.Naturals.Naturals
 open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
-open import Sets.FinSet
 open import Sets.FinSetWithK
 open import Functions
 open import Numbers.Naturals.WithK
