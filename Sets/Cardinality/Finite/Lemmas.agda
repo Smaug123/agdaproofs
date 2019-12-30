@@ -12,8 +12,8 @@ open import Sets.FinSet.Lemmas
 module Sets.Cardinality.Finite.Lemmas where
 
 finsetInjectIntoℕ : {n : ℕ} → Injection (toNat {n})
-Injection.property (finsetInjectIntoℕ {zero}) {()}
-finsetInjectIntoℕ {succ n} = record { property = ans }
+finsetInjectIntoℕ {zero} {()}
+finsetInjectIntoℕ {succ n} = ans
   where
     ans : {n : ℕ} → {x y : FinSet (succ n)} → (toNat x ≡ toNat y) → x ≡ y
     ans {zero} {fzero} {fzero} _ = refl

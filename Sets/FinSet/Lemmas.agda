@@ -21,10 +21,6 @@ private
   underlyingProof : {l m : _} {L : Set l} {pr : L → Set m} → (a : Sg L pr) → pr (underlying a)
   underlyingProof (a , b) = b
 
-  sgEq : {l m : _} {L : Set l} → {pr : L → Set m} → {a b : Sg L pr} → (underlying a ≡ underlying b) → ({c : L} → (r s : pr c) → r ≡ s) → (a ≡ b)
-  sgEq {l} {m} {L} {prop} {(a , b1)} {(.a , b)} refl pr2 with pr2 {a} b b1
-  sgEq {l} {m} {L} {prop} {(a , b1)} {(.a , .b1)} refl pr2 | refl = refl
-
 finSetNotEquals : {n : ℕ} → {a b : FinSet (succ n)} → (a ≡ b → False) → FinNotEquals {n} a b
 finSetNotEquals {zero} {fzero} {fzero} pr = exFalso (pr refl)
 finSetNotEquals {zero} {fzero} {fsucc ()} pr
@@ -91,7 +87,7 @@ finset1OnlyOne fzero fzero = refl
 finset1OnlyOne fzero (fsucc ())
 finset1OnlyOne (fsucc ()) b
 
-intoSmaller : {n m : ℕ} → (n <N m) → (FinSet n → FinSet m)
+intoSmaller : {n m : ℕ} → .(n <N m) → (FinSet n → FinSet m)
 intoSmaller {zero} {m} n<m = t
   where
     t : FinSet 0 → FinSet m
@@ -106,7 +102,7 @@ intoSmaller {succ n} {succ m} n<m | prev = t
 
 intoSmallerInj : {n m : ℕ} → (n<m : n <N m) → Injection (intoSmaller n<m)
 intoSmallerInj {zero} {zero} (le x ())
-intoSmallerInj {zero} {succ m} n<m = record { property = inj }
+intoSmallerInj {zero} {succ m} n<m = inj
   where
     t : FinSet 0 → FinSet (succ m)
     t ()
@@ -117,10 +113,10 @@ intoSmallerInj {succ n} {succ m} n<m with intoSmallerInj (canRemoveSuccFrom<N n<
 intoSmallerInj {succ n} {succ m} n<m | prevInj = inj
   where
     inj : Injection (intoSmaller n<m)
-    Injection.property inj {fzero} {fzero} pr = refl
-    Injection.property inj {fzero} {fsucc y} ()
-    Injection.property inj {fsucc x} {fzero} ()
-    Injection.property inj {fsucc x} {fsucc y} pr = applyEquality fsucc (Injection.property prevInj (fsuccInjective pr))
+    inj {fzero} {fzero} pr = refl
+    inj {fzero} {fsucc y} ()
+    inj {fsucc x} {fzero} ()
+    inj {fsucc x} {fsucc y} pr = applyEquality fsucc (prevInj (fsuccInjective pr))
 
 toNat : {n : ℕ} → (a : FinSet n) → ℕ
 toNat {.(succ _)} fzero = 0
@@ -131,13 +127,13 @@ toNatSmaller {zero} ()
 toNatSmaller {succ n} fzero = succIsPositive n
 toNatSmaller {succ n} (fsucc a) = succPreservesInequality (toNatSmaller a)
 
-ofNat : {n : ℕ} → (m : ℕ) → (m <N n) → FinSet n
-ofNat {zero} zero (le x ())
+ofNat : {n : ℕ} → (m : ℕ) → .(m <N n) → FinSet n
+ofNat {zero} zero ()
 ofNat {succ n} zero m<n = fzero
-ofNat {zero} (succ m) (le x ())
+ofNat {zero} (succ m) ()
 ofNat {succ n} (succ m) m<n = fsucc (ofNat {n} m (canRemoveSuccFrom<N m<n))
 
-ofNatInjective : {n : ℕ} → (x y : ℕ) → (pr : x <N n) → (pr2 : y <N n) → ofNat x pr ≡ ofNat y pr2 → x ≡ y
+ofNatInjective : {n : ℕ} → (x y : ℕ) → .(pr : x <N n) → .(pr2 : y <N n) → ofNat x pr ≡ ofNat y pr2 → x ≡ y
 ofNatInjective {zero} zero zero () y<n pr
 ofNatInjective {zero} zero (succ y) () y<n pr
 ofNatInjective {zero} (succ x) zero x<n () pr
@@ -146,6 +142,10 @@ ofNatInjective {succ n} zero zero x<n y<n pr = refl
 ofNatInjective {succ n} zero (succ y) x<n y<n ()
 ofNatInjective {succ n} (succ x) zero x<n y<n ()
 ofNatInjective {succ n} (succ x) (succ y) x<n y<n pr = applyEquality succ (ofNatInjective x y (canRemoveSuccFrom<N x<n) (canRemoveSuccFrom<N y<n) (fsuccInjective pr))
+
+toNatInjective : {n : ℕ} → (x y : FinSet n) → toNat x ≡ toNat y → x ≡ y
+toNatInjective fzero fzero pr = refl
+toNatInjective (fsucc x) (fsucc y) pr = applyEquality fsucc (toNatInjective x y (succInjective pr))
 
 toNatOfNat : {n : ℕ} → (a : ℕ) → (a<n : a <N n) → toNat (ofNat a a<n) ≡ a
 toNatOfNat {zero} zero (le x ())
@@ -159,16 +159,16 @@ intoSmallerLemm {.(succ _)} {zero} {n<m} fzero refl | bl = zeroNeverGreater (can
 intoSmallerLemm {.(succ _)} {succ m} {n<m} fzero () | bl
 intoSmallerLemm {.(succ _)} {m} {n<m} (fsucc b) pr with inspect (intoSmaller (canRemoveSuccFrom<N n<m))
 intoSmallerLemm {.(succ _)} {zero} {n<m} (fsucc b) pr | bl with≡ _ = zeroNeverGreater (canRemoveSuccFrom<N n<m)
-intoSmallerLemm {.(succ _)} {succ m} {n<m} {m<sm} (fsucc b) pr | bl with≡ p = intoSmallerLemm {m<sm = canRemoveSuccFrom<N m<sm} b (fsuccInjective pr)
+intoSmallerLemm {.(succ _)} {succ m} {n<m} {m<sm} (fsucc b) pr | bl with≡ p = intoSmallerLemm {n<m = canRemoveSuccFrom<N n<m} {m<sm = canRemoveSuccFrom<N m<sm} b (fsuccInjective pr)
 
 intoSmallerNotSurj : {n m : ℕ} → {n<m : n <N m} → Surjection (intoSmaller n<m) → False
-intoSmallerNotSurj {n} {zero} {le x ()} record { property = property }
-intoSmallerNotSurj {zero} {succ zero} {n<m} record { property = property } with property fzero
+intoSmallerNotSurj {n} {zero} {le x ()} property
+intoSmallerNotSurj {zero} {succ zero} {n<m} property with property fzero
 ... | () , _
-intoSmallerNotSurj {succ n} {succ zero} {n<m} record { property = property } = zeroNeverGreater (canRemoveSuccFrom<N n<m)
-intoSmallerNotSurj {0} {succ (succ m)} {n<m} record { property = property } with property fzero
+intoSmallerNotSurj {succ n} {succ zero} {n<m} property = zeroNeverGreater (canRemoveSuccFrom<N n<m)
+intoSmallerNotSurj {0} {succ (succ m)} {n<m} property with property fzero
 ... | () , _
-intoSmallerNotSurj {succ n} {succ (succ m)} {n<m} record { property = property } = problem
+intoSmallerNotSurj {succ n} {succ (succ m)} {n<m} property = problem
   where
     notHit : FinSet (succ (succ m))
     notHit = ofNat (succ m) (le zero refl)
@@ -189,35 +189,35 @@ finsetDecidableEquality (fsucc x) (fsucc y) | inr pr = inr (λ f → pr (fsuccIn
 subInjection : {n : ℕ} → {f : FinSet (succ (succ n)) → FinSet (succ (succ n))} → Injection f → (FinSet (succ n) → FinSet (succ n))
 subInjection {n} {f} inj x with inspect (f (fsucc x))
 subInjection {f = f} inj x | fzero with≡ _ with inspect (f fzero)
-subInjection {f = f} inj x | fzero with≡ pr | fzero with≡ pr2 = exFalso (fzeroNotFsucc (Injection.property inj (transitivity pr2 (equalityCommutative pr))))
+subInjection {f = f} inj x | fzero with≡ pr | fzero with≡ pr2 = exFalso (fzeroNotFsucc (inj (transitivity pr2 (equalityCommutative pr))))
 subInjection {f = f} inj x | fzero with≡ _ | fsucc bl with≡ _ = bl
 subInjection {f = f} inj x | fsucc bl with≡ _ = bl
 
 subInjIsInjective : {n : ℕ} → {f : FinSet (succ (succ n)) → FinSet (succ (succ n))} → (inj : Injection f) → Injection (subInjection inj)
-Injection.property (subInjIsInjective {f = f} inj) {x} {y} pr with inspect (f (fsucc x))
-Injection.property (subInjIsInjective {f = f} inj) {x} {y} pr | fzero with≡ _ with inspect (f (fzero))
-Injection.property (subInjIsInjective {f = f} inj) {x} {y} pr | fzero with≡ pr1 | fzero with≡ pr2 = exFalso (fzeroNotFsucc (Injection.property inj (transitivity pr2 (equalityCommutative pr1))))
-Injection.property (subInjIsInjective {f = f} inj) {x} {y} pr | fzero with≡ pr1 | fsucc bl with≡ _ with inspect (f (fsucc y))
-Injection.property (subInjIsInjective {f = f} inj) {x} {y} pr | fzero with≡ pr1 | fsucc bl with≡ _ | fzero with≡ x₁ with inspect (f (fzero))
-Injection.property (subInjIsInjective {f = f} inj) {x} {y} pr | fzero with≡ pr1 | fsucc bl with≡ _ | fzero with≡ x1 | fzero with≡ x2 = exFalso (fzeroNotFsucc (Injection.property inj (transitivity x2 (equalityCommutative x1))))
-Injection.property (subInjIsInjective {f = f} inj) {x} {y} refl | fzero with≡ pr1 | fsucc .bl2 with≡ _ | fzero with≡ x1 | fsucc bl2 with≡ _ = fsuccInjective (Injection.property inj (transitivity pr1 (equalityCommutative x1)))
-Injection.property (subInjIsInjective {f = f} inj) {x} {y} refl | fzero with≡ pr1 | fsucc .bl2 with≡ pr2 | fsucc bl2 with≡ pr3 = exFalso (fzeroNotFsucc (Injection.property inj (transitivity pr2 (equalityCommutative pr3))))
-Injection.property (subInjIsInjective {f = f} inj) {x} {y} pr | fsucc bl with≡ _ with inspect (f (fsucc y))
-Injection.property (subInjIsInjective {f = f} inj) {x} {y} pr | fsucc bl with≡ _ | fzero with≡ x₁ with inspect (f fzero)
-Injection.property (subInjIsInjective {f = f} inj) {x} {y} pr | fsucc bl with≡ _ | fzero with≡ x1 | fzero with≡ x2 = exFalso (fzeroNotFsucc (Injection.property inj (transitivity x2 (equalityCommutative x1))))
-Injection.property (subInjIsInjective {f = f} inj) {x} {y} refl | fsucc .bl2 with≡ x1 | fzero with≡ x₁ | fsucc bl2 with≡ x2 = exFalso (fzeroNotFsucc (Injection.property inj (transitivity x2 (equalityCommutative x1))))
-Injection.property (subInjIsInjective {f = f} inj) {x} {y} refl | fsucc .y1 with≡ pr1 | fsucc y1 with≡ pr2 = fsuccInjective (Injection.property inj (transitivity pr1 (equalityCommutative pr2)))
+subInjIsInjective {f = f} inj {x} {y} pr with inspect (f (fsucc x))
+subInjIsInjective {f = f} inj {x} {y} pr | fzero with≡ _ with inspect (f (fzero))
+subInjIsInjective {f = f} inj {x} {y} pr | fzero with≡ pr1 | fzero with≡ pr2 = exFalso (fzeroNotFsucc (inj (transitivity pr2 (equalityCommutative pr1))))
+subInjIsInjective {f = f} inj {x} {y} pr | fzero with≡ pr1 | fsucc bl with≡ _ with inspect (f (fsucc y))
+subInjIsInjective {f = f} inj {x} {y} pr | fzero with≡ pr1 | fsucc bl with≡ _ | fzero with≡ x₁ with inspect (f (fzero))
+subInjIsInjective {f = f} inj {x} {y} pr | fzero with≡ pr1 | fsucc bl with≡ _ | fzero with≡ x1 | fzero with≡ x2 = exFalso (fzeroNotFsucc (inj (transitivity x2 (equalityCommutative x1))))
+subInjIsInjective {f = f} inj {x} {y} refl | fzero with≡ pr1 | fsucc .bl2 with≡ _ | fzero with≡ x1 | fsucc bl2 with≡ _ = fsuccInjective (inj (transitivity pr1 (equalityCommutative x1)))
+subInjIsInjective {f = f} inj {x} {y} refl | fzero with≡ pr1 | fsucc .bl2 with≡ pr2 | fsucc bl2 with≡ pr3 = exFalso (fzeroNotFsucc (inj (transitivity pr2 (equalityCommutative pr3))))
+subInjIsInjective {f = f} inj {x} {y} pr | fsucc bl with≡ _ with inspect (f (fsucc y))
+subInjIsInjective {f = f} inj {x} {y} pr | fsucc bl with≡ _ | fzero with≡ x₁ with inspect (f fzero)
+subInjIsInjective {f = f} inj {x} {y} pr | fsucc bl with≡ _ | fzero with≡ x1 | fzero with≡ x2 = exFalso (fzeroNotFsucc (inj (transitivity x2 (equalityCommutative x1))))
+subInjIsInjective {f = f} inj {x} {y} refl | fsucc .bl2 with≡ x1 | fzero with≡ x₁ | fsucc bl2 with≡ x2 = exFalso (fzeroNotFsucc (inj (transitivity x2 (equalityCommutative x1))))
+subInjIsInjective {f = f} inj {x} {y} refl | fsucc .y1 with≡ pr1 | fsucc y1 with≡ pr2 = fsuccInjective (inj (transitivity pr1 (equalityCommutative pr2)))
 
 onepointBij : (f : FinSet 1 → FinSet 1) → Bijection f
-Injection.property (Bijection.inj (onepointBij f)) {x} {y} _ = finset1OnlyOne x y
-Surjection.property (Bijection.surj (onepointBij f)) fzero with inspect (f fzero)
+Bijection.inj (onepointBij f) {x} {y} _ = finset1OnlyOne x y
+Bijection.surj (onepointBij f) fzero with inspect (f fzero)
 ... | fzero with≡ pr = fzero , pr
 ... | fsucc () with≡ _
-Surjection.property (Bijection.surj (onepointBij f)) (fsucc ())
+Bijection.surj (onepointBij f) (fsucc ())
 
 nopointBij : (f : FinSet 0 → FinSet 0) → Bijection f
-Injection.property (Bijection.inj (nopointBij f)) {()}
-Surjection.property (Bijection.surj (nopointBij f)) ()
+Bijection.inj (nopointBij f) {()}
+Bijection.surj (nopointBij f) ()
 
 private
   flip : {n : ℕ} → (f : FinSet (succ n) → FinSet (succ n)) → FinSet (succ n) → FinSet (succ n)
@@ -255,36 +255,36 @@ private
 
   bijFlip : {n : ℕ} → {f : FinSet (succ n) → FinSet (succ n)} → Bijection (flip f)
   bijFlip {zero} {f} = onepointBij (flip f)
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fzero} {fzero} flx=fly = refl
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fzero} {fsucc y} flx=fly with inspect (f fzero)
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fzero} {fsucc y} flx=fly | fzero with≡ x rewrite x = exFalso (fzeroNotFsucc flx=fly)
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fzero} {fsucc y} flx=fly | fsucc f0 with≡ x with finsetDecidableEquality y f0
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fzero} {fsucc y} flx=fly | fsucc f0 with≡ x | inl x₁ = exFalso (fzeroNotFsucc (transitivity (equalityCommutative flx=fly) x))
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fzero} {fsucc y} flx=fly | fsucc f0 with≡ x | inr pr = exFalso (pr (fsuccInjective (transitivity (equalityCommutative flx=fly) x)))
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fsucc x} {fzero} flx=fly with inspect (f fzero)
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fsucc x} {fzero} flx=fly | fzero with≡ pr = transitivity flx=fly pr
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fsucc x} {fzero} flx=fly | fsucc f0 with≡ x₁ with finsetDecidableEquality x f0
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fsucc x} {fzero} flx=fly | fsucc f0 with≡ pr | inl x₂ = exFalso (fzeroNotFsucc (transitivity flx=fly pr))
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fsucc x} {fzero} flx=fly | fsucc f0 with≡ x1 | inr x!=f0 = exFalso (x!=f0 (fsuccInjective (transitivity flx=fly x1)))
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fsucc x} {fsucc y} flx=fly with inspect (f fzero)
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fsucc x} {fsucc y} flx=fly | fzero with≡ x₁ = flx=fly
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fsucc x} {fsucc y} flx=fly | fsucc f0 with≡ x₁ with finsetDecidableEquality y f0
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fsucc x} {fsucc y} flx=fly | fsucc f0 with≡ x₁ | inl y=f0 with finsetDecidableEquality x f0
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fsucc x} {fsucc y} flx=fly | fsucc f0 with≡ x₁ | inl y=f0 | inl x=f0 = applyEquality fsucc (transitivity x=f0 (equalityCommutative y=f0))
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fsucc x} {fsucc y} () | fsucc f0 with≡ x₁ | inl y=f0 | inr x!=f0
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fsucc x} {fsucc y} flx=fly | fsucc f0 with≡ x₁ | inr y!=f0 with finsetDecidableEquality x f0
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fsucc x} {fsucc y} () | fsucc f0 with≡ x₁ | inr y!=f0 | inl x=f0
-  Injection.property (Bijection.inj (bijFlip {succ n} {f})) {fsucc x} {fsucc y} flx=fly | fsucc f0 with≡ x₁ | inr y!=f0 | inr x!=f0 = flx=fly
-  Surjection.property (Bijection.surj (bijFlip {succ n} {f})) fzero = f fzero , flipSwapsF0 {f = f}
-  Surjection.property (Bijection.surj (bijFlip {succ n} {f})) (fsucc b) with inspect (f fzero)
-  Surjection.property (Bijection.surj (bijFlip {succ n} {f})) (fsucc b) | fzero with≡ x = fsucc b , flipMaintainsEverythingElse {f = f} b λ pr → fzeroNotFsucc (transitivity (equalityCommutative x) (equalityCommutative pr))
-  Surjection.property (Bijection.surj (bijFlip {succ n} {f})) (fsucc b) | fsucc y with≡ x with finsetDecidableEquality y b
-  Surjection.property (Bijection.surj (bijFlip {succ n} {f})) (fsucc b) | fsucc y with≡ x | inl y=b = fzero , transitivity x (applyEquality fsucc y=b)
-  Surjection.property (Bijection.surj (bijFlip {succ n} {f})) (fsucc b) | fsucc y with≡ x | inr y!=b = fsucc b , flipMaintainsEverythingElse {f = f} b λ pr → y!=b (fsuccInjective (transitivity (equalityCommutative x) (equalityCommutative pr)))
+  Bijection.inj (bijFlip {succ n} {f}) {fzero} {fzero} flx=fly = refl
+  Bijection.inj (bijFlip {succ n} {f}) {fzero} {fsucc y} flx=fly with inspect (f fzero)
+  Bijection.inj (bijFlip {succ n} {f}) {fzero} {fsucc y} flx=fly | fzero with≡ x rewrite x = exFalso (fzeroNotFsucc flx=fly)
+  Bijection.inj (bijFlip {succ n} {f}) {fzero} {fsucc y} flx=fly | fsucc f0 with≡ x with finsetDecidableEquality y f0
+  Bijection.inj (bijFlip {succ n} {f}) {fzero} {fsucc y} flx=fly | fsucc f0 with≡ x | inl x₁ = exFalso (fzeroNotFsucc (transitivity (equalityCommutative flx=fly) x))
+  Bijection.inj (bijFlip {succ n} {f}) {fzero} {fsucc y} flx=fly | fsucc f0 with≡ x | inr pr = exFalso (pr (fsuccInjective (transitivity (equalityCommutative flx=fly) x)))
+  Bijection.inj (bijFlip {succ n} {f}) {fsucc x} {fzero} flx=fly with inspect (f fzero)
+  Bijection.inj (bijFlip {succ n} {f}) {fsucc x} {fzero} flx=fly | fzero with≡ pr = transitivity flx=fly pr
+  Bijection.inj (bijFlip {succ n} {f}) {fsucc x} {fzero} flx=fly | fsucc f0 with≡ x₁ with finsetDecidableEquality x f0
+  Bijection.inj (bijFlip {succ n} {f}) {fsucc x} {fzero} flx=fly | fsucc f0 with≡ pr | inl x₂ = exFalso (fzeroNotFsucc (transitivity flx=fly pr))
+  Bijection.inj (bijFlip {succ n} {f}) {fsucc x} {fzero} flx=fly | fsucc f0 with≡ x1 | inr x!=f0 = exFalso (x!=f0 (fsuccInjective (transitivity flx=fly x1)))
+  Bijection.inj (bijFlip {succ n} {f}) {fsucc x} {fsucc y} flx=fly with inspect (f fzero)
+  Bijection.inj (bijFlip {succ n} {f}) {fsucc x} {fsucc y} flx=fly | fzero with≡ x₁ = flx=fly
+  Bijection.inj (bijFlip {succ n} {f}) {fsucc x} {fsucc y} flx=fly | fsucc f0 with≡ x₁ with finsetDecidableEquality y f0
+  Bijection.inj (bijFlip {succ n} {f}) {fsucc x} {fsucc y} flx=fly | fsucc f0 with≡ x₁ | inl y=f0 with finsetDecidableEquality x f0
+  Bijection.inj (bijFlip {succ n} {f}) {fsucc x} {fsucc y} flx=fly | fsucc f0 with≡ x₁ | inl y=f0 | inl x=f0 = applyEquality fsucc (transitivity x=f0 (equalityCommutative y=f0))
+  Bijection.inj (bijFlip {succ n} {f}) {fsucc x} {fsucc y} () | fsucc f0 with≡ x₁ | inl y=f0 | inr x!=f0
+  Bijection.inj (bijFlip {succ n} {f}) {fsucc x} {fsucc y} flx=fly | fsucc f0 with≡ x₁ | inr y!=f0 with finsetDecidableEquality x f0
+  Bijection.inj (bijFlip {succ n} {f}) {fsucc x} {fsucc y} () | fsucc f0 with≡ x₁ | inr y!=f0 | inl x=f0
+  Bijection.inj (bijFlip {succ n} {f}) {fsucc x} {fsucc y} flx=fly | fsucc f0 with≡ x₁ | inr y!=f0 | inr x!=f0 = flx=fly
+  Bijection.surj (bijFlip {succ n} {f}) fzero = f fzero , flipSwapsF0 {f = f}
+  Bijection.surj (bijFlip {succ n} {f}) (fsucc b) with inspect (f fzero)
+  Bijection.surj (bijFlip {succ n} {f}) (fsucc b) | fzero with≡ x = fsucc b , flipMaintainsEverythingElse {f = f} b λ pr → fzeroNotFsucc (transitivity (equalityCommutative x) (equalityCommutative pr))
+  Bijection.surj (bijFlip {succ n} {f}) (fsucc b) | fsucc y with≡ x with finsetDecidableEquality y b
+  Bijection.surj (bijFlip {succ n} {f}) (fsucc b) | fsucc y with≡ x | inl y=b = fzero , transitivity x (applyEquality fsucc y=b)
+  Bijection.surj (bijFlip {succ n} {f}) (fsucc b) | fsucc y with≡ x | inr y!=b = fsucc b , flipMaintainsEverythingElse {f = f} b λ pr → y!=b (fsuccInjective (transitivity (equalityCommutative x) (equalityCommutative pr)))
 
 injectionIsBijectionFinset : {n : ℕ} → {f : FinSet n → FinSet n} → Injection f → Bijection f
-injectionIsBijectionFinset {zero} {f} inj = record { inj = inj ; surj = record { property = λ () } }
-injectionIsBijectionFinset {succ zero} {f} inj = record { inj = inj ; surj = record { property = ans } }
+injectionIsBijectionFinset {zero} {f} inj = record { inj = inj ; surj = λ () }
+injectionIsBijectionFinset {succ zero} {f} inj = record { inj = inj ; surj = ans }
   where
     ans : (b : FinSet (succ zero)) → Sg (FinSet (succ zero)) (λ a → f a ≡ b)
     ans fzero with inspect (f fzero)
@@ -302,12 +302,12 @@ injectionIsBijectionFinset {succ (succ n)} {f} inj with injectionIsBijectionFins
     tweakedF (fsucc x) = fsucc (subInjection inj x)
 
     tweakedBij : Bijection tweakedF
-    Injection.property (Bijection.inj tweakedBij) {fzero} {fzero} f'x=f'y = refl
-    Injection.property (Bijection.inj tweakedBij) {fzero} {fsucc y} ()
-    Injection.property (Bijection.inj tweakedBij) {fsucc x} {fzero} ()
-    Injection.property (Bijection.inj tweakedBij) {fsucc x} {fsucc y} f'x=f'y = applyEquality fsucc (Injection.property (subInjIsInjective inj) (fsuccInjective f'x=f'y))
-    Surjection.property (Bijection.surj tweakedBij) fzero = fzero , refl
-    Surjection.property (Bijection.surj tweakedBij) (fsucc b) with Surjection.property subSurj b
+    Bijection.inj tweakedBij {fzero} {fzero} f'x=f'y = refl
+    Bijection.inj tweakedBij {fzero} {fsucc y} ()
+    Bijection.inj tweakedBij {fsucc x} {fzero} ()
+    Bijection.inj tweakedBij {fsucc x} {fsucc y} f'x=f'y = applyEquality fsucc ((subInjIsInjective inj) (fsuccInjective f'x=f'y))
+    Bijection.surj tweakedBij fzero = fzero , refl
+    Bijection.surj tweakedBij (fsucc b) with subSurj b
     ... | ans , prop = fsucc ans , applyEquality fsucc prop
 
     compBij : Bijection (λ i → flip f (tweakedF i))
@@ -318,12 +318,12 @@ injectionIsBijectionFinset {succ (succ n)} {f} inj with injectionIsBijectionFins
     undoTweakMakesF {fsucc x} with inspect (f fzero)
     undoTweakMakesF {fsucc x} | fzero with≡ x₁ with inspect (f (fsucc x))
     undoTweakMakesF {fsucc x} | fzero with≡ x₁ | fzero with≡ x₂ with inspect (f fzero)
-    undoTweakMakesF {fsucc x} | fzero with≡ x₁ | fzero with≡ x2 | fzero with≡ x3 = exFalso (fzeroNotFsucc (Injection.property inj (transitivity x3 (equalityCommutative x2))))
-    undoTweakMakesF {fsucc x} | fzero with≡ x1 | fzero with≡ x2 | fsucc y with≡ x3 = exFalso (fzeroNotFsucc (Injection.property inj (transitivity x1 (equalityCommutative x2))))
+    undoTweakMakesF {fsucc x} | fzero with≡ x₁ | fzero with≡ x2 | fzero with≡ x3 = exFalso (fzeroNotFsucc (inj (transitivity x3 (equalityCommutative x2))))
+    undoTweakMakesF {fsucc x} | fzero with≡ x1 | fzero with≡ x2 | fsucc y with≡ x3 = exFalso (fzeroNotFsucc (inj (transitivity x1 (equalityCommutative x2))))
     undoTweakMakesF {fsucc x} | fzero with≡ x1 | fsucc y with≡ x2 = equalityCommutative x2
     undoTweakMakesF {fsucc x} | fsucc y with≡ x₁ with inspect (f (fsucc x))
     undoTweakMakesF {fsucc x} | fsucc y with≡ x₁ | fzero with≡ x₂ with inspect (f fzero)
-    undoTweakMakesF {fsucc x} | fsucc y with≡ x₁ | fzero with≡ x2 | fzero with≡ x3 = exFalso (fzeroNotFsucc (Injection.property inj (transitivity x3 (equalityCommutative x2))))
+    undoTweakMakesF {fsucc x} | fsucc y with≡ x₁ | fzero with≡ x2 | fzero with≡ x3 = exFalso (fzeroNotFsucc (inj (transitivity x3 (equalityCommutative x2))))
     undoTweakMakesF {fsucc x} | fsucc y with≡ x₁ | fzero with≡ x₂ | fsucc pr with≡ x₃ with finsetDecidableEquality pr y
     undoTweakMakesF {fsucc x} | fsucc y with≡ x₁ | fzero with≡ x2 | fsucc pr with≡ x₃ | inl x₄ = equalityCommutative x2
     undoTweakMakesF {fsucc x} | fsucc y with≡ x1 | fzero with≡ x₂ | fsucc pr with≡ x3 | inr pr!=y = exFalso (pr!=y (fsuccInjective (transitivity (equalityCommutative x3) x1)))
@@ -333,7 +333,7 @@ injectionIsBijectionFinset {succ (succ n)} {f} inj with injectionIsBijectionFins
         p : f fzero ≡ f (fsucc x)
         p = transitivity x1 (equalityCommutative x2)
         q : fzero ≡ fsucc x
-        q = Injection.property inj p
+        q = inj p
         false : False
         false = fzeroNotFsucc q
     undoTweakMakesF {fsucc x} | fsucc y with≡ x₁ | fsucc thi with≡ x2 | inr thi!=y = equalityCommutative x2
@@ -342,12 +342,12 @@ injectionIsBijectionFinset {succ (succ n)} {f} inj with injectionIsBijectionFins
     ans = bijectionPreservedUnderExtensionalEq compBij undoTweakMakesF
 
 pigeonhole : {n m : ℕ} → (m <N n) → {f : FinSet n → FinSet m} → Injection f → False
-pigeonhole {zero} {zero} () {f} record { property = property }
-pigeonhole {zero} {succ m} () {f} record { property = property }
-pigeonhole {succ n} {zero} m<n {f} record { property = property } = finset0Empty (f fzero)
-pigeonhole {succ zero} {succ m} m<n {f} record { property = property } with canRemoveSuccFrom<N m<n
-pigeonhole {succ zero} {succ m} m<n {f} record { property = property } | le x ()
-pigeonhole {succ (succ n)} {succ zero} m<n {f} record { property = property } = fzeroNotFsucc (property (transitivity f0 (equalityCommutative f1)))
+pigeonhole {zero} {zero} () {f} property
+pigeonhole {zero} {succ m} () {f} property
+pigeonhole {succ n} {zero} m<n {f} property = finset0Empty (f fzero)
+pigeonhole {succ zero} {succ m} m<n {f} property with canRemoveSuccFrom<N m<n
+pigeonhole {succ zero} {succ m} m<n {f} property | le x ()
+pigeonhole {succ (succ n)} {succ zero} m<n {f} property = fzeroNotFsucc (property (transitivity f0 (equalityCommutative f1)))
   where
     f0 : f (fzero) ≡ fzero
     f0 with inspect (f fzero)
