@@ -8,7 +8,6 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals.Semiring
 open import Numbers.Integers.Integers
 open import Numbers.Integers.Addition
-open import Sets.FinSet
 open import Groups.Homomorphisms.Definition
 open import Groups.Groups
 open import Groups.Subgroups.Definition

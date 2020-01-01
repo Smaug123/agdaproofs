@@ -6,7 +6,6 @@ open import Numbers.Integers.Integers
 open import Setoids.Setoids
 open import Setoids.Subset
 open import LogicalFormulae
-open import Sets.FinSet
 open import Functions
 open import Sets.EquivalenceRelations
 open import Numbers.Naturals.Naturals

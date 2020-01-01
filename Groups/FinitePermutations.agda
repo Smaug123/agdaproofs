@@ -5,7 +5,6 @@ open import Numbers.Naturals.Semiring -- for length
 open import Lists.Lists
 open import Functions
 open import Groups.SymmetricGroups.Definition
-open import Sets.FinSet
 open import Setoids.Setoids
 --open import Groups.Actions
 

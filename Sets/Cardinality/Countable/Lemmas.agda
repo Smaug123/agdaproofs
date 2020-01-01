@@ -7,23 +7,15 @@ open import Functions
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.Lemmas
-open import Sets.Cardinality.Finite.Definition
+open import Sets.FinSet.Definition
 open import Semirings.Definition
 open import Sets.CantorBijection.CantorBijection
 open import Orders.Total.Definition
+open import Sets.Cardinality.Countable.Definition
 
-module Sets.Cardinality where
+module Sets.Cardinality.Countable.Lemmas where
 
 open import Semirings.Lemmas ℕSemiring
-
-record CountablyInfiniteSet {a : _} (A : Set a) : Set a where
-  field
-    counting : A → ℕ
-    countingIsBij : Bijection counting
-
-data Countable {a : _} (A : Set a) : Set a where
-  finite : FiniteSet A → Countable A
-  infinite : CountablyInfiniteSet A → Countable A
 
 ℕCountable : CountablyInfiniteSet ℕ
 ℕCountable = record { counting = id ; countingIsBij = invertibleImpliesBijection (record { inverse = id ; isLeft = λ b → refl ; isRight = λ a → refl}) }

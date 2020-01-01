@@ -66,7 +66,7 @@ identityOfIndiscernablesRight {a = a} {b} {.b} prop prAB refl = prAB
 equalityCommutative : {a : _} {A : Set a} {x y : A} → (x ≡ y) → (y ≡ x)
 equalityCommutative refl = refl
 
-exFalso : {n : _} {A : Set n} → False → A
+exFalso : {n : _} {A : Set n} → .(x : False) → A
 exFalso {a} = λ ()
 
 orIsAssociative : {n : _} {a b c : Set n} → ((a || b) || c) → (a || (b || c))

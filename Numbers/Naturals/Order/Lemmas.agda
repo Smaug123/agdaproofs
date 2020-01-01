@@ -80,3 +80,7 @@ cancelInequalityLeft {a} {succ b} {succ c} pr = succPreservesInequality q'
     q = canFlipMultiplicationsInIneq {b} {a} {c} {a} p
     q' : b <N c
     q' = cancelInequalityLeft {a} {b} {c} q
+
+<NProp : {a b : ℕ} → .(a <N b) → a <N b
+<NProp {zero} {succ b} a<b = succIsPositive _
+<NProp {succ a} {succ b} a<b = succPreservesInequality (<NProp (canRemoveSuccFrom<N a<b))

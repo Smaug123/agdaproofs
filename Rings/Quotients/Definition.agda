@@ -1,7 +1,6 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
 open import Functions
-open import Sets.FinSet
 open import LogicalFormulae
 open import Groups.Definition
 open import Groups.Groups

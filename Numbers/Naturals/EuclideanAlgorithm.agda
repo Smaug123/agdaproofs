@@ -356,3 +356,9 @@ euclid a b = inducted (succ a +N b) a b (a<SuccA (a +N b))
     go maxSum indHyp = λ a b a+b<maxSum → go' maxSum a b a+b<maxSum indHyp
     inducted : ∀ x → P x
     inducted = rec <NWellfounded P go
+
+divOneImpliesOne : {a : ℕ} → a ∣ 1 → a ≡ 1
+divOneImpliesOne {zero} a|1 = exFalso (zeroDividesNothing _ a|1)
+divOneImpliesOne {succ zero} a|1 = refl
+divOneImpliesOne {succ (succ a)} (divides record { quot = zero ; rem = .0 ; pr = pr ; remIsSmall = remIsSmall ; quotSmall = quotSmall } refl) rewrite Semiring.sumZeroRight ℕSemiring (a *N zero) | multiplicationNIsCommutative a 0 = exFalso (naughtE pr)
+divOneImpliesOne {succ (succ a)} (divides record { quot = (succ quot) ; rem = .0 ; pr = pr ; remIsSmall = remIsSmall ; quotSmall = quotSmall } refl) rewrite Semiring.commutative ℕSemiring quot (succ (quot +N a *N succ quot)) = exFalso (naughtE (equalityCommutative (succInjective pr)))
