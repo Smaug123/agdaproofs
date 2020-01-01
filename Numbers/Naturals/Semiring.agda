@@ -35,3 +35,9 @@ productZeroImpliesOperandZero : {a b : ℕ} → a *N b ≡ 0 → (a ≡ 0) || (b
 productZeroImpliesOperandZero {zero} {b} pr = inl refl
 productZeroImpliesOperandZero {succ a} {zero} pr = inr refl
 productZeroImpliesOperandZero {succ a} {succ b} ()
+
+*NWellDefined : {a b c d : ℕ} → (a ≡ c) → (b ≡ d) → a *N b ≡ c *N d
+*NWellDefined refl refl = refl
+
++NWellDefined : {a b c d : ℕ} → (a ≡ c) → (b ≡ d) → a +N b ≡ c +N d
++NWellDefined refl refl = refl

@@ -81,11 +81,3 @@ finNotEqualsRefl {.(succ (succ _))} {.(fsucc a)} {.(fsucc b)} (fneN (fsucc a) (f
     r rewrite equalityCommutative t | equalityCommutative t' | equalityCommutative u | equalityCommutative u' = refl
     ans : fneN (fsucc a) (fsucc b) (inr ((fst ,, snd1) , snd)) ≡ fneN (fsucc a) (fsucc b) (inr ((fst1 ,, snd2) , b1))
     ans = applyEquality (λ t → fneN (fsucc a) (fsucc b) (inr t)) (sgEq r equality)
-
-ofNatToNat : {n : ℕ} → (a : FinSet n) → ofNat (toNat a) (toNatSmaller a) ≡ a
-ofNatToNat {zero} ()
-ofNatToNat {succ n} fzero = refl
-ofNatToNat {succ n} (fsucc a) = applyEquality fsucc indHyp
-  where
-    indHyp : ofNat (toNat a) (canRemoveSuccFrom<N (succPreservesInequality (toNatSmaller a))) ≡ a
-    indHyp rewrite <NRefl (canRemoveSuccFrom<N (succPreservesInequality (toNatSmaller a))) (toNatSmaller a) = ofNatToNat a

@@ -370,3 +370,8 @@ pigeonhole {succ (succ n)} {succ (succ m)} m<n {f} injF = intoSmallerNotSurj {_}
 --surjectionIsBijectionFinset {zero} {f} surj = nopointBij f
 --surjectionIsBijectionFinset {succ zero} {f} surj = onepointBij f
 --surjectionIsBijectionFinset {succ (succ n)} {f} record { property = property } = {!!}
+
+ofNatToNat : {n : ℕ} → (a : FinSet n) → ofNat (toNat a) (toNatSmaller a) ≡ a
+ofNatToNat {zero} ()
+ofNatToNat {succ n} fzero = refl
+ofNatToNat {succ n} (fsucc a) = applyEquality fsucc (ofNatToNat a)

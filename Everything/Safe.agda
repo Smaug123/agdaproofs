@@ -8,6 +8,8 @@ open import Numbers.BinaryNaturals.Multiplication
 open import Numbers.BinaryNaturals.Order
 open import Numbers.BinaryNaturals.Subtraction
 
+open import Numbers.Modulo.Group
+
 open import Numbers.Integers.Integers
 open import Numbers.Integers.RingStructure.EuclideanDomain
 

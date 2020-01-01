@@ -16,7 +16,7 @@ open import Orders.Total.Definition
 
 module Numbers.Naturals.Naturals where
 
-record subtractionNResult (a b : ℕ) (p : a ≤N b) : Set where
+record subtractionNResult (a b : ℕ) .(p : a ≤N b) : Set where
   field
     result : ℕ
     pr : a +N result ≡ b
@@ -32,11 +32,11 @@ subtractionNWellDefined {a} {.a} {inr refl} {pr2} record { result = result1 ; pr
 
 -N : {a : ℕ} → {b : ℕ} → (pr : a ≤N b) → subtractionNResult a b pr
 -N {zero} {b} prAB = record { result = b ; pr = refl }
--N {succ a} {zero} (inl (le x ()))
+-N {succ a} {zero} (inl ())
 -N {succ a} {zero} (inr ())
 -N {succ a} {succ b} (inl x) with -N {a} {b} (inl (canRemoveSuccFrom<N x))
 -N {succ a} {succ b} (inl x) | record { result = result ; pr = pr } = record { result = result ; pr = applyEquality succ pr }
--N {succ a} {succ .a} (inr refl) = record { result = 0 ; pr = applyEquality succ (addZeroRight a) }
+-N {succ a} {succ b} (inr pr) = record { result = 0 ; pr = transitivity (applyEquality succ (addZeroRight a)) pr }
 
 addOneToWeakInequality : {a b : ℕ} → (a ≤N b) → (succ a ≤N succ b)
 addOneToWeakInequality {a} {b} (inl ineq) = inl (succPreservesInequality ineq)
@@ -51,7 +51,7 @@ addMinus {zero} {succ b} pr = applyEquality succ (addZeroRight b)
 addMinus {succ a} {zero} (inl (le x ()))
 addMinus {succ a} {zero} (inr ())
 addMinus {succ a} {succ b} (inl x) with (-N {succ a} {succ b} (inl x))
-addMinus {succ a} {succ b} (inl x) | record { result = result ; pr = pr } = transitivity (transitivity (applyEquality (_+N succ a) (transitivity (subtractionNWellDefined {p1 = inl (canRemoveSuccFrom<N x)} (record { result = subtractionNResult.result (-N (inl (canRemoveSuccFrom<N x))) ; pr = transitivity (additionNIsCommutative a _) (addMinus (inl (canRemoveSuccFrom<N x)))}) previous) (equalityCommutative t))) (additionNIsCommutative result (succ a))) pr
+addMinus {succ a} {succ b} (inl x) | record { result = result ; pr = pr } = transitivity (transitivity (applyEquality (_+N succ a) (transitivity (subtractionNWellDefined {p1 = inl (canRemoveSuccFrom<N x)} {p2 = inl (canRemoveSuccFrom<N x)} (record { result = subtractionNResult.result (-N (inl (canRemoveSuccFrom<N x))) ; pr = transitivity (additionNIsCommutative a _) (addMinus (inl (canRemoveSuccFrom<N x)))}) previous) (equalityCommutative t))) (additionNIsCommutative result (succ a))) pr
   where
     pr'' : (a <N b) || (a ≡ b)
     pr'' = (inl (le (_<N_.x x) (transitivity (equalityCommutative (succExtracts (_<N_.x x) a)) (succInjective (_<N_.proof x)))))
@@ -296,9 +296,9 @@ subtractProduct {succ zero} {b} {c} aPos b<c = s'
     r = subtractionNWellDefined {b +N 0 *N b} {c +N 0 *N c} {(lessCast' (lessCast (inl b<c) (equalityCommutative (addZeroRight b))) (equalityCommutative (addZeroRight c)))} {inl (lessRespectsMultiplicationLeft b c 1 b<c aPos)} (underlying resbc'') (-N {b +N 0 *N b} {c +N 0 *N c} (inl (lessRespectsMultiplicationLeft b c 1 b<c aPos)))
     g (a , b) = b
     g' (a , b) = b
-    resbc'' = subtractionCast' (equalityCommutative (addZeroRight c)) (underlying resbc')
+    resbc'' = subtractionCast' {pr = inl (identityOfIndiscernablesLeft _<N_ b<c (equalityCommutative (addZeroRight b)))} (equalityCommutative (addZeroRight c)) (underlying resbc')
     q = transitivity {_} {_} {subtractionNResult.result resbc} {subtractionNResult.result (underlying resbc')} {subtractionNResult.result (underlying resbc'')} (g resbc') (g' resbc'')
-    resbc' = subtractionCast {b} {c} {b +N 0 *N b} (equalityCommutative (addZeroRight b)) resbc
+    resbc' = subtractionCast {b} {c} {b +N 0 *N b} {inl b<c} (equalityCommutative (addZeroRight b)) resbc
 
 subtractProduct {succ (succ a)} {b} {c} aPos b<c =
   let
