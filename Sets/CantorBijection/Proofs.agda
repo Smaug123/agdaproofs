@@ -6,7 +6,7 @@ open import LogicalFormulae
 open import Functions
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
-open import Sets.FinSet
+open import Sets.FinSet.Definition
 open import Semirings.Definition
 open import Sets.CantorBijection.Order
 open import Orders.Total.Definition

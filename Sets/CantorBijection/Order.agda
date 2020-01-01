@@ -7,7 +7,7 @@ open import Functions
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.WellFounded
-open import Sets.FinSet
+open import Sets.FinSet.Definition
 open import Semirings.Definition
 open import Orders.Total.Definition
 open import Orders.Partial.Definition

@@ -87,6 +87,7 @@ open import Setoids.Functions.Extension
 
 open import Sets.Cardinality.Infinite.Examples
 open import Sets.Cardinality.Infinite.Lemmas
+open import Sets.Cardinality.Countable.Lemmas
 open import Sets.Cardinality.Finite.Lemmas
 open import Sets.FinSet.Lemmas
 

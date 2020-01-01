@@ -7,7 +7,7 @@ open import Functions
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.Lemmas
-open import Sets.FinSet
+open import Sets.Cardinality.Finite.Definition
 open import Semirings.Definition
 open import Sets.CantorBijection.CantorBijection
 open import Orders.Total.Definition

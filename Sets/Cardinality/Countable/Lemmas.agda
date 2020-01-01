@@ -7,7 +7,7 @@ open import Functions
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.Lemmas
-open import Sets.FinSet
+open import Sets.FinSet.Definition
 open import Semirings.Definition
 open import Sets.CantorBijection.CantorBijection
 open import Orders.Total.Definition
@@ -63,21 +63,21 @@ sqrtFloor (succ n) | (a ,, b) , pr | inr x = (succ a ,, 0) , (q ,, succIsPositiv
 pairUnionIsCountable : {a b : _} {A : Set a} {B : Set b} → (X : CountablyInfiniteSet A) → (Y : CountablyInfiniteSet B) → CountablyInfiniteSet (A || B)
 CountablyInfiniteSet.counting (pairUnionIsCountable X Y) (inl r) = 2 *N (CountablyInfiniteSet.counting X r)
 CountablyInfiniteSet.counting (pairUnionIsCountable X Y) (inr s) = succ (2 *N (CountablyInfiniteSet.counting Y s))
-Injection.property (Bijection.inj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y))) {inl x} {inl y} pr rewrite Semiring.commutative ℕSemiring (CountablyInfiniteSet.counting X x) 0 | Semiring.commutative ℕSemiring (CountablyInfiniteSet.counting X y) 0 | doubleIsAddTwo (CountablyInfiniteSet.counting X x) | doubleIsAddTwo (CountablyInfiniteSet.counting X y) = applyEquality inl (Injection.property (Bijection.inj (CountablyInfiniteSet.countingIsBij X)) inter)
+Bijection.inj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y)) {inl x} {inl y} pr rewrite Semiring.commutative ℕSemiring (CountablyInfiniteSet.counting X x) 0 | Semiring.commutative ℕSemiring (CountablyInfiniteSet.counting X y) 0 | doubleIsAddTwo (CountablyInfiniteSet.counting X x) | doubleIsAddTwo (CountablyInfiniteSet.counting X y) = applyEquality inl (Bijection.inj (CountablyInfiniteSet.countingIsBij X) inter)
   where
     inter : CountablyInfiniteSet.counting X x ≡ CountablyInfiniteSet.counting X y
     inter = doubleLemma (CountablyInfiniteSet.counting X x) (CountablyInfiniteSet.counting X y) pr
-Injection.property (Bijection.inj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y))) {inl x} {inr y} pr = exFalso (evenCannotBeOdd (CountablyInfiniteSet.counting X x) (CountablyInfiniteSet.counting Y y) pr)
-Injection.property (Bijection.inj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y))) {inr x} {inl y} pr = exFalso (evenCannotBeOdd (CountablyInfiniteSet.counting X y) (CountablyInfiniteSet.counting Y x) (equalityCommutative pr))
-Injection.property (Bijection.inj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y))) {inr x} {inr y} pr = applyEquality inr (Injection.property (Bijection.inj (CountablyInfiniteSet.countingIsBij Y)) (doubleLemma (CountablyInfiniteSet.counting Y x) (CountablyInfiniteSet.counting Y y) (succInjective pr) ))
-Surjection.property (Bijection.surj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y))) b with aMod2 b
-Surjection.property (Bijection.surj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y))) b | a , inl x with Surjection.property (Bijection.surj (CountablyInfiniteSet.countingIsBij X)) a
-Surjection.property (Bijection.surj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y))) b | a , inl x | r , pr = inl r , ans
+Bijection.inj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y)) {inl x} {inr y} pr = exFalso (evenCannotBeOdd (CountablyInfiniteSet.counting X x) (CountablyInfiniteSet.counting Y y) pr)
+Bijection.inj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y)) {inr x} {inl y} pr = exFalso (evenCannotBeOdd (CountablyInfiniteSet.counting X y) (CountablyInfiniteSet.counting Y x) (equalityCommutative pr))
+Bijection.inj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y)) {inr x} {inr y} pr = applyEquality inr (Bijection.inj (CountablyInfiniteSet.countingIsBij Y) (doubleLemma (CountablyInfiniteSet.counting Y x) (CountablyInfiniteSet.counting Y y) (succInjective pr) ))
+Bijection.surj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y)) b with aMod2 b
+Bijection.surj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y)) b | a , inl x with Bijection.surj (CountablyInfiniteSet.countingIsBij X) a
+Bijection.surj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y)) b | a , inl x | r , pr = inl r , ans
   where
     ans : 2 *N CountablyInfiniteSet.counting X r ≡ b
     ans rewrite pr = x
-Surjection.property (Bijection.surj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y))) b | a , inr x with Surjection.property (Bijection.surj (CountablyInfiniteSet.countingIsBij Y)) a
-Surjection.property (Bijection.surj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y))) b | a , inr x | r , pr = inr r , ans
+Bijection.surj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y)) b | a , inr x with Bijection.surj (CountablyInfiniteSet.countingIsBij Y) a
+Bijection.surj (CountablyInfiniteSet.countingIsBij (pairUnionIsCountable X Y)) b | a , inr x | r , pr = inr r , ans
   where
     ans : succ (2 *N CountablyInfiniteSet.counting Y r) ≡ b
     ans rewrite pr = x
@@ -92,17 +92,17 @@ reflPair : {a b : _} {A : Set a} {B : Set b} {x1 x2 : A} {y1 y2 : B} → (x1 ≡
 reflPair refl refl = refl
 
 bijectionOfCountableSetIsCountable : {a b : _} {A : Set a} {B : Set b} → (X : CountablyInfiniteSet A) {f : A → B} → (bij : Bijection f) → CountablyInfiniteSet B
-CountablyInfiniteSet.counting (bijectionOfCountableSetIsCountable X {f} record { inj = inj ; surj = surj }) b with Surjection.property surj b
+CountablyInfiniteSet.counting (bijectionOfCountableSetIsCountable X {f} record { inj = inj ; surj = surj }) b with surj b
 CountablyInfiniteSet.counting (bijectionOfCountableSetIsCountable record { counting = counting ; countingIsBij = countingIsBij } {f} record { inj = inj ; surj = surj }) b | a , pr = counting a
-Injection.property (Bijection.inj (CountablyInfiniteSet.countingIsBij (bijectionOfCountableSetIsCountable X {f} record { inj = inj ; surj = surj }))) {m} {n} m=n with Surjection.property surj m
-Injection.property (Bijection.inj (CountablyInfiniteSet.countingIsBij (bijectionOfCountableSetIsCountable X {f} record { inj = inj ; surj = surj }))) {m} {n} m=n | a , b with Surjection.property surj n
-... | c , d = transitivity (equalityCommutative b) (transitivity (applyEquality f (Injection.property (Bijection.inj (CountablyInfiniteSet.countingIsBij X)) m=n)) d)
-Surjection.property (Bijection.surj (CountablyInfiniteSet.countingIsBij (bijectionOfCountableSetIsCountable X {f} record { inj = inj ; surj = surj }))) b with Surjection.property (Bijection.surj (CountablyInfiniteSet.countingIsBij X)) b
-Surjection.property (Bijection.surj (CountablyInfiniteSet.countingIsBij (bijectionOfCountableSetIsCountable X {f} record { inj = inj ; surj = surj }))) b | a , pr = f a , s
+Bijection.inj (CountablyInfiniteSet.countingIsBij (bijectionOfCountableSetIsCountable X {f} record { inj = inj ; surj = surj })) {m} {n} m=n with surj m
+Bijection.inj (CountablyInfiniteSet.countingIsBij (bijectionOfCountableSetIsCountable X {f} record { inj = inj ; surj = surj })) {m} {n} m=n | a , b with surj n
+... | c , d = transitivity (equalityCommutative b) (transitivity (applyEquality f (Bijection.inj (CountablyInfiniteSet.countingIsBij X) m=n)) d)
+Bijection.surj (CountablyInfiniteSet.countingIsBij (bijectionOfCountableSetIsCountable X {f} record { inj = inj ; surj = surj })) b with Bijection.surj (CountablyInfiniteSet.countingIsBij X) b
+Bijection.surj (CountablyInfiniteSet.countingIsBij (bijectionOfCountableSetIsCountable X {f} record { inj = inj ; surj = surj })) b | a , pr = f a , s
   where
     s : CountablyInfiniteSet.counting (bijectionOfCountableSetIsCountable X {f} record { inj = inj ; surj = surj }) (f a) ≡ b
-    s with Surjection.property surj (f a)
-    s | t , u = transitivity (applyEquality (CountablyInfiniteSet.counting X) (Injection.property inj u)) pr
+    s with surj (f a)
+    s | t , u = transitivity (applyEquality (CountablyInfiniteSet.counting X) (inj u)) pr
 
 N^2Countable : CountablyInfiniteSet (ℕ && ℕ)
 CountablyInfiniteSet.counting N^2Countable x = Invertible.inverse (bijectionImpliesInvertible (cantorBijection)) x
@@ -115,14 +115,14 @@ tupleLmap : {a b c : _} {A : Set a} {B : Set b} {C : Set c} → (f : A → C) �
 tupleLmap f (a ,, b) = (f a ,, b)
 
 bijectionOnRightOfProduct : {a b c : _} {A : Set a} {B : Set b} {C : Set c} → {f : B → C} → Bijection f → Bijection (tupleRmap {A = A} f)
-Injection.property (Bijection.inj (bijectionOnRightOfProduct {A = A} {B} {C} {f} bij)) {fst ,, snd} {fst₁ ,, snd₁} gx=gy rewrite firstEqualityOfPair gx=gy | Injection.property (Bijection.inj bij) (secondEqualityOfPair gx=gy) = refl
-Surjection.property (Bijection.surj (bijectionOnRightOfProduct {A = A} {B} {C} {f} bij)) (fst ,, snd) with Surjection.property (Bijection.surj bij) snd
-Surjection.property (Bijection.surj (bijectionOnRightOfProduct {A = A} {B} {C} {f} bij)) (fst ,, snd) | b , pr = (fst ,, b) , reflPair refl pr
+Bijection.inj (bijectionOnRightOfProduct {A = A} {B} {C} {f} bij) {fst ,, snd} {fst₁ ,, snd₁} gx=gy rewrite firstEqualityOfPair gx=gy | Bijection.inj bij (secondEqualityOfPair gx=gy) = refl
+Bijection.surj (bijectionOnRightOfProduct {A = A} {B} {C} {f} bij) (fst ,, snd) with Bijection.surj bij snd
+Bijection.surj (bijectionOnRightOfProduct {A = A} {B} {C} {f} bij) (fst ,, snd) | b , pr = (fst ,, b) , reflPair refl pr
 
 bijectionOnLeftOfProduct : {a b c : _} {A : Set a} {B : Set b} {C : Set c} → {f : A → C} → Bijection f → Bijection (tupleLmap {B = B} f)
-Injection.property (Bijection.inj (bijectionOnLeftOfProduct {A = A} {B} {C} {f} bij)) {a ,, b} {c ,, d} gx=gy rewrite secondEqualityOfPair gx=gy | Injection.property (Bijection.inj bij) (firstEqualityOfPair gx=gy) = refl
-Surjection.property (Bijection.surj (bijectionOnLeftOfProduct {A = A} {B} {C} {f} bij)) (fst ,, snd) with Surjection.property (Bijection.surj bij) fst
-Surjection.property (Bijection.surj (bijectionOnLeftOfProduct {A = A} {B} {C} {f} bij)) (fst ,, snd) | a , b = (a ,, snd) , reflPair b refl
+Bijection.inj (bijectionOnLeftOfProduct {A = A} {B} {C} {f} bij) {a ,, b} {c ,, d} gx=gy rewrite secondEqualityOfPair gx=gy | Bijection.inj bij (firstEqualityOfPair gx=gy) = refl
+Bijection.surj (bijectionOnLeftOfProduct {A = A} {B} {C} {f} bij) (fst ,, snd) with Bijection.surj bij fst
+Bijection.surj (bijectionOnLeftOfProduct {A = A} {B} {C} {f} bij) (fst ,, snd) | a , b = (a ,, snd) , reflPair b refl
 
 pairProductIsCountable : {a b : _} {A : Set a} {B : Set b} → (X : CountablyInfiniteSet A) → (Y : CountablyInfiniteSet B) → CountablyInfiniteSet (A && B)
 pairProductIsCountable {A = A} {B = B} X Y = bijectionOfCountableSetIsCountable N^2Countable {(tupleLmap m) ∘ (tupleRmap n)} bijF
