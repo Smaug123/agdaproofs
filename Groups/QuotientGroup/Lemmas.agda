@@ -1,12 +1,8 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
 open import Functions
-open import LogicalFormulae
 open import Groups.Definition
-open import Groups.Groups
-open import Groups.FiniteGroups.Definition
 open import Groups.Homomorphisms.Definition
-open import Groups.Abelian.Definition
 open import Setoids.Setoids
 open import Sets.EquivalenceRelations
 open import Groups.Lemmas

@@ -1,23 +1,15 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import LogicalFormulae
-open import Groups.Groups
 open import Groups.Abelian.Definition
-open import Groups.Homomorphisms.Definition
 open import Groups.Definition
 open import Groups.Abelian.Definition
-open import Numbers.Naturals.Naturals
 open import Numbers.Integers.Integers
-open import Setoids.Orders
 open import Setoids.Setoids
-open import Functions
 open import Sets.EquivalenceRelations
-open import Rings.Definition
 open import Modules.Definition
 open import Groups.Cyclic.Definition
 open import Groups.Cyclic.DefinitionLemmas
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Modules.Examples where
 

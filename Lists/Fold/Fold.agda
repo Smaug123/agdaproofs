@@ -1,7 +1,5 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import LogicalFormulae
-open import Functions
 open import Lists.Definition
 
 module Lists.Fold.Fold {a b : _} {A : Set a} {B : Set b} where

@@ -1,20 +1,17 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Setoids.Orders
 open import Setoids.Setoids
 open import Sets.EquivalenceRelations
 open import Rings.IntegralDomains.Definition
 open import Rings.Definition
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Rings.Irreducibles.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} (intDom : IntegralDomain R) where
 
 open import Rings.Irreducibles.Definition intDom
 open import Rings.Divisible.Definition R
 open import Rings.Units.Definition R
-open import Rings.Associates.Definition intDom
 
 open Setoid S
 open Equivalence eq

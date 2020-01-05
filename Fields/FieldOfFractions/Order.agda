@@ -1,22 +1,17 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Groups.Groups
 open import Groups.Definition
-open import Groups.Lemmas
 open import Rings.Definition
 open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
 open import Rings.Orders.Total.Lemmas
-open import Rings.Lemmas
 open import Rings.IntegralDomains.Definition
-open import Fields.Fields
 open import Functions
 open import Setoids.Setoids
 open import Setoids.Orders
 open import Sets.EquivalenceRelations
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Fields.FieldOfFractions.Order {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} {pRing : PartiallyOrderedRing R pOrder} (I : IntegralDomain R) (order : TotallyOrderedRing pRing) where
 

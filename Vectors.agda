@@ -3,7 +3,6 @@
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
-open import Functions
 open import Semirings.Definition
 open import Orders.Total.Definition
 open import Lists.Lists

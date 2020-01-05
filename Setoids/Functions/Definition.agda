@@ -1,9 +1,7 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import LogicalFormulae
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
-open import Setoids.Subset
 
 module Setoids.Functions.Definition {a b c d : _} {A : Set a} {B : Set b} where
 

@@ -1,17 +1,12 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
-open import Functions
-open import LogicalFormulae
 open import Groups.Definition
 open import Groups.Groups
-open import Groups.FiniteGroups.Definition
 open import Groups.Homomorphisms.Definition
 open import Setoids.Setoids
 open import Sets.EquivalenceRelations
 open import Groups.Lemmas
 open import Groups.Homomorphisms.Lemmas
-open import Groups.Subgroups.Definition
-open import Groups.Subgroups.Normal.Definition
 
 module Groups.QuotientGroup.Definition {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_·A_ : A → A → A} {_·B_ : B → B → B} (G : Group S _·A_) {H : Group T _·B_} {f : A → B} (fHom : GroupHom G H f) where
 

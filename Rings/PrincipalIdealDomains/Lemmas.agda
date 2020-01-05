@@ -7,7 +7,6 @@ open import Rings.Definition
 open import Rings.PrincipalIdealDomains.Definition
 open import Rings.IntegralDomains.Definition
 open import Rings.Ideals.Maximal.Definition
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Rings.PrincipalIdealDomains.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} (intDom : IntegralDomain R) (pid : {c : _} → PrincipalIdealDomain intDom {c}) where
 
@@ -26,7 +25,6 @@ open import Rings.Primes.Definition intDom
 open import Rings.Primes.Lemmas intDom
 open import Rings.Ideals.Principal.Lemmas R
 open import Rings.Ideals.Maximal.Lemmas {R = R}
-open import Rings.UniqueFactorisationDomains.Definition intDom
 
 open Ring R
 open Setoid S

@@ -1,6 +1,5 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
 open import Numbers.Naturals.Definition
 

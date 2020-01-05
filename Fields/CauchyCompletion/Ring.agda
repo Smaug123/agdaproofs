@@ -1,13 +1,10 @@
 {-# OPTIONS --safe --warning=error --without-K --guardedness #-}
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
 open import Rings.Definition
-open import Rings.Lemmas
 open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
 open import Groups.Definition
-open import Groups.Groups
 open import Groups.Lemmas
 open import Fields.Fields
 open import Sets.EquivalenceRelations
@@ -17,7 +14,6 @@ open import Functions
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
-open import Numbers.Naturals.Order.Lemmas
 
 module Fields.CauchyCompletion.Ring {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
 
@@ -29,7 +25,6 @@ open PartiallyOrderedRing pRing
 open Field F
 open Group (Ring.additiveGroup R)
 
-open import Rings.Orders.Partial.Lemmas pRing
 open import Rings.Orders.Total.Lemmas order
 open import Fields.CauchyCompletion.Definition order F
 open import Fields.CauchyCompletion.Multiplication order F charNot2

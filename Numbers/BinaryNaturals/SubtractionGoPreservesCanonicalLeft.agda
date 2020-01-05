@@ -2,7 +2,6 @@
 
 open import LogicalFormulae
 open import Lists.Lists
-open import Numbers.Naturals.Naturals
 open import Numbers.BinaryNaturals.Definition
 open import Maybe
 open import Numbers.BinaryNaturals.SubtractionGo

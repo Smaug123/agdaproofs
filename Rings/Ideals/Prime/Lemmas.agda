@@ -1,19 +1,15 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Groups.Groups
-open import Groups.Lemmas
 open import Groups.Definition
 open import Setoids.Setoids
 open import Rings.Definition
 open import Sets.EquivalenceRelations
 open import Rings.Ideals.Definition
 open import Rings.IntegralDomains.Definition
-open import Rings.IntegralDomains.Lemmas
 open import Rings.Ideals.Prime.Definition
 open import Rings.Cosets
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Rings.Ideals.Prime.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} {c : _} {pred : A → Set c} (i : Ideal R pred) where
 

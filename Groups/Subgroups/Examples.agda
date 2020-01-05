@@ -3,9 +3,6 @@
 open import LogicalFormulae
 open import Setoids.Setoids
 open import Sets.EquivalenceRelations
-open import Functions
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals.Naturals
 open import Groups.Definition
 
 module Groups.Subgroups.Examples {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} (G : Group S _+_) where

@@ -1,7 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Groups.Groups
 open import Groups.Lemmas
 open import Groups.Definition
 open import Rings.Definition
@@ -16,7 +15,6 @@ open import Sets.EquivalenceRelations
 open import Fields.Fields
 open import Fields.Orders.Total.Definition
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Fields.Orders.Lemmas {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {_} {o} A} {R : Ring S _+_ _*_} {pOrder : SetoidPartialOrder S _<_} {F : Field R} {pRing : PartiallyOrderedRing R pOrder} (oF : TotallyOrderedField F pRing) where
 

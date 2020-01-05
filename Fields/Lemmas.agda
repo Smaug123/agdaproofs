@@ -1,18 +1,11 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
 open import Rings.Definition
-open import Rings.Lemmas
-open import Rings.Orders.Total.Definition
 open import Groups.Definition
-open import Groups.Groups
 open import Fields.Fields
 open import Sets.EquivalenceRelations
-open import Setoids.Orders
-open import Functions
 open import LogicalFormulae
-open import Numbers.Naturals.Naturals
 open import Rings.IntegralDomains.Definition
 
 module Fields.Lemmas {m n : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} (F : Field R) where
