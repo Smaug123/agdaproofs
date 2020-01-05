@@ -1,6 +1,5 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import LogicalFormulae
 open import Setoids.Setoids
 open import Rings.Definition
 open import Rings.IntegralDomains.Definition

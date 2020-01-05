@@ -3,14 +3,11 @@
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
 open import Rings.Definition
-open import Rings.Lemmas
 open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
 open import Groups.Definition
-open import Groups.Groups
 open import Groups.Lemmas
 open import Fields.Fields
-open import Fields.Orders.Total.Definition
 open import Sets.EquivalenceRelations
 open import Sequences
 open import Setoids.Orders

@@ -2,11 +2,7 @@
 
 open import LogicalFormulae
 open import Setoids.Setoids
-open import Functions
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals.Naturals
 open import Groups.Definition
-open import Sets.EquivalenceRelations
 
 module Groups.DirectSum.Definition {m n o p : _} {A : Set m} {S : Setoid {m} {o} A} {_·A_ : A → A → A} {B : Set n} {T : Setoid {n} {p} B} {_·B_ : B → B → B} (G : Group S _·A_) (H : Group T _·B_) where
 

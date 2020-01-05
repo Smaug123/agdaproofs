@@ -2,16 +2,11 @@
 
 open import LogicalFormulae
 open import Setoids.Setoids
-open import Setoids.DirectSum
-open import Functions
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals.Naturals
 open import Groups.Definition
 open import Sets.EquivalenceRelations
 open import Groups.Abelian.Definition
 open import Groups.Homomorphisms.Definition
 open import Groups.DirectSum.Definition
-open import Groups.Subgroups.Definition
 open import Groups.Isomorphisms.Definition
 
 module Groups.Abelian.Lemmas where

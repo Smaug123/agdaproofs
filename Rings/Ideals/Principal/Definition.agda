@@ -1,10 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import LogicalFormulae
-open import Setoids.Orders
 open import Setoids.Setoids
-open import Functions
-open import Sets.EquivalenceRelations
 open import Rings.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)

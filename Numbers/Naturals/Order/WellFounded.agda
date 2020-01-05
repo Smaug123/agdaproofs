@@ -1,13 +1,10 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Orders.WellFounded.Definition
-open import Functions
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Semirings.Definition
-open import Orders.Total.Definition
 
 module Numbers.Naturals.Order.WellFounded where
 open Semiring ℕSemiring

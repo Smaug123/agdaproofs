@@ -1,18 +1,14 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Groups.Groups
 open import Groups.Cosets
 open import Groups.Homomorphisms.Definition
 open import Rings.Homomorphisms.Definition
 open import Groups.Lemmas
 open import Groups.Definition
 open import Setoids.Setoids
-open import Setoids.Subset
-open import Setoids.Functions.Definition
 open import Setoids.Functions.Lemmas
 open import Rings.Definition
-open import Rings.Lemmas
 open import Sets.EquivalenceRelations
 open import Rings.Ideals.Definition
 open import Fields.Fields
@@ -28,7 +24,6 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Rings.Ideals.Maximal.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} {c : _} {pred : A → Set c} (i : Ideal R pred)  where
 
-open import Rings.Divisible.Definition R
 
 open Ring R
 open Group additiveGroup

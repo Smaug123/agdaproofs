@@ -1,14 +1,11 @@
 {-# OPTIONS --safe --warning=error --without-K --guardedness #-}
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
 open import Rings.Definition
-open import Rings.Lemmas
 open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
 open import Groups.Definition
 open import Groups.Lemmas
-open import Groups.Groups
 open import Fields.Fields
 open import Sets.EquivalenceRelations
 open import Sequences

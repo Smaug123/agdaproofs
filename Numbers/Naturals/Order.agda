@@ -2,7 +2,6 @@
 
 open import LogicalFormulae
 open import Semirings.Definition
-open import Numbers.Naturals.Definition
 open import Numbers.Naturals.Semiring
 open import Orders.Total.Definition
 open import Orders.Partial.Definition

@@ -1,13 +1,11 @@
 {-# OPTIONS --safe --warning=error --without-K --guardedness #-}
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
 open import Rings.Definition
 open import Rings.Lemmas
 open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
 open import Groups.Definition
-open import Groups.Groups
 open import Groups.Lemmas
 open import Fields.Fields
 open import Sets.EquivalenceRelations
@@ -37,7 +35,6 @@ open import Rings.Orders.Total.Lemmas order
 open import Rings.Orders.Partial.Lemmas pRing
 open import Fields.CauchyCompletion.Definition order F
 open import Fields.CauchyCompletion.Addition order F charNot2
-open import Fields.CauchyCompletion.Setoid order F charNot2
 open import Fields.CauchyCompletion.Comparison order F charNot2
 
 abstract

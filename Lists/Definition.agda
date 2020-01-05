@@ -1,7 +1,5 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import LogicalFormulae
-open import Functions
 
 module Lists.Definition {a : _} where
 

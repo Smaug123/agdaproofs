@@ -1,18 +1,11 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
 open import Functions
-open import LogicalFormulae
-open import Groups.Definition
-open import Groups.Groups
-open import Groups.FiniteGroups.Definition
 open import Rings.Homomorphisms.Definition
 open import Groups.Homomorphisms.Definition
-open import Groups.Abelian.Definition
 open import Setoids.Setoids
 open import Rings.Definition
-open import Fields.FieldOfFractions.Setoid
 open import Sets.EquivalenceRelations
-open import Groups.Lemmas
 open import Groups.QuotientGroup.Definition
 
 module Rings.Quotients.Definition {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+A_ _*A_ : A → A → A} {_+B_ _*B_ : B → B → B} (R : Ring S _+A_ _*A_) (R2 : Ring T _+B_ _*B_) {underf : A → B} (f : RingHom R R2 underf) where

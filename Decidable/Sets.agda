@@ -1,7 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Decidable.Sets where
 

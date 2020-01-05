@@ -1,20 +1,12 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
 open import Functions
-open import LogicalFormulae
 open import Groups.Definition
-open import Groups.Groups
-open import Groups.FiniteGroups.Definition
 open import Rings.Homomorphisms.Definition
-open import Groups.Homomorphisms.Definition
-open import Groups.Abelian.Definition
 open import Setoids.Setoids
 open import Rings.Definition
-open import Fields.FieldOfFractions.Setoid
 open import Sets.EquivalenceRelations
 open import Groups.Lemmas
-open import Groups.Subgroups.Definition
-open import Groups.QuotientGroup.Definition
 open import Rings.Ideals.Definition
 
 module Rings.Cosets {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} (R : Ring S _+_ _*_) {pred : A → Set c} (ideal : Ideal R pred) where

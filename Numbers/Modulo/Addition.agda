@@ -3,16 +3,8 @@
 -- a natural together with a proof that it is small.
 
 open import LogicalFormulae
-open import Groups.Definition
-open import Groups.Groups
-open import Groups.Abelian.Definition
-open import Groups.FiniteGroups.Definition
 open import Numbers.Naturals.Semiring
-open import Numbers.Naturals.Naturals
 open import Numbers.Naturals.Order
-open import Setoids.Setoids
-open import Sets.FinSet.Definition
-open import Functions
 open import Semirings.Definition
 open import Orders.Total.Definition
 open import Numbers.Modulo.Definition

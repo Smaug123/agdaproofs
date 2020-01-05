@@ -1,13 +1,10 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
-open import Orders.WellFounded.Induction
 open import LogicalFormulae
-open import Functions
 open import Lists.Lists
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.Lemmas
 open import Numbers.Naturals.Semiring
-open import Groups.Definition
 open import Numbers.BinaryNaturals.Definition
 open import Orders.Total.Definition
 open import Semirings.Definition

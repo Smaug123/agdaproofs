@@ -1,10 +1,7 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Functions
 open import Numbers.Naturals.Semiring -- for length
-open import Numbers.Naturals.Order
-open import Semirings.Definition
 open import Lists.Definition
 open import Lists.Fold.Fold
 

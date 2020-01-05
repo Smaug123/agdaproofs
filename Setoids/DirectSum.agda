@@ -1,7 +1,5 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import Functions
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
 open import Sets.EquivalenceRelations
 open import Setoids.Setoids

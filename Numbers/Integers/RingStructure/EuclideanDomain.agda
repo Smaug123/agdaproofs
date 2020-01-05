@@ -9,9 +9,6 @@ open import Numbers.Integers.Order
 open import Numbers.Integers.RingStructure.Ring
 open import Numbers.Integers.RingStructure.IntegralDomain
 open import Semirings.Definition
-open import Groups.Definition
-open import Rings.Definition
-open import Setoids.Setoids
 open import Rings.EuclideanDomains.Definition
 open import Orders.Total.Definition
 open import Numbers.Naturals.EuclideanAlgorithm

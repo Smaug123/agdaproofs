@@ -2,7 +2,6 @@
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-open import LogicalFormulae
 open import Functions
 
 module Sets.EquivalenceRelations where

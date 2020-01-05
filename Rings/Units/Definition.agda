@@ -2,10 +2,7 @@
 
 open import LogicalFormulae
 open import Setoids.Setoids
-open import Functions
-open import Sets.EquivalenceRelations
 open import Rings.Definition
-open import Rings.Homomorphisms.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 

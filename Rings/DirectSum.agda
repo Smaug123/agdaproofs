@@ -1,18 +1,10 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Groups.Groups
-open import Groups.Homomorphisms.Definition
 open import Groups.DirectSum.Definition
-open import Groups.Definition
-open import Numbers.Naturals.Naturals
-open import Setoids.Orders
 open import Setoids.Setoids
-open import Functions
-open import Sets.EquivalenceRelations
 open import Rings.Definition
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Rings.DirectSum {a b c d : _} {A : Set a} {S : Setoid {a} {b} A} {_+1_ : A → A → A} {_*1_ : A → A → A} {C : Set c} {T : Setoid {c} {d} C} {_+2_ : C → C → C} {_*2_ : C → C → C} (R1 : Ring S _+1_ _*1_) (R2 : Ring T _+2_ _*2_) where
 

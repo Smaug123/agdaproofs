@@ -1,11 +1,6 @@
 {-# OPTIONS --warning=error --without-K --safe #-}
 
 open import LogicalFormulae
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals.Naturals
-open import Numbers.Naturals.Order
-open import Vectors
-open import Semirings.Definition
 open import Categories.Definition
 open import Categories.Functor.Definition
 

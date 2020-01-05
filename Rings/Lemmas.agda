@@ -1,14 +1,11 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Functions
-open import Groups.Groups
 open import Groups.Abelian.Definition
 open import Groups.Definition
 open import Groups.Lemmas
 open import Rings.Definition
 open import Setoids.Setoids
-open import Setoids.Orders
 open import Sets.EquivalenceRelations
 
 module Rings.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} (R : Ring S _+_ _*_) where

@@ -1,7 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Numbers.Naturals.Naturals
 open import Lists.Lists
 open import Setoids.Setoids
 open import Functions
