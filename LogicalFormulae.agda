@@ -15,7 +15,6 @@ data False' {a : _} : Set a where
 
 record True : Set where
 record True' {a : _} : Set a where
-record Unit : Set where
 
 infix 10 _||_
 data _||_ {a b} (A : Set a) (B : Set b) : Set (a ⊔ b) where
@@ -67,7 +66,7 @@ identityOfIndiscernablesRight {a = a} {b} {.b} prop prAB refl = prAB
 equalityCommutative : {a : _} {A : Set a} {x y : A} → (x ≡ y) → (y ≡ x)
 equalityCommutative refl = refl
 
-exFalso : {n : _} {A : Set n} → False → A
+exFalso : {n : _} {A : Set n} → .(x : False) → A
 exFalso {a} = λ ()
 
 orIsAssociative : {n : _} {a b c : Set n} → ((a || b) || c) → (a || (b || c))
@@ -93,6 +92,10 @@ not BoolFalse = BoolTrue
 boolAnd : Bool → Bool → Bool
 boolAnd BoolTrue y = y
 boolAnd BoolFalse y = BoolFalse
+
+boolOr : Bool → Bool → Bool
+boolOr BoolTrue y = BoolTrue
+boolOr BoolFalse y = y
 
 typeCast : {a : _} {A : Set a} {B : Set a} (el : A) (pr : A ≡ B) → B
 typeCast {a} {A} {.A} elt refl = elt

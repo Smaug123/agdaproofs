@@ -1,7 +1,8 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Orders
+open import Orders.Total.Definition
+open import Orders.Partial.Definition
 open import Setoids.Setoids
 open import Functions
 
@@ -33,10 +34,10 @@ record SetoidTotalOrder {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_<_ : Re
   max a b | inl (inr b<a) = a
   max a b | inr a=b = b
 
-partialOrderToSetoidPartialOrder : {a b : _} {A : Set a} (P : PartialOrder {a} {b} A) → SetoidPartialOrder (reflSetoid A) (PartialOrder._<_ P)
+partialOrderToSetoidPartialOrder : {a b : _} {A : Set a} (P : PartialOrder {a} A {b}) → SetoidPartialOrder (reflSetoid A) (PartialOrder._<_ P)
 SetoidPartialOrder.<WellDefined (partialOrderToSetoidPartialOrder P) a=b c=d a<c rewrite a=b | c=d = a<c
 SetoidPartialOrder.irreflexive (partialOrderToSetoidPartialOrder P) = PartialOrder.irreflexive P
 SetoidPartialOrder.<Transitive (partialOrderToSetoidPartialOrder P) = PartialOrder.<Transitive P
 
-totalOrderToSetoidTotalOrder : {a b : _} {A : Set a} (T : TotalOrder {a} {b} A) → SetoidTotalOrder (partialOrderToSetoidPartialOrder (TotalOrder.order T))
+totalOrderToSetoidTotalOrder : {a b : _} {A : Set a} (T : TotalOrder {a} A {b}) → SetoidTotalOrder (partialOrderToSetoidPartialOrder (TotalOrder.order T))
 SetoidTotalOrder.totality (totalOrderToSetoidTotalOrder T) = TotalOrder.totality T

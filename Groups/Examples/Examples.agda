@@ -10,7 +10,9 @@ open import Setoids.Setoids
 open import LogicalFormulae
 open import Sets.FinSet
 open import Functions
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Definition
+open import Numbers.Naturals.Order
+open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.WithK
 open import Numbers.Modulo.Definition
 open import Numbers.Modulo.Addition
@@ -54,7 +56,7 @@ CyclicGroup.cyclic ℤCyclic {negSucc x} = (negSucc x , ans)
 
 elementPowZn : (n : ℕ) → {pr : 0 <N succ (succ n)} → (power : ℕ) → (powerLess : power <N succ (succ n)) → {p : 1 <N succ (succ n)} → elementPower (ℤnGroup (succ (succ n)) pr) (record { x = 1 ; xLess = p }) (nonneg power) ≡ record { x = power ; xLess = powerLess }
 elementPowZn n zero powerLess = equalityZn _ _ refl
-elementPowZn n {pr} (succ power) powerLess {p} with orderIsTotal (ℤn.x (elementPower (ℤnGroup (succ (succ n)) pr) (record { x = 1 ; xLess = p }) (nonneg power))) (succ n)
+elementPowZn n {pr} (succ power) powerLess {p} with TotalOrder.totality ℕTotalOrder (ℤn.x (elementPower (ℤnGroup (succ (succ n)) pr) (record { x = 1 ; xLess = p }) (nonneg power))) (succ n)
 elementPowZn n {pr} (succ power) powerLess {p} | inl (inl x) = equalityZn _ _ (applyEquality succ v)
   where
     t : elementPower (ℤnGroup (succ (succ n)) pr) (record { x = 1 ; xLess = succPreservesInequality (succIsPositive n) }) (nonneg power) ≡ record { x = power ; xLess = PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) (a<SuccA power) powerLess }
@@ -102,7 +104,7 @@ intoZn {succ n} {0<n} x x<n | record { quot = quot ; rem = rem ; pr = pr ; remIs
     ans rewrite multiplicationNIsCommutative n 0 = refl
 intoZn {succ n} {0<n} x x<n | record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = inr () ; quotSmall = quotSmall }
 
-quotientZn : (n : ℕ) → (pr : 0 <N n) → GroupIso (quotientGroup ℤGroup (modNExampleGroupHom n pr)) (ℤnGroup n pr) (mod n pr)
+quotientZn : (n : ℕ) → (pr : 0 <N n) → GroupIso (quotientGroupByHom ℤGroup (modNExampleGroupHom n pr)) (ℤnGroup n pr) (mod n pr)
 GroupHom.groupHom (GroupIso.groupHom (quotientZn n pr)) = GroupHom.groupHom (modNExampleGroupHom n pr)
 GroupHom.wellDefined (GroupIso.groupHom (quotientZn n pr)) {x} {y} x~y = need
   where
@@ -135,23 +137,3 @@ GroupHom.groupHom (trivialGroupHom {S = S} G) = symmetric identRight
     open Group G
     open Equivalence eq
 GroupHom.wellDefined (trivialGroupHom {S = S} G) _ = Equivalence.reflexive (Setoid.eq S)
-
-trivialSubgroupIsNormal : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+A_ : A → A → A} (G : Group S _+A_) → NormalSubgroup G trivialGroup (trivialGroupHom G)
-SetoidInjection.wellDefined (Subgroup.fInj (NormalSubgroup.subgroup (trivialSubgroupIsNormal {S = S} G))) {x} {.x} refl = Equivalence.reflexive (Setoid.eq S)
-SetoidInjection.injective (Subgroup.fInj (NormalSubgroup.subgroup (trivialSubgroupIsNormal G))) {fzero} {fzero} _ = refl
-SetoidInjection.injective (Subgroup.fInj (NormalSubgroup.subgroup (trivialSubgroupIsNormal G))) {fzero} {fsucc ()} _
-SetoidInjection.injective (Subgroup.fInj (NormalSubgroup.subgroup (trivialSubgroupIsNormal G))) {fsucc ()} {y} _
-NormalSubgroup.normal (trivialSubgroupIsNormal {S = S} {_+A_ = _+A_} G) = fzero , transitive (+WellDefined identRight reflexive) invRight
-  where
-    open Setoid S
-    open Group G
-    open Equivalence eq
-
-improperSubgroupIsNormal : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+A_ : A → A → A} (G : Group S _+A_) → NormalSubgroup G G (identityHom G)
-SetoidInjection.wellDefined (Subgroup.fInj (NormalSubgroup.subgroup (improperSubgroupIsNormal G))) {x} {y} x=y = x=y
-SetoidInjection.injective (Subgroup.fInj (NormalSubgroup.subgroup (improperSubgroupIsNormal G))) = id
-NormalSubgroup.normal (improperSubgroupIsNormal {S = S} {_+A_ = _+A_} G) {g} {h} =  ((g +A h) +A inverse g) , reflexive
-  where
-    open Group G
-    open Setoid S
-    open Equivalence eq

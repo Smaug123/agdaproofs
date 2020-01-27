@@ -1,13 +1,11 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Functions
-open import Groups.Groups
+open import Groups.Abelian.Definition
 open import Groups.Definition
 open import Groups.Lemmas
 open import Rings.Definition
 open import Setoids.Setoids
-open import Setoids.Orders
 open import Sets.EquivalenceRelations
 
 module Rings.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} (R : Ring S _+_ _*_) where
@@ -54,3 +52,6 @@ abstract
 
   charNot2ImpliesNontrivial : ((1R + 1R) ∼ 0R → False) → (0R ∼ 1R) → False
   charNot2ImpliesNontrivial charNot2 0=1 = charNot2 (Equivalence.transitive eq (+WellDefined (Equivalence.symmetric eq 0=1) (Equivalence.symmetric eq 0=1)) identRight)
+
+abelianUnderlyingGroup : AbelianGroup additiveGroup
+abelianUnderlyingGroup = record { commutative = groupIsAbelian }

@@ -2,21 +2,18 @@
 
 open import LogicalFormulae
 open import Setoids.Setoids
-open import Functions
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals.Naturals
-open import Sets.FinSet
 open import Groups.Definition
-open import Sets.EquivalenceRelations
 
-module Groups.DirectSum.Definition where
+module Groups.DirectSum.Definition {m n o p : _} {A : Set m} {S : Setoid {m} {o} A} {_·A_ : A → A → A} {B : Set n} {T : Setoid {n} {p} B} {_·B_ : B → B → B} (G : Group S _·A_) (H : Group T _·B_) where
 
-directSum : {m n o p : _} → {A : Set m} {S : Setoid {m} {o} A} {_·A_ : A → A → A} {B : Set n} {T : Setoid {n} {p} B} {_·B_ : B → B → B} (G : Group S _·A_) (h : Group T _·B_) → Group (directSumSetoid S T) (λ x1 y1 → (((_&&_.fst x1) ·A (_&&_.fst y1)) ,, ((_&&_.snd x1) ·B (_&&_.snd y1))))
-Group.+WellDefined (directSum {A = A} {B} g h) (s ,, t) (u ,, v) = Group.+WellDefined g s u ,, Group.+WellDefined h t v
-Group.0G (directSum {A = A} {B} g h) = (Group.0G g ,, Group.0G h)
-Group.inverse (directSum {A = A} {B} g h) (g1 ,, h1) = (Group.inverse g g1) ,, (Group.inverse h h1)
-Group.+Associative (directSum {A = A} {B} g h) = Group.+Associative g ,, Group.+Associative h
-Group.identRight (directSum {A = A} {B} g h) = Group.identRight g ,, Group.identRight h
-Group.identLeft (directSum {A = A} {B} g h) = Group.identLeft g ,, Group.identLeft h
-Group.invLeft (directSum {A = A} {B} g h) = Group.invLeft g ,, Group.invLeft h
-Group.invRight (directSum {A = A} {B} g h) = Group.invRight g ,, Group.invRight h
+open import Setoids.DirectSum S T
+
+directSumGroup : Group directSumSetoid (λ x1 y1 → (((_&&_.fst x1) ·A (_&&_.fst y1)) ,, ((_&&_.snd x1) ·B (_&&_.snd y1))))
+Group.+WellDefined directSumGroup (s ,, t) (u ,, v) = Group.+WellDefined G s u ,, Group.+WellDefined H t v
+Group.0G directSumGroup = (Group.0G G ,, Group.0G H)
+Group.inverse directSumGroup (g1 ,, H1) = (Group.inverse G g1) ,, (Group.inverse H H1)
+Group.+Associative directSumGroup = Group.+Associative G ,, Group.+Associative H
+Group.identRight directSumGroup = Group.identRight G ,, Group.identRight H
+Group.identLeft directSumGroup = Group.identLeft G ,, Group.identLeft H
+Group.invLeft directSumGroup = Group.invLeft G ,, Group.invLeft H
+Group.invRight directSumGroup = Group.invRight G ,, Group.invRight H

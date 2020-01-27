@@ -1,51 +1,49 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 
-open import LogicalFormulae
+open import Sets.EquivalenceRelations
 open import Setoids.Setoids
 open import Functions
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals
-open import Numbers.Integers
-open import Sets.FinSet
-open import Groups.GroupDefinition
-open import Groups.Groups
+open import Groups.Definition
+open import Groups.Homomorphisms.Definition
+open import Groups.Subgroups.Definition
+open import Groups.Subgroups.Normal.Definition
 
-module Groups.GroupCosets where
-  data GroupCoset {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+A_ : A → A → A} {_+B_ : B → B → B} {G : Group S _+A_} {H : Group T _+B_} {f : B → A} {fHom : GroupHom H G f} (subgrp : Subgroup G H fHom) : Set (a ⊔ b ⊔ c ⊔ d) where
-    cosetOfElt : (x : A) → GroupCoset subgrp
+module Groups.Cosets {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} (G : Group S _+_) {c : _} {pred : A → Set c} (subgrp : Subgroup G pred) where
 
-  groupCosetSetoid : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+A_ : A → A → A} {_+B_ : B → B → B} {G : Group S _+A_} {H : Group T _+B_} {f : B → A} {fHom : GroupHom H G f} (subgrp : Subgroup G H fHom) → Setoid (GroupCoset subgrp)
-  Setoid._∼_ (groupCosetSetoid {A = A} {S = S} {_+A_ = _+A_} {G = G} subgrp) (cosetOfElt x) (cosetOfElt y) = Sg (A && A) (λ p → x +A (_&&_.fst p) ∼ y +A (_&&_.snd p))
-    where
-      open Setoid S
-  Reflexive.reflexive (Equivalence.reflexiveEq (Setoid.eq (groupCosetSetoid {S = S} {G = G} subgrp))) {cosetOfElt x} = (identity ,, identity) , transitive (multIdentRight) (symmetric multIdentRight)
-    where
-      open Group G
-      open Setoid S
-      open Transitive (Equivalence.transitiveEq eq)
-      open Symmetric (Equivalence.symmetricEq eq)
-  Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq (groupCosetSetoid {S = S} subgrp))) {cosetOfElt x} {cosetOfElt y} ((xMul ,, yMul) , pr) = (yMul ,, xMul) , Symmetric.symmetric (Equivalence.symmetricEq (Setoid.eq S)) pr
-  Transitive.transitive (Equivalence.transitiveEq (Setoid.eq (groupCosetSetoid {S = S} {_+A_ = _+A_} {G = G} subgrp))) {cosetOfElt x} {cosetOfElt y} {cosetOfElt z} ((xMul ,, yMul) , pr) ((yMul' ,, zMul) , pr2) = (((xMul +A (inverse yMul)) +A yMul') ,, zMul) , transitive (transitive multAssoc (wellDefined (transitive multAssoc (transitive (wellDefined pr reflexive) (transitive (symmetric multAssoc) (transitive (wellDefined reflexive invRight) multIdentRight)))) reflexive)) pr2
-    where
-      open Group G
-      open Setoid S
-      open Transitive (Equivalence.transitiveEq eq)
-      open Reflexive (Equivalence.reflexiveEq eq)
-      open Symmetric (Equivalence.symmetricEq eq)
+open Equivalence (Setoid.eq S)
+open import Groups.Lemmas G
+open Group G
+open Subgroup subgrp
 
-  groupCosetBijection : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+A_ : A → A → A} {_+B_ : B → B → B} {G : Group S _+A_} {H : Group T _+B_} {f : B → A} {fHom : GroupHom H G f} (subgrp : Subgroup G H fHom) → SetoidsBiject T (groupCosetSetoid subgrp)
-  SetoidsBiject.bij (groupCosetBijection {f = f} subgrp) x = cosetOfElt (f x)
-  SetoidInjection.wellDefined (SetoidBijection.inj (SetoidsBiject.bijIsBijective (groupCosetBijection {S = S} {G = G} {fHom = fHom} subgrp))) x~y = (identity ,, identity) , transitive multIdentRight (transitive (GroupHom.wellDefined fHom x~y) (symmetric multIdentRight))
-    where
-      open Group G
-      open Setoid S
-      open Transitive (Equivalence.transitiveEq eq)
-      open Symmetric (Equivalence.symmetricEq eq)
-  SetoidInjection.injective (SetoidBijection.inj (SetoidsBiject.bijIsBijective (groupCosetBijection {S = S} {_+A_ = _+A_} {G = G} {f = f} subgrp))) {x} {y} ((xH ,, yH) , b) = {!!}
-  SetoidSurjection.wellDefined (SetoidBijection.surj (SetoidsBiject.bijIsBijective (groupCosetBijection {S = S} {G = G} {fHom = fHom} subgrp))) x~y = (identity ,, identity) , transitive multIdentRight (transitive (GroupHom.wellDefined fHom x~y) (symmetric multIdentRight))
-    where
-      open Group G
-      open Setoid S
-      open Transitive (Equivalence.transitiveEq eq)
-      open Symmetric (Equivalence.symmetricEq eq)
-  SetoidSurjection.surjective (SetoidBijection.surj (SetoidsBiject.bijIsBijective (groupCosetBijection subgrp))) {cosetOfElt x} = {!!}
+cosetSetoid : Setoid A
+Setoid._∼_ cosetSetoid g h = pred ((Group.inverse G h) + g)
+Equivalence.reflexive (Setoid.eq cosetSetoid) = isSubset (symmetric (Group.invLeft G)) containsIdentity
+Equivalence.symmetric (Setoid.eq cosetSetoid) yx = isSubset (transitive invContravariant (+WellDefined reflexive invInv)) (closedUnderInverse yx)
+Equivalence.transitive (Setoid.eq cosetSetoid) yx zy = isSubset (transitive +Associative (+WellDefined (transitive (symmetric +Associative) (transitive (+WellDefined reflexive invRight) identRight)) reflexive)) (closedUnderPlus zy yx)
+
+cosetGroup : normalSubgroup G subgrp → Group cosetSetoid _+_
+Group.+WellDefined (cosetGroup norm) {m} {n} {x} {y} m=x n=y = ans
+  where
+    t : pred (inverse y + n)
+    t = n=y
+    u : pred (inverse x + m)
+    u = m=x
+    v : pred (m + inverse x)
+    v = isSubset (+WellDefined reflexive (transitive (symmetric +Associative) (transitive (+WellDefined reflexive invRight) identRight))) (norm u)
+    ans' : pred ((inverse y) + ((inverse x + m) + inverse (inverse y)))
+    ans' = norm u
+    ans'' : pred ((inverse y) + ((inverse x + m) + y))
+    ans'' = isSubset (+WellDefined reflexive (+WellDefined reflexive (invTwice y))) ans'
+    ans : pred (inverse (x + y) + (m + n))
+    ans = isSubset (transitive (transitive +Associative (transitive (+WellDefined (transitive (symmetric +Associative) (transitive (+WellDefined reflexive (transitive (symmetric +Associative) (transitive (+WellDefined reflexive invRight) identRight))) +Associative)) reflexive) (symmetric +Associative))) (symmetric (+WellDefined invContravariant reflexive))) (closedUnderPlus ans'' t)
+Group.0G (cosetGroup norm) = 0G
+Group.inverse (cosetGroup norm) = inverse
+Group.+Associative (cosetGroup norm) {a} {b} {c} = isSubset (symmetric (transitive (+WellDefined (inverseWellDefined (symmetric +Associative)) reflexive) (invLeft {a + (b + c)}))) containsIdentity
+Group.identRight (cosetGroup norm) = isSubset (symmetric (transitive +Associative (transitive (+WellDefined invLeft reflexive) identRight))) containsIdentity
+Group.identLeft (cosetGroup norm) = isSubset (symmetric (transitive (+WellDefined reflexive identLeft) invLeft)) containsIdentity
+Group.invLeft (cosetGroup norm) = isSubset (symmetric (transitive (+WellDefined reflexive invLeft) invLeft)) containsIdentity
+Group.invRight (cosetGroup norm) = isSubset (symmetric (transitive (+WellDefined reflexive invRight) invLeft)) containsIdentity
+
+cosetGroupHom : (norm : normalSubgroup G subgrp) → GroupHom G (cosetGroup norm) id
+GroupHom.groupHom (cosetGroupHom norm) = isSubset (symmetric (transitive (+WellDefined invContravariant reflexive) (transitive +Associative (transitive (+WellDefined (transitive (symmetric +Associative) (+WellDefined reflexive invLeft)) reflexive) (transitive (+WellDefined identRight reflexive) invLeft))))) (Subgroup.containsIdentity subgrp)
+GroupHom.wellDefined (cosetGroupHom norm) {x} {y} x=y = isSubset (symmetric (transitive (+WellDefined reflexive x=y) invLeft)) (Subgroup.containsIdentity subgrp)

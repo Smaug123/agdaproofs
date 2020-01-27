@@ -1,10 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import LogicalFormulae
 open import Setoids.Setoids
-open import Functions
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals.Naturals
 open import Groups.Definition
 open import Sets.EquivalenceRelations
 
@@ -140,3 +136,6 @@ invContravariant {x} {y} = ans
     otherInvIsInverse = transitive oneMult invRight
     ans : (x · y) ^-1 ∼ (y ^-1) · (x ^-1)
     ans = symmetric (leftInversesAreUnique otherInvIsInverse)
+
+equalsDoubleImpliesZero : {x : A} → (x · x) ∼ x → x ∼ 0G
+equalsDoubleImpliesZero 2x=x = transitive (symmetric identLeft) (transitive (+WellDefined (symmetric invLeft) reflexive) (transitive (symmetric +Associative) (transitive (+WellDefined reflexive 2x=x) invLeft)))

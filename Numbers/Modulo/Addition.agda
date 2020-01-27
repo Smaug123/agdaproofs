@@ -1,102 +1,49 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 -- These are explicitly with-K, because we currently encode an element of Zn as
 -- a natural together with a proof that it is small.
 
 open import LogicalFormulae
-open import Groups.Definition
-open import Groups.Groups
-open import Groups.Abelian.Definition
-open import Groups.FiniteGroups.Definition
-open import Numbers.Naturals.Naturals
-open import Numbers.Naturals.Addition -- TODO remove this dependency
-open import Numbers.Primes.PrimeNumbers
-open import Setoids.Setoids
-open import Sets.FinSet
-open import Sets.FinSetWithK
-open import Functions
-open import Numbers.Naturals.WithK
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
 open import Semirings.Definition
-open import Orders
+open import Orders.Total.Definition
 open import Numbers.Modulo.Definition
+open import Numbers.Modulo.ModuloFunction
+open import Numbers.Naturals.Order.Lemmas
 
 module Numbers.Modulo.Addition where
+open TotalOrder ℕTotalOrder
 
-cancelSumFromInequality : {a b c : ℕ} → a +N b <N a +N c → b <N c
-cancelSumFromInequality {a} {b} {c} (le x proof) = le x help
-  where
-    help : succ x +N b ≡ c
-    help rewrite Semiring.+Associative ℕSemiring (succ x) a b | Semiring.commutative ℕSemiring x a | equalityCommutative (Semiring.+Associative ℕSemiring (succ a) x b) | Semiring.commutative ℕSemiring a (x +N b) | Semiring.commutative ℕSemiring (succ (x +N b)) a = canSubtractFromEqualityLeft {a} proof
+_+n_ : {n : ℕ} .(pr : 0 <N n) → ℤn n pr → ℤn n pr → ℤn n pr
+_+n_ {n} pr a b = record { x = mod n pr (ℤn.x a +N ℤn.x b) ; xLess = mod<N pr _ }
 
-_+n_ : {n : ℕ} {pr : 0 <N n} → ℤn n pr → ℤn n pr → ℤn n pr
-_+n_ {0} {le x ()} a b
-_+n_ {succ n} {pr} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } with orderIsTotal (a +N b) (succ n)
-_+n_ {succ n} {pr} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inl (inl (a+b<n)) = record { x = a +N b ; xLess = a+b<n }
-_+n_ {succ n} {pr} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inl (inr (n<a+b)) = record { x = subtractionNResult.result sub ; xLess = pr2 }
-    where
-      sub : subtractionNResult (succ n) (a +N b) (inl n<a+b)
-      sub = -N (inl n<a+b)
-      pr1 : a +N b <N succ n +N succ n
-      pr1 = addStrongInequalities aLess bLess
-      pr1' : succ n +N (subtractionNResult.result sub) <N succ n +N succ n
-      pr1' rewrite subtractionNResult.pr sub = pr1
-      pr2 : subtractionNResult.result sub <N succ n
-      pr2 = cancelSumFromInequality pr1'
-_+n_ {succ n} {pr} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inr (a+b=n) = record { x = 0 ; xLess = succIsPositive n }
+plusZnIdentityRight : {n : ℕ} → .(pr : 0 <N n) → (a : ℤn n pr) → (_+n_ pr a record { x = 0 ; xLess = pr }) ≡ a
+plusZnIdentityRight 0<n record { x = x ; xLess = xLess } rewrite Semiring.sumZeroRight ℕSemiring x = equalityZn (modIsMod 0<n x (<NProp xLess))
 
-plusZnIdentityRight : {n : ℕ} → {pr : 0 <N n} → (a : ℤn n pr) → (a +n record { x = 0 ; xLess = pr }) ≡ a
-plusZnIdentityRight {zero} {()} a
-plusZnIdentityRight {succ x} {_} record { x = a ; xLess = aLess } with orderIsTotal (a +N 0) (succ x)
-plusZnIdentityRight {succ x} {_} record { x = a ; xLess = aLess } | inl (inl a<sx) = equalityZn _ _ (Semiring.commutative ℕSemiring a 0)
-plusZnIdentityRight {succ x} {_} record { x = a ; xLess = aLess } | inl (inr sx<a) = exFalso (f aLess sx<a)
-  where
-    f : (aL : a <N succ x) → (sx<a : succ x <N a +N 0) → False
-    f aL sx<a rewrite Semiring.commutative ℕSemiring a 0 = orderIsIrreflexive aL sx<a
-plusZnIdentityRight {succ x} {_} record { x = a ; xLess = aLess } | inr a=sx = exFalso (f aLess a=sx)
-  where
-    f : (aL : a <N succ x) → (a=sx : a +N 0 ≡ succ x) → False
-    f aL a=sx rewrite Semiring.commutative ℕSemiring a 0 | a=sx = TotalOrder.irreflexive ℕTotalOrder aL
+plusZnIdentityLeft : {n : ℕ} → .(pr : 0 <N n) → (a : ℤn n pr) → _+n_ pr (record { x = 0 ; xLess = pr }) a ≡ a
+plusZnIdentityLeft 0<n record { x = x ; xLess = xLess } = equalityZn (modIsMod 0<n x (<NProp xLess))
 
+plusZnCommutative : {n : ℕ} → .(pr : 0 <N n) → (a b : ℤn n pr) → _+n_ pr a b ≡ _+n_ pr b a
+plusZnCommutative {n} 0<n a b = equalityZn (applyEquality (mod n 0<n) (Semiring.commutative ℕSemiring (ℤn.x a) _))
 
-plusZnIdentityLeft : {n : ℕ} → {pr : 0 <N n} → (a : ℤn n pr) → (record { x = 0 ; xLess = pr }) +n a ≡ a
-plusZnIdentityLeft {zero} {()}
-plusZnIdentityLeft {succ n} {pr} record { x = x ; xLess = xLess } with orderIsTotal x (succ n)
-plusZnIdentityLeft {succ n} {pr} record { x = x ; xLess = xLess } | inl (inl x<succn) rewrite <NRefl x<succn xLess = refl
-plusZnIdentityLeft {succ n} {pr} record { x = x ; xLess = xLess } | inl (inr succn<x) = exFalso (TotalOrder.irreflexive ℕTotalOrder (TotalOrder.<Transitive ℕTotalOrder succn<x xLess))
-plusZnIdentityLeft {succ n} {pr} record { x = x ; xLess = xLess } | inr x=succn rewrite x=succn = exFalso (TotalOrder.irreflexive ℕTotalOrder xLess)
+plusZnAssociative' : {n : ℕ} → .(pr : 0 <N n) → {a b c : ℕ} → (a <N n) → (b <N n) → (c <N n) → mod n pr ((mod n pr (a +N b)) +N c) ≡ mod n pr (a +N (mod n pr (b +N c)))
+plusZnAssociative' 0<n {a} {b} {c} a<n b<n c<n with modAddition 0<n a<n b<n
+plusZnAssociative' {n} 0<n {a} {b} {c} a<n b<n c<n | inl a+b=mod with modAddition 0<n b<n c<n
+... | inl b+c=mod rewrite equalityCommutative (a+b=mod) | equalityCommutative (b+c=mod) = applyEquality (mod _ 0<n) (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
+... | inr b+c=n+mod rewrite equalityCommutative (a+b=mod) | equalityCommutative (modAnd+n 0<n (a +N mod _ 0<n (b +N c))) | Semiring.+Associative ℕSemiring n a (mod _ 0<n (b +N c)) | Semiring.commutative ℕSemiring n a | equalityCommutative (Semiring.+Associative ℕSemiring a n (mod _ 0<n (b +N c))) | equalityCommutative b+c=n+mod = applyEquality (mod _ 0<n) (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
+plusZnAssociative' 0<n {a} {b} {c} a<n b<n c<n | inr a+b=n+mod with modAddition 0<n b<n c<n
+plusZnAssociative' {n} 0<n {a} {b} {c} a<n b<n c<n | inr a+b=n+mod | inl b+c=mod rewrite equalityCommutative b+c=mod | equalityCommutative (modAnd+n 0<n (mod _ 0<n (a +N b) +N c)) | Semiring.+Associative ℕSemiring n (mod _ 0<n (a +N b)) c | equalityCommutative a+b=n+mod = applyEquality (mod _ 0<n) (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
+plusZnAssociative' {n} 0<n {a} {b} {c} a<n b<n c<n | inr a+b=n+mod | inr b+c=n+mod rewrite equalityCommutative (modAnd+n 0<n ((mod _ 0<n (a +N b)) +N c)) | equalityCommutative (modAnd+n 0<n (a +N mod _ 0<n (b +N c))) | Semiring.+Associative ℕSemiring n (mod _ 0<n (a +N b)) c | equalityCommutative (a+b=n+mod) | Semiring.commutative ℕSemiring a (mod n 0<n (b +N c)) | Semiring.+Associative ℕSemiring n (mod n 0<n (b +N c)) a | equalityCommutative b+c=n+mod | Semiring.commutative ℕSemiring (b +N c) a = applyEquality (mod _ 0<n) (equalityCommutative (Semiring.+Associative ℕSemiring a b c))
 
-subLemma : {a b c : ℕ} → (pr1 : a <N b) → (pr2 : a <N c) → (pr : b ≡ c) → (subtractionNResult.result (-N (inl pr1))) ≡ (subtractionNResult.result (-N (inl pr2)))
-subLemma {a} {b} {c} a<b a<c b=c rewrite b=c | <NRefl a<b a<c = refl
-
-plusZnCommutative : {n : ℕ} → {pr : 0 <N n} → (a b : ℤn n pr) → (a +n b) ≡ b +n a
-plusZnCommutative {zero} {()} a b
-plusZnCommutative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } with orderIsTotal (a +N b) (succ n)
-plusZnCommutative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inl (inl a+b<sn) with orderIsTotal (b +N a) (succ n)
-plusZnCommutative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inl (inl a+b<sn) | inl (inl b+a<sn) = equalityZn _ _ (Semiring.commutative ℕSemiring a b)
-plusZnCommutative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inl (inl a+b<sn) | inl (inr sn<b+a) = exFalso (f a+b<sn sn<b+a)
+plusZnAssociative : {n : ℕ} → .(pr : 0 <N n) → (a b c : ℤn n pr) → _+n_ pr (_+n_ pr a b) c ≡ _+n_ pr a (_+n_ pr b c)
+plusZnAssociative {succ n} 0<sn record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } record { x = c ; xLess = cLess } = equalityZn t
   where
-    f : (a +N b) <N succ n → succ n <N b +N a → False
-    f pr1 pr2 rewrite Semiring.commutative ℕSemiring b a = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive pr2 pr1)
-plusZnCommutative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inl (inl a+b<sn) | inr b+a=sn = exFalso (f a+b<sn b+a=sn)
-  where
-    f : (a +N b) <N succ n → b +N a ≡ succ n → False
-    f pr1 eq rewrite Semiring.commutative ℕSemiring b a | eq = TotalOrder.irreflexive ℕTotalOrder pr1
-plusZnCommutative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inl (inr sn<a+b) with orderIsTotal (b +N a) (succ n)
-plusZnCommutative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inl (inr sn<a+b) | inl (inl b+a<sn) = exFalso (f sn<a+b b+a<sn)
-  where
-    f : succ n <N a +N b → b +N a <N succ n → False
-    f pr1 pr2 rewrite Semiring.commutative ℕSemiring b a = TotalOrder.irreflexive ℕTotalOrder (orderIsTransitive sn<a+b b+a<sn)
-plusZnCommutative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inl (inr sn<a+b) | inl (inr sn<b+a) = equalityZn _ _ (subLemma sn<a+b sn<b+a (Semiring.commutative ℕSemiring a b))
-plusZnCommutative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inl (inr sn<a+b) | inr sn=b+a = exFalso (f sn<a+b sn=b+a)
-  where
-    f : succ n <N a +N b → b +N a ≡ succ n → False
-    f pr eq rewrite Semiring.commutative ℕSemiring b a | eq = TotalOrder.irreflexive ℕTotalOrder pr
-plusZnCommutative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inr sn=a+b with orderIsTotal (b +N a) (succ n)
-plusZnCommutative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inr sn=a+b | inl (inl b+a<sn) = exFalso f
-  where
-    f : False
-    f rewrite Semiring.commutative ℕSemiring b a | sn=a+b = TotalOrder.irreflexive ℕTotalOrder b+a<sn
-plusZnCommutative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inr sn=a+b | inl (inr sn<b+a) = exFalso f
-  where
-    f : False
-    f rewrite Semiring.commutative ℕSemiring b a | sn=a+b = TotalOrder.irreflexive ℕTotalOrder sn<b+a
-plusZnCommutative {succ n} {_} record { x = a ; xLess = aLess } record { x = b ; xLess = bLess } | inr sn=a+b | inr sn=b+a = equalityZn _ _ refl
+    ma = mod (succ n) 0<sn a
+    mb = mod (succ n) 0<sn b
+    mc = mod (succ n) 0<sn c
+    v : mod (succ n) 0<sn ((mod (succ n) 0<sn (ma +N mb)) +N mc) ≡ mod (succ n) 0<sn (ma +N mod (succ n) 0<sn (mb +N mc))
+    v = plusZnAssociative' 0<sn (mod<N 0<sn a) (mod<N 0<sn b) (mod<N 0<sn c)
+    u : mod (succ n) 0<sn ((mod (succ n) 0<sn (mod (succ n) 0<sn a +N (mod (succ n) 0<sn b))) +N c) ≡ mod (succ n) 0<sn (a +N mod (succ n) 0<sn ((mod (succ n) 0<sn b) +N (mod (succ n) 0<sn c)))
+    u rewrite equalityCommutative (modIsMod 0<sn c (<NProp cLess)) | equalityCommutative (modIsMod 0<sn a (<NProp aLess)) | modIdempotent 0<sn a | modIdempotent 0<sn c = v
+    t : mod (succ n) 0<sn (mod (succ n) 0<sn (a +N b) +N c) ≡ mod (succ n) 0<sn (a +N mod (succ n) 0<sn (b +N c))
+    t rewrite modExtracts {succ n} 0<sn a b | modExtracts {succ n} 0<sn b c = u

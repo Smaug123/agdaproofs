@@ -2,7 +2,6 @@
 
 open import LogicalFormulae
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module ClassicalLogic.ClassicalFive where
 

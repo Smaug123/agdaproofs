@@ -11,13 +11,11 @@ module Functions where
   _∘_ : {a b c : _} {A : Set a} {B : Set b} {C : Set c} → (f : B → C) → (g : A → B) → (A → C)
   g ∘ f = λ a → g (f a)
 
-  record Injection {a b : _} {A : Set a} {B : Set b} (f : A → B) : Set (a ⊔ b) where
-    field
-      property : {x y : A} → (f x ≡ f y) → x ≡ y
+  Injection : {a b : _} {A : Set a} {B : Set b} (f : A → B) → Set (a ⊔ b)
+  Injection {A = A} f = {x y : A} → (f x ≡ f y) → x ≡ y
 
-  record Surjection {a b : _} {A : Set a} {B : Set b} (f : A → B) : Set (a ⊔ b) where
-    field
-      property : (b : B) → Sg A (λ a → f a ≡ b)
+  Surjection : {a b : _} {A : Set a} {B : Set b} (f : A → B) → Set (a ⊔ b)
+  Surjection {A = A} {B = B} f = (b : B) → Sg A (λ a → f a ≡ b)
 
   record Bijection {a b : _} {A : Set a} {B : Set b} (f : A → B) : Set (a ⊔ b) where
     field
@@ -31,28 +29,28 @@ module Functions where
       isRight : (a : A) → inverse (f a) ≡ a
 
   invertibleImpliesBijection : {a b : _} {A : Set a} {B : Set b} {f : A → B} → Invertible f → Bijection f
-  Injection.property (Bijection.inj (invertibleImpliesBijection {a} {b} {A} {B} {f} record { inverse = inverse ; isLeft = isLeft ; isRight = isRight })) {x} {y} fx=fy = ans
+  Bijection.inj (invertibleImpliesBijection {a} {b} {A} {B} {f} record { inverse = inverse ; isLeft = isLeft ; isRight = isRight }) {x} {y} fx=fy = ans
     where
       bl : inverse (f x) ≡ inverse (f y)
       bl = applyEquality inverse fx=fy
       ans : x ≡ y
       ans rewrite equalityCommutative (isRight x) | equalityCommutative (isRight y) = bl
-  Surjection.property (Bijection.surj (invertibleImpliesBijection {a} {b} {A} {B} {f} record { inverse = inverse ; isLeft = isLeft ; isRight = isRight })) y = (inverse y , isLeft y)
+  Bijection.surj (invertibleImpliesBijection {a} {b} {A} {B} {f} record { inverse = inverse ; isLeft = isLeft ; isRight = isRight }) y = (inverse y , isLeft y)
 
   bijectionImpliesInvertible : {a b : _} {A : Set a} {B : Set b} {f : A → B} → Bijection f → Invertible f
-  Invertible.inverse (bijectionImpliesInvertible record { inj = inj ; surj = record { property = property } }) b = underlying (property b)
-  Invertible.isLeft (bijectionImpliesInvertible {f = f} record { inj = inj ; surj = surj }) b with Surjection.property surj b
+  Invertible.inverse (bijectionImpliesInvertible record { inj = inj ; surj = surj }) b = underlying (surj b)
+  Invertible.isLeft (bijectionImpliesInvertible {f = f} record { inj = inj ; surj = surj }) b with surj b
   Invertible.isLeft (bijectionImpliesInvertible {f = f} record { inj = inj ; surj = surj }) b | a , prop = prop
-  Invertible.isRight (bijectionImpliesInvertible {f = f} record { inj = inj ; surj = surj }) a with Surjection.property surj (f a)
-  Invertible.isRight (bijectionImpliesInvertible {f = f} record { inj = record { property = property } ; surj = surj }) a | a₁ , b = property b
+  Invertible.isRight (bijectionImpliesInvertible {f = f} record { inj = inj ; surj = surj }) a with surj (f a)
+  Invertible.isRight (bijectionImpliesInvertible {f = f} record { inj = property ; surj = surj }) a | a₁ , b = property b
 
   injComp : {a b c : _} {A : Set a} {B : Set b} {C : Set c} {f : A → B} {g : B → C} → Injection f → Injection g → Injection (g ∘ f)
-  Injection.property (injComp {f = f} {g} record { property = propF } record { property = propG }) pr = propF (propG pr)
+  injComp {f = f} {g} propF propG pr = propF (propG pr)
 
   surjComp : {a b c : _} {A : Set a} {B : Set b} {C : Set c} {f : A → B} {g : B → C} → Surjection f → Surjection g → Surjection (g ∘ f)
-  Surjection.property (surjComp {f = f} {g} record { property = propF } record { property = propG }) c with propG c
-  Surjection.property (surjComp {f = f} {g} record { property = propF } record { property = propG }) c | b , pr with propF b
-  Surjection.property (surjComp {f = f} {g} record { property = propF } record { property = propG }) c | b , pr | a , pr2 = a , pr'
+  surjComp {f = f} {g} propF propG c with propG c
+  surjComp {f = f} {g} propF propG c | b , pr with propF b
+  surjComp {f = f} {g} propF propG c | b , pr | a , pr2 = a , pr'
     where
       pr' : g (f a) ≡ c
       pr' rewrite pr2 = pr
@@ -62,18 +60,18 @@ module Functions where
   Bijection.surj (bijectionComp bijF bijG) = surjComp (Bijection.surj bijF) (Bijection.surj bijG)
 
   compInjRightInj : {a b c : _} {A : Set a} {B : Set b} {C : Set c} {f : A → B} {g : B → C} → Injection (g ∘ f) → Injection f
-  Injection.property (compInjRightInj {f = f} {g} record { property = property }) {x} {y} fx=fy = property (applyEquality g fx=fy)
+  compInjRightInj {f = f} {g} property {x} {y} fx=fy = property (applyEquality g fx=fy)
 
   compSurjLeftSurj : {a b c : _} {A : Set a} {B : Set b} {C : Set c} {f : A → B} {g : B → C} → Surjection (g ∘ f) → Surjection g
-  Surjection.property (compSurjLeftSurj {f = f} {g} record { property = property }) b with property b
-  Surjection.property (compSurjLeftSurj {f = f} {g} record { property = property }) b | a , b1 = f a , b1
+  compSurjLeftSurj {f = f} {g} property b with property b
+  compSurjLeftSurj {f = f} {g} property b | a , b1 = f a , b1
 
   injectionPreservedUnderExtensionalEq : {a b : _} {A : Set a} {B : Set b} {f g : A → B} → Injection f → ({x : A} → f x ≡ g x) → Injection g
-  Injection.property (injectionPreservedUnderExtensionalEq {A = A} {B} {f} {g} record { property = property } prop) {x} {y} gx=gy = property (transitivity (prop {x}) (transitivity gx=gy (equalityCommutative (prop {y}))))
+  injectionPreservedUnderExtensionalEq {A = A} {B} {f} {g} property prop {x} {y} gx=gy = property (transitivity (prop {x}) (transitivity gx=gy (equalityCommutative (prop {y}))))
 
   surjectionPreservedUnderExtensionalEq : {a b : _} {A : Set a} {B : Set b} {f g : A → B} → Surjection f → ({x : A} → f x ≡ g x) → Surjection g
-  Surjection.property (surjectionPreservedUnderExtensionalEq {f = f} {g} surj ext) b with (Surjection.property surj b)
-  Surjection.property (surjectionPreservedUnderExtensionalEq {f = f} {g} surj ext) b | a , pr = a , transitivity (equalityCommutative ext) pr
+  surjectionPreservedUnderExtensionalEq {f = f} {g} surj ext b with surj b
+  surjectionPreservedUnderExtensionalEq {f = f} {g} surj ext b | a , pr = a , transitivity (equalityCommutative ext) pr
 
   bijectionPreservedUnderExtensionalEq : {a b : _} {A : Set a} {B : Set b} {f g : A → B} → Bijection f → ({x : A} → f x ≡ g x) → Bijection g
   Bijection.inj (bijectionPreservedUnderExtensionalEq record { inj = inj ; surj = surj } ext) = injectionPreservedUnderExtensionalEq inj ext
@@ -88,8 +86,8 @@ module Functions where
   id a = a
 
   idIsBijective : {a : _} {A : Set a} → Bijection (id {a} {A})
-  Injection.property (Bijection.inj idIsBijective) pr = pr
-  Surjection.property (Bijection.surj idIsBijective) b = b , refl
+  Bijection.inj idIsBijective pr = pr
+  Bijection.surj idIsBijective b = b , refl
 
   functionCompositionExtensionallyAssociative : {a b c d : _} {A : Set a} {B : Set b} {C : Set c} {D : Set d} → (f : A → B) → (g : B → C) → (h : C → D) → (x : A) → (h ∘ (g ∘ f)) x ≡ ((h ∘ g) ∘ f) x
   functionCompositionExtensionallyAssociative f g h x = refl

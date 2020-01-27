@@ -4,13 +4,17 @@ open import LogicalFormulae
 open import Functions
 open import Groups.Groups
 open import Groups.Definition
-open import Orders
 open import Rings.Definition
+open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Order
+open import Numbers.Naturals.Order.Lemmas
 open import Numbers.Integers.Integers
 open import Numbers.Primes.PrimeNumbers
 open import Numbers.Modulo.Definition
 open import Numbers.Modulo.Group
+open import Numbers.Naturals.EuclideanAlgorithm
+open import Orders.Total.Definition
 
 module Rings.Examples.Proofs where
   nToZn' : (n : ℕ) (pr : 0 <N n) (x : ℕ) → ℤn n pr
@@ -25,29 +29,29 @@ module Rings.Examples.Proofs where
   mod' (succ n) pr (negSucc x) = Group.inverse (ℤnGroup (succ n) pr) (nToZn' (succ n) pr (succ x))
 
   subtractionEquiv : (a : ℕ) → {b c : ℕ} → (c<b : c <N b) → a +N c ≡ b → a ≡ subtractionNResult.result (-N (inl c<b))
-  subtractionEquiv 0 {b} {c} c<b pr rewrite pr = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) c<b)
+  subtractionEquiv 0 {b} {c} c<b pr rewrite pr = exFalso (TotalOrder.irreflexive ℕTotalOrder c<b)
   subtractionEquiv (succ a) {b} {c} c<b pr = equivalentSubtraction 0 b (succ a) c (succIsPositive a) c<b (equalityCommutative pr)
 
   modNExampleSurjective' : (n : ℕ) → (pr : 0 <N n) → Surjection (mod' n pr)
-  Surjection.property (modNExampleSurjective' zero ())
-  Surjection.property (modNExampleSurjective' (succ n) pr) record { x = x ; xLess = xLess } with divisionAlg (succ n) x
-  Surjection.property (modNExampleSurjective' (succ n) p) record { x = x ; xLess = xLess } | record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = inl remIsSmall ; quotSmall = q } = nonneg x , lhs'
+  modNExampleSurjective' zero ()
+  modNExampleSurjective' (succ n) pr record { x = x ; xLess = xLess } with divisionAlg (succ n) x
+  modNExampleSurjective' (succ n) p record { x = x ; xLess = xLess } | record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = inl remIsSmall ; quotSmall = q } = nonneg x , lhs'
     where
       rs' : rem ≡ x
-      rs' = modIsUnique (record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = inl remIsSmall ; quotSmall = q }) (record { quot = 0 ; rem = x ; pr = blah ; remIsSmall = inl xLess ; quotSmall = inl (succIsPositive n) })
+      rs' = modIsUnique (record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = inl remIsSmall ; quotSmall = q }) (record { quot = 0 ; rem = x ; pr = blah ; remIsSmall = inl (<NProp xLess) ; quotSmall = inl (succIsPositive n) })
         where
           blah : n *N 0 +N x ≡ x
           blah rewrite multiplicationNIsCommutative n 0 = refl
       lhs : nToZn' (succ n) p x ≡ record { x = rem ; xLess = remIsSmall }
       lhs with divisionAlg (succ n) x
-      lhs | record { quot = quot' ; rem = rem' ; pr = pr' ; remIsSmall = inl t ; quotSmall = quotSmall } = equalityZn _ _ (equalityCommutative rs)
+      lhs | record { quot = quot' ; rem = rem' ; pr = pr' ; remIsSmall = inl t ; quotSmall = quotSmall } = equalityZn (equalityCommutative rs)
         where
           rs : rem ≡ rem'
           rs = modIsUnique (record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = inl remIsSmall; quotSmall = q }) (record { quot = quot' ; rem = rem' ; pr = pr' ; remIsSmall = inl t ; quotSmall = quotSmall })
       lhs | record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = inr () ; quotSmall = quotSmall }
       lhs' : nToZn' (succ n) p x ≡ record { x = x ; xLess = xLess }
-      lhs' = transitivity lhs (equalityZn _ _ rs')
-  Surjection.property (modNExampleSurjective' (succ n) p) record { x = x ; xLess = xLess } | record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = inr () ; quotSmall = quotSmall }
+      lhs' = transitivity lhs (equalityZn rs')
+  modNExampleSurjective' (succ n) p record { x = x ; xLess = xLess } | record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = inr () ; quotSmall = quotSmall }
 
 {-
   modNExampleGroupHom' : (n : ℕ) → (pr : 0 <N n) → GroupHom ℤGroup (ℤnGroup n pr) (mod' n pr)

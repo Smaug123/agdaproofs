@@ -6,7 +6,6 @@ open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals.Naturals
 open import Numbers.Integers.Integers
-open import Sets.FinSet
 open import Groups.Definition
 open import Groups.Homomorphisms.Definition
 open import Groups.Homomorphisms.Lemmas
@@ -34,85 +33,6 @@ module Groups.Examples.ExampleSheet1 where
 
   question1' : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} → (G : Group S _+_) → Setoid._∼_ S ((Group.0G G) + (Group.0G G)) (Group.0G G)
   question1' G = Group.identRight G
-
-  {-
-    Question 2: intersection of subgroups is a subgroup; union of subgroups is a subgroup iff one is contained in the other.
-
-    First, define the intersection of subgroups and show that it is a subgroup.
-  -}
-  data SubgroupIntersectionElement {a b c d e f : _} {A : Set a} {B : Set b} {C : Set c} {S : Setoid {a} {d} A} {T : Setoid {b} {e} B} {U : Setoid {c} {f} C} {_+_ : A → A → A} {_+H1_ : B → B → B} {_+H2_ : C → C → C} (G : Group S _+_) {H1grp : Group T _+H1_} {H2grp : Group U _+H2_} {h1Inj : B → A} {h2Inj : C → A} {h1Hom : GroupHom H1grp G h1Inj} {h2Hom : GroupHom H2grp G h2Inj} (H1 : Subgroup G H1grp h1Hom) (H2 : Subgroup G H2grp h2Hom) : Set (a ⊔ b ⊔ c ⊔ d ⊔ e ⊔ f) where
-    ofElt : {x : A} → Sg B (λ b → Setoid._∼_ S (h1Inj b) x) → Sg C (λ c → Setoid._∼_ S (h2Inj c) x) → SubgroupIntersectionElement G H1 H2
-
-  subgroupIntersectionOp : {a b c d e f : _} {A : Set a} {B : Set b} {C : Set c} {S : Setoid {a} {d} A} {T : Setoid {b} {e} B} {U : Setoid {c} {f} C} {_+_ : A → A → A} {_+H1_ : B → B → B} {_+H2_ : C → C → C} (G : Group S _+_) {H1grp : Group T _+H1_} {H2grp : Group U _+H2_} {h1Inj : B → A} {h2Inj : C → A} {h1Hom : GroupHom H1grp G h1Inj} {h2Hom : GroupHom H2grp G h2Inj} (H1 : Subgroup G H1grp h1Hom) (H2 : Subgroup G H2grp h2Hom) → (r : SubgroupIntersectionElement G H1 H2) → (s : SubgroupIntersectionElement G H1 H2) → SubgroupIntersectionElement G H1 H2
-  subgroupIntersectionOp {S = S} {_+_ = _+_} {_+H1_ = _+H1_} {_+H2_ = _+H2_} G {h1Hom = h1Hom} {h2Hom = h2Hom} H1 H2 (ofElt (b , prB) (c , prC)) (ofElt (b2 , prB2) (c2 , prC2)) = ofElt ((b +H1 b2) , GroupHom.groupHom h1Hom) ((c +H2 c2) , transitive (GroupHom.groupHom h2Hom) (transitive (Group.+WellDefined G prC prC2) (Group.+WellDefined G (symmetric prB) (symmetric prB2))))
-    where
-      open Setoid S
-      open Equivalence eq
-
-  subgroupIntersectionSetoid : {a b c d e f : _} {A : Set a} {B : Set b} {C : Set c} {S : Setoid {a} {d} A} {T : Setoid {b} {e} B} {U : Setoid {c} {f} C} {_+_ : A → A → A} {_+H1_ : B → B → B} {_+H2_ : C → C → C} (G : Group S _+_) {H1grp : Group T _+H1_} {H2grp : Group U _+H2_} {h1Inj : B → A} {h2Inj : C → A} {h1Hom : GroupHom H1grp G h1Inj} {h2Hom : GroupHom H2grp G h2Inj} (H1 : Subgroup G H1grp h1Hom) (H2 : Subgroup G H2grp h2Hom) → Setoid (SubgroupIntersectionElement G H1 H2)
-  Setoid._∼_ (subgroupIntersectionSetoid {T = T} {U = U} G {h1Inj = h1} {h2Inj = h2} H1 H2) (ofElt (xH1 , prxH1) (xH2 , prxH2)) (ofElt (yH1 , pryH1) (yH2 , pryH2)) = (Setoid._∼_ T xH1 yH1) && (Setoid._∼_ U xH2 yH2)
-  Equivalence.reflexive (Setoid.eq (subgroupIntersectionSetoid {T = T} {U = U} G H1 H2)) {ofElt (a , prA) (b , prB)} = (Equivalence.reflexive (Setoid.eq T)) ,, (Equivalence.reflexive (Setoid.eq U))
-  Equivalence.symmetric (Setoid.eq (subgroupIntersectionSetoid {T = T} {U = U} G H1 H2)) {ofElt (a , prA) (b , prB)} {ofElt (c , prC) (d , prD)} (fst ,, snd) = Equivalence.symmetric (Setoid.eq T) fst ,, Equivalence.symmetric (Setoid.eq U) snd
-  Equivalence.transitive (Setoid.eq (subgroupIntersectionSetoid {T = T} {U = U} G H1 H2)) {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} (fst1 ,, snd1) (fst2 ,, snd2) = Equivalence.transitive (Setoid.eq T) fst1 fst2 ,, Equivalence.transitive (Setoid.eq U) snd1 snd2
-
-  subgroupIntersectionGroup : {a b c d e f : _} {A : Set a} {B : Set b} {C : Set c} {S : Setoid {a} {d} A} {T : Setoid {b} {e} B} {U : Setoid {c} {f} C} {_+_ : A → A → A} {_+H1_ : B → B → B} {_+H2_ : C → C → C} (G : Group S _+_) {H1grp : Group T _+H1_} {H2grp : Group U _+H2_} {h1Inj : B → A} {h2Inj : C → A} {h1Hom : GroupHom H1grp G h1Inj} {h2Hom : GroupHom H2grp G h2Inj} (H1 : Subgroup G H1grp h1Hom) (H2 : Subgroup G H2grp h2Hom) → Group (subgroupIntersectionSetoid G H1 H2) (subgroupIntersectionOp G H1 H2)
-  Group.+WellDefined (subgroupIntersectionGroup {S = S} {T = T} {U = U} G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (_ , _) (_ , _)} {ofElt (_ , _ ) (_ , _)} {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} (pr1 ,, pr2) (pr3 ,, pr4) = transitiveT (Group.+WellDefined h1 pr1 reflexiveT) (Group.+WellDefined h1 reflexiveT pr3) ,, transitiveU (Group.+WellDefined h2 pr2 reflexiveU) ((Group.+WellDefined h2 reflexiveU pr4))
-    where
-      open Group G
-      open Setoid T
-      open Equivalence (Setoid.eq T) renaming (transitive to transitiveT ; symmetric to symmetricT ; reflexive to reflexiveT)
-      open Equivalence (Setoid.eq U) renaming (transitive to transitiveU ; symmetric to symmetricU ; reflexive to reflexiveU)
-  Group.0G (subgroupIntersectionGroup G {H1grp = H1grp} {H2grp = H2grp} {h1Hom = h1Hom} {h2Hom = h2Hom} H1 H2) = ofElt {x = Group.0G G} (Group.0G H1grp , imageOfIdentityIsIdentity h1Hom) (Group.0G H2grp , imageOfIdentityIsIdentity h2Hom)
-  Group.inverse (subgroupIntersectionGroup {S = S} G {H1grp = h1} {H2grp = h2} {h1Hom = h1hom} {h2Hom = h2hom} H1 H2) (ofElt (a , prA) (b , prB)) = ofElt (Group.inverse h1 a , homRespectsInverse h1hom) (Group.inverse h2 b , transitive (homRespectsInverse h2hom) (inverseWellDefined G (transitive prB (symmetric prA))))
-    where
-      open Setoid S
-      open Equivalence eq
-  Group.+Associative (subgroupIntersectionGroup G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (a , prA) (b , prB)} {ofElt (c , prC) (d , prD)} {ofElt (e , prE) (f , prF)} = Group.+Associative h1 ,, Group.+Associative h2
-  Group.identRight (subgroupIntersectionGroup G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (_ , _) (_ , _)} = Group.identRight h1 ,, Group.identRight h2
-  Group.identLeft (subgroupIntersectionGroup G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (_ , _) (_ , _)} = Group.identLeft h1 ,, Group.identLeft h2
-  Group.invLeft (subgroupIntersectionGroup G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (_ , _) (_ , _)} = Group.invLeft h1 ,, Group.invLeft h2
-  Group.invRight (subgroupIntersectionGroup G {H1grp = h1} {H2grp = h2} H1 H2) {ofElt (_ , _) (_ , _)} = Group.invRight h1 ,, Group.invRight h2
-
-  subgroupIntersectionInjectionIntoMain : {a b c d e f : _} {A : Set a} {B : Set b} {C : Set c} {S : Setoid {a} {d} A} {T : Setoid {b} {e} B} {U : Setoid {c} {f} C} {_+_ : A → A → A} {_+H1_ : B → B → B} {_+H2_ : C → C → C} (G : Group S _+_) {H1grp : Group T _+H1_} {H2grp : Group U _+H2_} {h1Inj : B → A} {h2Inj : C → A} {h1Hom : GroupHom H1grp G h1Inj} {h2Hom : GroupHom H2grp G h2Inj} (H1 : Subgroup G H1grp h1Hom) (H2 : Subgroup G H2grp h2Hom) → SubgroupIntersectionElement G H1 H2 → A
-  subgroupIntersectionInjectionIntoMain G {h1Inj = f} H1 H2 (ofElt (a , prA) (b , prB)) = f a
-
-  subgroupIntersectionInjectionIntoMainIsHom : {a b c d e f : _} {A : Set a} {B : Set b} {C : Set c} {S : Setoid {a} {d} A} {T : Setoid {b} {e} B} {U : Setoid {c} {f} C} {_+_ : A → A → A} {_+H1_ : B → B → B} {_+H2_ : C → C → C} (G : Group S _+_) {H1grp : Group T _+H1_} {H2grp : Group U _+H2_} {h1Inj : B → A} {h2Inj : C → A} {h1Hom : GroupHom H1grp G h1Inj} {h2Hom : GroupHom H2grp G h2Inj} (H1 : Subgroup G H1grp h1Hom) (H2 : Subgroup G H2grp h2Hom) → GroupHom (subgroupIntersectionGroup G H1 H2) G (subgroupIntersectionInjectionIntoMain G H1 H2)
-  GroupHom.groupHom (subgroupIntersectionInjectionIntoMainIsHom G {h1Hom = h1} H1 H2) {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} = GroupHom.groupHom h1
-  GroupHom.wellDefined (subgroupIntersectionInjectionIntoMainIsHom G {h1Hom = h1} H1 H2) {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} (fst ,, snd) = GroupHom.wellDefined h1 fst
-
-  subgroupIntersectionIsSubgroup : {a b c d e f : _} {A : Set a} {B : Set b} {C : Set c} {S : Setoid {a} {d} A} {T : Setoid {b} {e} B} {U : Setoid {c} {f} C} {_+_ : A → A → A} {_+H1_ : B → B → B} {_+H2_ : C → C → C} (G : Group S _+_) {H1grp : Group T _+H1_} {H2grp : Group U _+H2_} {h1Inj : B → A} {h2Inj : C → A} {h1Hom : GroupHom H1grp G h1Inj} {h2Hom : GroupHom H2grp G h2Inj} (H1 : Subgroup G H1grp h1Hom) (H2 : Subgroup G H2grp h2Hom) → Subgroup G (subgroupIntersectionGroup G H1 H2) (subgroupIntersectionInjectionIntoMainIsHom G H1 H2)
-  SetoidInjection.wellDefined (Subgroup.fInj (subgroupIntersectionIsSubgroup G {h1Hom = h1} H1 H2)) {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} (fst ,, snd) = GroupHom.wellDefined h1 fst
-  SetoidInjection.injective (Subgroup.fInj (subgroupIntersectionIsSubgroup {S = S} G H1 H2)) {ofElt (a , prA) (b , prB)} {ofElt (c , prC) (d , prD)} x~y = SetoidInjection.injective (Subgroup.fInj H1) x~y ,, SetoidInjection.injective (Subgroup.fInj H2) (transitive prB (transitive (transitive (symmetric prA) (transitive x~y prC) ) (symmetric prD)))
-    where
-      open Setoid S
-      open Equivalence eq
-
-  {-
-    To make sure we haven't defined something stupid, check that the intersection doesn't care which order the two subgroups came in, and check that the subgroup intersection is isomorphic to the original group in the case that the two were the same, and check that the intersection injects into the first subgroup.
-  -}
-
-  subgroupIntersectionIsomorphic : {a b c d e f : _} {A : Set a} {B : Set b} {C : Set c} {S : Setoid {a} {d} A} {T : Setoid {b} {e} B} {U : Setoid {c} {f} C} {_+_ : A → A → A} {_+H1_ : B → B → B} {_+H2_ : C → C → C} (G : Group S _+_) {H1grp : Group T _+H1_} {H2grp : Group U _+H2_} {h1Inj : B → A} {h2Inj : C → A} {h1Hom : GroupHom H1grp G h1Inj} {h2Hom : GroupHom H2grp G h2Inj} (H1 : Subgroup G H1grp h1Hom) (H2 : Subgroup G H2grp h2Hom) → GroupsIsomorphic (subgroupIntersectionGroup G H1 H2) (subgroupIntersectionGroup G H2 H1)
-  GroupsIsomorphic.isomorphism (subgroupIntersectionIsomorphic G H1 H2) (ofElt (a , prA) (b , prB)) = ofElt (b , prB) (a , prA)
-  GroupHom.groupHom (GroupIso.groupHom (GroupsIsomorphic.proof (subgroupIntersectionIsomorphic {T = T} {U = U} G H1 H2))) {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} = Equivalence.reflexive (Setoid.eq U) ,, Equivalence.reflexive (Setoid.eq T)
-  GroupHom.wellDefined (GroupIso.groupHom (GroupsIsomorphic.proof (subgroupIntersectionIsomorphic G H1 H2))) {ofElt (a , prA) (b , prB)} {ofElt (_ , _) (_ , _)} (fst ,, snd) = snd ,, fst
-  SetoidInjection.wellDefined (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.proof (subgroupIntersectionIsomorphic G H1 H2)))) {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} (fst ,, snd) = snd ,, fst
-  SetoidInjection.injective (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.proof (subgroupIntersectionIsomorphic G H1 H2)))) {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} (fst ,, snd) = snd ,, fst
-  SetoidSurjection.wellDefined (SetoidBijection.surj (GroupIso.bij (GroupsIsomorphic.proof (subgroupIntersectionIsomorphic G H1 H2)))) {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} (fst ,, snd) = snd ,, fst
-  SetoidSurjection.surjective (SetoidBijection.surj (GroupIso.bij (GroupsIsomorphic.proof (subgroupIntersectionIsomorphic {T = T} {U = U} G H1 H2)))) {ofElt (a , prA) (b , prB)} = ofElt (b , prB) (a , prA) , (Equivalence.reflexive (Setoid.eq U) ,, Equivalence.reflexive (Setoid.eq T))
-
-  subgroupIntersectionOfSame : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+_ : A → A → A} {_+H1_ : B → B → B} (G : Group S _+_) {H1grp : Group T _+H1_} {h1Inj : B → A} {h1Hom : GroupHom H1grp G h1Inj} (H1 : Subgroup G H1grp h1Hom) → GroupsIsomorphic (subgroupIntersectionGroup G H1 H1) H1grp
-  GroupsIsomorphic.isomorphism (subgroupIntersectionOfSame G H1) (ofElt (a , prA) (b , prB)) = a
-  GroupHom.groupHom (GroupIso.groupHom (GroupsIsomorphic.proof (subgroupIntersectionOfSame {T = T} G H1))) {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} = Equivalence.reflexive (Setoid.eq T)
-  GroupHom.wellDefined (GroupIso.groupHom (GroupsIsomorphic.proof (subgroupIntersectionOfSame G H1))) {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} (fst ,, _) = fst
-  SetoidInjection.wellDefined (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.proof (subgroupIntersectionOfSame G H1)))) {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} (fst ,, _) = fst
-  SetoidInjection.injective (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.proof (subgroupIntersectionOfSame {S = S} {T = T} G {h1Hom = h1Hom} H1)))) {ofElt (a , prA) (b , prB)} {ofElt (c , prC) (d , prD)} a~b = a~b ,, SetoidInjection.injective (Subgroup.fInj H1) (transitive prB (transitive (transitive (symmetric prA) (transitive (GroupHom.wellDefined h1Hom a~b) prC)) (symmetric prD)))
-    where
-      open Setoid S
-      open Equivalence eq
-  SetoidSurjection.wellDefined (SetoidBijection.surj (GroupIso.bij (GroupsIsomorphic.proof (subgroupIntersectionOfSame G H1)))) {ofElt (_ , _) (_ , _)} {ofElt (_ , _) (_ , _)} (fst ,, _) = fst
-  SetoidSurjection.surjective (SetoidBijection.surj (GroupIso.bij (GroupsIsomorphic.proof (subgroupIntersectionOfSame {S = S} {T = T} G H1)))) {b} = ofElt (b , Equivalence.reflexive (Setoid.eq S)) (b , Equivalence.reflexive (Setoid.eq S)) , (Equivalence.reflexive (Setoid.eq T))
-
-  {- TODO: finish question 2 -}
 
   {-
     Question 3. We can't talk about ℝ yet, so we'll just work in an arbitrary integral domain.

@@ -1,10 +1,13 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
-open import Functions
 open import Semirings.Definition
+open import Orders.Total.Definition
+open import Lists.Lists
+
+module Vectors where
 
 data Vec {a : _} (X : Set a) : ℕ -> Set a where
   [] : Vec X zero
@@ -37,6 +40,9 @@ vecLast {a} {X} {zero} v ()
 vecLast {a} {X} {succ zero} (x ,- []) _ = x
 vecLast {a} {X} {succ (succ m)} (x ,- v) _ = vecLast v (succIsPositive m)
 
+vecLast' : {a : _} {X : Set a} {m : ℕ} → Vec X (succ m) → X
+vecLast' {m = m} v = vecLast v (le m (applyEquality succ (Semiring.sumZeroRight ℕSemiring m)))
+
 vecAppend : {a : _} {X : Set a} {m : ℕ} → Vec X m → (x : X) → Vec X (succ m)
 vecAppend {a} {X} {zero} [] x = x ,- []
 vecAppend {a} {X} {succ m} (y ,- v) x = y ,- vecAppend v x
@@ -53,9 +59,9 @@ vecMoveAppend : {a : _} {X : Set a} {m : ℕ} → (x : X) → (v : Vec X m) → 
 vecMoveAppend {a} {X} {.0} x [] = refl
 vecMoveAppend {a} {X} {.(succ _)} x (y ,- v) rewrite vecMoveAppend x v = refl
 
-revRevIsId : {a : _} {X : Set a} {m : ℕ} → (v : Vec X m) → (vecRev (vecRev v)) ≡ v
-revRevIsId {a} {X} {zero} [] = refl
-revRevIsId {a} {X} {succ m} (x ,- v) rewrite vecMoveAppend x (vecRev v) = applyEquality (λ i → x ,- i) (revRevIsId v)
+vecRevRevIsId : {a : _} {X : Set a} {m : ℕ} → (v : Vec X m) → (vecRev (vecRev v)) ≡ v
+vecRevRevIsId {a} {X} {zero} [] = refl
+vecRevRevIsId {a} {X} {succ m} (x ,- v) rewrite vecMoveAppend x (vecRev v) = applyEquality (λ i → x ,- i) (vecRevRevIsId v)
 
 record vecContains {a : _} {X : Set a} {m : ℕ} (vec : Vec X m) (x : X) : Set a where
   field
@@ -152,6 +158,10 @@ vecComposition : {a b c : _} {X : Set a} {Y : Set b} {Z : Set c} {n : ℕ} (fs :
 vecComposition [] [] [] = refl
 vecComposition (f ,- fs) (g ,- gs) (x ,- xs) rewrite vecComposition fs gs xs = refl
 
+vecToList : {a : _} {A : Set a} {n : ℕ} → (v : Vec A n) → List A
+vecToList [] = []
+vecToList (x ,- v) = x :: vecToList v
+
 ------------
 
 data _<=_ : ℕ → ℕ → Set where
@@ -175,7 +185,7 @@ all4<=4 : Vec (4 <= 4) 1
 all4<=4 = os (os (os (os oz))) ,- []
 
 <=Is≤N : {n m : ℕ} → (n <= m) → n ≤N m
-<=Is≤N {n} {m} thm with orderIsTotal n m
+<=Is≤N {n} {m} thm with TotalOrder.totality ℕTotalOrder n m
 <=Is≤N {n} {m} thm | inl (inl n<m) = inl n<m
 <=Is≤N {n} {.n} thm | inr refl = inr refl
 <=Is≤N {zero} {zero} thm | inl (inr m<n) = inl m<n

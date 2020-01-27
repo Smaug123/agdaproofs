@@ -1,10 +1,9 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
 open import Numbers.Integers.Definition
 open import Semirings.Definition
-open import Groups.Groups
 open import Groups.Abelian.Definition
 open import Groups.Definition
 open import Setoids.Setoids

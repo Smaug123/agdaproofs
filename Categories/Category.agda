@@ -2,11 +2,14 @@
 
 open import LogicalFormulae
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Vectors
 open import Semirings.Definition
 open import Categories.Definition
+open import Orders
+open import Categories.Functor.Definition
+open import Categories.Examples
 
 module Categories.Category where
 
@@ -20,7 +23,7 @@ NatPreorder : Category {lzero} {lzero}
 NatPreorder = record { objects = ℕ ; arrows = λ m n → m ≤N n ; id = λ x → inr refl ; _∘_ = λ f g → leqTransitive g f ; rightId = λ x<y → leqUnique (leqTransitive x<y (inr refl)) x<y ; leftId = λ x<y → leqUnique (leqTransitive (inr refl) x<y) x<y ; associative = λ z<=w y<=z x<=y → leqUnique (leqTransitive (leqTransitive x<=y y<=z) z<=w) (leqTransitive x<=y (leqTransitive y<=z z<=w)) }
   where
     leqTransitive : {a b c : ℕ} → (a ≤N b) → (b ≤N c) → (a ≤N c)
-    leqTransitive (inl a<b) (inl b<c) = inl (orderIsTransitive a<b b<c)
+    leqTransitive (inl a<b) (inl b<c) = inl (TotalOrder.<Transitive ℕTotalOrder a<b b<c)
     leqTransitive (inl a<b) (inr b=c) rewrite b=c = inl a<b
     leqTransitive (inr a=b) (inl b<c) rewrite a=b = inl b<c
     leqTransitive (inr a=b) (inr b=c) rewrite a=b | b=c = inr refl

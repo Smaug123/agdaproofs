@@ -1,18 +1,12 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
 open import Rings.Definition
-open import Rings.Lemmas
-open import Rings.Orders.Total.Definition
 open import Groups.Definition
-open import Groups.Groups
 open import Fields.Fields
 open import Sets.EquivalenceRelations
-open import Setoids.Orders
-open import Functions
 open import LogicalFormulae
-open import Numbers.Naturals.Naturals
+open import Rings.IntegralDomains.Definition
 
 module Fields.Lemmas {m n : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} (F : Field R) where
 
@@ -32,3 +26,10 @@ abstract
 
   halfHalves : {x : A} (1/2 : A) (pr : 1/2 + 1/2 ∼ 1R) → (x + x) * 1/2 ∼ x
   halfHalves {x} 1/2 pr = Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.transitive eq *Commutative (Equivalence.transitive eq (Equivalence.transitive eq *DistributesOver+ (Equivalence.transitive eq (+WellDefined *Commutative *Commutative) (Equivalence.symmetric eq *DistributesOver+))) *Commutative)) (*WellDefined pr (Equivalence.reflexive eq))) identIsIdent
+
+fieldIsIntDom : (Setoid._∼_ S (Ring.1R R) (Ring.0R R) → False) → IntegralDomain R
+IntegralDomain.intDom (fieldIsIntDom 1!=0) {a} {b} ab=0 a!=0 with Field.allInvertible F a a!=0
+IntegralDomain.intDom (fieldIsIntDom _) {a} {b} ab=0 a!=0 | 1/a , prA = transitive (symmetric identIsIdent) (transitive (*WellDefined (symmetric prA) reflexive) (transitive (symmetric *Associative) (transitive (*WellDefined reflexive ab=0) (Ring.timesZero R))))
+  where
+    open Equivalence eq
+IntegralDomain.nontrivial (fieldIsIntDom 1!=0) = 1!=0

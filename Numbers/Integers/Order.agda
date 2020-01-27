@@ -1,17 +1,15 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Numbers.Naturals.Naturals
-open import Numbers.Integers.Definition
-open import Numbers.Integers.Addition
-open import Numbers.Integers.Multiplication
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
+open import Numbers.Integers.RingStructure.Ring
 open import Semirings.Definition
-open import Rings.Definition
 open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
-open import Setoids.Setoids
 open import Setoids.Orders
-open import Orders
+open import Orders.Total.Definition
+open import Orders.Partial.Definition
 
 module Numbers.Integers.Order where
 
@@ -28,9 +26,6 @@ lessLemma (succ a) x pr = lessLemma a x q
   where
     q : succ x +N a ≡ a
     q rewrite Semiring.commutative ℕSemiring a (succ x) | Semiring.commutative ℕSemiring x a | Semiring.commutative ℕSemiring (succ a) x = succInjective pr
-
-nonnegInjective : {a b : ℕ} → (nonneg a ≡ nonneg b) → (a ≡ b)
-nonnegInjective {a} {.a} refl = refl
 
 irreflexive : (x : ℤ) → x <Z x → False
 irreflexive (nonneg x) record { x = y ; proof = proof } = lessLemma x y (nonnegInjective proof)
@@ -68,13 +63,13 @@ _<Z_.proof (lessNegsuccNonneg {zero} {b}) = refl
 _<Z_.proof (lessNegsuccNonneg {succ a} {b}) = _<Z_.proof (lessNegsuccNonneg {a} {b})
 
 lessThanTotalZ : {a b : ℤ} → ((a <Z b) || (b <Z a)) || (a ≡ b)
-lessThanTotalZ {nonneg a} {nonneg b} with orderIsTotal a b
+lessThanTotalZ {nonneg a} {nonneg b} with TotalOrder.totality ℕTotalOrder a b
 lessThanTotalZ {nonneg a} {nonneg b} | inl (inl a<b) = inl (inl (lessInherits a<b))
 lessThanTotalZ {nonneg a} {nonneg b} | inl (inr b<a) = inl (inr (lessInherits b<a))
 lessThanTotalZ {nonneg a} {nonneg b} | inr a=b = inr (applyEquality nonneg a=b)
 lessThanTotalZ {nonneg a} {negSucc b} = inl (inr (lessNegsuccNonneg {b} {a}))
 lessThanTotalZ {negSucc a} {nonneg x} = inl (inl (lessNegsuccNonneg {a} {x}))
-lessThanTotalZ {negSucc a} {negSucc b} with orderIsTotal a b
+lessThanTotalZ {negSucc a} {negSucc b} with TotalOrder.totality ℕTotalOrder a b
 ... | inl (inl a<b) = inl (inr (lessInheritsNegsucc a<b))
 ... | inl (inr b<a) = inl (inl (lessInheritsNegsucc b<a))
 lessThanTotalZ {negSucc a} {negSucc .a} | inr refl = inr refl

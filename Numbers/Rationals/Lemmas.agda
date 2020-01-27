@@ -1,8 +1,11 @@
 {-# OPTIONS --safe --warning=error #-}
 
-open import WellFoundedInduction
 open import LogicalFormulae
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
+open import Numbers.Naturals.Order.WellFounded
+open import Numbers.Naturals.Order.Lemmas
+open import Numbers.Integers.Definition
 open import Numbers.Integers.Integers
 open import Numbers.Integers.Order
 open import Groups.Groups
@@ -18,9 +21,12 @@ open import Functions
 open import Sets.EquivalenceRelations
 open import Numbers.Rationals.Definition
 open import Semirings.Definition
-open import Orders
+open import Orders.Total.Definition
+open import Orders.WellFounded.Induction
 
 module Numbers.Rationals.Lemmas where
+
+open import Semirings.Lemmas ℕSemiring
 
 open PartiallyOrderedRing ℤPOrderedRing
 open import Rings.Orders.Total.Lemmas ℤOrderedRing
@@ -80,7 +86,7 @@ evil' = rec <NWellfounded (λ z → (x x₁ : ℕ) (pr' : 0 <N x) (x₂ : z ≡ 
 
         halveDecreased : underlying aEven <N a
         halveDecreased with aEven
-        halveDecreased | zero , even rewrite equalityCommutative even = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) 0<a)
+        halveDecreased | zero , even rewrite equalityCommutative even = exFalso (TotalOrder.irreflexive ℕTotalOrder 0<a)
         halveDecreased | succ a/2 , even = le a/2 (transitivity (applyEquality succ (transitivity (Semiring.commutative ℕSemiring a/2 _) (applyEquality succ (transitivity (doubleIsAddTwo a/2) (multiplicationNIsCommutative 2 a/2))))) even)
 
         reduced : b +N underlying aEven <N k
@@ -91,7 +97,7 @@ evil' = rec <NWellfounded (λ z → (x x₁ : ℕ) (pr' : 0 <N x) (x₂ : z ≡ 
         0<b with TotalOrder.totality ℕTotalOrder 0 b
         0<b | inl (inl 0<b) = 0<b
         0<b | inl (inr ())
-        0<b | inr 0=b rewrite equalityCommutative 0=b = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) {0} (identityOfIndiscernablesRight _<N_ 0<a (sqrt0 a pr)))
+        0<b | inr 0=b rewrite equalityCommutative 0=b = exFalso (TotalOrder.irreflexive ℕTotalOrder {0} (identityOfIndiscernablesRight _<N_ 0<a (sqrt0 a pr)))
 
         contr : False
         contr = indHyp (b +N underlying aEven) reduced b (underlying aEven) 0<b refl next3

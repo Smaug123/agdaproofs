@@ -1,12 +1,13 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
-open import Functions
 open import Lists.Lists
+open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Naturals
-open import Groups.Definition
+open import Numbers.Naturals.Order
 open import Numbers.BinaryNaturals.Definition
 open import Semirings.Definition
+open import Orders.Total.Definition
 
 module Numbers.BinaryNaturals.Addition where
 
@@ -39,7 +40,7 @@ _+B_ : BinNat → BinNat → BinNat
     refine b pr with canonical b
     refine b pr | x :: bl = ::Inj pr
     t : NToBinNat (0 +N binNatToN (zero :: b)) ≡ zero :: b
-    t with orderIsTotal 0 (binNatToN b)
+    t with TotalOrder.totality ℕTotalOrder 0 (binNatToN b)
     t | inl (inl pos) = transitivity (doubleIsBitShift (binNatToN b) pos) (applyEquality (zero ::_) (transitivity (binToBin b) (equalityCommutative (refine b prB))))
     t | inl (inr ())
     ... | inr eq with binNatToNZero b (equalityCommutative eq)
@@ -61,9 +62,9 @@ _+B_ : BinNat → BinNat → BinNat
 
 +BIsInherited' : (a b : BinNat) → a +Binherit b ≡ canonical (a +B b)
 
-+BinheritLemma a b prA prB with orderIsTotal 0 (binNatToN a +N binNatToN b)
++BinheritLemma a b prA prB with TotalOrder.totality ℕTotalOrder 0 (binNatToN a +N binNatToN b)
 +BinheritLemma a b prA prB | inl (inl x) rewrite doubleIsBitShift (binNatToN a +N binNatToN b) x = applyEquality (one ::_) (+BIsInherited a b prA prB)
-+BinheritLemma a b prA prB | inr x with sumZeroImpliesOperandsZero (binNatToN a) (equalityCommutative x)
++BinheritLemma a b prA prB | inr x with sumZeroImpliesSummandsZero (equalityCommutative x)
 +BinheritLemma a b prA prB | inr x | fst ,, snd = ans2
   where
     bad : b ≡ []
@@ -75,10 +76,10 @@ _+B_ : BinNat → BinNat → BinNat
 
 +BIsInherited [] b _ prB = +BIsInherited[] b prB
 +BIsInherited (x :: a) [] prA _ = transitivity (applyEquality NToBinNat (Semiring.commutative ℕSemiring (binNatToN (x :: a)) 0)) (transitivity (binToBin (x :: a)) (equalityCommutative prA))
-+BIsInherited (zero :: as) (zero :: b) prA prB with orderIsTotal 0 (binNatToN as +N binNatToN b)
++BIsInherited (zero :: as) (zero :: b) prA prB with TotalOrder.totality ℕTotalOrder 0 (binNatToN as +N binNatToN b)
 ... | inl (inl 0<) rewrite Semiring.commutative ℕSemiring (binNatToN as) 0 | Semiring.commutative ℕSemiring (binNatToN b) 0 | Semiring.+Associative ℕSemiring (binNatToN as +N binNatToN as) (binNatToN b) (binNatToN b) | equalityCommutative (Semiring.+Associative ℕSemiring (binNatToN as) (binNatToN as) (binNatToN b)) | Semiring.commutative ℕSemiring (binNatToN as) (binNatToN b) | Semiring.+Associative ℕSemiring (binNatToN as) (binNatToN b) (binNatToN as) | equalityCommutative (Semiring.+Associative ℕSemiring (binNatToN as +N binNatToN b) (binNatToN as) (binNatToN b)) | Semiring.commutative ℕSemiring 0 ((binNatToN as +N binNatToN b) +N (binNatToN as +N binNatToN b)) | equalityCommutative (Semiring.+Associative ℕSemiring (binNatToN as +N binNatToN b) (binNatToN as +N binNatToN b) 0) = transitivity (doubleIsBitShift (binNatToN as +N binNatToN b) (identityOfIndiscernablesRight _<N_ 0< (Semiring.commutative ℕSemiring (binNatToN b) _))) (applyEquality (zero ::_) (+BIsInherited as b (canonicalDescends as prA) (canonicalDescends b prB)))
 +BIsInherited (zero :: as) (zero :: b) prA prB | inl (inr ())
-... | inr p with sumZeroImpliesOperandsZero (binNatToN as) (equalityCommutative p)
+... | inr p with sumZeroImpliesSummandsZero {binNatToN as} (equalityCommutative p)
 +BIsInherited (zero :: as) (zero :: b) prA prB | inr p | as=0 ,, b=0 rewrite as=0 | b=0 = exFalso ans
   where
     bad : (b : BinNat) → (pr : b ≡ canonical b) → (pr2 : binNatToN b ≡ 0) → b ≡ []
@@ -142,7 +143,7 @@ _+B_ : BinNat → BinNat → BinNat
   where
     ans : NToBinNat (2 *N (binNatToN as +N binNatToN bs)) ≡ canonical (zero :: (as +B bs))
     ans with inspect (binNatToN as +N binNatToN bs)
-    ans | zero with≡ x with sumZeroImpliesOperandsZero (binNatToN as) x
+    ans | zero with≡ x with sumZeroImpliesSummandsZero {binNatToN as} x
     ... | as=0 ,, bs=0 rewrite as=0 | bs=0 = foo
       where
         u : canonical (as +Binherit bs) ≡ []
@@ -162,7 +163,7 @@ _+B_ : BinNat → BinNat → BinNat
   where
     ans2 : incr (NToBinNat (2 *N (binNatToN as +N binNatToN bs))) ≡ one :: canonical (as +B bs)
     ans2 with inspect (binNatToN as +N binNatToN bs)
-    ans2 | zero with≡ x with sumZeroImpliesOperandsZero (binNatToN as) x
+    ans2 | zero with≡ x with sumZeroImpliesSummandsZero {binNatToN as} x
     ans2 | zero with≡ x | as=0 ,, bs=0 rewrite as=0 | bs=0 = applyEquality (one ::_) (transitivity t (+BIsInherited' as bs))
       where
         t : [] ≡ as +Binherit bs
@@ -172,7 +173,7 @@ _+B_ : BinNat → BinNat → BinNat
   where
     ans : incr (NToBinNat (2 *N (binNatToN as +N binNatToN bs))) ≡ one :: canonical (as +B bs)
     ans with inspect (binNatToN as +N binNatToN bs)
-    ans | zero with≡ x with sumZeroImpliesOperandsZero (binNatToN as) x
+    ans | zero with≡ x with sumZeroImpliesSummandsZero {binNatToN as} x
     ... | as=0 ,, bs=0 rewrite as=0 | bs=0 = applyEquality (one ::_) (transitivity t (+BIsInherited' as bs))
       where
         t : [] ≡ NToBinNat (binNatToN as +N binNatToN bs)
@@ -182,7 +183,7 @@ _+B_ : BinNat → BinNat → BinNat
   where
     ans : incr (incr (NToBinNat (2 *N (binNatToN as +N binNatToN bs)))) ≡ canonical (zero :: incr (as +B bs))
     ans with inspect (binNatToN as +N binNatToN bs)
-    ... | zero with≡ x with sumZeroImpliesOperandsZero (binNatToN as) x
+    ... | zero with≡ x with sumZeroImpliesSummandsZero {binNatToN as} x
     ans | zero with≡ x | as=0 ,, bs=0 rewrite as=0 | bs=0 = bar
       where
         u' : canonical (as +Binherit bs) ≡ []
