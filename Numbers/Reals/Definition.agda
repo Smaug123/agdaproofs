@@ -1,4 +1,4 @@
-{-# OPTIONS --warning=error --safe --guardedness #-}
+{-# OPTIONS --warning=error --safe --guardedness --without-K #-}
 
 open import Setoids.Orders
 open import LogicalFormulae

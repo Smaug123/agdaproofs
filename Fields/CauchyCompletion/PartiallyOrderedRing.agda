@@ -15,7 +15,9 @@ open import Sequences
 open import Setoids.Orders
 open import Functions
 open import LogicalFormulae
-open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
+open import Numbers.Naturals.Order.Lemmas
 open import Semirings.Definition
 
 module Fields.CauchyCompletion.PartiallyOrderedRing {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
@@ -69,6 +71,18 @@ Have: a <Cr x r<C b
 
 Then a' + c' is an appropriate witness.
 -}
+
+cOrderRespectsAdditionLeft : (a : CauchyCompletion) (b : A) (c : CauchyCompletion) → (a <Cr b) → (a +C c) <C (injection b +C c)
+cOrderRespectsAdditionLeft a b a<b = {!!}
+
+cOrderRespectsAdditionRight : (a : A) (b : CauchyCompletion) (c : CauchyCompletion) → (a r<C b) → (injection a +C c) <C (b +C c)
+cOrderRespectsAdditionRight a b a<b = {!!}
+
+cOrderRespectsAddition : (a b : CauchyCompletion) → (a <C b) → (c : CauchyCompletion) → (a +C c) <C (b +C c)
+cOrderRespectsAddition a b (between , (a<between ,, between<b)) c with cOrderRespectsAdditionLeft a _ c a<between
+... | (betweenAC , ((ε , (0<ε ,, (N , isBiggerThanA))) ,, ((ε2 , (0<ε2 ,, (M , isLessThanC)))))) = between , ({!bl!} ,, {!bl!})
+
+{-
 cOrderRespectsAddition : (a b : CauchyCompletion) → (a <C b) → (c : CauchyCompletion) → (a +C c) <C (b +C c)
 cOrderRespectsAddition a b (r , ((r1 , (0<r1 ,, (N1 , prN1))) ,, (r2 , (0<r2 ,, (N2 , prN2))))) c = (a' + c') , (ans1 ,, ans2)
   where
@@ -106,10 +120,10 @@ cOrderRespectsAddition a b (r , ((r1 , (0<r1 ,, (N1 , prN1))) ,, (r2 , (0<r2 ,, 
     -- TODO here
 
     ans1 : (a +C c) <Cr (a' + c')
-    ans1 = r1 , (0<r1 ,, (N1 , ans))
+    ans1 = r1 , (0<r1 ,, ((N1 +N N2) , ans))
       where
-        ans : (m : ℕ) → N1 <N m → (r1 + index (CauchyCompletion.elts (a +C c)) m) < (a' + c')
-        ans m N1<m rewrite indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts c) _+_ {m} = <WellDefined (Equivalence.symmetric eq +Associative) reflexive (SetoidPartialOrder.<Transitive pOrder (orderRespectsAddition (prN1 m N1<m) (index (CauchyCompletion.elts c) m)) {!!})
+        ans : (m : ℕ) → (N1 +N N2) <N m → (r1 + index (CauchyCompletion.elts (a +C c)) m) < (a' + c')
+        ans m N1+N2<m rewrite indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts c) _+_ {m} = <WellDefined (Equivalence.symmetric eq +Associative) reflexive (SetoidPartialOrder.<Transitive pOrder (orderRespectsAddition (prN1 m (inequalityShrinkLeft N1+N2<m)) (index (CauchyCompletion.elts c) m)) {!!})
 
     ans2 : (a' + c') r<C (b +C c)
     ans2 = r2 , (0<r2 ,, {!!})
@@ -136,3 +150,5 @@ cOrderRespectsAddition a b (r , ((r1 , (0<r1 ,, (N1 , prN1))) ,, (r2 , (0<r2 ,, 
 CpOrderedRing : PartiallyOrderedRing CRing <COrder
 PartiallyOrderedRing.orderRespectsAddition CpOrderedRing {a} {b} = cOrderRespectsAddition a b
 PartiallyOrderedRing.orderRespectsMultiplication CpOrderedRing {a} {b} (interA , (0<interA ,, interA<a)) (interB , (0<interB ,, interB<b)) = (interA * interB) , (productPositives interA interB 0<interA 0<interB ,, productPositives' a b interA interB (orderInherited 0<interA) (orderInherited 0<interB) interA<a interB<b)
+
+-}

@@ -9,4 +9,3 @@ module Sets.Cardinality.Infinite.Definition where
 
 InfiniteSet : {a : _} (A : Set a) → Set a
 InfiniteSet A = (n : ℕ) → (f : FinSet n → A) → (Bijection f) → False
-
