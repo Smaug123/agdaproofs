@@ -84,6 +84,9 @@ open import Setoids.Lists
 open import Setoids.Orders
 open import Setoids.Functions.Definition
 open import Setoids.Functions.Extension
+open import Setoids.Algebra.Lemmas
+open import Setoids.Intersection.Lemmas
+open import Setoids.Union.Lemmas
 
 open import Sets.Cardinality.Infinite.Examples
 open import Sets.Cardinality.Infinite.Lemmas
