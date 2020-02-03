@@ -13,6 +13,8 @@ open import Numbers.Modulo.Group
 open import Numbers.Integers.Integers
 open import Numbers.Integers.RingStructure.EuclideanDomain
 
+open import Numbers.ClassicalReals.Examples
+
 open import Lists.Lists
 open import Lists.Filter.AllTrue
 
@@ -42,6 +44,7 @@ open import Groups.Subgroups.Normal.Examples
 open import Fields.Fields
 open import Fields.Orders.Partial.Definition
 open import Fields.Orders.Total.Definition
+open import Fields.Orders.LeastUpperBounds.Examples
 open import Fields.Orders.Lemmas
 open import Fields.FieldOfFractions.Field
 open import Fields.FieldOfFractions.Lemmas
