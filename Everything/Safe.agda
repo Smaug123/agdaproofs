@@ -80,6 +80,7 @@ open import Rings.Primes.Lemmas
 open import Rings.Irreducibles.Definition
 open import Rings.Divisible.Definition
 open import Rings.Associates.Lemmas
+open import Rings.InitialRing
 
 open import Setoids.Setoids
 open import Setoids.DirectSum
