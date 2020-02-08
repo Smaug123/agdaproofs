@@ -12,6 +12,7 @@ open import Rings.Orders.Total.Lemmas
 open import Rings.Orders.Partial.Definition
 open import Rings.Definition
 open import Fields.Orders.LeastUpperBounds.Definition
+open import Fields.Orders.Total.Definition
 
 module Numbers.ClassicalReals.RealField where
 
@@ -23,7 +24,6 @@ record RealField : Agda.Primitive.Setω where
     _+_ : A → A → A
     _*_ : A → A → A
     R : Ring S _+_ _*_
-    nontrivial : Setoid._∼_ S (Ring.0R R) (Ring.1R R) → False
     F : Field R
     _<_ : Rel {_} {c} A
     pOrder : SetoidPartialOrder S _<_
@@ -31,5 +31,8 @@ record RealField : Agda.Primitive.Setω where
     orderedRing : TotallyOrderedRing pOrderedRing
     lub : {d : _} → {pred : A → Set d} → (sub : subset S pred) → (nonempty : Sg A pred) → (boundedAbove : Sg A (UpperBound pOrder sub)) → Sg A (LeastUpperBound pOrder sub)
   open Setoid S
+  open Field F
   charNot2 : (Ring.1R R + Ring.1R R) ∼ Ring.0R R → False
   charNot2 = orderedImpliesCharNot2 orderedRing nontrivial
+  oField : TotallyOrderedField F pOrderedRing
+  oField = record { oRing = orderedRing }

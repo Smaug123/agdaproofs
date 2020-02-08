@@ -2,7 +2,6 @@
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-open import Numbers.ClassicalReals.RealField
 open import LogicalFormulae
 open import Setoids.Subset
 open import Setoids.Setoids
@@ -17,36 +16,40 @@ open import Sequences
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Semirings.Definition
+open import Functions
+open import Fields.Orders.Total.Definition
 
-module Numbers.ClassicalReals.Limits.Definition (ℝ : RealField) where
+module Fields.Orders.Limits.Definition {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {_} {c} A} {R : Ring S _+_ _*_} {pOrder : SetoidPartialOrder S _<_} {F : Field R} {pRing : PartiallyOrderedRing R pOrder} (oF : TotallyOrderedField F pRing) where
 
-open RealField ℝ
 open Ring R
-open PartiallyOrderedRing pOrderedRing
-open import Rings.Orders.Total.Lemmas orderedRing
-open import Rings.Orders.Partial.Lemmas pOrderedRing
-open SetoidTotalOrder (TotallyOrderedRing.total orderedRing)
+open TotallyOrderedField oF
+open TotallyOrderedRing oRing
+open PartiallyOrderedRing pRing
+open import Rings.Orders.Total.Lemmas oRing
+open import Rings.Orders.Partial.Lemmas pRing
+open SetoidTotalOrder total
 open SetoidPartialOrder pOrder
 open Group additiveGroup
 open import Groups.Lemmas additiveGroup
 open Setoid S
 open Equivalence eq
 open Field F
+open import Fields.CauchyCompletion.Definition (TotallyOrderedField.oRing oF) F
 
 _~>_ : Sequence A → A → Set (a ⊔ c)
 x ~> c = (ε : A) → (0R < ε) → Sg ℕ (λ N → (n : ℕ) → (N <N n) → abs ((index x n) + inverse c) < ε)
 
 1/2 : A
-1/2 with allInvertible (1R + 1R) charNot2
+1/2 with allInvertible (1R + 1R) (orderedImpliesCharNot2 nontrivial)
 ... | a , _ = a
 
 abstract
   1/2is1/2 : (1/2 * (1R + 1R)) ∼ 1R
-  1/2is1/2 with allInvertible (1R + 1R) charNot2
+  1/2is1/2 with allInvertible (1R + 1R) (orderedImpliesCharNot2 nontrivial)
   ... | a , pr = pr
 
   0<1/2 : 0R < 1/2
-  0<1/2 = halvePositive 1/2 (<WellDefined reflexive (symmetric (transitive (transitive (+WellDefined (symmetric (transitive *Commutative identIsIdent)) (symmetric (transitive *Commutative identIsIdent))) (symmetric *DistributesOver+)) 1/2is1/2)) (0<1 (RealField.nontrivial ℝ)))
+  0<1/2 = halvePositive 1/2 (<WellDefined reflexive (symmetric (transitive (transitive (+WellDefined (symmetric (transitive *Commutative identIsIdent)) (symmetric (transitive *Commutative identIsIdent))) (symmetric *DistributesOver+)) 1/2is1/2)) (0<1 nontrivial))
 
   halfHalves : {a : A} → (1/2 * (a + a)) ∼ a
   halfHalves {a} = transitive (*WellDefined reflexive (+WellDefined (symmetric identIsIdent) (symmetric identIsIdent))) (transitive (*WellDefined reflexive (symmetric *DistributesOver+')) (transitive *Associative (transitive (*WellDefined 1/2is1/2 reflexive) identIsIdent)))
@@ -96,3 +99,6 @@ limitsAreUnique x {r} {s} xr xs with totality r s
 limitsAreUnique x {r} {s} xr xs | inl (inl r<s) = exFalso (limitsUniqueLemma x xr xs r<s)
 limitsAreUnique x {r} {s} xr xs | inl (inr s<r) = exFalso (limitsUniqueLemma x xs xr s<r)
 limitsAreUnique x {r} {s} xr xs | inr r=s = r=s
+
+constantSequenceConverges : (a : A) → constSequence a ~> a
+constantSequenceConverges a e 0<e = 0 , λ n _ → <WellDefined (symmetric (transitive (absWellDefined _ _ (transitive (+WellDefined (identityOfIndiscernablesRight _∼_ reflexive (indexAndConst a n)) reflexive) invRight)) absZeroIsZero)) reflexive 0<e

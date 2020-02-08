@@ -3,6 +3,7 @@
 open import LogicalFormulae
 open import Numbers.Naturals.Definition
 open import Setoids.Setoids
+open import Numbers.Naturals.Order
 
 module Sequences where
 
@@ -63,3 +64,14 @@ mapAndApply s1 s2 f g (succ m) = mapAndApply (Sequence.tail s1) (Sequence.tail s
 assemble : {a : _} {A : Set a} → (x : A) → (s : Sequence A) → Sequence A
 Sequence.head (assemble x s) = x
 Sequence.tail (assemble x s) = s
+
+allTrue : {a : _} {A : Set a} {c : _} (pred : A → Set c) (s : Sequence A) → Set c
+allTrue pred s = (n : ℕ) → pred (index s n)
+
+tailFrom : {a : _} {A : Set a} (n : ℕ) → (s : Sequence A) → Sequence A
+tailFrom zero s = s
+tailFrom (succ n) s = tailFrom n (Sequence.tail s)
+
+subsequence : {a : _} {A : Set a} (x : Sequence A) → (indices : Sequence ℕ) → ((n : ℕ) → index indices n <N index indices (succ n)) → Sequence A
+Sequence.head (subsequence x selector increasing) = index x (Sequence.head selector)
+Sequence.tail (subsequence x selector increasing) = subsequence (tailFrom (succ (Sequence.head selector)) x) (Sequence.tail selector) λ n → increasing (succ n)

@@ -5,13 +5,8 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
 open import Setoids.Subset
 open import Setoids.Setoids
-open import Setoids.Orders
 open import Fields.Fields
-open import Rings.Orders.Total.Definition
-open import Rings.Orders.Total.Lemmas
-open import Rings.Orders.Partial.Definition
 open import Rings.Definition
-open import Fields.Orders.LeastUpperBounds.Definition
 open import Groups.Definition
 open import Groups.Homomorphisms.Definition
 open import Rings.Homomorphisms.Definition
