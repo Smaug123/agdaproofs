@@ -84,3 +84,7 @@ cancelInequalityLeft {a} {succ b} {succ c} pr = succPreservesInequality q'
 <NProp : {a b : ℕ} → .(a <N b) → a <N b
 <NProp {zero} {succ b} a<b = succIsPositive _
 <NProp {succ a} {succ b} a<b = succPreservesInequality (<NProp (canRemoveSuccFrom<N a<b))
+
+zeroLeast : {m n : ℕ} → m <N n → 0 <N n
+zeroLeast {zero} m<n = m<n
+zeroLeast {succ m} {succ n} m<n = le n (applyEquality succ (Semiring.sumZeroRight ℕSemiring n))

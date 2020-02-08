@@ -344,3 +344,6 @@ abstract
   absBoundedImpliesBounded {a} {b} a<b | inl (inl x) = a<b
   absBoundedImpliesBounded {a} {b} a<b | inl (inr x) = SetoidPartialOrder.<Transitive pOrder x (SetoidPartialOrder.<Transitive pOrder (lemm2 a x) a<b)
   absBoundedImpliesBounded {a} {b} a<b | inr x = a<b
+
+  orderedImpliesCharNot2 : (0R ∼ 1R → False) → 1R + 1R ∼ 0R → False
+  orderedImpliesCharNot2 0!=1 x = irreflexive (<WellDefined (identRight {0R}) x (ringAddInequalities (0<1 0!=1) (0<1 0!=1)))
