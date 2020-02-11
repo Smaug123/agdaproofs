@@ -16,7 +16,7 @@ abstract
   open Ring R
   open Group additiveGroup
 
-  ringMinusExtracts : {x y : A} → Setoid._∼_ S (x * Group.inverse (Ring.additiveGroup R) y) (Group.inverse (Ring.additiveGroup R) (x * y))
+  ringMinusExtracts : {x y : A} → (x * Group.inverse (Ring.additiveGroup R) y) ∼ (Group.inverse (Ring.additiveGroup R) (x * y))
   ringMinusExtracts {x = x} {y} = transferToRight' additiveGroup (transitive (symmetric *DistributesOver+) (transitive (*WellDefined reflexive invLeft) (Ring.timesZero R)))
     where
       open Equivalence eq
