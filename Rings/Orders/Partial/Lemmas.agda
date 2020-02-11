@@ -75,3 +75,6 @@ abstract
 
   moveInequality : {a b : A} → a < b → 0R < (b + inverse a)
   moveInequality {a} {b} a<b = <WellDefined invRight reflexive (orderRespectsAddition a<b (inverse a))
+
+  moveInequality' : {a b : A} → a < b → (a + inverse b) < 0R
+  moveInequality' {a} {b} a<b = <WellDefined reflexive invRight (orderRespectsAddition a<b (inverse b))
