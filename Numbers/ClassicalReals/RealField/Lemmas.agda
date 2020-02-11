@@ -8,7 +8,6 @@ open import Setoids.Subset
 open import Setoids.Setoids
 open import Setoids.Orders
 open import Fields.Fields
-open import Rings.Orders.Total.Definition
 open import Rings.Orders.Total.Lemmas
 open import Rings.Orders.Partial.Definition
 open import Rings.Definition
@@ -16,7 +15,7 @@ open import Fields.Orders.LeastUpperBounds.Definition
 open import Fields.Orders.Total.Definition
 open import Sets.EquivalenceRelations
 
-module Numbers.ClassicalReals.RealField.Lemmas {a b c : _} {A : Set a} {S : Setoid {_} {b} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} (F : Field R) {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} {pOrderedRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pOrderedRing) {orderNontrivialX orderNontrivialY : A} (orderNontrivial : orderNontrivialX < orderNontrivialY) where
+module Numbers.ClassicalReals.RealField.Lemmas {a b c : _} {A : Set a} {S : Setoid {_} {b} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} (F : Field R) {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} (pOrderedRing : PartiallyOrderedRing R pOrder) {orderNontrivialX orderNontrivialY : A} (orderNontrivial : orderNontrivialX < orderNontrivialY) where
 
 open Ring R
 open Group additiveGroup

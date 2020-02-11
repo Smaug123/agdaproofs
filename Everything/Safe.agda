@@ -14,7 +14,7 @@ open import Numbers.Integers.Integers
 open import Numbers.Integers.RingStructure.EuclideanDomain
 
 open import Numbers.ClassicalReals.Examples
-
+open import Numbers.ClassicalReals.RealField.Lemmas
 
 open import Lists.Lists
 open import Lists.Filter.AllTrue
