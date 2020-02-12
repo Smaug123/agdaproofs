@@ -94,8 +94,6 @@ open import Setoids.Algebra.Lemmas
 open import Setoids.Intersection.Lemmas
 open import Setoids.Union.Lemmas
 
-open import Sets.Cardinality.Infinite.Examples
-open import Sets.Cardinality.Infinite.Lemmas
 open import Sets.Cardinality.Countable.Lemmas
 open import Sets.Cardinality.Finite.Lemmas
 open import Sets.Cardinality
@@ -121,8 +119,6 @@ open import Monoids.Definition
 open import Semirings.Definition
 open import Semirings.Solver
 
-open import Fields.CauchyCompletion.PartiallyOrderedRing
-
 open import Categories.Definition
 open import Categories.Functor.Definition
 open import Categories.Functor.Lemmas
@@ -131,5 +127,7 @@ open import Categories.Dual.Definition
 open import Modules.Examples
 open import Modules.Lemmas
 open import Modules.DirectSum
+
+open import Fields.CauchyCompletion.PartiallyOrderedRing
 
 module Everything.Safe where

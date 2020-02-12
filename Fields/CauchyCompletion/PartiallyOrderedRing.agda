@@ -147,8 +147,8 @@ cOrderRespectsAddition a b (r , ((r1 , (0<r1 ,, (N1 , prN1))) ,, (r2 , (0<r2 ,, 
     c'Pr with c'All
     ... | (_ , (_ ,, x)) = x
 
+-}
+
 CpOrderedRing : PartiallyOrderedRing CRing <COrder
 PartiallyOrderedRing.orderRespectsAddition CpOrderedRing {a} {b} = cOrderRespectsAddition a b
 PartiallyOrderedRing.orderRespectsMultiplication CpOrderedRing {a} {b} (interA , (0<interA ,, interA<a)) (interB , (0<interB ,, interB<b)) = (interA * interB) , (productPositives interA interB 0<interA 0<interB ,, productPositives' a b interA interB (orderInherited 0<interA) (orderInherited 0<interB) interA<a interB<b)
-
--}
