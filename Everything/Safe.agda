@@ -133,4 +133,10 @@ open import Modules.Examples
 open import Modules.Lemmas
 open import Modules.DirectSum
 
+open import Graphs.PathGraph
+open import Graphs.CycleGraph
+open import Graphs.UnionGraph
+open import Graphs.CompleteGraph
+open import Graphs.Colouring
+
 module Everything.Safe where

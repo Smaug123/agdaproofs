@@ -38,3 +38,11 @@ listZip : {a b c : _} {A : Set a} {B : Set b} {C : Set c} (f : A → B → C) �
 listZip f f1 f2 [] l2 = map f2 l2
 listZip f f1 f2 (x :: l1) [] = map f1 (x :: l1)
 listZip f f1 f2 (x :: l1) (y :: l2) = (f x y) :: listZip f f1 f2 l1 l2
+
+contains : {a : _} {A : Set a} (l : List A) (needle : A) → Set a
+contains [] needle = False'
+contains (x :: l) needle = (x ≡ needle) || contains l needle
+
+containsMap : {a b : _} {A : Set a} {B : Set b} (f : A → B) (l : List A) (needle : A) → (contains l needle) → contains (map f l) (f needle)
+containsMap f (x :: l) needle (inl cont) = inl (applyEquality f cont)
+containsMap f (x :: l) needle (inr cont) = inr (containsMap f l needle cont)

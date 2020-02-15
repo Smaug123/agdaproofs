@@ -116,3 +116,6 @@ decidableOr : {a b : _} → (A : Set a) → (B : Set b) → (A || (A → False))
 decidableOr {a} {b} A B decidable (inl x) = inl x
 decidableOr {a} {b} A B (inl y) (inr x) = inl y
 decidableOr {a} {b} A B (inr y) (inr x) = inr (record { fst = y ; snd = x})
+
+embedLevel : {a b : _} → Set a → Set (a ⊔ b)
+embedLevel {a} {b} A = A && (True' {b})
