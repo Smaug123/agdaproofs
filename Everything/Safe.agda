@@ -26,6 +26,7 @@ open import Groups.QuotientGroup.Definition
 open import Groups.QuotientGroup.Lemmas
 open import Groups.FiniteGroups.Definition
 open import Groups.Homomorphisms.Lemmas
+open import Groups.Homomorphisms.Lemmas2
 open import Groups.Homomorphisms.Examples
 open import Groups.Isomorphisms.Lemmas
 open import Groups.FinitePermutations
@@ -83,6 +84,7 @@ open import Rings.Irreducibles.Definition
 open import Rings.Divisible.Definition
 open import Rings.Associates.Lemmas
 open import Rings.InitialRing
+open import Rings.Homomorphisms.Lemmas
 
 open import Setoids.Setoids
 open import Setoids.DirectSum
@@ -138,5 +140,10 @@ open import Graphs.CycleGraph
 open import Graphs.UnionGraph
 open import Graphs.CompleteGraph
 open import Graphs.Colouring
+open import Graphs.Bipartite
+open import Graphs.Complement
+open import Graphs.InducedSubgraph
+
+open import LectureNotes.MetAndTop.Chapter1
 
 module Everything.Safe where
