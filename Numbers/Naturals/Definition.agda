@@ -29,3 +29,8 @@ aIsNotSuccA (succ a) pr = aIsNotSuccA a (succInjective pr)
 ℕDecideEquality (succ a) (succ b) with ℕDecideEquality a b
 ℕDecideEquality (succ a) (succ b) | inl x = inl (applyEquality succ x)
 ℕDecideEquality (succ a) (succ b) | inr x = inr λ pr → x (succInjective pr)
+
+ℕDecideEquality' : (a b : ℕ) → Bool
+ℕDecideEquality' a b with ℕDecideEquality a b
+ℕDecideEquality' a b | inl x = BoolTrue
+ℕDecideEquality' a b | inr x = BoolFalse
