@@ -10,34 +10,34 @@ open import Vectors
 module Logic.PropositionalLogicExamples where
 
 axiomK : {a : _} {A : Set a} {P Q : Propositions A} → Tautology (implies P (implies Q P))
-Tautology.isTaut (axiomK {P = P} {Q}) {v = v} with inspect (Valuation.v v P)
-Tautology.isTaut (axiomK {P = P} {Q}) {v} | BoolTrue with≡ pT with inspect (Valuation.v v Q)
-Tautology.isTaut (axiomK {P = P} {Q}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT = Valuation.vImplicationT v (Valuation.vImplicationT v pT)
-Tautology.isTaut (axiomK {P = P} {Q}) {v} | BoolTrue with≡ pT | BoolFalse with≡ qF = Valuation.vImplicationT v (Valuation.vImplicationVacuous v qF)
-Tautology.isTaut (axiomK {P = P} {Q}) {v} | BoolFalse with≡ pF = Valuation.vImplicationVacuous v pF
+axiomK {P = P} {Q} {v = v} with inspect (Valuation.v v P)
+axiomK {P = P} {Q} {v} | BoolTrue with≡ pT with inspect (Valuation.v v Q)
+axiomK {P = P} {Q} {v} | BoolTrue with≡ pT | BoolTrue with≡ qT = Valuation.vImplicationT v (Valuation.vImplicationT v pT)
+axiomK {P = P} {Q} {v} | BoolTrue with≡ pT | BoolFalse with≡ qF = Valuation.vImplicationT v (Valuation.vImplicationVacuous v qF)
+axiomK {P = P} {Q} {v} | BoolFalse with≡ pF = Valuation.vImplicationVacuous v pF
 
 excludedMiddle : {a : _} {A : Set a} {P : Propositions A} → Tautology (implies (prNot (prNot P)) P)
-Tautology.isTaut (excludedMiddle {P = P}) {v} with inspect (Valuation.v v P)
-Tautology.isTaut (excludedMiddle {P = P}) {v} | BoolTrue with≡ pT = Valuation.vImplicationT v pT
-Tautology.isTaut (excludedMiddle {P = P}) {v} | BoolFalse with≡ pF = Valuation.vImplicationVacuous v (Valuation.vImplicationF v (Valuation.vImplicationVacuous v pF) (Valuation.vFalse v))
+excludedMiddle {P = P} {v} with inspect (Valuation.v v P)
+excludedMiddle {P = P} {v} | BoolTrue with≡ pT = Valuation.vImplicationT v pT
+excludedMiddle {P = P} {v} | BoolFalse with≡ pF = Valuation.vImplicationVacuous v (Valuation.vImplicationF v (Valuation.vImplicationVacuous v pF) (Valuation.vFalse v))
 
 axiomS : {a : _} {A : Set a} {P Q R : Propositions A} → Tautology (implies (implies P (implies Q R)) (implies (implies P Q) (implies P R)))
-Tautology.isTaut (axiomS {P = P} {Q} {R}) {v} with inspect (Valuation.v v P)
-Tautology.isTaut (axiomS {P = P} {Q} {R}) {v} | BoolTrue with≡ pT with inspect (Valuation.v v Q)
-Tautology.isTaut (axiomS {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT with inspect (Valuation.v v R)
-Tautology.isTaut (axiomS {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT | BoolTrue with≡ rT = Valuation.vImplicationT v (Valuation.vImplicationT v (Valuation.vImplicationT v rT))
-Tautology.isTaut (axiomS {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT | BoolFalse with≡ rF = Valuation.vImplicationVacuous v (Valuation.vImplicationF v pT (Valuation.vImplicationF v qT rF))
-Tautology.isTaut (axiomS {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolFalse with≡ qF = Valuation.vImplicationT v (Valuation.vImplicationVacuous v (Valuation.vImplicationF v pT qF))
-Tautology.isTaut (axiomS {P = P} {Q} {R}) {v} | BoolFalse with≡ pF = Valuation.vImplicationT v (Valuation.vImplicationT v (Valuation.vImplicationVacuous v pF))
+axiomS {P = P} {Q} {R} {v} with inspect (Valuation.v v P)
+axiomS {P = P} {Q} {R} {v} | BoolTrue with≡ pT with inspect (Valuation.v v Q)
+axiomS {P = P} {Q} {R} {v} | BoolTrue with≡ pT | BoolTrue with≡ qT with inspect (Valuation.v v R)
+axiomS {P = P} {Q} {R} {v} | BoolTrue with≡ pT | BoolTrue with≡ qT | BoolTrue with≡ rT = Valuation.vImplicationT v (Valuation.vImplicationT v (Valuation.vImplicationT v rT))
+axiomS {P = P} {Q} {R} {v} | BoolTrue with≡ pT | BoolTrue with≡ qT | BoolFalse with≡ rF = Valuation.vImplicationVacuous v (Valuation.vImplicationF v pT (Valuation.vImplicationF v qT rF))
+axiomS {P = P} {Q} {R} {v} | BoolTrue with≡ pT | BoolFalse with≡ qF = Valuation.vImplicationT v (Valuation.vImplicationVacuous v (Valuation.vImplicationF v pT qF))
+axiomS {P = P} {Q} {R} {v} | BoolFalse with≡ pF = Valuation.vImplicationT v (Valuation.vImplicationT v (Valuation.vImplicationVacuous v pF))
 
 emptySubset : {a : _} (A : Set a) → IsSubset False A
 emptySubset A = record { ofElt = λ () }
 
 emptyEntailment : {a b : _} {A : Set a} {P : Propositions A} → Entails (emptySubset (Propositions A)) P → Tautology P
-Tautology.isTaut (emptyEntailment {a} {b} {A} {P} record { entails = entails }) {v} = entails {v} λ {s} → exFalso s
+emptyEntailment {a} {b} {A} {P} record { entails = entails } {v} = entails {v} λ {s} → exFalso s
 
 emptyEntailment' : {a b : _} {A : Set a} {P : Propositions A} → Tautology P → Entails (emptySubset (Propositions A)) P
-Entails.entails (emptyEntailment' record { isTaut = isTaut }) {v} _ = isTaut {v}
+Entails.entails (emptyEntailment' isTaut) {v} _ = isTaut {v}
 
 data TwoElements : Set where
   One : TwoElements
