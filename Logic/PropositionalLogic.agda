@@ -77,9 +77,8 @@ Valuation.vImplicationT (extendValuation w) {p} {q} qT | BoolFalse = refl
 valuationsAreFree : {a : _} {pr : Set a} → (w : pr → Bool) → {x : pr} → Valuation.v (extendValuation w) (ofPrimitive x) ≡ w x
 valuationsAreFree w = refl
 
-record Tautology {a : _} {pr : Set a} (prop : Propositions pr) : Set a where
-  field
-    isTaut : {v : Valuation pr} → Valuation.v v prop ≡ BoolTrue
+Tautology : {a : _} {pr : Set a} (prop : Propositions pr) → Set a
+Tautology {pr = pr} prop = {v : Valuation pr} → Valuation.v v prop ≡ BoolTrue
 
 record IsSubset {a b : _} (sub : Set a) (super : Set b) : Set (a ⊔ b) where
   field
