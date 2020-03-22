@@ -17,7 +17,7 @@ open import Sets.FinSetWithK
 open import Rings.Examples.Examples
 open import Rings.Examples.Proofs
 
-open import Groups.FreeGroups
+open import Groups.FreeGroup.UniversalProperty
 open import Groups.Examples.ExampleSheet1
 open import Groups.LectureNotes.Lecture1
 
