@@ -1,3 +1,4 @@
+
 {-# OPTIONS --safe --warning=error --without-K --guardedness #-}
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
@@ -69,4 +70,5 @@ increasingBoundedLimit x increasing (K , kIsBound) with lub (sequenceSubset x) (
 ... | a , _ = a
 
 increasingBoundedConverges : (x : Sequence A) → (increasing : Increasing x) → (bounded : Bounded x) → x ~> (increasingBoundedLimit x increasing bounded)
-increasingBoundedConverges x increasing bounded = {!!}
+increasingBoundedConverges x increasing (K , prBound) with lub (sequenceSubset x) (Sequence.head x , (0 , reflexive)) (K , boundedSequenceBounds K x prBound)
+... | lub , isLub = {!!}
