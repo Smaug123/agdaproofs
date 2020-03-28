@@ -102,102 +102,108 @@ abstract
   prependWD' {i} g1 nz (nonempty j w1) (nonempty k w2) eq | inr i!=j | inr i!=k | inl refl = Equivalence.reflexive (Setoid.eq (S i)) ,, eq
   prependWD' {i} g1 nz (nonempty j w1) (nonempty k w2) eq | inr i!=j | inr i!=k | inr x = exFalso (x refl)
 
-plus'WDlemm : {i : I} (x1 x2 : ReducedSequenceBeginningWith i) (y : ReducedSequence) → (=RP' x1 x2) → plus' x1 y =RP plus' x2 y
-plus'WDlemm (ofEmpty i g nonZero) (ofEmpty .i g₁ nonZero₁) y x1=x2 with decidableIndex i i
-plus'WDlemm (ofEmpty i g nonZero) (ofEmpty .i h nonZero2) y x1=x2 | inl refl = prependWD g h nonZero nonZero2 y x1=x2
-plus'WDlemm (prependLetter i g nonZero {j} x1 x) (prependLetter .i h nonZero2 {j2} x2 pr) y x1=x2 with decidableIndex i i
-... | inl refl with decidableIndex j j2
-plus'WDlemm (prependLetter i g nonZero {j} x1 x) (prependLetter .i h nonZero2 {.j} x2 pr) y x1=x2 | inl refl | inl refl = Equivalence.transitive (Setoid.eq freeProductSetoid) {prepend i g nonZero (plus' x1 y)} {prepend i h nonZero2 (plus' x1 y)} {plus' (prependLetter i h nonZero2 x2 pr) y} (prependWD g h nonZero nonZero2 (plus' x1 y) (_&&_.fst x1=x2)) (prependWD' h nonZero2 (plus' x1 y) (plus' x2 y) (plus'WDlemm x1 x2 y (_&&_.snd x1=x2)))
-... | inr j!=j2 = exFalso (notEqualIfStartDifferent j!=j2 x1 x2 (_&&_.snd x1=x2))
-plus'WDlemm _ _ _ _ | inr bad = exFalso (bad refl)
+abstract
+  plus'WDlemm : {i : I} (x1 x2 : ReducedSequenceBeginningWith i) (y : ReducedSequence) → (=RP' x1 x2) → plus' x1 y =RP plus' x2 y
+  plus'WDlemm (ofEmpty i g nonZero) (ofEmpty .i g₁ nonZero₁) y x1=x2 with decidableIndex i i
+  plus'WDlemm (ofEmpty i g nonZero) (ofEmpty .i h nonZero2) y x1=x2 | inl refl = prependWD g h nonZero nonZero2 y x1=x2
+  plus'WDlemm (prependLetter i g nonZero {j} x1 x) (prependLetter .i h nonZero2 {j2} x2 pr) y x1=x2 with decidableIndex i i
+  ... | inl refl with decidableIndex j j2
+  plus'WDlemm (prependLetter i g nonZero {j} x1 x) (prependLetter .i h nonZero2 {.j} x2 pr) y x1=x2 | inl refl | inl refl = Equivalence.transitive (Setoid.eq freeProductSetoid) {prepend i g nonZero (plus' x1 y)} {prepend i h nonZero2 (plus' x1 y)} {plus' (prependLetter i h nonZero2 x2 pr) y} (prependWD g h nonZero nonZero2 (plus' x1 y) (_&&_.fst x1=x2)) (prependWD' h nonZero2 (plus' x1 y) (plus' x2 y) (plus'WDlemm x1 x2 y (_&&_.snd x1=x2)))
+  ... | inr j!=j2 = exFalso (notEqualIfStartDifferent j!=j2 x1 x2 (_&&_.snd x1=x2))
+  plus'WDlemm _ _ _ _ | inr bad = exFalso (bad refl)
 
-plus'WD : {i j : I} (x1 : ReducedSequenceBeginningWith i) (x2 : ReducedSequenceBeginningWith j) (y : ReducedSequence) → (=RP' x1 x2) → plus' x1 y =RP plus' x2 y
-plus'WD {i} {j} x1 x2 y x1=x2 with decidableIndex i j
-plus'WD {i} {.i} x1 x2 y x1=x2 | inl refl = plus'WDlemm x1 x2 y x1=x2
-plus'WD {i} {j} x1 x2 y x1=x2 | inr x = exFalso (notEqualIfStartDifferent x x1 x2 x1=x2)
+abstract
+  plus'WD : {i j : I} (x1 : ReducedSequenceBeginningWith i) (x2 : ReducedSequenceBeginningWith j) (y : ReducedSequence) → (=RP' x1 x2) → plus' x1 y =RP plus' x2 y
+  plus'WD {i} {j} x1 x2 y x1=x2 with decidableIndex i j
+  plus'WD {i} {.i} x1 x2 y x1=x2 | inl refl = plus'WDlemm x1 x2 y x1=x2
+  plus'WD {i} {j} x1 x2 y x1=x2 | inr x = exFalso (notEqualIfStartDifferent x x1 x2 x1=x2)
 
 private
-  prependLetterWD : {i : I} {h1 h2 : A i} (h1=h2 : Setoid._∼_ (S i) h1 h2) → .(nonZero1 : _) .(nonZero2 : _) {j1 j2 : I} (w1 : ReducedSequenceBeginningWith j1) (w2 : ReducedSequenceBeginningWith j2) → (eq : =RP' w1 w2) → (x1 : i ≡ _ → False) (x2 : i ≡ _ → False) → nonempty i (prependLetter i h1 nonZero1 w1 x1) =RP nonempty i (prependLetter i h2 nonZero2 w2 x2)
-  prependLetterWD {i} h1=h2 nonZero1 nonZero2 {j1} {j2} w1 w2 eq x1 x2 with decidableIndex i i
-  prependLetterWD {i} h1=h2 nonZero1 nonZero2 {j1} {j2} w1 w2 eq x1 x2 | inl refl = h1=h2 ,, eq
-  prependLetterWD {i} h1=h2 nonZero1 nonZero2 {j1} {j2} w1 w2 eq x1 x2 | inr x = exFalso (x refl)
+  abstract
+    prependLetterWD : {i : I} {h1 h2 : A i} (h1=h2 : Setoid._∼_ (S i) h1 h2) → .(nonZero1 : _) .(nonZero2 : _) {j1 j2 : I} (w1 : ReducedSequenceBeginningWith j1) (w2 : ReducedSequenceBeginningWith j2) → (eq : =RP' w1 w2) → (x1 : i ≡ _ → False) (x2 : i ≡ _ → False) → nonempty i (prependLetter i h1 nonZero1 w1 x1) =RP nonempty i (prependLetter i h2 nonZero2 w2 x2)
+    prependLetterWD {i} h1=h2 nonZero1 nonZero2 {j1} {j2} w1 w2 eq x1 x2 with decidableIndex i i
+    prependLetterWD {i} h1=h2 nonZero1 nonZero2 {j1} {j2} w1 w2 eq x1 x2 | inl refl = h1=h2 ,, eq
+    prependLetterWD {i} h1=h2 nonZero1 nonZero2 {j1} {j2} w1 w2 eq x1 x2 | inr x = exFalso (x refl)
 
-plus'WD' : {i : I} (x : ReducedSequenceBeginningWith i) (y1 y2 : ReducedSequence) → (y1 =RP y2) → plus' x y1 =RP plus' x y2
-plus'WD' x empty empty eq = Equivalence.reflexive (Setoid.eq freeProductSetoid) {plus' x empty}
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 w1) (nonempty i2 w2) eq with decidableIndex j i1
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j w1) (nonempty i2 w2) eq | inl refl with decidableIndex j i2
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j g₁ nonZero₁)) (nonempty .j (ofEmpty .j g₂ nonZero₂)) eq | inl refl | inl refl with decidableIndex j j
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl with decidableGroups j ((j + g) h1) (Group.0G (G j))
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inl x with decidableGroups j ((j + g) h2) (Group.0G (G j))
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inl x | inl x₁ = record {}
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inl x | inr bad = exFalso (bad (Equivalence.transitive (Setoid.eq (S j)) (Group.+WellDefined (G j) (Equivalence.reflexive (Setoid.eq (S j))) (Equivalence.symmetric (Setoid.eq (S j)) eq)) x))
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inr x with decidableGroups j ((j + g) h2) (Group.0G (G j))
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inr x | inl bad = exFalso (x (Equivalence.transitive (Setoid.eq (S j)) (Group.+WellDefined (G j) (Equivalence.reflexive (Setoid.eq (S j))) eq) bad))
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inr x | inr x₁ with decidableIndex j j
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inr x | inr x₁ | inl refl = Group.+WellDefined (G j) (Equivalence.reflexive (Setoid.eq (S j))) eq
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inr x | inr x₁ | inr bad = exFalso (bad refl)
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl with decidableGroups j ((j + g) h1) (Group.0G (G j))
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl | inl eq1 with decidableGroups j ((j + g) h2) (Group.0G (G j))
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl | inl eq1 | inl x₂ with decidableIndex j j
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl | inl eq1 | inl x₂ | inl refl = _&&_.snd eq
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl | inl eq1 | inr neq2 with decidableIndex j j
-... | inl refl = exFalso (neq2 (Equivalence.transitive (Setoid.eq (S j)) (Group.+WellDefined (G j) (Equivalence.reflexive (Setoid.eq (S j))) (Equivalence.symmetric (Setoid.eq (S j)) (_&&_.fst eq))) eq1))
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl | inr neq1 with decidableGroups j ((j + g) h2) (Group.0G (G j))
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl | inr neq1 | inl eq2 with decidableIndex j j
-... | inl refl = exFalso (neq1 (Equivalence.transitive (Setoid.eq (S j)) (Group.+WellDefined (G j) (Equivalence.reflexive (Setoid.eq (S j))) (_&&_.fst eq)) eq2))
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl | inr neq1 | inr x₂ with decidableIndex j j
-... | inl refl = Group.+WellDefined (G j) (Equivalence.reflexive (Setoid.eq (S j))) (_&&_.fst eq) ,, _&&_.snd eq
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j g₁ nonZero₁)) (nonempty i2 (ofEmpty .i2 g₂ nonZero₂)) eq | inl refl | inr x with decidableIndex j i2
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j g₁ nonZero₁)) (nonempty .j (ofEmpty .j g₂ nonZero₂)) eq | inl refl | inr x | inl refl = exFalso (x refl)
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j g₁ nonZero₁ w1 x₁)) (nonempty i2 (prependLetter .i2 g₂ nonZero₂ w2 x₂)) eq | inl refl | inr x with decidableIndex j i2
-plus'WD' {.i2} (ofEmpty .i2 g nonZero) (nonempty .i2 (prependLetter .i2 g₁ nonZero₁ w1 x₁)) (nonempty i2 (prependLetter .i2 g₂ nonZero₂ w2 x₂)) eq | inl refl | inr x | inl refl = exFalso (x refl)
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 w1) (nonempty i2 w2) eq | inr j!=i1 with decidableIndex j i2
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 (ofEmpty .i1 g₁ nonZero₁)) (nonempty .j (ofEmpty .j g₂ nonZero₂)) eq | inr j!=i1 | inl refl with decidableIndex i1 j
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 (ofEmpty .i1 g₁ nonZero₁)) (nonempty .j (ofEmpty .j g₂ nonZero₂)) eq | inr j!=i1 | inl refl | inl x = exFalso (j!=i1 (equalityCommutative x))
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 (prependLetter .i1 g₁ nonZero₁ w1 x)) (nonempty .j (prependLetter .j g₂ nonZero₂ w2 x₁)) eq | inr j!=i1 | inl refl with decidableIndex i1 j
-... | inl bad = exFalso (j!=i1 (equalityCommutative bad))
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 w1) (nonempty i2 w2) eq | inr j!=i1 | inr j!=i2 with decidableIndex j j
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 w1) (nonempty i2 w2) eq | inr j!=i1 | inr j!=i2 | inl refl = Equivalence.reflexive (Setoid.eq (S j)) ,, eq
-plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 w1) (nonempty i2 w2) eq | inr j!=i1 | inr j!=i2 | inr x = exFalso (x refl)
-plus'WD' {j} (prependLetter j g nonZero l x) (nonempty i (ofEmpty .i h1 nonZero1)) (nonempty i2 (ofEmpty .i2 h2 nonZero2)) eq with decidableIndex i i2
-... | inl refl = prependWD' g nonZero (plus' l (nonempty i (ofEmpty i h1 nonZero1))) (plus' l (nonempty i2 (ofEmpty i2 h2 nonZero2))) (plus'WD' l (nonempty i2 (ofEmpty i2 h1 nonZero1)) (nonempty i2 (ofEmpty i2 h2 nonZero2)) t)
-  where
-    t : =RP' (ofEmpty i2 h1 nonZero1) (ofEmpty i2 h2 nonZero2)
-    t with decidableIndex i2 i2
-    t | inl refl = eq
-    t | inr x = exFalso (x refl)
-... | inr i!=i2 = exFalso' eq
-plus'WD' {j} (prependLetter j g nonZero l x) (nonempty i (prependLetter .i g₁ nonZero₁ w1 x₁)) (nonempty i2 (prependLetter .i2 g₂ nonZero₂ w2 x₂)) eq with decidableIndex i i2
-plus'WD' {j} (prependLetter j g nonZero l x) (nonempty i (prependLetter .i h1 nonZero1 w1 x1)) (nonempty .i (prependLetter .i h2 nonZero2 w2 x2)) eq | inl refl = prependWD' g nonZero (plus' l (nonempty i (prependLetter i h1 nonZero1 w1 x1))) (plus' l (nonempty i (prependLetter i h2 nonZero2 w2 x2))) (plus'WD' l (nonempty i (prependLetter i h1 nonZero1 w1 x1)) (nonempty i (prependLetter i h2 nonZero2 w2 x2)) (prependLetterWD (_&&_.fst eq) nonZero1 nonZero2 w1 w2 (_&&_.snd eq) x1 x2))
+abstract
+  plus'WD' : {i : I} (x : ReducedSequenceBeginningWith i) (y1 y2 : ReducedSequence) → (y1 =RP y2) → plus' x y1 =RP plus' x y2
+  plus'WD' x empty empty eq = Equivalence.reflexive (Setoid.eq freeProductSetoid) {plus' x empty}
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 w1) (nonempty i2 w2) eq with decidableIndex j i1
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j w1) (nonempty i2 w2) eq | inl refl with decidableIndex j i2
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j g₁ nonZero₁)) (nonempty .j (ofEmpty .j g₂ nonZero₂)) eq | inl refl | inl refl with decidableIndex j j
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl with decidableGroups j ((j + g) h1) (Group.0G (G j))
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inl x with decidableGroups j ((j + g) h2) (Group.0G (G j))
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inl x | inl x₁ = record {}
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inl x | inr bad = exFalso (bad (Equivalence.transitive (Setoid.eq (S j)) (Group.+WellDefined (G j) (Equivalence.reflexive (Setoid.eq (S j))) (Equivalence.symmetric (Setoid.eq (S j)) eq)) x))
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inr x with decidableGroups j ((j + g) h2) (Group.0G (G j))
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inr x | inl bad = exFalso (x (Equivalence.transitive (Setoid.eq (S j)) (Group.+WellDefined (G j) (Equivalence.reflexive (Setoid.eq (S j))) eq) bad))
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inr x | inr x₁ with decidableIndex j j
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inr x | inr x₁ | inl refl = Group.+WellDefined (G j) (Equivalence.reflexive (Setoid.eq (S j))) eq
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j h1 nonZero₁)) (nonempty .j (ofEmpty .j h2 nonZero₂)) eq | inl refl | inl refl | inl refl | inr x | inr x₁ | inr bad = exFalso (bad refl)
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl with decidableGroups j ((j + g) h1) (Group.0G (G j))
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl | inl eq1 with decidableGroups j ((j + g) h2) (Group.0G (G j))
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl | inl eq1 | inl x₂ with decidableIndex j j
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl | inl eq1 | inl x₂ | inl refl = _&&_.snd eq
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl | inl eq1 | inr neq2 with decidableIndex j j
+  ... | inl refl = exFalso (neq2 (Equivalence.transitive (Setoid.eq (S j)) (Group.+WellDefined (G j) (Equivalence.reflexive (Setoid.eq (S j))) (Equivalence.symmetric (Setoid.eq (S j)) (_&&_.fst eq))) eq1))
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl | inr neq1 with decidableGroups j ((j + g) h2) (Group.0G (G j))
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl | inr neq1 | inl eq2 with decidableIndex j j
+  ... | inl refl = exFalso (neq1 (Equivalence.transitive (Setoid.eq (S j)) (Group.+WellDefined (G j) (Equivalence.reflexive (Setoid.eq (S j))) (_&&_.fst eq)) eq2))
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j h1 nonZero₁ w1 x)) (nonempty .j (prependLetter .j h2 nonZero₂ w2 x₁)) eq | inl refl | inl refl | inr neq1 | inr x₂ with decidableIndex j j
+  ... | inl refl = Group.+WellDefined (G j) (Equivalence.reflexive (Setoid.eq (S j))) (_&&_.fst eq) ,, _&&_.snd eq
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j g₁ nonZero₁)) (nonempty i2 (ofEmpty .i2 g₂ nonZero₂)) eq | inl refl | inr x with decidableIndex j i2
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (ofEmpty .j g₁ nonZero₁)) (nonempty .j (ofEmpty .j g₂ nonZero₂)) eq | inl refl | inr x | inl refl = exFalso (x refl)
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty .j (prependLetter .j g₁ nonZero₁ w1 x₁)) (nonempty i2 (prependLetter .i2 g₂ nonZero₂ w2 x₂)) eq | inl refl | inr x with decidableIndex j i2
+  plus'WD' {.i2} (ofEmpty .i2 g nonZero) (nonempty .i2 (prependLetter .i2 g₁ nonZero₁ w1 x₁)) (nonempty i2 (prependLetter .i2 g₂ nonZero₂ w2 x₂)) eq | inl refl | inr x | inl refl = exFalso (x refl)
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 w1) (nonempty i2 w2) eq | inr j!=i1 with decidableIndex j i2
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 (ofEmpty .i1 g₁ nonZero₁)) (nonempty .j (ofEmpty .j g₂ nonZero₂)) eq | inr j!=i1 | inl refl with decidableIndex i1 j
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 (ofEmpty .i1 g₁ nonZero₁)) (nonempty .j (ofEmpty .j g₂ nonZero₂)) eq | inr j!=i1 | inl refl | inl x = exFalso (j!=i1 (equalityCommutative x))
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 (prependLetter .i1 g₁ nonZero₁ w1 x)) (nonempty .j (prependLetter .j g₂ nonZero₂ w2 x₁)) eq | inr j!=i1 | inl refl with decidableIndex i1 j
+  ... | inl bad = exFalso (j!=i1 (equalityCommutative bad))
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 w1) (nonempty i2 w2) eq | inr j!=i1 | inr j!=i2 with decidableIndex j j
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 w1) (nonempty i2 w2) eq | inr j!=i1 | inr j!=i2 | inl refl = Equivalence.reflexive (Setoid.eq (S j)) ,, eq
+  plus'WD' {j} (ofEmpty j g nonZero) (nonempty i1 w1) (nonempty i2 w2) eq | inr j!=i1 | inr j!=i2 | inr x = exFalso (x refl)
+  plus'WD' {j} (prependLetter j g nonZero l x) (nonempty i (ofEmpty .i h1 nonZero1)) (nonempty i2 (ofEmpty .i2 h2 nonZero2)) eq with decidableIndex i i2
+  ... | inl refl = prependWD' g nonZero (plus' l (nonempty i (ofEmpty i h1 nonZero1))) (plus' l (nonempty i2 (ofEmpty i2 h2 nonZero2))) (plus'WD' l (nonempty i2 (ofEmpty i2 h1 nonZero1)) (nonempty i2 (ofEmpty i2 h2 nonZero2)) t)
+    where
+      t : =RP' (ofEmpty i2 h1 nonZero1) (ofEmpty i2 h2 nonZero2)
+      t with decidableIndex i2 i2
+      t | inl refl = eq
+      t | inr x = exFalso (x refl)
+  ... | inr i!=i2 = exFalso' eq
+  plus'WD' {j} (prependLetter j g nonZero l x) (nonempty i (prependLetter .i g₁ nonZero₁ w1 x₁)) (nonempty i2 (prependLetter .i2 g₂ nonZero₂ w2 x₂)) eq with decidableIndex i i2
+  plus'WD' {j} (prependLetter j g nonZero l x) (nonempty i (prependLetter .i h1 nonZero1 w1 x1)) (nonempty .i (prependLetter .i h2 nonZero2 w2 x2)) eq | inl refl = prependWD' g nonZero (plus' l (nonempty i (prependLetter i h1 nonZero1 w1 x1))) (plus' l (nonempty i (prependLetter i h2 nonZero2 w2 x2))) (plus'WD' l (nonempty i (prependLetter i h1 nonZero1 w1 x1)) (nonempty i (prependLetter i h2 nonZero2 w2 x2)) (prependLetterWD (_&&_.fst eq) nonZero1 nonZero2 w1 w2 (_&&_.snd eq) x1 x2))
 
-plusEmptyRight : {i : I} (x : ReducedSequenceBeginningWith i) → _=RP_ (plus' x empty) (nonempty i x)
-plusEmptyRight (ofEmpty i g nonZero) with decidableIndex i i
-plusEmptyRight (ofEmpty i g nonZero) | inl refl = Equivalence.reflexive (Setoid.eq (S i))
-plusEmptyRight (ofEmpty i g nonZero) | inr x = exFalso (x refl)
-plusEmptyRight (prependLetter i g nonZero {j} x i!=j) with plusEmptyRight x
-... | b with plus' x empty
-plusEmptyRight (prependLetter i g nonZero {j} x i!=j) | b | nonempty k w with decidableIndex i k
-plusEmptyRight (prependLetter .k g nonZero {j} x i!=j) | b | nonempty k (ofEmpty .k h nonZero₁) | inl refl with decidableGroups k ((k + g) h) (Group.0G (G k))
-plusEmptyRight (prependLetter .k g nonZero {.i} (ofEmpty i g₁ nonZero₂) i!=j) | b | nonempty k (ofEmpty .k h nonZero₁) | inl refl | inl g+k=hinv with decidableIndex k i
-plusEmptyRight (prependLetter .i g nonZero {.i} (ofEmpty i g₁ nonZero₂) i!=j) | b | nonempty .i (ofEmpty .i h nonZero₁) | inl refl | inl g+k=hinv | inl refl = exFalso (i!=j refl)
-plusEmptyRight (prependLetter .k g nonZero {.i} (ofEmpty i g₁ nonZero₂) i!=j) | b | nonempty k (ofEmpty .k h nonZero₁) | inl refl | inr x₁ with decidableIndex k i
-plusEmptyRight (prependLetter .i g nonZero {.i} (ofEmpty i g₁ nonZero₂) i!=j) | b | nonempty .i (ofEmpty .i h nonZero₁) | inl refl | inr x₁ | inl refl = exFalso (i!=j refl)
-plusEmptyRight (prependLetter .k g nonZero {j} w1 i!=j) | b | nonempty k (prependLetter .k h nonZero₁ w x₁) | inl refl with decidableGroups k ((k + g) h) (Group.0G (G k))
-plusEmptyRight (prependLetter .k g nonZero {.i} (prependLetter i g₁ nonZero₂ w1 x) i!=j) | b | nonempty k (prependLetter .k h nonZero₁ w x₁) | inl refl | inl p with decidableIndex k i
-plusEmptyRight (prependLetter .i g nonZero {.i} (prependLetter i g₁ nonZero₂ w1 x) i!=j) | b | nonempty .i (prependLetter .i h nonZero₁ w x₁) | inl refl | inl p | inl refl = exFalso (i!=j refl)
-plusEmptyRight (prependLetter .k g nonZero {j} w1 i!=j) | b | nonempty k (prependLetter .k h nonZero₁ w x₁) | inl refl | inr x₂ with decidableIndex k k
-plusEmptyRight (prependLetter .k g nonZero {.i} (prependLetter i g₁ nonZero₂ w1 x) i!=j) | b | nonempty k (prependLetter .k h nonZero₁ w x₁) | inl refl | inr x₂ | inl refl with decidableIndex k i
-plusEmptyRight (prependLetter .i g nonZero {.i} (prependLetter i g₁ nonZero₂ w1 x) i!=j) | b | nonempty .i (prependLetter .i h nonZero₁ w x₁) | inl refl | inr x₂ | inl refl | inl refl = exFalso (i!=j refl)
-plusEmptyRight (prependLetter .k g nonZero {j} w1 i!=j) | b | nonempty k (prependLetter .k h nonZero₁ w x₁) | inl refl | inr x₂ | inr x = exFalso (x refl)
-plusEmptyRight (prependLetter i g nonZero {j} w1 i!=j) | b | nonempty k w | inr i!=k with decidableIndex i i
-plusEmptyRight (prependLetter i g nonZero {j} w1 i!=j) | b | nonempty k w | inr i!=k | inl refl = Equivalence.reflexive (Setoid.eq (S i)) ,, b
-plusEmptyRight (prependLetter i g nonZero {j} w1 i!=j) | b | nonempty k w | inr i!=k | inr x = exFalso (x refl)
+abstract
+  plusEmptyRight : {i : I} (x : ReducedSequenceBeginningWith i) → _=RP_ (plus' x empty) (nonempty i x)
+  plusEmptyRight (ofEmpty i g nonZero) with decidableIndex i i
+  plusEmptyRight (ofEmpty i g nonZero) | inl refl = Equivalence.reflexive (Setoid.eq (S i))
+  plusEmptyRight (ofEmpty i g nonZero) | inr x = exFalso (x refl)
+  plusEmptyRight (prependLetter i g nonZero {j} x i!=j) with plusEmptyRight x
+  ... | b with plus' x empty
+  plusEmptyRight (prependLetter i g nonZero {j} x i!=j) | b | nonempty k w with decidableIndex i k
+  plusEmptyRight (prependLetter .k g nonZero {j} x i!=j) | b | nonempty k (ofEmpty .k h nonZero₁) | inl refl with decidableGroups k ((k + g) h) (Group.0G (G k))
+  plusEmptyRight (prependLetter .k g nonZero {.i} (ofEmpty i g₁ nonZero₂) i!=j) | b | nonempty k (ofEmpty .k h nonZero₁) | inl refl | inl g+k=hinv with decidableIndex k i
+  plusEmptyRight (prependLetter .i g nonZero {.i} (ofEmpty i g₁ nonZero₂) i!=j) | b | nonempty .i (ofEmpty .i h nonZero₁) | inl refl | inl g+k=hinv | inl refl = exFalso (i!=j refl)
+  plusEmptyRight (prependLetter .k g nonZero {.i} (ofEmpty i g₁ nonZero₂) i!=j) | b | nonempty k (ofEmpty .k h nonZero₁) | inl refl | inr x₁ with decidableIndex k i
+  plusEmptyRight (prependLetter .i g nonZero {.i} (ofEmpty i g₁ nonZero₂) i!=j) | b | nonempty .i (ofEmpty .i h nonZero₁) | inl refl | inr x₁ | inl refl = exFalso (i!=j refl)
+  plusEmptyRight (prependLetter .k g nonZero {j} w1 i!=j) | b | nonempty k (prependLetter .k h nonZero₁ w x₁) | inl refl with decidableGroups k ((k + g) h) (Group.0G (G k))
+  plusEmptyRight (prependLetter .k g nonZero {.i} (prependLetter i g₁ nonZero₂ w1 x) i!=j) | b | nonempty k (prependLetter .k h nonZero₁ w x₁) | inl refl | inl p with decidableIndex k i
+  plusEmptyRight (prependLetter .i g nonZero {.i} (prependLetter i g₁ nonZero₂ w1 x) i!=j) | b | nonempty .i (prependLetter .i h nonZero₁ w x₁) | inl refl | inl p | inl refl = exFalso (i!=j refl)
+  plusEmptyRight (prependLetter .k g nonZero {j} w1 i!=j) | b | nonempty k (prependLetter .k h nonZero₁ w x₁) | inl refl | inr x₂ with decidableIndex k k
+  plusEmptyRight (prependLetter .k g nonZero {.i} (prependLetter i g₁ nonZero₂ w1 x) i!=j) | b | nonempty k (prependLetter .k h nonZero₁ w x₁) | inl refl | inr x₂ | inl refl with decidableIndex k i
+  plusEmptyRight (prependLetter .i g nonZero {.i} (prependLetter i g₁ nonZero₂ w1 x) i!=j) | b | nonempty .i (prependLetter .i h nonZero₁ w x₁) | inl refl | inr x₂ | inl refl | inl refl = exFalso (i!=j refl)
+  plusEmptyRight (prependLetter .k g nonZero {j} w1 i!=j) | b | nonempty k (prependLetter .k h nonZero₁ w x₁) | inl refl | inr x₂ | inr x = exFalso (x refl)
+  plusEmptyRight (prependLetter i g nonZero {j} w1 i!=j) | b | nonempty k w | inr i!=k with decidableIndex i i
+  plusEmptyRight (prependLetter i g nonZero {j} w1 i!=j) | b | nonempty k w | inr i!=k | inl refl = Equivalence.reflexive (Setoid.eq (S i)) ,, b
+  plusEmptyRight (prependLetter i g nonZero {j} w1 i!=j) | b | nonempty k w | inr i!=k | inr x = exFalso (x refl)
 
-plusWD : (m n o p : ReducedSequence) → (m =RP o) → (n =RP p) → (m +RP n) =RP (o +RP p)
-plusWD empty empty empty empty m=o n=p = record {}
-plusWD empty (nonempty i x) empty (nonempty i₁ x₁) m=o n=p = n=p
-plusWD (nonempty i x) empty (nonempty j y) empty m=o record {} = Equivalence.transitive (Setoid.eq freeProductSetoid) {plus' x empty} {nonempty i x} {plus' y empty} (plusEmptyRight x) (Equivalence.transitive (Setoid.eq freeProductSetoid) {nonempty i x} {nonempty j y} {plus' y empty} m=o (Equivalence.symmetric (Setoid.eq freeProductSetoid) {plus' y empty} {nonempty j y} (plusEmptyRight y)))
-plusWD (nonempty i1 x1) (nonempty i2 x2) (nonempty i3 x3) (nonempty i4 x4) m=o n=p = (Equivalence.transitive (Setoid.eq freeProductSetoid)) {plus' x1 (nonempty i2 x2)} {plus' x3 (nonempty i2 x2)} {plus' x3 (nonempty i4 x4)} (plus'WD x1 x3 (nonempty i2 x2) m=o) (plus'WD' x3 (nonempty i2 x2) (nonempty i4 x4) n=p)
+abstract
+  plusWD : (m n o p : ReducedSequence) → (m =RP o) → (n =RP p) → (m +RP n) =RP (o +RP p)
+  plusWD empty empty empty empty m=o n=p = record {}
+  plusWD empty (nonempty i x) empty (nonempty i₁ x₁) m=o n=p = n=p
+  plusWD (nonempty i x) empty (nonempty j y) empty m=o record {} = Equivalence.transitive (Setoid.eq freeProductSetoid) {plus' x empty} {nonempty i x} {plus' y empty} (plusEmptyRight x) (Equivalence.transitive (Setoid.eq freeProductSetoid) {nonempty i x} {nonempty j y} {plus' y empty} m=o (Equivalence.symmetric (Setoid.eq freeProductSetoid) {plus' y empty} {nonempty j y} (plusEmptyRight y)))
+  plusWD (nonempty i1 x1) (nonempty i2 x2) (nonempty i3 x3) (nonempty i4 x4) m=o n=p = (Equivalence.transitive (Setoid.eq freeProductSetoid)) {plus' x1 (nonempty i2 x2)} {plus' x3 (nonempty i2 x2)} {plus' x3 (nonempty i4 x4)} (plus'WD x1 x3 (nonempty i2 x2) m=o) (plus'WD' x3 (nonempty i2 x2) (nonempty i4 x4) n=p)
 
 abstract
   prependFrom : {i : I} (g1 g2 : A i) (pr : (Setoid._∼_ (S i) (_+_ i g1 g2) (Group.0G (G i))) → False) (c : ReducedSequence) .(p2 : _) .(p3 : _) → prepend i (_+_ i g1 g2) pr c =RP prepend i g1 p2 (prepend i g2 p3 c)
@@ -357,8 +363,7 @@ abstract
   prependAssocLemma' {.k} {j} neq {g1} nz m (nonempty k (prependLetter .k g nonZero x x₁)) c | inl refl | inr neq1 = prependFrom g1 g neq1 (plus' x c) nz nonZero
   prependAssocLemma' {i} {j} neq {g} nz m (nonempty k x) c | inr i!=k = Equivalence.reflexive (Setoid.eq freeProductSetoid) {prepend i g _ (plus' x c)}
 
---prependFrom : {i : I} (g1 g2 : A i) (pr : (Setoid._∼_ (S i) (_+_ i g1 g2) (Group.0G (G i))) → False) (c : ReducedSequence) .(p2 : _) .(p3 : _) → prepend i (_+_ i g1 g2) pr c =RP prepend i g1 p2 (prepend i g2 p3 c)
-
+abstract
   plusAssocLemma : {i : I} (x : ReducedSequenceBeginningWith i) (b c : ReducedSequence) → (plus' x b +RP c) =RP plus' x (b +RP c)
   plusAssocLemma (ofEmpty i g nonZero) empty c = Equivalence.reflexive (Setoid.eq freeProductSetoid) {prepend i g _ c}
   plusAssocLemma (ofEmpty i g nonZero) (nonempty j b) c with decidableIndex i j
