@@ -45,6 +45,14 @@ private
     ... | inl x = =RP'reflex r
 
   abstract
+    unpeel : (k : ReducedSequence) {j : I} (g : A j) .(pr : _) .(pr2 : _) → k =RP empty → (prepend j g pr (k +RP (nonempty j (ofEmpty j (Group.inverse (G j) g) pr2)))) =RP empty
+    unpeel empty {j} g pr pr2 x with decidableIndex j j
+    ... | inr bad = exFalso (bad refl)
+    unpeel empty {j} g pr pr2 x | inl refl with decidableGroups j ((j + g) (Group.inverse (G j) g)) (Group.0G (G j))
+    ... | inl _ = record {}
+    ... | inr bad = exFalso (bad (Group.invRight (G j)))
+
+  abstract
     invRight' : {i : I} (x : ReducedSequenceBeginningWith i) → ((nonempty i x) +RP inv (nonempty i x)) =RP empty
     invRight' {i} (ofEmpty _ g nonZero) with decidableIndex i i
     ... | inr x = exFalso (x refl)
@@ -62,7 +70,9 @@ private
     invRight' {j} (prependLetter _ g nonZero {k} (ofEmpty .k h nonZero1) j!=k) | inr _ | inl refl | inl _ | inl refl with decidableGroups j ((j + g) (Group.inverse (G j) g)) (Group.0G (G j))
     ... | inr bad = exFalso (bad (Group.invRight (G j)))
     ... | inl r = record {}
-    invRight' {j} (prependLetter _ g nonZero {k} (prependLetter .k h nonZero1 x x₁) j!=k) rewrite refl {x = 0} = {!!}
+    invRight' {j} (prependLetter _ g nonZero {k} (prependLetter .k h nonZero1 {i} x k!=i) j!=k) rewrite refl {x = 0} = Equivalence.transitive (Setoid.eq freeProductSetoid) {prepend j g _ (prepend k h _ (plus' x ((inv' x +RP nonempty k (ofEmpty k (Group.inverse (G k) h) _)) +RP nonempty j (ofEmpty j (Group.inverse (G j) g) _))))} {prepend j g nonZero (prepend k h nonZero1 (plus' x (inv' x +RP nonempty k (ofEmpty k (Group.inverse (G k) h) λ t → nonZero1 (invZeroImpliesZero (G k) t)))) +RP (nonempty j (ofEmpty j (Group.inverse (G j) g) λ t → nonZero (invZeroImpliesZero (G j) t))))} {empty} (prependWD' g nonZero (prepend k h nonZero1 (plus' x ((inv' x +RP nonempty k (ofEmpty k (Group.inverse (G k) h) _)) +RP nonempty j (ofEmpty j (Group.inverse (G j) g) λ t → nonZero (invZeroImpliesZero (G j) t))))) (prepend k h _ (plus' x (inv' x +RP nonempty k (ofEmpty k (Group.inverse (G k) h) λ t → nonZero1 (invZeroImpliesZero (G k) t)))) +RP nonempty j (ofEmpty j (Group.inverse (G j) g) λ i → nonZero (invZeroImpliesZero (G j) i))) (Equivalence.symmetric (Setoid.eq freeProductSetoid) {(prepend k h _ (plus' x (inv' x +RP nonempty k (ofEmpty k (Group.inverse (G k) h) _))) +RP nonempty j (ofEmpty j (Group.inverse (G j) g) _))} {prepend k h _ (plus' x ((inv' x +RP nonempty k (ofEmpty k (Group.inverse (G k) h) _)) +RP nonempty j (ofEmpty j (Group.inverse (G j) g) _)))} {!!})) (unpeel (prepend k h nonZero1 (plus' x (inv' x +RP nonempty k (ofEmpty k (Group.inverse (G k) h) _)))) g nonZero (λ t → nonZero (invZeroImpliesZero (G j) t)) (Equivalence.transitive (Setoid.eq freeProductSetoid) {prepend k h nonZero1 (plus' x (inv' x +RP nonempty k (ofEmpty k (Group.inverse (G k) h) λ t → nonZero1 (invZeroImpliesZero (G k) t))))} {prepend k h nonZero1 ((plus' x (inv' x)) +RP nonempty k (ofEmpty k (Group.inverse (G k) h) λ t → nonZero1 (invZeroImpliesZero (G k) t)))} {empty} (prependWD' h nonZero1 (plus' x (inv' x +RP nonempty k (ofEmpty k (Group.inverse (G k) h) λ t → nonZero1 (invZeroImpliesZero (G k) t)))) (plus' x (inv' x) +RP nonempty k (ofEmpty k (Group.inverse (G k) h) λ t → nonZero1 (invZeroImpliesZero (G k) t))) (Equivalence.symmetric (Setoid.eq freeProductSetoid) {plus' x (inv' x) +RP nonempty k (ofEmpty k (Group.inverse (G k) h) λ t → nonZero1 (invZeroImpliesZero (G k) t))} (plusAssoc (nonempty _ x) (inv' x) (nonempty k (ofEmpty k (Group.inverse (G k) h) (λ t → nonZero1 (invZeroImpliesZero (G k) t))))))) (unpeel (plus' x (inv' x)) h nonZero1 (λ t → nonZero1 (invZeroImpliesZero (G k) t)) (invRight' x))))
+
+{-
 
   abstract
     invRight : (x : ReducedSequence) → (x +RP (inv x)) =RP empty
@@ -105,3 +115,5 @@ Group.identLeft FreeProductGroup {empty} = Equivalence.reflexive (Setoid.eq free
 Group.identLeft FreeProductGroup {nonempty i x} = Equivalence.reflexive (Setoid.eq freeProductSetoid) {nonempty i x}
 Group.invLeft FreeProductGroup {x} = invLeft x
 Group.invRight FreeProductGroup {x} = invRight x
+
+-}
