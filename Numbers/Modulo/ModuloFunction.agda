@@ -19,10 +19,10 @@ private
   notBigger' : (a : ℕ) {n : ℕ} → succ a +N n ≡ n → False
   notBigger' (succ a) {succ n} pr rewrite Semiring.commutative ℕSemiring a (succ n) | Semiring.commutative ℕSemiring n a = notBigger' _ (succInjective pr)
 
-abstract
-  mod : (n : ℕ) → .(pr : 0 <N n) → (a : ℕ) → ℕ
-  mod (succ n) 0<n a = divisionAlgResult.rem (divisionAlg (succ n) a)
+mod : (n : ℕ) → .(pr : 0 <N n) → (a : ℕ) → ℕ
+mod (succ n) 0<n a = divisionAlgResult.rem (divisionAlg (succ n) a)
 
+abstract
   modIsMod : {n : ℕ} → .(pr : 0 <N n) → (a : ℕ) → a <N n → mod n pr a ≡ a
   modIsMod {succ n} 0<n a a<n with divisionAlg (succ n) a
   modIsMod {succ n} 0<n a a<n | record { quot = zero ; rem = rem ; pr = pr ; remIsSmall = remIsSmall ; quotSmall = quotSmall } rewrite multiplicationNIsCommutative n 0 = pr

@@ -69,6 +69,9 @@ equalityCommutative refl = refl
 exFalso : {n : _} {A : Set n} → .(x : False) → A
 exFalso {a} = λ ()
 
+exFalso' : {r n : _} {A : Set n} → .(x : False' {r}) → A
+exFalso' ()
+
 orIsAssociative : {n : _} {a b c : Set n} → ((a || b) || c) → (a || (b || c))
 orIsAssociative (inl (inl x)) = inl x
 orIsAssociative (inl (inr x)) = inr (inl x)
