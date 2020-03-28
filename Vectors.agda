@@ -29,10 +29,10 @@ _+V_ : {a : _} {X : Set a} {m n : ℕ} → Vec X m → Vec X n → Vec X (m +N n
 [] +V ys = ys
 (x ,- xs) +V ys = (x ,- (xs +V ys))
 
-vecIndex : {a : _} {X : Set a} {m : ℕ} → Vec X m → (i : ℕ) → (i <N m) → X
-vecIndex [] zero (le x ())
+vecIndex : {a : _} {X : Set a} {m : ℕ} → Vec X m → (i : ℕ) → .(i <N m) → X
+vecIndex [] zero ()
 vecIndex (x ,- vec) zero i<m = x
-vecIndex [] (succ i) (le x ())
+vecIndex [] (succ i) ()
 vecIndex (x ,- vec) (succ i) i<m = vecIndex vec i (canRemoveSuccFrom<N i<m)
 
 vecLast : {a : _} {X : Set a} {m : ℕ} → Vec X m → (0 <N m) → X
@@ -126,6 +126,10 @@ vecMapIsNatural : {a b : _} {X : Set a} {Y : Set b} (f : X → Y) → {m n : ℕ
 vecMapIsNatural f [] xs' = refl
 vecMapIsNatural f (x ,- xs) xs' rewrite vecMapIsNatural f xs xs' = refl
 
+vecMapAndIndex : {n : ℕ} {a b : _} {A : Set a} {B : Set b} (v : Vec A n) (f : A → B) → {a : ℕ} → (a<n : a <N n) → vecIndex (vecMap f v) a a<n ≡ f (vecIndex v a a<n)
+vecMapAndIndex (x ,- v) f {zero} a<n = refl
+vecMapAndIndex (x ,- v) f {succ a} a<n = vecMapAndIndex v f (canRemoveSuccFrom<N a<n)
+
 vecPure : {a : _} {X : Set a} → X → {n : ℕ} → Vec X n
 vecPure x {zero} = []
 vecPure x {succ n} = x ,- vecPure x {n}
@@ -161,6 +165,10 @@ vecComposition (f ,- fs) (g ,- gs) (x ,- xs) rewrite vecComposition fs gs xs = r
 vecToList : {a : _} {A : Set a} {n : ℕ} → (v : Vec A n) → List A
 vecToList [] = []
 vecToList (x ,- v) = x :: vecToList v
+
+listToVec : {a : _} {A : Set a} (l : List A) → Vec A (length l)
+listToVec [] = []
+listToVec (x :: l) = x ,- listToVec l
 
 ------------
 

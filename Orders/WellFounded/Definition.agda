@@ -10,4 +10,3 @@ data Accessible (x : A) : Set (lsuc a ⊔ b) where
 
 WellFounded : Set (lsuc a ⊔ b)
 WellFounded = ∀ x → Accessible x
-

@@ -131,10 +131,6 @@ open import Categories.Functor.Definition
 open import Categories.Functor.Lemmas
 open import Categories.Dual.Definition
 
-open import Modules.Examples
-open import Modules.Lemmas
-open import Modules.DirectSum
-
 open import Graphs.PathGraph
 open import Graphs.CycleGraph
 open import Graphs.UnionGraph
@@ -145,5 +141,10 @@ open import Graphs.Complement
 open import Graphs.InducedSubgraph
 
 open import LectureNotes.MetAndTop.Chapter1
+
+open import Modules.Examples
+open import Modules.PolynomialModule
+open import Modules.Lemmas
+open import Modules.DirectSum
 
 module Everything.Safe where

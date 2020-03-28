@@ -9,7 +9,6 @@ open import Rings.Definition
 open import Lists.Lists
 open import Rings.Homomorphisms.Definition
 
-
 module Rings.Polynomial.Evaluation {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} (R : Ring S _+_ _*_) where
 
 open Ring R
