@@ -50,14 +50,17 @@ valuationIsDetermined v1 v2 pr {implies x y} | eqX | eqY | BoolTrue with≡ p | 
 valuationIsDetermined v1 v2 pr {implies x y} | eqX | eqY | BoolTrue with≡ p | BoolFalse with≡ q rewrite p | q | Valuation.vImplicationF v1 p q | Valuation.vImplicationF v2 (equalityCommutative eqX) (equalityCommutative eqY) = refl
 valuationIsDetermined v1 v2 pr {implies x y} | eqX | eqY | BoolFalse with≡ p rewrite p | Valuation.vImplicationVacuous v1 {q = y} p | Valuation.vImplicationVacuous v2 {q = y} (equalityCommutative eqX) = refl
 
+extendValuationV : {a : _} {pr : Set a} → (w : pr → Bool) → Propositions pr → Bool
+extendValuationV w (ofPrimitive x) = w x
+extendValuationV w false = BoolFalse
+extendValuationV w (implies x y) with extendValuationV w x
+... | BoolTrue with extendValuationV w y
+extendValuationV w (implies x y) | BoolTrue | BoolTrue = BoolTrue
+... | BoolFalse = BoolFalse
+extendValuationV w (implies x y) | BoolFalse = BoolTrue
+
 extendValuation : {a : _} {pr : Set a} → (w : pr → Bool) → Valuation pr
-Valuation.v (extendValuation w) (ofPrimitive x) = w x
-Valuation.v (extendValuation w) false = BoolFalse
-Valuation.v (extendValuation w) (implies x y) with Valuation.v (extendValuation w) x
-Valuation.v (extendValuation w) (implies x y) | BoolTrue with Valuation.v (extendValuation w) y
-Valuation.v (extendValuation w) (implies x y) | BoolTrue | BoolTrue = BoolTrue
-Valuation.v (extendValuation w) (implies x y) | BoolTrue | BoolFalse = BoolFalse
-Valuation.v (extendValuation w) (implies x y) | BoolFalse = BoolTrue
+Valuation.v (extendValuation w) = extendValuationV w
 Valuation.vFalse (extendValuation w) = refl
 Valuation.vImplicationF (extendValuation w) {p} {q} pT qF with Valuation.v (extendValuation w) p
 Valuation.vImplicationF (extendValuation w) {p} {q} refl qF | BoolTrue with Valuation.v (extendValuation w) q
