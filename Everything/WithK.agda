@@ -21,7 +21,7 @@ open import Rings.Examples.Proofs
 
 open import Groups.FreeGroup.UniversalProperty
 open import Groups.FreeGroup.Parity
-open import Groups.FreeProduct.Group
+open import Groups.FreeProduct.UniversalProperty
 open import Groups.Examples.ExampleSheet1
 open import Groups.LectureNotes.Lecture1
 
