@@ -17,15 +17,25 @@ open import Groups.FreeGroup.UniversalProperty
 
 module Groups.FreeGroup.Lemmas {a : _} {A : Set a} (decA : DecidableSet A) where
 
+freeGroupNonAbelian : {!!}
+freeGroupNonAbelian = {!!}
+
 freeGroupFunctorWellDefined : {b : _} {B : Set b} (decB : DecidableSet B) → {f : A → B} → Bijection f → GroupsIsomorphic (freeGroup decA) (freeGroup decB)
 GroupsIsomorphic.isomorphism (freeGroupFunctorWellDefined decB {f} bij) = universalPropertyFunction decA (freeGroup decB) λ a → freeEmbedding decB (f a)
 GroupIso.groupHom (GroupsIsomorphic.proof (freeGroupFunctorWellDefined decB {f} bij)) = universalPropertyHom decA (freeGroup decB) λ a → freeEmbedding decB (f a)
 GroupIso.bij (GroupsIsomorphic.proof (freeGroupFunctorWellDefined decB {f} bij)) = {!!}
 
-private
-  subgroupGeneratedBySquares : {c d : _} {C : Set c} {S : Setoid {c} {d} C} {_+_ : C → C → C} (G : Group S _+_) → Set
-  sub
-
-
 freeGroupFunctorInjective : {b : _} {B : Set b} (decB : DecidableSet B) → GroupsIsomorphic (freeGroup decA) (freeGroup decB) → Sg (A → B) (λ f → Bijection f)
 freeGroupFunctorInjective decB iso = {!!}
+
+everyGroupQuotientOfFreeGroup : {!!}
+everyGroupQuotientOfFreeGroup = {!!}
+
+everyFGGroupQuotientOfFGFreeGroup : {!!}
+everyFGGroupQuotientOfFGFreeGroup = {!!}
+
+freeGroupTorsionFree : {!!}
+freeGroupTorsionFree = {!!}
+
+freeGroupInfinite : {!!}
+freeGroupInfinite = {!!}
