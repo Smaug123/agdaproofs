@@ -123,7 +123,7 @@ universalPropertyFunctionUniquelyHasProperty {T = T} H fs homs otherFunction hom
     ... | inr _ with decidableIndex i i
     ... | inr bad = exFalso (bad refl)
     ... | inl refl = Equivalence.reflexive (Setoid.eq (S i)) ,, =RP'reflex (ofEmpty k g1 nonZero1)
-universalPropertyFunctionUniquelyHasProperty {T = T} H fs homs otherFunction hom prop (nonempty i (prependLetter .i g nonZero {k} (prependLetter .k g2 nonZero2 x x2) x1)) = transitive (GroupHom.wellDefined hom {nonempty i (prependLetter i g nonZero (prependLetter k g2 nonZero2 x x2) x1)} {(nonempty i (ofEmpty i g nonZero)) +RP (nonempty k (prependLetter k g2 nonZero2 x x2))} t) (transitive (GroupHom.groupHom hom {nonempty i (ofEmpty i g nonZero)} {nonempty k (prependLetter k g2 nonZero2 x x2)}) (Group.+WellDefined H (universalPropertyFunctionUniquelyHasProperty H fs homs otherFunction hom prop (nonempty i (ofEmpty i g nonZero))) (universalPropertyFunctionUniquelyHasPropertyLemma H fs homs otherFunction hom prop x2 x g2 nonZero2)))
+universalPropertyFunctionUniquelyHasProperty {T = T} H fs homs otherFunction hom prop (nonempty i (prependLetter .i g nonZero {k} (prependLetter .k g2 nonZero2 x x2) x1)) = transitive (GroupHom.wellDefined hom {nonempty i (prependLetter i g nonZero (prependLetter k g2 nonZero2 x x2) x1)} {(nonempty i (ofEmpty i g nonZero)) +RP (nonempty k (prependLetter k g2 nonZero2 x x2))} t) (transitive (GroupHom.groupHom hom {nonempty i (ofEmpty i g nonZero)} {nonempty k (prependLetter k g2 nonZero2 x x2)}) (Group.+WellDefined H (symmetric (prop g nonZero)) (universalPropertyFunctionUniquelyHasPropertyLemma H fs homs otherFunction hom prop x2 x g2 nonZero2)))
   where
     open Setoid T
     open Equivalence eq
