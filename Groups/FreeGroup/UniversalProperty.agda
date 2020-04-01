@@ -32,7 +32,7 @@ private
     where
       open Setoid S
       open Equivalence eq
-  prepLemma {S = S} G f (prependLetter (ofInv x) w pr) l with DecidableSet.eq decA l x
+  prepLemma {S = S} G f (prependLetter (ofInv x) w pr) l with decA l x
   ... | inl refl = transitive (symmetric identLeft) (transitive (+WellDefined (symmetric invRight) reflexive) (symmetric +Associative))
     where
       open Group G
@@ -48,7 +48,7 @@ private
     where
       open Setoid S
       open Equivalence eq
-  prepLemma' {S = S} G f (prependLetter (ofLetter x) w pr) l with DecidableSet.eq decA l x
+  prepLemma' {S = S} G f (prependLetter (ofLetter x) w pr) l with decA l x
   ... | inl refl = symmetric (transitive +Associative (transitive (+WellDefined invLeft reflexive) identLeft))
     where
       open Group G

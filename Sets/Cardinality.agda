@@ -1,6 +1,5 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-
 open import LogicalFormulae
 open import Functions
 open import Numbers.Naturals.Semiring

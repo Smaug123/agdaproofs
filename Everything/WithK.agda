@@ -19,6 +19,7 @@ open import Sets.FinSetWithK
 open import Rings.Examples.Examples
 open import Rings.Examples.Proofs
 
+open import Groups.FreeGroup.Lemmas
 open import Groups.FreeGroup.UniversalProperty
 open import Groups.FreeGroup.Parity
 open import Groups.FreeProduct.UniversalProperty

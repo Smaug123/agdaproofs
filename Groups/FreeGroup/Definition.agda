@@ -27,8 +27,11 @@ ofLetterInjective refl = refl
 ofInvInjective : {a : _} {A : Set a} {x y : A} → (ofInv x ≡ ofInv y) → x ≡ y
 ofInvInjective refl = refl
 
+ofLetterOfInv : {a : _} {A : Set a} {x y : A} → ofLetter x ≡ ofInv y → False
+ofLetterOfInv ()
+
 decidableFreeCompletion : {a : _} {A : Set a} → DecidableSet A → DecidableSet (FreeCompletion A)
-decidableFreeCompletion {A = A} record { eq = dec } = record { eq = pr }
+decidableFreeCompletion {A = A} dec = pr
   where
     pr : (a b : FreeCompletion A) → (a ≡ b) || (a ≡ b → False)
     pr (ofLetter x) (ofLetter y) with dec x y
@@ -41,17 +44,17 @@ decidableFreeCompletion {A = A} record { eq = dec } = record { eq = pr }
     ... | inr x!=y = inr λ p → x!=y (ofInvInjective p)
 
 freeCompletionEqual : {a : _} {A : Set a} (dec : DecidableSet A) (x y : FreeCompletion A) → Bool
-freeCompletionEqual dec x y with DecidableSet.eq (decidableFreeCompletion dec) x y
+freeCompletionEqual dec x y with decidableFreeCompletion dec x y
 freeCompletionEqual dec x y | inl x₁ = BoolTrue
 freeCompletionEqual dec x y | inr x₁ = BoolFalse
 
 freeCompletionEqualFalse : {a : _} {A : Set a} (dec : DecidableSet A) {x y : FreeCompletion A} → ((x ≡ y) → False) → (freeCompletionEqual dec x y) ≡ BoolFalse
-freeCompletionEqualFalse dec {x = x} {y} x!=y with DecidableSet.eq (decidableFreeCompletion dec) x y
+freeCompletionEqualFalse dec {x = x} {y} x!=y with decidableFreeCompletion dec x y
 freeCompletionEqualFalse dec {x} {y} x!=y | inl x=y = exFalso (x!=y x=y)
 freeCompletionEqualFalse dec {x} {y} x!=y | inr _ = refl
 
 freeCompletionEqualFalse' : {a : _} {A : Set a} (dec : DecidableSet A) {x y : FreeCompletion A} → .((freeCompletionEqual dec x y) ≡ BoolFalse) → (x ≡ y) → False
-freeCompletionEqualFalse' dec {x} {y} pr with DecidableSet.eq (decidableFreeCompletion dec) x y
+freeCompletionEqualFalse' dec {x} {y} pr with decidableFreeCompletion dec x y
 freeCompletionEqualFalse' dec {x} {y} () | inl x₁
 freeCompletionEqualFalse' dec {x} {y} pr | inr ans = ans
 
