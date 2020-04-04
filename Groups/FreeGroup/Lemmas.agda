@@ -81,6 +81,7 @@ SetoidInjection.injective (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.p
 SetoidSurjection.wellDefined (SetoidBijection.surj (GroupIso.bij (GroupsIsomorphic.proof (freeGroupFunctorWellDefined decB {f} bij)))) refl = refl
 SetoidSurjection.surjective (SetoidBijection.surj (GroupIso.bij (GroupsIsomorphic.proof (freeGroupFunctorWellDefined decB {f} bij)))) {x} = Bijection.surj (inBijection decB bij) x
 
+{-
 freeGroupFunctorInjective : {b : _} {B : Set b} (decB : DecidableSet B) → GroupsIsomorphic (freeGroup decA) (freeGroup decB) → Sg (A → B) (λ f → Bijection f)
 freeGroupFunctorInjective decB iso = {!!}
 
@@ -92,6 +93,7 @@ everyFGGroupQuotientOfFGFreeGroup = {!!}
 
 freeGroupTorsionFree : {!!}
 freeGroupTorsionFree = {!!}
+-}
 
 private
   mapNToGrp : (a : A) → (n : ℕ) → ReducedWord decA
