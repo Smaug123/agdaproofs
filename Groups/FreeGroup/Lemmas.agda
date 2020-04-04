@@ -19,6 +19,7 @@ open import Groups.FreeGroup.UniversalProperty
 open import Groups.Abelian.Definition
 open import Groups.QuotientGroup.Definition
 open import Groups.Lemmas
+open import Groups.Homomorphisms.Lemmas
 
 module Groups.FreeGroup.Lemmas {a : _} {A : Set a} (decA : DecidableSet A) where
 
@@ -34,24 +35,51 @@ freeGroupNonAbelian record { commutative = commutative } a = (λ _ → record {}
         t = commutative {prependLetter (ofLetter x) empty (wordEmpty refl)} {prependLetter (ofLetter y) empty (wordEmpty refl)}
     Bijection.surj b record {} = a , refl
 
-mapIntoFreeGroupInjective : {b c : _} {B : Set b} {S : Setoid {b} {c} B} {_+_ : B → B → B} (G : Group S _+_) → {f : A → B} → SetoidInjection (reflSetoid A) S f → SetoidInjection (reflSetoid (ReducedWord decA)) S (universalPropertyFunction decA G (λ a → f a))
-SetoidInjection.wellDefined (mapIntoFreeGroupInjective {S = S} G {f} inj) {x} {.x} refl = Equivalence.reflexive (Setoid.eq S)
-SetoidInjection.injective (mapIntoFreeGroupInjective G {f} inj) {empty} {empty} pr = refl
-SetoidInjection.injective (mapIntoFreeGroupInjective {S = S} G {f} inj) {empty} {prependLetter (ofLetter l) y x} pr with SetoidInjection.injective inj {l} {{!!}} (Equivalence.transitive (Setoid.eq S) (transferToRight' G (Equivalence.symmetric (Setoid.eq S) pr)) {!!})
-... | bl = {!!}
-SetoidInjection.injective (mapIntoFreeGroupInjective G {f} inj) {empty} {prependLetter (ofInv l) y x} pr = {!!}
-SetoidInjection.injective (mapIntoFreeGroupInjective G {f} inj) {prependLetter letter x x₁} {y} pr = {!!}
+private
+  iso : {b : _} {B : Set b} (decB : DecidableSet B) → {f : A → B} → Bijection f → ReducedWord decA → ReducedWord decB
+  iso decB {f} bij = universalPropertyFunction decA (freeGroup decB) λ a → freeEmbedding decB (f a)
+
+  isoHom : {b : _} {B : Set b} (decB : DecidableSet B) → {f : A → B} → (bij : Bijection f) → GroupHom (freeGroup decA) (freeGroup decB) (iso decB bij)
+  isoHom decB {f} bij = universalPropertyHom decA (freeGroup decB) λ a → iso decB bij (freeEmbedding decA a)
+
+  iso2 : {b : _} {B : Set b} (decB : DecidableSet B) → {f : A → B} → Bijection f → ReducedWord decB → ReducedWord decA
+  iso2 decB {f} bij = universalPropertyFunction decB (freeGroup decA) λ b → freeEmbedding decA (Invertible.inverse (bijectionImpliesInvertible bij) b)
+
+  iso2Hom : {b : _} {B : Set b} (decB : DecidableSet B) → {f : A → B} → (bij : Bijection f) → GroupHom (freeGroup decB) (freeGroup decA) (iso2 decB bij)
+  iso2Hom decB {f} bij = universalPropertyHom decB (freeGroup decA) λ b → iso2 decB bij (freeEmbedding decB b)
+
+  fixesF : {b : _} {B : Set b} (decB : DecidableSet B) → {f : A → B} → (bij : Bijection f) → (x : A) → iso2 decB bij (iso decB bij (freeEmbedding decA x)) ≡ freeEmbedding decA x
+  fixesF decB {f} bij x with Bijection.surj bij (f x)
+  ... | _ , pr rewrite Bijection.inj bij pr = refl
+
+  fixesF' : {b : _} {B : Set b} (decB : DecidableSet B) → {f : A → B} → (bij : Bijection f) → (x : B) → iso decB bij (iso2 decB bij (freeEmbedding decB x)) ≡ freeEmbedding decB x
+  fixesF' decB {f} bij x with Bijection.surj bij x
+  ... | _ , pr rewrite pr = refl
+
+  uniq : {b : _} {B : Set b} (decB : DecidableSet B) → {f : A → B} → (bij : Bijection f) → (x : ReducedWord decA) → x ≡ universalPropertyFunction decA (freeGroup decA) (λ x → iso2 decB bij (iso decB bij (freeEmbedding decA x))) x
+  uniq decB {f} bij x = universalPropertyUniqueness decA (freeGroup decA) (λ x → iso2 decB bij (iso decB bij (freeEmbedding decA x))) {id} (record { wellDefined = id ; groupHom = refl }) (fixesF decB bij) x
+  uniqLemm : {b : _} {B : Set b} (decB : DecidableSet B) → {f : A → B} → (bij : Bijection f) → (x : ReducedWord decA) → iso2 decB bij (iso decB bij x) ≡ universalPropertyFunction decA (freeGroup decA) (λ x → iso2 decB bij (iso decB bij (freeEmbedding decA x))) x
+  uniqLemm decB {f} bij x = universalPropertyUniqueness decA (freeGroup decA) (λ i → freeEmbedding decA (underlying (Bijection.surj bij (f i)))) {λ i → iso2 decB bij (iso decB bij i)} (groupHomsCompose (isoHom decB bij) (iso2Hom decB bij)) (λ _ → refl) x
+  uniq! : {b : _} {B : Set b} (decB : DecidableSet B) → {f : A → B} → (bij : Bijection f) → (x : ReducedWord decA) → iso2 decB bij (iso decB bij x) ≡ x
+  uniq! decB bij x = transitivity (uniqLemm decB bij x) (equalityCommutative (uniq decB bij x))
+
+  uniq' : {b : _} {B : Set b} (decB : DecidableSet B) → {f : A → B} → (bij : Bijection f) → (x : ReducedWord decB) → x ≡ universalPropertyFunction decB (freeGroup decB) (λ x → iso decB bij (iso2 decB bij (freeEmbedding decB x))) x
+  uniq' decB {f} bij x = universalPropertyUniqueness decB (freeGroup decB) (λ x → iso decB bij (iso2 decB bij (freeEmbedding decB x))) {id} (record { wellDefined = id ; groupHom = refl }) (fixesF' decB bij) x
+  uniq'Lemm : {b : _} {B : Set b} (decB : DecidableSet B) → {f : A → B} → (bij : Bijection f) → (x : ReducedWord decB) → iso decB bij (iso2 decB bij x) ≡ universalPropertyFunction decB (freeGroup decB) (λ x → iso decB bij (iso2 decB bij (freeEmbedding decB x))) x
+  uniq'Lemm decB {f} bij x = universalPropertyUniqueness decB (freeGroup decB) (λ i → freeEmbedding decB (f (Invertible.inverse (bijectionImpliesInvertible bij) i))) {λ i → iso decB bij (iso2 decB bij i)} (groupHomsCompose (iso2Hom decB bij) (isoHom decB bij)) (λ _ → refl) x
+  uniq'! : {b : _} {B : Set b} (decB : DecidableSet B) → {f : A → B} → (bij : Bijection f) → (x : ReducedWord decB) → iso decB bij (iso2 decB bij x) ≡ x
+  uniq'! decB bij x = transitivity (uniq'Lemm decB bij x) (equalityCommutative (uniq' decB bij x))
+
+  inBijection : {b : _} {B : Set b} (decB : DecidableSet B) {f : A → B} (bij : Bijection f) → Bijection (iso decB bij)
+  inBijection decB bij = invertibleImpliesBijection (record { inverse = iso2 decB bij ; isLeft = uniq'! decB bij ; isRight = uniq! decB bij })
 
 freeGroupFunctorWellDefined : {b : _} {B : Set b} (decB : DecidableSet B) → {f : A → B} → Bijection f → GroupsIsomorphic (freeGroup decA) (freeGroup decB)
-GroupsIsomorphic.isomorphism (freeGroupFunctorWellDefined decB {f} bij) = universalPropertyFunction decA (freeGroup decB) λ a → freeEmbedding decB (f a)
+GroupsIsomorphic.isomorphism (freeGroupFunctorWellDefined decB {f} bij) = iso decB bij
 GroupIso.groupHom (GroupsIsomorphic.proof (freeGroupFunctorWellDefined decB {f} bij)) = universalPropertyHom decA (freeGroup decB) λ a → freeEmbedding decB (f a)
 SetoidInjection.wellDefined (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.proof (freeGroupFunctorWellDefined decB {f} bij)))) refl = refl
-SetoidInjection.injective (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.proof (freeGroupFunctorWellDefined decB {f} bij)))) {empty} {empty} _ = refl
-SetoidInjection.injective (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.proof (freeGroupFunctorWellDefined decB {f} bij)))) {empty} {prependLetter letter u x} r = {!!}
-SetoidInjection.injective (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.proof (freeGroupFunctorWellDefined decB {f} bij)))) {prependLetter letter t x} {empty} = {!!}
-SetoidInjection.injective (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.proof (freeGroupFunctorWellDefined decB {f} bij)))) {prependLetter l t x} {prependLetter l2 u y} pr = {!!}
+SetoidInjection.injective (SetoidBijection.inj (GroupIso.bij (GroupsIsomorphic.proof (freeGroupFunctorWellDefined decB {f} bij)))) {x} {y} pr = Bijection.inj (inBijection decB bij) pr
 SetoidSurjection.wellDefined (SetoidBijection.surj (GroupIso.bij (GroupsIsomorphic.proof (freeGroupFunctorWellDefined decB {f} bij)))) refl = refl
-SetoidSurjection.surjective (SetoidBijection.surj (GroupIso.bij (GroupsIsomorphic.proof (freeGroupFunctorWellDefined decB {f} bij)))) {x} = {!!}
+SetoidSurjection.surjective (SetoidBijection.surj (GroupIso.bij (GroupsIsomorphic.proof (freeGroupFunctorWellDefined decB {f} bij)))) {x} = Bijection.surj (inBijection decB bij) x
 
 freeGroupFunctorInjective : {b : _} {B : Set b} (decB : DecidableSet B) → GroupsIsomorphic (freeGroup decA) (freeGroup decB) → Sg (A → B) (λ f → Bijection f)
 freeGroupFunctorInjective decB iso = {!!}
