@@ -17,6 +17,10 @@ data FreeCompletion {a : _} (A : Set a) : Set a where
   ofLetter : A → FreeCompletion A
   ofInv : A → FreeCompletion A
 
+freeCompletionMap : {a b : _} {A : Set a} {B : Set b} (f : A → B) (w : FreeCompletion A) → FreeCompletion B
+freeCompletionMap f (ofLetter x) = ofLetter (f x)
+freeCompletionMap f (ofInv x) = ofInv (f x)
+
 freeInverse : {a : _} {A : Set a} (l : FreeCompletion A) → FreeCompletion A
 freeInverse (ofLetter x) = ofInv x
 freeInverse (ofInv x) = ofLetter x
