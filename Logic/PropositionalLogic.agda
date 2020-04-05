@@ -81,7 +81,7 @@ valuationsAreFree : {a : _} {pr : Set a} → (w : pr → Bool) → {x : pr} → 
 valuationsAreFree w = refl
 
 Tautology : {a : _} {pr : Set a} (prop : Propositions pr) → Set a
-Tautology {pr = pr} prop = {v : Valuation pr} → Valuation.v v prop ≡ BoolTrue
+Tautology {pr = pr} prop = (v : Valuation pr) → Valuation.v v prop ≡ BoolTrue
 
 record IsSubset {a b : _} (sub : Set a) (super : Set b) : Set (a ⊔ b) where
   field
@@ -216,32 +216,6 @@ deductionTheorem {P = P} {Q} record { n = n ; proof = (nextStep .n proof (modusP
 
 -}
 
-axiomKTaut : {a : _} {A : Set a} {P Q : Propositions A} → Tautology (implies P (implies Q P))
-Tautology.isTaut (axiomKTaut {P = P} {Q}) {v = v} with inspect (Valuation.v v P)
-Tautology.isTaut (axiomKTaut {P = P} {Q}) {v} | BoolTrue with≡ pT with inspect (Valuation.v v Q)
-Tautology.isTaut (axiomKTaut {P = P} {Q}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT = Valuation.vImplicationT v (Valuation.vImplicationT v pT)
-Tautology.isTaut (axiomKTaut {P = P} {Q}) {v} | BoolTrue with≡ pT | BoolFalse with≡ qF = Valuation.vImplicationT v (Valuation.vImplicationVacuous v qF)
-Tautology.isTaut (axiomKTaut {P = P} {Q}) {v} | BoolFalse with≡ pF = Valuation.vImplicationVacuous v pF
-
-excludedMiddleTaut : {a : _} {A : Set a} {P : Propositions A} → Tautology (implies (prNot (prNot P)) P)
-Tautology.isTaut (excludedMiddleTaut {P = P}) {v} with inspect (Valuation.v v P)
-Tautology.isTaut (excludedMiddleTaut {P = P}) {v} | BoolTrue with≡ pT = Valuation.vImplicationT v pT
-Tautology.isTaut (excludedMiddleTaut {P = P}) {v} | BoolFalse with≡ pF = Valuation.vImplicationVacuous v (Valuation.vImplicationF v (Valuation.vImplicationVacuous v pF) (Valuation.vFalse v))
-
-axiomSTaut : {a : _} {A : Set a} {P Q R : Propositions A} → Tautology (implies (implies P (implies Q R)) (implies (implies P Q) (implies P R)))
-Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} with inspect (Valuation.v v P)
-Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT with inspect (Valuation.v v Q)
-Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT with inspect (Valuation.v v R)
-Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT | BoolTrue with≡ rT = Valuation.vImplicationT v (Valuation.vImplicationT v (Valuation.vImplicationT v rT))
-Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT | BoolFalse with≡ rF = Valuation.vImplicationVacuous v (Valuation.vImplicationF v pT (Valuation.vImplicationF v qT rF))
-Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolFalse with≡ qF = Valuation.vImplicationT v (Valuation.vImplicationVacuous v (Valuation.vImplicationF v pT qF))
-Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolFalse with≡ pF = Valuation.vImplicationT v (Valuation.vImplicationT v (Valuation.vImplicationVacuous v pF))
-
-
-propositionalAxiomsTautology : {a : _} {A : Set a} (x : Sg ThreeElements (indexAxiom A)) → Tautology (IsSubset.ofElt propositionalAxioms x)
-propositionalAxiomsTautology (One , (fst ,, snd)) = axiomKTaut
-propositionalAxiomsTautology (Two , record { one = one ; two = two ; three = three }) = axiomSTaut
-propositionalAxiomsTautology (Three , b) = excludedMiddleTaut
 
 propositionalLogicSound : {a b c : _} {A : Set a} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} → {P : Propositions A} → Proves propositionalAxioms givensSubset P → Entails givensSubset P
 Entails.entails (propositionalLogicSound {P = .(IsSubset.ofElt propositionalAxioms x)} record { n = .0 ; proof = (nextStep .0 empty (axiom x)) ; ofStatement = refl }) {v} values = Tautology.isTaut (propositionalAxiomsTautology x) {v}
