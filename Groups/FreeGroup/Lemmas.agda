@@ -123,7 +123,7 @@ private
   mapNToGrpInj a (succ (succ x)) zero ()
   mapNToGrpInj a (succ zero) (succ zero) pr = refl
   mapNToGrpInj a (succ zero) (succ (succ y)) ()
-  mapNToGrpInj a (succ (succ x)) (succ 0) ()
+  mapNToGrpInj a (succ (succ x)) (succ 0) pr = exFalso (naughtE (transitivity (equalityCommutative (applyEquality (wordLength decA) (prependLetterInjective decA pr))) (mapNToGrpLen a (succ x))))
   mapNToGrpInj a (succ (succ x)) (succ (succ y)) pr = applyEquality succ (mapNToGrpInj a (succ x) (succ y) (prependLetterInjective decA pr))
 
 freeGroupInfinite : (nonempty : A) → DedekindInfiniteSet (ReducedWord decA)
