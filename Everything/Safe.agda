@@ -95,6 +95,8 @@ open import Setoids.Functions.Extension
 open import Setoids.Algebra.Lemmas
 open import Setoids.Intersection.Lemmas
 open import Setoids.Union.Lemmas
+open import Setoids.Cardinality.Infinite.Lemmas
+open import Setoids.Cardinality.Finite.Definition
 
 open import Sets.Cardinality.Infinite.Examples
 open import Sets.Cardinality.Infinite.Lemmas
