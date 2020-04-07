@@ -102,9 +102,8 @@ Valuation.vImplicationT (inheritedValuation isSub v) qT = Valuation.vImplication
 inheritedValuation' : {a b : _} {sub : Set a} {super : Set b} → (IsSubset sub (Propositions super)) → Valuation super → (x : sub) → Bool
 inheritedValuation' subset v x = Valuation.v v (IsSubset.ofElt subset x)
 
-record Entails {a b : _} {sub : Set a} {super : Set b} (S : IsSubset sub (Propositions super)) (P : Propositions super) : Set (a ⊔ b) where
-  field
-    entails : {v : Valuation super} → ({s : sub} → inheritedValuation' S v s ≡ BoolTrue) → Valuation.v v P ≡ BoolTrue
+Entails : {a b : _} {sub : Set a} {super : Set b} (S : IsSubset sub (Propositions super)) (P : Propositions super) → Set (a ⊔ b)
+Entails {sub = sub} {super = super} S P = {v : Valuation super} → ({s : sub} → inheritedValuation' S v s ≡ BoolTrue) → Valuation.v v P ≡ BoolTrue
 
 data ThreeElements : Set where
   One : ThreeElements
@@ -173,7 +172,10 @@ adjoinGiven : {a b : _} {A : Set a} {givens : Set b} (givensSubset : IsSubset gi
 IsSubset.ofElt (adjoinGiven record { ofElt = ofElt } P) (inl x) = P
 IsSubset.ofElt (adjoinGiven record { ofElt = ofElt } _) (inr x) = ofElt x
 
-{-
+vecIndexRefl : {a : _} {A : Set a} {n : ℕ} {v1 v2 : Vec A n} → {pos : ℕ} → {pos<N1 pos<N2 : pos <N n} → v1 ≡ v2 → vecIndex v1 pos pos<N1 ≡ vecIndex v2 pos pos<N2
+vecIndexRefl {v1 = v1} {.v1} {pos} {pos<N1} {pos<N2} refl = refl
+
+
 proofRemainsValidOnAddingGivens : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} → {Q : Propositions A} → Proof axiomsSubset givensSubset n → Proof axiomsSubset (adjoinGiven givensSubset Q) n
 pr' : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} → {Q : Propositions A} → (pr : Proof axiomsSubset givensSubset n) → toSteps pr ≡ toSteps (proofRemainsValidOnAddingGivens {Q = Q} pr)
 
@@ -183,15 +185,15 @@ proofRemainsValidOnAddingGivens {Q = Q} (nextStep n pr (given x)) = nextStep n (
 proofRemainsValidOnAddingGivens {A = A} {axiomsSubset = axiomsSubset} {givensSubset = givensSubset} {Q = Q} (nextStep n pr (modusPonens implication argument conclusion x)) = nextStep n (proofRemainsValidOnAddingGivens pr) (modusPonens (record { element = Selection.element implication ; position = Selection.position implication ; pos<N = Selection.pos<N implication ; elementIsAt = lemma implication }) (record { element = Selection.element argument ; position = Selection.position argument ; pos<N = Selection.pos<N argument ; elementIsAt = lemma argument }) conclusion x)
   where
     lemma : (sel : Selection (toSteps pr)) → vecIndex (toSteps (proofRemainsValidOnAddingGivens pr)) (Selection.position sel) (Selection.pos<N sel) ≡ Selection.element sel
-    lemma sel = {!!}
+    lemma sel with proofRemainsValidOnAddingGivens {Q = Q} pr
+    ... | nextStep n bl x = {!!}
 
 pr' empty = refl
 pr' (nextStep n pr (axiom x)) rewrite pr' pr = refl
 pr' (nextStep n pr (given x)) rewrite pr' pr = refl
 pr' (nextStep n pr (modusPonens implication argument conclusion x)) rewrite pr' pr = refl
 
-vecIndexRefl : {a : _} {A : Set a} {n : ℕ} {v1 v2 : Vec A n} → {pos : ℕ} → {pos<N1 pos<N2 : pos <N n} → v1 ≡ v2 → vecIndex v1 pos pos<N1 ≡ vecIndex v2 pos pos<N2
-vecIndexRefl {v1 = v1} {.v1} {pos} {pos<N1} {pos<N2} refl rewrite <NRefl pos<N1 pos<N2 = refl
+{-
 
 proofImpliesProves : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} (0<n : 0 <N n) → (p : Proof axiomsSubset givensSubset n) → (pr : Propositions A) → vecIndex (toSteps p) 0 0<n ≡ pr → Proves axiomsSubset givensSubset pr
 proofImpliesProves {n = zero} () p pr x
@@ -216,12 +218,12 @@ deductionTheorem {P = P} {Q} record { n = n ; proof = (nextStep .n proof (modusP
 
 -}
 
-
 propositionalLogicSound : {a b c : _} {A : Set a} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} → {P : Propositions A} → Proves propositionalAxioms givensSubset P → Entails givensSubset P
-Entails.entails (propositionalLogicSound {P = .(IsSubset.ofElt propositionalAxioms x)} record { n = .0 ; proof = (nextStep .0 empty (axiom x)) ; ofStatement = refl }) {v} values = Tautology.isTaut (propositionalAxiomsTautology x) {v}
+Entails.entails (propositionalLogicSound {P = .(IsSubset.ofElt propositionalAxioms x)} record { n = .0 ; proof = (nextStep .0 empty (axiom x)) ; ofStatement = refl }) {v} values = propositionalAxiomsTautology x {v}
 Entails.entails (propositionalLogicSound {P = P} record { n = .0 ; proof = (nextStep .0 empty (given x)) ; ofStatement = ofStatement }) {v} values rewrite equalityCommutative ofStatement = values {x}
 Entails.entails (propositionalLogicSound {P = P} record { n = .0 ; proof = (nextStep .0 empty (modusPonens record { element = element ; position = zero ; pos<N = (le x₁ ()) ; elementIsAt = elementIsAt } argument conclusion x)) ; ofStatement = ofStatement }) {v} values
 Entails.entails (propositionalLogicSound {P = P} record { n = .0 ; proof = (nextStep .0 empty (modusPonens record { element = element ; position = (succ position) ; pos<N = (le x₁ ()) ; elementIsAt = elementIsAt } argument conclusion x)) ; ofStatement = ofStatement }) {v} values
 Entails.entails (propositionalLogicSound {P = P} record { n = .(succ n) ; proof = (nextStep .(succ n) (nextStep n proof y) x) ; ofStatement = ofStatement }) {v} values = {!!}
+
 
 -}
