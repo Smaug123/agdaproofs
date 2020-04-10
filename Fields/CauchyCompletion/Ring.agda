@@ -33,23 +33,25 @@ open import Fields.CauchyCompletion.Addition order F charNot2
 open import Fields.CauchyCompletion.Setoid order F charNot2
 open import Fields.CauchyCompletion.Group order F charNot2
 
-c*Assoc : {a b c : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid (a *C (b *C c)) ((a *C b) *C c)
-c*Assoc {a} {b} {c} ε 0<e = 0 , ans
-  where
-    ans : {m : ℕ} → 0 <N m → abs (index (CauchyCompletion.elts ((a *C (b *C c)) +C (-C ((a *C b) *C c)))) m) < ε
-    ans {m} 0<m rewrite indexAndApply (CauchyCompletion.elts (a *C (b *C c))) (CauchyCompletion.elts (-C ((a *C b) *C c))) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts c)) _*_ {m} | equalityCommutative (mapAndIndex (apply _*_ (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts b)) (CauchyCompletion.elts c)) inverse m) | indexAndApply (CauchyCompletion.elts b) (CauchyCompletion.elts c) _*_ {m} | indexAndApply (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts b)) (CauchyCompletion.elts c) _*_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts b) _*_ {m} = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ (transferToRight'' (Ring.additiveGroup R) (Ring.*Associative R))) (identityOfIndiscernablesRight _∼_ (Equivalence.reflexive eq) absZero))) (Equivalence.reflexive eq) 0<e
+private
+  abstract
+    c*Assoc : {a b c : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid (a *C (b *C c)) ((a *C b) *C c)
+    c*Assoc {a} {b} {c} ε 0<e = 0 , ans
+      where
+        ans : {m : ℕ} → 0 <N m → abs (index (CauchyCompletion.elts ((a *C (b *C c)) +C (-C ((a *C b) *C c)))) m) < ε
+        ans {m} 0<m rewrite indexAndApply (CauchyCompletion.elts (a *C (b *C c))) (CauchyCompletion.elts (-C ((a *C b) *C c))) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts c)) _*_ {m} | equalityCommutative (mapAndIndex (apply _*_ (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts b)) (CauchyCompletion.elts c)) inverse m) | indexAndApply (CauchyCompletion.elts b) (CauchyCompletion.elts c) _*_ {m} | indexAndApply (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts b)) (CauchyCompletion.elts c) _*_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts b) _*_ {m} = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ (transferToRight'' (Ring.additiveGroup R) (Ring.*Associative R))) (identityOfIndiscernablesRight _∼_ (Equivalence.reflexive eq) absZero))) (Equivalence.reflexive eq) 0<e
 
-c*Ident : {a : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid (injection (Ring.1R R) *C a) a
-c*Ident {a} ε 0<e = 0 , ans
-  where
-    ans : {m : ℕ} → 0 <N m → abs (index (apply _+_ (CauchyCompletion.elts (injection (Ring.1R R) *C a)) (map inverse (CauchyCompletion.elts a))) m) < ε
-    ans {m} 0<m rewrite indexAndApply (CauchyCompletion.elts (injection (Ring.1R R) *C a)) (map inverse (CauchyCompletion.elts a)) _+_ {m} | indexAndApply (constSequence (Ring.1R R)) (CauchyCompletion.elts a) _*_ {m} | equalityCommutative (mapAndIndex (CauchyCompletion.elts a) inverse m) | indexAndConst (Ring.1R R) m = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ (transferToRight'' (Ring.additiveGroup R) (Ring.identIsIdent R))) (identityOfIndiscernablesRight _∼_ (Equivalence.reflexive eq) (absZero)))) (Equivalence.reflexive eq) 0<e
+    c*Ident : {a : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid (injection (Ring.1R R) *C a) a
+    c*Ident {a} ε 0<e = 0 , ans
+      where
+        ans : {m : ℕ} → 0 <N m → abs (index (apply _+_ (CauchyCompletion.elts (injection (Ring.1R R) *C a)) (map inverse (CauchyCompletion.elts a))) m) < ε
+        ans {m} 0<m rewrite indexAndApply (CauchyCompletion.elts (injection (Ring.1R R) *C a)) (map inverse (CauchyCompletion.elts a)) _+_ {m} | indexAndApply (constSequence (Ring.1R R)) (CauchyCompletion.elts a) _*_ {m} | equalityCommutative (mapAndIndex (CauchyCompletion.elts a) inverse m) | indexAndConst (Ring.1R R) m = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ (transferToRight'' (Ring.additiveGroup R) (Ring.identIsIdent R))) (identityOfIndiscernablesRight _∼_ (Equivalence.reflexive eq) (absZero)))) (Equivalence.reflexive eq) 0<e
 
-*CDistribute : {a b c : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid (a *C (b +C c)) ((a *C b) +C (a *C c))
-*CDistribute {a} {b} {c} e 0<e = 0 , ans
-  where
-    ans : {m : ℕ} → 0 <N m → abs (index (apply _+_ (CauchyCompletion.elts (a *C (b +C c))) (map inverse (CauchyCompletion.elts ((a *C b) +C (a *C c))))) m) < e
-    ans {m} N<m rewrite indexAndApply (CauchyCompletion.elts (a *C (b +C c))) (map inverse (CauchyCompletion.elts ((a *C b) +C (a *C c)))) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (apply _+_ (CauchyCompletion.elts b) (CauchyCompletion.elts c)) _*_ {m} | equalityCommutative (mapAndIndex (apply _+_ (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts b)) (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts c))) inverse m) | indexAndApply (CauchyCompletion.elts b) (CauchyCompletion.elts c) _+_ {m} | indexAndApply (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts b)) (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts c)) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts b) _*_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts c) _*_ {m} = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ (transferToRight'' (Ring.additiveGroup R) (Ring.*DistributesOver+ R))) (absZeroIsZero))) (Equivalence.reflexive eq) 0<e
+    *CDistribute : {a b c : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid (a *C (b +C c)) ((a *C b) +C (a *C c))
+    *CDistribute {a} {b} {c} e 0<e = 0 , ans
+      where
+        ans : {m : ℕ} → 0 <N m → abs (index (apply _+_ (CauchyCompletion.elts (a *C (b +C c))) (map inverse (CauchyCompletion.elts ((a *C b) +C (a *C c))))) m) < e
+        ans {m} N<m rewrite indexAndApply (CauchyCompletion.elts (a *C (b +C c))) (map inverse (CauchyCompletion.elts ((a *C b) +C (a *C c)))) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (apply _+_ (CauchyCompletion.elts b) (CauchyCompletion.elts c)) _*_ {m} | equalityCommutative (mapAndIndex (apply _+_ (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts b)) (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts c))) inverse m) | indexAndApply (CauchyCompletion.elts b) (CauchyCompletion.elts c) _+_ {m} | indexAndApply (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts b)) (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts c)) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts b) _*_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts c) _*_ {m} = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ (transferToRight'' (Ring.additiveGroup R) (Ring.*DistributesOver+ R))) (absZeroIsZero))) (Equivalence.reflexive eq) 0<e
 
 CRing : Ring cauchyCompletionSetoid _+C_ _*C_
 Ring.additiveGroup CRing = CGroup

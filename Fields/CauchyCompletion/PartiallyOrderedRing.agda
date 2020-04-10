@@ -157,3 +157,4 @@ cOrderRespectsAddition a b (r , ((r1 , (0<r1 ,, (N1 , prN1))) ,, (r2 , (0<r2 ,, 
 CpOrderedRing : PartiallyOrderedRing CRing <COrder
 PartiallyOrderedRing.orderRespectsAddition CpOrderedRing {a} {b} = cOrderRespectsAddition a b
 PartiallyOrderedRing.orderRespectsMultiplication CpOrderedRing {a} {b} record { i = interA ; a<i = 0<interA ; i<b = interA<a } record { i = interB ; a<i = 0<interB ; i<b = interB<b } = record { i = interA * interB ; a<i = productPositives interA interB 0<interA 0<interB ; i<b = productPositives' a b interA interB (<CCollapsesL 0R _ 0<interA) (<CCollapsesL 0R _ 0<interB) interA<a interB<b }
+
