@@ -9,7 +9,10 @@ open import Sets.FinSet.Lemmas
 open import Sets.Cardinality.Infinite.Definition
 open import Sets.Cardinality.Finite.Lemmas
 open import Numbers.Reals.Definition
+open import Numbers.Rationals.Definition
+open import Numbers.Integers.Definition
 open import Sets.Cardinality.Infinite.Lemmas
+open import Setoids.Setoids
 
 module Sets.Cardinality.Infinite.Examples where
 
@@ -31,5 +34,6 @@ module Sets.Cardinality.Infinite.Examples where
     badInj : Injection bad
     badInj = injComp nextInj invInj
 
-ℝIsInfinite : InfiniteSet ℝ
-ℝIsInfinite = injectionInfiniteImpliesInfinite ℕIsInfinite {?} ?
+ℝIsInfinite : DedekindInfiniteSet ℝ
+DedekindInfiniteSet.inj ℝIsInfinite n = injectionR (injectionQ (nonneg n))
+DedekindInfiniteSet.isInjection ℝIsInfinite {x} {y} pr = nonnegInjective (injectionQInjective (injectionRInjective pr))

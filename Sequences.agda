@@ -13,6 +13,9 @@ record Sequence {a : _} (A : Set a) : Set a where
     head : A
     tail : Sequence A
 
+headInjective : {a : _} {A : Set a} {s1 s2 : Sequence A} → s1 ≡ s2 → Sequence.head s1 ≡ Sequence.head s2
+headInjective {s1 = s1} {.s1} refl = refl
+
 constSequence : {a : _} {A : Set a} (k : A) → Sequence A
 Sequence.head (constSequence k) = k
 Sequence.tail (constSequence k) = constSequence k

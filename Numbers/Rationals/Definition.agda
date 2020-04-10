@@ -27,6 +27,9 @@ open import Fields.FieldOfFractions.Order ℤIntDom ℤOrderedRing
 ℚ : Set
 ℚ = fieldOfFractionsSet
 
+ℚSetoid : Setoid ℚ
+ℚSetoid = fieldOfFractionsSetoid
+
 _+Q_ : ℚ → ℚ → ℚ
 a +Q b = fieldOfFractionsPlus a b
 
@@ -41,6 +44,9 @@ a *Q b = fieldOfFractionsTimes a b
 
 injectionQ : ℤ → ℚ
 injectionQ z = z ,, (nonneg 1 , λ ())
+
+injectionQInjective : Injection injectionQ
+injectionQInjective pr = equalityLeft pr
 
 ℚField : Field ℚRing
 ℚField = fieldOfFractions

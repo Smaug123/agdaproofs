@@ -98,6 +98,8 @@ open import Setoids.Union.Lemmas
 open import Setoids.Cardinality.Infinite.Lemmas
 open import Setoids.Cardinality.Finite.Definition
 
+open import Sets.Cardinality.Infinite.Examples
+open import Sets.Cardinality.Infinite.Lemmas
 open import Sets.Cardinality.Countable.Lemmas
 open import Sets.Cardinality.Finite.Lemmas
 open import Sets.Cardinality
