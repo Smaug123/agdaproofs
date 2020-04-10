@@ -3,25 +3,30 @@
 open import Functions
 open import LogicalFormulae
 open import Numbers.Naturals.Definition
+open import Numbers.Naturals.Order
 open import Sets.Cardinality.Infinite.Definition
 open import Sets.FinSet.Definition
+open import Sets.FinSet.Lemmas
 
 module Sets.Cardinality.Infinite.Lemmas where
 
 finsetNotInfinite : {n : ℕ} → InfiniteSet (FinSet n) → False
 finsetNotInfinite {n} isInfinite = isInfinite n id idIsBijective
 
-injectionInfiniteImpliesInfinite : {a b : _} {A : Set a} {B : Set b} → (isInfinite : InfiniteSet A) → {f : A → B} → Injection f → InfiniteSet B
-injectionInfiniteImpliesInfinite infinite {f} inj n finiteBij isBij with bijectionImpliesInvertible isBij
-injectionInfiniteImpliesInfinite {A = A} infinite {f} inj n finiteBij isBij | record { inverse = inverse ; isLeft = isLeft ; isRight = isRight } = infinite n {!!} {!!}
+noInjectionNToFinite : {n : ℕ} → {f : ℕ → FinSet n} → Injection f → False
+noInjectionNToFinite {n} {f} inj = pigeonhole (le 0 refl) tInj
   where
-    t : A → FinSet n
-    t x = inverse (f x)
+    t : FinSet (succ n) → FinSet n
+    t m = f (toNat m)
     tInj : Injection t
-    tInj {x} {y} tx=ty = inj (Bijection.inj i tx=ty)
-      where
-        i : Bijection inverse
-        i = invertibleImpliesBijection (inverseIsInvertible (record { inverse = inverse ; isLeft = isLeft ; isRight = isRight }))
-    tSurj : Surjection t
-    tSurj fin with finiteBij fin
-    ... | b = {!!}
+    tInj {x} {y} fx=fy = toNatInjective x y (inj fx=fy)
+
+dedekindInfiniteImpliesInfinite : {a : _} (A : Set a) → DedekindInfiniteSet A → InfiniteSet A
+dedekindInfiniteImpliesInfinite A record { inj = inj ; isInjection = isInjection } zero f x with Invertible.inverse (bijectionImpliesInvertible x) (inj 0)
+... | ()
+dedekindInfiniteImpliesInfinite A record { inj = inj ; isInjection = isInj } (succ n) f isBij = noInjectionNToFinite {f = t} tInjective
+  where
+    t : ℕ → FinSet (succ n)
+    t n = Invertible.inverse (bijectionImpliesInvertible isBij) (inj n)
+    tInjective : Injection t
+    tInjective pr = isInj ((Bijection.inj (invertibleImpliesBijection (inverseIsInvertible (bijectionImpliesInvertible isBij)))) pr)

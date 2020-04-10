@@ -32,7 +32,7 @@ GroupHom.groupHom (groupHomsCompose {U = U} {_+C_ = _·C_} {I} {g} gHom) {x} {y}
     answer = (Equivalence.transitive (Setoid.eq U)) (GroupHom.wellDefined gHom (GroupHom.groupHom hom {x} {y}) ) (GroupHom.groupHom gHom {f x} {f y})
 
 homRespectsInverse : {x : A} → Setoid._∼_ T (f (Group.inverse G x)) (Group.inverse H (f x))
-homRespectsInverse {x} = rightInversesAreUnique H (f x) (f (Group.inverse G x)) (transitive (symmetric (GroupHom.groupHom hom)) (transitive (GroupHom.wellDefined hom (Group.invLeft G)) imageOfIdentityIsIdentity))
+homRespectsInverse {x} = rightInversesAreUnique H {f x} {f (Group.inverse G x)} (transitive (symmetric (GroupHom.groupHom hom)) (transitive (GroupHom.wellDefined hom (Group.invLeft G)) imageOfIdentityIsIdentity))
   where
     open Setoid T
     open Equivalence eq
