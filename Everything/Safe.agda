@@ -144,6 +144,7 @@ open import Modules.PolynomialModule
 open import Modules.Lemmas
 open import Modules.DirectSum
 
-open import Fields.CauchyCompletion.PartiallyOrderedRing
+open import Fields.CauchyCompletion.Ring
+open import Fields.CauchyCompletion.Comparison
 
 module Everything.Safe where
