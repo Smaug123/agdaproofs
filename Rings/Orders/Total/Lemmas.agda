@@ -293,6 +293,9 @@ abstract
   halvePositive a 0<2a | inl (inr a<0) = exFalso (irreflexive {a + a} (SetoidPartialOrder.<Transitive pOrder (<WellDefined (Equivalence.reflexive eq) identRight (ringAddInequalities a<0 a<0)) 0<2a))
   halvePositive a 0<2a | inr x = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (+WellDefined (Equivalence.symmetric eq x) (Equivalence.symmetric eq x)) identRight) 0<2a))
 
+  halvePositive' : {a b : A} → (a + a) ∼ b → 0R < b → 0R < a
+  halvePositive' {a} {b} pr 0<b = halvePositive a (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq pr) 0<b)
+
   0<1 : (0R ∼ 1R → False) → 0R < 1R
   0<1 0!=1 with totality 0R 1R
   0<1 0!=1 | inl (inl x) = x

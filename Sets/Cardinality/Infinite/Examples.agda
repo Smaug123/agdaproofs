@@ -1,4 +1,4 @@
-{-# OPTIONS --safe --warning=error --without-K #-}
+{-# OPTIONS --safe --warning=error --without-K --guardedness #-}
 
 open import Functions
 open import LogicalFormulae
@@ -8,6 +8,11 @@ open import Sets.FinSet.Definition
 open import Sets.FinSet.Lemmas
 open import Sets.Cardinality.Infinite.Definition
 open import Sets.Cardinality.Finite.Lemmas
+open import Numbers.Reals.Definition
+open import Numbers.Rationals.Definition
+open import Numbers.Integers.Definition
+open import Sets.Cardinality.Infinite.Lemmas
+open import Setoids.Setoids
 
 module Sets.Cardinality.Infinite.Examples where
 
@@ -28,3 +33,7 @@ module Sets.Cardinality.Infinite.Examples where
     bad a = (inv (toNat a))
     badInj : Injection bad
     badInj = injComp nextInj invInj
+
+ℝIsInfinite : DedekindInfiniteSet ℝ
+DedekindInfiniteSet.inj ℝIsInfinite n = injectionR (injectionQ (nonneg n))
+DedekindInfiniteSet.isInjection ℝIsInfinite {x} {y} pr = nonnegInjective (injectionQInjective (injectionRInjective pr))

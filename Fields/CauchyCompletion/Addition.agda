@@ -32,9 +32,10 @@ open import Fields.CauchyCompletion.Definition order F
 open import Rings.Orders.Partial.Lemmas pRing
 open import Rings.Orders.Total.Lemmas order
 
-lemm : (m : ℕ) (a b : Sequence A) → index (apply _+_ a b) m ≡ (index a m) + (index b m)
-lemm zero a b = refl
-lemm (succ m) a b = lemm m (Sequence.tail a) (Sequence.tail b)
+private
+  lemm : (m : ℕ) (a b : Sequence A) → index (apply _+_ a b) m ≡ (index a m) + (index b m)
+  lemm zero a b = refl
+  lemm (succ m) a b = lemm m (Sequence.tail a) (Sequence.tail b)
 
 _+C_ : CauchyCompletion → CauchyCompletion → CauchyCompletion
 CauchyCompletion.elts (record { elts = a ; converges = convA } +C record { elts = b ; converges = convB }) = apply _+_ a b

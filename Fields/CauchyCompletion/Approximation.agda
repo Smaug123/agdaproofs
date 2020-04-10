@@ -40,20 +40,26 @@ open import Fields.CauchyCompletion.Comparison order F charNot2
 abstract
 
   chain : {a b : A} (c : CauchyCompletion) → (a r<C c) → (c <Cr b) → a < b
-  chain {a} {b} c (betweenAC , (0<betweenAC ,, (Nac , prAC))) (betweenCB , (0<betweenCB ,, (Nb , prBC))) = SetoidPartialOrder.<Transitive pOrder (SetoidPartialOrder.<Transitive pOrder (<WellDefined identLeft (Equivalence.reflexive eq) (orderRespectsAddition 0<betweenAC a)) (<WellDefined groupIsAbelian (Equivalence.reflexive eq) (SetoidPartialOrder.<Transitive pOrder (prAC (succ Nac +N Nb) (le Nb (applyEquality succ (Semiring.commutative ℕSemiring Nb Nac)))) (<WellDefined identLeft (Equivalence.reflexive eq) (orderRespectsAddition 0<betweenCB (index (Sequence.tail (CauchyCompletion.elts c)) (Nac +N Nb))))))) (prBC (succ Nac +N Nb) (le Nac refl))
+  chain {a} {b} c record { e = betweenAC ; 0<e = 0<betweenAC ; N = Nac ; pr = prAC } record { e = betweenCB ; 0<e = 0<betweenCB ; N = Nb ; property = prBC } = SetoidPartialOrder.<Transitive pOrder (SetoidPartialOrder.<Transitive pOrder (<WellDefined identLeft (Equivalence.reflexive eq) (orderRespectsAddition 0<betweenAC a)) (<WellDefined groupIsAbelian (Equivalence.reflexive eq) (SetoidPartialOrder.<Transitive pOrder (prAC (succ Nac +N Nb) (le Nb (applyEquality succ (Semiring.commutative ℕSemiring Nb Nac)))) (<WellDefined identLeft (Equivalence.reflexive eq) (orderRespectsAddition 0<betweenCB (index (Sequence.tail (CauchyCompletion.elts c)) (Nac +N Nb))))))) (prBC (succ Nac +N Nb) (le Nac refl))
 
-  approxLemma : (a : CauchyCompletion) (e e/2 : A) → (0G < e) → (e/2 + e/2 ∼ e) → (m N : ℕ) → abs ((index (CauchyCompletion.elts a) m) + inverse (index (CauchyCompletion.elts a) N)) < e/2 → (e/2 + index (CauchyCompletion.elts a) m) < (index (CauchyCompletion.elts a) N + e)
-  approxLemma a e e/2 0<e prE/2 m N ans with totality 0R ((index (CauchyCompletion.elts a) m) + inverse (index (CauchyCompletion.elts a) N))
-  approxLemma a e e/2 0<e prE/2 m N ans | inl (inl x) with <WellDefined (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) (invLeft))) identRight) groupIsAbelian (orderRespectsAddition ans (index (CauchyCompletion.elts a) N))
-  ... | bl = <WellDefined groupIsAbelian (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) prE/2)) (orderRespectsAddition bl e/2)
-  approxLemma a e e/2 0<e prE/2 m N ans | inl (inr x) with <WellDefined (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) (invLeft))) identRight) (identLeft) (orderRespectsAddition x (index (CauchyCompletion.elts a) N))
-  ... | bl = <WellDefined groupIsAbelian (Equivalence.reflexive eq) (ringAddInequalities bl (halfLess e/2 e 0<e prE/2))
-  approxLemma a e e/2 0<e prE/2 m N ans | inr x with transferToRight additiveGroup (Equivalence.symmetric eq x)
-  ... | bl = <WellDefined (+WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq bl)) groupIsAbelian (orderRespectsAddition (halfLess e/2 e 0<e prE/2) (index (CauchyCompletion.elts a) N))
+  private
+    approxLemma : (a : CauchyCompletion) (e e/2 : A) → (0G < e) → (e/2 + e/2 ∼ e) → (m N : ℕ) → abs ((index (CauchyCompletion.elts a) m) + inverse (index (CauchyCompletion.elts a) N)) < e/2 → (e/2 + index (CauchyCompletion.elts a) m) < (index (CauchyCompletion.elts a) N + e)
+    approxLemma a e e/2 0<e prE/2 m N ans with totality 0R ((index (CauchyCompletion.elts a) m) + inverse (index (CauchyCompletion.elts a) N))
+    approxLemma a e e/2 0<e prE/2 m N ans | inl (inl x) with <WellDefined (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) (invLeft))) identRight) groupIsAbelian (orderRespectsAddition ans (index (CauchyCompletion.elts a) N))
+    ... | bl = <WellDefined groupIsAbelian (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) prE/2)) (orderRespectsAddition bl e/2)
+    approxLemma a e e/2 0<e prE/2 m N ans | inl (inr x) with <WellDefined (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) (invLeft))) identRight) (identLeft) (orderRespectsAddition x (index (CauchyCompletion.elts a) N))
+    ... | bl = <WellDefined groupIsAbelian (Equivalence.reflexive eq) (ringAddInequalities bl (halfLess e/2 e 0<e prE/2))
+    approxLemma a e e/2 0<e prE/2 m N ans | inr x with transferToRight additiveGroup (Equivalence.symmetric eq x)
+    ... | bl = <WellDefined (+WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq bl)) groupIsAbelian (orderRespectsAddition (halfLess e/2 e 0<e prE/2) (index (CauchyCompletion.elts a) N))
 
-  approximateAboveCrude : (a : CauchyCompletion) → Sg A (λ b → (a <Cr b))
-  approximateAboveCrude a with CauchyCompletion.converges a 1R (0<1 (charNot2ImpliesNontrivial R charNot2))
-  ... | N , conv = ((((index (CauchyCompletion.elts a) (succ N)) + 1R) + 1R) + 1R) , (1R , (0<1 (charNot2ImpliesNontrivial R charNot2) ,, (N , ans)))
+approximateAboveCrude : (a : CauchyCompletion) → A
+approximateAboveCrude a with CauchyCompletion.converges a 1R (0<1 (charNot2ImpliesNontrivial R charNot2))
+... | N , conv = (((index (CauchyCompletion.elts a) (succ N)) + 1R) + 1R) + 1R
+
+abstract
+  approximateAboveCrudeIsAbove : (a : CauchyCompletion) → a <Cr (approximateAboveCrude a)
+  approximateAboveCrudeIsAbove a with CauchyCompletion.converges a 1R (0<1 (charNot2ImpliesNontrivial R charNot2))
+  ... | N , conv = record { e = 1R ; 0<e = 0<1 (charNot2ImpliesNontrivial R charNot2) ; N = N ; property = ans }
     where
       ans : (m : ℕ) → (N <N m) → (1R + index (CauchyCompletion.elts a) m) < (((index (CauchyCompletion.elts a) (succ N) + 1R) + 1R) + 1R)
       ans m N<m with conv {m} {succ N} N<m (le 0 refl)
@@ -64,14 +70,15 @@ abstract
       ... | am<aN = <WellDefined groupIsAbelian (Equivalence.reflexive eq) (orderRespectsAddition (SetoidPartialOrder.<Transitive pOrder am<aN (<WellDefined (Equivalence.reflexive eq) (+Associative) (<WellDefined identLeft groupIsAbelian (orderRespectsAddition (<WellDefined identLeft (Equivalence.reflexive eq) (ringAddInequalities (0<1 (charNot2ImpliesNontrivial R charNot2)) (0<1 (charNot2ImpliesNontrivial R charNot2)))) (index (CauchyCompletion.elts a) (succ N)))))) 1R)
       ans m N<m | bl | inr 0=am-aN = <WellDefined (Equivalence.transitive eq (+WellDefined identLeft (Equivalence.reflexive eq)) identLeft) (Equivalence.transitive eq groupIsAbelian (Equivalence.transitive eq (+WellDefined (Equivalence.transitive eq groupIsAbelian (+WellDefined (transferToRight additiveGroup (Equivalence.symmetric eq 0=am-aN)) (Equivalence.reflexive eq))) (Equivalence.reflexive eq)) +Associative)) (orderRespectsAddition (ringAddInequalities (0<1 (charNot2ImpliesNontrivial R charNot2)) (0<1 (charNot2ImpliesNontrivial R charNot2))) (1R + (index (CauchyCompletion.elts a) m)))
 
-  rationalApproximatelyAbove : (a : CauchyCompletion) → (e : A) → (0G < e) → A
-  rationalApproximatelyAbove a e 0<e with halve charNot2 e
-  ... | e/2 , prE/2 with halvePositive e/2 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq prE/2) 0<e)
-  ... | 0<e/2 with halve charNot2 e/2
-  ... | e/4 , prE/4 with halvePositive e/4 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq prE/4) 0<e/2)
-  ... | 0<e/4 with CauchyCompletion.converges a e/4 0<e/4
-  ... | N , cauchyBeyondN = index (CauchyCompletion.elts a) (succ N) + e/2
+rationalApproximatelyAbove : (a : CauchyCompletion) → (e : A) → (0G < e) → A
+rationalApproximatelyAbove a e 0<e with halve charNot2 e
+... | e/2 , prE/2 with halvePositive e/2 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq prE/2) 0<e)
+... | 0<e/2 with halve charNot2 e/2
+... | e/4 , prE/4 with halvePositive e/4 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq prE/4) 0<e/2)
+... | 0<e/4 with CauchyCompletion.converges a e/4 0<e/4
+... | N , cauchyBeyondN = index (CauchyCompletion.elts a) (succ N) + e/2
 
+abstract
   rationalApproximatelyAboveIsAbove : (a : CauchyCompletion) (e : A) → (0<e : 0G < e) → a <Cr (rationalApproximatelyAbove a e 0<e)
   rationalApproximatelyAboveIsAbove a e 0<e with halve charNot2 e
   ... | e/2 , prE/2 with halvePositive e/2 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq prE/2) 0<e)
@@ -81,7 +88,7 @@ abstract
   ... | N , cauchyBeyondN with halve charNot2 e/4
   ... | e/8 , prE/8 with halvePositive e/8 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq prE/8) 0<e/4)
   ... | 0<e/8 with CauchyCompletion.converges a e/8 0<e/8
-  ... | N2 , cauchyBeyondN2 = e/8 , (0<e/8 ,, ((N +N N2) , ans2))
+  ... | N2 , cauchyBeyondN2 = record { e = e/8 ; 0<e = 0<e/8 ; N = N +N N2 ; property = ans2 }
     where
       ans2 : (m : ℕ) → N +N N2 <N m → (e/8 + index (CauchyCompletion.elts a) m) < (index (CauchyCompletion.elts a) (succ N) + e/2)
       ans2 m <m with cauchyBeyondN {m} {succ N} (inequalityShrinkLeft <m) (le 0 refl)
@@ -105,7 +112,7 @@ abstract
   ... | 0<e/8 with CauchyCompletion.converges a e/8 0<e/8
   ... | N8 , cauchyBeyondN8 with halve charNot2 e/8
   ... | e/16 , prE/16 with halvePositive e/16 (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq prE/16) 0<e/8)
-  ... | 0<e/16 = ((e/2 + e/4) + e/8) , ((e/8 , (0<e/8 ,, ((N +N N8) , ans))) ,, (e/16 , (0<e/16 ,, (0 , t'))))
+  ... | 0<e/16 = record { i = (e/2 + e/4) + e/8 ; a<i = record { e = e/8 ; 0<e = 0<e/8 ; N = N +N N8 ; property = ans } ; i<b = record { e = e/16 ; 0<e = 0<e/16 ; N = 0 ; pr = t' } }
     where
       t' : (m : ℕ) → (0 <N m) → (((e/2 + e/4) + e/8) + e/16) < index (constSequence e) m
       t' m 0<m rewrite indexAndConst e m = <WellDefined (Equivalence.reflexive eq) prE/2 (<WellDefined (Equivalence.reflexive eq) (+WellDefined (Equivalence.reflexive eq) prE/4) (<WellDefined +Associative (Equivalence.symmetric eq +Associative) (<WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition (<WellDefined (Equivalence.reflexive eq) prE/8 (<WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition (halfLess e/16 e/8 0<e/8 prE/16) e/8))) (e/2 + e/4)))))
@@ -130,7 +137,7 @@ abstract
 
   approximateBelow : (a : CauchyCompletion) → (ε : A) → (0G < ε) → Sg A (λ b → (b r<C a) && (a +C (-C injection b)) <C (injection ε))
   approximateBelow a e 0<e with approximateAbove (-C a) e 0<e
-  ... | x , ((deltaXAnd-A , (0<deltaXA ,, (NdeltaXA , prDeltaXA))) ,, (rationalNear , ((bound , (0<bound ,, (N , prBound))) ,, (bound2 , (0<bound2 ,, (N2 , prBound2)))))) = inverse x , ((deltaXAnd-A , (0<deltaXA ,, (NdeltaXA , λ m N<m → <WellDefined (Equivalence.transitive eq groupIsAbelian (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq groupIsAbelian (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq) (cancel {m} (CauchyCompletion.elts a))) identRight)))))) (Equivalence.transitive eq +Associative (Equivalence.transitive eq (+WellDefined invRight (Equivalence.reflexive eq)) identLeft)) (orderRespectsAddition (prDeltaXA m N<m) (inverse x + (index (CauchyCompletion.elts a) m)))))) ,, (rationalNear , ((bound , (0<bound ,, (N , pr1))) ,, (bound2 , (0<bound2 ,, (N2 , prBound2))))))
+  ... | x , (record { e = deltaXAnd-A ; 0<e = 0<deltaXA ; N = NdeltaXA ; property = prDeltaXA } ,, record { i = rationalNear ; a<i = record { e = bound ; 0<e = 0<bound ; N = N ; property = prBound } ; i<b = record { e = bound2 ; 0<e = 0<bound2 ; N = N2 ; pr = prBound2 } }) = inverse x , (record { e = deltaXAnd-A ; 0<e = 0<deltaXA ; N = NdeltaXA ; pr = λ m N<m → <WellDefined (Equivalence.transitive eq groupIsAbelian (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq groupIsAbelian (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq) (cancel {m} (CauchyCompletion.elts a))) identRight)))))) (Equivalence.transitive eq +Associative (Equivalence.transitive eq (+WellDefined invRight (Equivalence.reflexive eq)) identLeft)) (orderRespectsAddition (prDeltaXA m N<m) (inverse x + (index (CauchyCompletion.elts a) m))) } ,, record { i = rationalNear ; a<i = record { e = bound ; 0<e = 0<bound ; N = N ; property = pr1 } ; i<b = record { e = bound2 ; 0<e = 0<bound2 ; N = N2 ; pr = prBound2 } })
     where
       cancel : {m : ℕ} (a : Sequence A) → (index (map inverse a) m) + (index a m) ∼ 0G
       cancel {m} a rewrite equalityCommutative (mapAndIndex a inverse m) = invLeft
@@ -143,7 +150,7 @@ abstract
   ... | below , (below<a ,, a-below<e) with approximateAbove a 1R (0<1 (charNot2ImpliesNontrivial R charNot2))
   ... | above , (a<above ,, above-a<e) with totality 0R below
   boundModulus a | below , (below<a ,, a-below<e) | above , (a<above ,, above-a<e) | inl (inl 0<below) with totality 0R above
-  boundModulus a | below , ((belowBound , (0<belowBound ,, (Nbelow , prBelow))) ,, a-below<e) | above , ((bound , (0<bound ,, (N , ans))) ,, above-a<e) | inl (inl 0<below) | inl (inl 0<above) = above , ((N +N Nbelow) , λ m N<m → SetoidPartialOrder.<Transitive pOrder (res m N<m) (ans m (inequalityShrinkLeft N<m)))
+  boundModulus a | below , (record { e = belowBound ; 0<e = 0<belowBound ; N = Nbelow ; pr = prBelow } ,, a-below<e) | above , (record { e = bound ; 0<e = 0<bound ; N = N ; property = ans } ,, above-a<e) | inl (inl 0<below) | inl (inl 0<above) = above , ((N +N Nbelow) , λ m N<m → SetoidPartialOrder.<Transitive pOrder (res m N<m) (ans m (inequalityShrinkLeft N<m)))
     where
       res : (m : ℕ) → ((N +N Nbelow) <N m) → (abs (index (CauchyCompletion.elts a) m)) < (bound + index (CauchyCompletion.elts a) m)
       res m N<m with totality 0R (index (CauchyCompletion.elts a) m)
@@ -154,42 +161,42 @@ abstract
   boundModulus a | below , (below<a ,, a-below<e) | above , (a<above ,, above-a<e) | inl (inl 0<below) | inr 0=above = exFalso (irreflexive (SetoidPartialOrder.<Transitive pOrder 0<below (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq 0=above) (chain a below<a a<above))))
   boundModulus a | below , (below<a ,, a-below<e) | above , (a<above ,, above-a<e) | inl (inr below<0) with totality 0R above
   boundModulus a | below , (below<a ,, a-below<e) | above , (a<above ,, above-a<e) | inl (inr below<0) | inl (inl 0<above) with totality (inverse below) above
-  boundModulus a | below , ((boundBelow , (0<boundBelow ,, (N , prBoundBelow))) ,, a-below<e) | above , ((boundAbove , (0<boundAbove ,, (Nabove , prBoundAbove))) ,, above-a<e) | inl (inr below<0) | inl (inl 0<above) | inl (inl -bel<ab) = above , ((N +N Nabove) , ans)
+  boundModulus a | below , (record { e = boundBelow ; 0<e = 0<boundBelow ; N = N ; pr = prBoundBelow } ,, a-below<e) | above , (record { e = boundAbove ; 0<e = 0<boundAbove ; N = Nabove ; property = prBoundAbove } ,, above-a<e) | inl (inr below<0) | inl (inl 0<above) | inl (inl -bel<ab) = above , ((N +N Nabove) , ans)
     where
       ans : (m : ℕ) → (N +N Nabove <N m) → abs (index (CauchyCompletion.elts a) m) < above
       ans m N<m with totality 0G (index (CauchyCompletion.elts a) m)
       ans m N<m | inl (inl 0<am) = SetoidPartialOrder.<Transitive pOrder (<WellDefined identLeft (Equivalence.reflexive eq) (orderRespectsAddition 0<boundAbove (index (CauchyCompletion.elts a) m))) (prBoundAbove m (inequalityShrinkRight N<m))
       ans m N<m | inl (inr am<0) = SetoidPartialOrder.<Transitive pOrder (ringSwapNegatives' (prBoundBelow m (inequalityShrinkLeft N<m))) (SetoidPartialOrder.<Transitive pOrder (ringSwapNegatives' (<WellDefined identLeft groupIsAbelian (orderRespectsAddition 0<boundBelow below))) -bel<ab)
       ans m N<m | inr 0=am = <WellDefined 0=am (Equivalence.reflexive eq) 0<above
-  boundModulus a | below , ((boundBelow , (0<boundBelow ,, (N , prBoundBelow))) ,, a-below<e) | above , ((boundAbove , (0<boundAbove ,, (Nabove , prBoundAbove))) ,, above-a<e) | inl (inr below<0) | inl (inl 0<above) | inl (inr ab<-bel) = inverse below , ((N +N Nabove) , ans)
+  boundModulus a | below , (record { e = boundBelow ; 0<e = 0<boundBelow ; N = N ; pr = prBoundBelow } ,, a-below<e) | above , (record { e = boundAbove ; 0<e = 0<boundAbove ; N = Nabove ; property = prBoundAbove } ,, above-a<e) | inl (inr below<0) | inl (inl 0<above) | inl (inr ab<-bel) = inverse below , ((N +N Nabove) , ans)
     where
       ans : (m : ℕ) → (N +N Nabove <N m) → abs (index (CauchyCompletion.elts a) m) < (inverse below)
       ans m N<m with totality 0G (index (CauchyCompletion.elts a) m)
       ans m N<m | inl (inl 0<am) = SetoidPartialOrder.<Transitive pOrder (SetoidPartialOrder.<Transitive pOrder (<WellDefined identLeft (Equivalence.reflexive eq) (orderRespectsAddition 0<boundAbove (index (CauchyCompletion.elts a) m))) (prBoundAbove m (inequalityShrinkRight N<m))) ab<-bel
       ans m N<m | inl (inr am<0) = ringSwapNegatives' (SetoidPartialOrder.<Transitive pOrder (<WellDefined identLeft groupIsAbelian (orderRespectsAddition 0<boundBelow below)) (prBoundBelow m (inequalityShrinkLeft N<m)))
       ans m N<m | inr 0=am = <WellDefined 0=am (Equivalence.reflexive eq) (lemm2 below below<0)
-  boundModulus a | below , ((boundBelow , (0<boundBelow ,, (N , prBoundBelow))) ,, a-below<e) | above , ((boundAbove , (0<boundAbove ,, (Nabove , prBoundAbove))) ,, above-a<e) | inl (inr below<0) | inl (inl 0<above) | inr -bel=ab = above , ((N +N Nabove) , ans)
+  boundModulus a | below , (record { e = boundBelow ; 0<e = 0<boundBelow ; N = N ; pr = prBoundBelow } ,, a-below<e) | above , (record { e = boundAbove ; 0<e = 0<boundAbove ; N = Nabove ; property = prBoundAbove } ,, above-a<e) | inl (inr below<0) | inl (inl 0<above) | inr -bel=ab = above , ((N +N Nabove) , ans)
     where
       ans : (m : ℕ) → (N +N Nabove <N m) → abs (index (CauchyCompletion.elts a) m) < above
       ans m N<m with totality 0G (index (CauchyCompletion.elts a) m)
       ans m N<m | inl (inl 0<am) = SetoidPartialOrder.<Transitive pOrder (<WellDefined identLeft (Equivalence.reflexive eq) (orderRespectsAddition 0<boundAbove (index (CauchyCompletion.elts a) m))) (prBoundAbove m (inequalityShrinkRight N<m))
       ans m N<m | inl (inr am<0) = <WellDefined (Equivalence.reflexive eq) (-bel=ab) (ringSwapNegatives' (SetoidPartialOrder.<Transitive pOrder (<WellDefined identLeft groupIsAbelian (orderRespectsAddition 0<boundBelow below)) (prBoundBelow m (inequalityShrinkLeft N<m))))
       ans m N<m | inr 0=am = <WellDefined 0=am (Equivalence.reflexive eq) 0<above
-  boundModulus a | below , ((boundBelow , (0<boundBelow ,, (N , prBoundBelow))) ,, a-below<e) | above , ((boundAbove , (0<boundAbove ,, (Nabove , prBoundAbove))) ,, above-a<e) | inl (inr below<0) | inl (inr above<0) = inverse below , ((N +N Nabove) , ans)
+  boundModulus a | below , (record { e = boundBelow ; 0<e = 0<boundBelow ; N = N ; pr = prBoundBelow } ,, a-below<e) | above , (record { e = boundAbove ; 0<e = 0<boundAbove ; N = Nabove ; property = prBoundAbove } ,, above-a<e) | inl (inr below<0) | inl (inr above<0) = inverse below , ((N +N Nabove) , ans)
     where
       ans : (m : ℕ) → ((N +N Nabove) <N m) → abs (index (CauchyCompletion.elts a) m) < inverse below
       ans m N<m with totality 0R (index (CauchyCompletion.elts a) m)
       ans m N<m | inl (inl 0<am) = exFalso (irreflexive {0G} (SetoidPartialOrder.<Transitive pOrder 0<am (SetoidPartialOrder.<Transitive pOrder (SetoidPartialOrder.<Transitive pOrder (<WellDefined identLeft (Equivalence.reflexive eq) (orderRespectsAddition 0<boundAbove (index (CauchyCompletion.elts a) m))) (prBoundAbove m (inequalityShrinkRight N<m))) above<0)))
       ans m N<m | inl (inr am<0) = ringSwapNegatives' (SetoidPartialOrder.<Transitive pOrder (<WellDefined identLeft groupIsAbelian (orderRespectsAddition 0<boundBelow below)) (prBoundBelow m (inequalityShrinkLeft N<m)))
       ans m N<m | inr 0=am = exFalso (irreflexive {0G} (<WellDefined (Equivalence.symmetric eq 0=am) (Equivalence.reflexive eq) (SetoidPartialOrder.<Transitive pOrder (SetoidPartialOrder.<Transitive pOrder (<WellDefined identLeft (Equivalence.reflexive eq) (orderRespectsAddition 0<boundAbove (index (CauchyCompletion.elts a) m))) (prBoundAbove m (inequalityShrinkRight N<m))) above<0)))
-  boundModulus a | below , ((boundBelow , (0<boundBelow ,, (N , prBoundBelow))) ,, a-below<e) | above , ((boundAbove , (0<boundAbove ,, (Nabove , prBoundAbove))) ,, above-a<e) | inl (inr below<0) | inr 0=above = inverse below , ((N +N Nabove) , ans)
+  boundModulus a | below , (record { e = boundBelow ; 0<e = 0<boundBelow ; N = N ; pr = prBoundBelow } ,, a-below<e) | above , (record { e = boundAbove ; 0<e = 0<boundAbove ; N = Nabove ; property = prBoundAbove } ,, above-a<e) | inl (inr below<0) | inr 0=above = inverse below , ((N +N Nabove) , ans)
     where
       ans : (m : ℕ) → ((N +N Nabove) <N m) → abs (index (CauchyCompletion.elts a) m) < inverse below
       ans m N<m with totality 0R (index (CauchyCompletion.elts a) m)
       ans m N<m | inl (inl 0<am) = exFalso (irreflexive {0G} (<WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq 0=above) (SetoidPartialOrder.<Transitive pOrder 0<am (SetoidPartialOrder.<Transitive pOrder (<WellDefined identLeft (Equivalence.reflexive eq) (orderRespectsAddition 0<boundAbove (index (CauchyCompletion.elts a) m))) (prBoundAbove m (inequalityShrinkRight N<m))))))
       ans m N<m | inl (inr am<0) = ringSwapNegatives' (SetoidPartialOrder.<Transitive pOrder (<WellDefined identLeft groupIsAbelian (orderRespectsAddition 0<boundBelow below)) (prBoundBelow m (inequalityShrinkLeft N<m)))
       ans m N<m | inr 0=am = <WellDefined 0=am (Equivalence.reflexive eq) (lemm2 _ below<0)
-  boundModulus a | below , ((boundBelow , ((boundBelowDiff ,, (Nb , ansBelow)))) ,, a-below<e) | above , ((bound , (0<bound ,, (N , ans))) ,, above-a<e) | inr 0=below = above , ((N +N Nb) , λ m N<m → SetoidPartialOrder.<Transitive pOrder (res m N<m) (ans m (inequalityShrinkLeft N<m)))
+  boundModulus a | below , (record { e = boundBelow ; 0<e = boundBelowDiff ; N = Nb ; pr = ansBelow } ,, a-below<e) | above , (record { e = bound ; 0<e = 0<bound ; N = N ; property = ans } ,, above-a<e) | inr 0=below = above , ((N +N Nb) , λ m N<m → SetoidPartialOrder.<Transitive pOrder (res m N<m) (ans m (inequalityShrinkLeft N<m)))
     where
       res : (m : ℕ) → (N +N Nb) <N m → (abs (index (CauchyCompletion.elts a) m)) < (bound + index (CauchyCompletion.elts a) m)
       res m N<m with totality 0R (index (CauchyCompletion.elts a) m)

@@ -32,6 +32,12 @@ record _&&_ {a b} (A : Set a) (B : Set b) : Set (a ⊔ b) where
     fst : A
     snd : B
 
+equalityLeft : {a b : _} {A : Set a} {B : Set b} {x1 x2 : A && B} → (x1 ≡ x2) → _&&_.fst x1 ≡ _&&_.fst x2
+equalityLeft {x1 = a ,, _} {.a ,, _} refl = refl
+
+equalityRight : {a b : _} {A : Set a} {B : Set b} {x1 x2 : A && B} → (x1 ≡ x2) → _&&_.snd x1 ≡ _&&_.snd x2
+equalityRight {x1 = _ ,, a} {_ ,, .a} refl = refl
+
 infix 15 _&_&_
 record _&_&_ {a b c} (A : Set a) (B : Set b) (C : Set c) : Set (a ⊔ b ⊔ c) where
   field
@@ -77,9 +83,9 @@ orIsAssociative (inl (inl x)) = inl x
 orIsAssociative (inl (inr x)) = inr (inl x)
 orIsAssociative (inr x) = inr (inr x)
 
-leqConstructive : {n : _} → {p : Set n} → (p || (p → False)) → (((p → False) → False) → p)
-leqConstructive (inl p) = λ _ → p
-leqConstructive (inr notP) = λ negnegP → exFalso (negnegP notP)
+lemConstructive : {n : _} → {p : Set n} → (p || (p → False)) → (((p → False) → False) → p)
+lemConstructive (inl p) = λ _ → p
+lemConstructive (inr notP) = λ negnegP → exFalso (negnegP notP)
 
 lemConverse : {n : _} → {p : Set n} → p → ((p → False) → False)
 lemConverse p = λ notP → notP p
