@@ -85,6 +85,7 @@ open import Rings.Divisible.Definition
 open import Rings.Associates.Lemmas
 open import Rings.InitialRing
 open import Rings.Homomorphisms.Lemmas
+open import Rings.UniqueFactorisationDomains.Definition
 
 open import Setoids.Setoids
 open import Setoids.DirectSum
