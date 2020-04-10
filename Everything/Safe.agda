@@ -81,7 +81,7 @@ open import Rings.Subrings.Definition
 open import Rings.Ideals.Maximal.Lemmas
 open import Rings.Primes.Lemmas
 open import Rings.Irreducibles.Definition
-open import Rings.Divisible.Definition
+open import Rings.Divisible.Lemmas
 open import Rings.Associates.Lemmas
 open import Rings.InitialRing
 open import Rings.Homomorphisms.Lemmas

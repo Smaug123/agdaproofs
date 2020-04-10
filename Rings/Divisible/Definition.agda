@@ -6,7 +6,6 @@ open import Functions
 open import Sets.EquivalenceRelations
 open import Rings.Definition
 
-
 module Rings.Divisible.Definition {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} (R : Ring S _+_ _*_) where
 
 open Setoid S
