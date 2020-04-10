@@ -39,8 +39,9 @@ open import Fields.CauchyCompletion.Approximation order F charNot2
 0!=1 : {e : A} → (0G < e) → 0R ∼ 1R → False
 0!=1 {e} 0<e 0=1 = irreflexive (<WellDefined (Equivalence.reflexive eq) (oneZeroImpliesAllZero R 0=1) 0<e)
 
-littleLemma : {a b c d : A} → ((a * b) + inverse (c * d)) ∼ ((a * (b + inverse d)) + (d * (a + inverse c)))
-littleLemma {a} {b} {c} {d} = Equivalence.transitive eq (Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq identLeft) (+WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (+WellDefined (Equivalence.transitive eq (ringMinusExtracts R) (inverseWellDefined additiveGroup *Commutative)) (Equivalence.reflexive eq)) (invLeft {d * a}))) (Equivalence.transitive eq (Equivalence.symmetric eq (ringMinusExtracts' R)) *Commutative))) (Equivalence.symmetric eq +Associative))) (+Associative)) (Equivalence.symmetric eq (+WellDefined (*DistributesOver+) (*DistributesOver+)))
+private
+  littleLemma : {a b c d : A} → ((a * b) + inverse (c * d)) ∼ ((a * (b + inverse d)) + (d * (a + inverse c)))
+  littleLemma {a} {b} {c} {d} = Equivalence.transitive eq (Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq identLeft) (+WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (+WellDefined (Equivalence.transitive eq (ringMinusExtracts R) (inverseWellDefined additiveGroup *Commutative)) (Equivalence.reflexive eq)) (invLeft {d * a}))) (Equivalence.transitive eq (Equivalence.symmetric eq (ringMinusExtracts' R)) *Commutative))) (Equivalence.symmetric eq +Associative))) (+Associative)) (Equivalence.symmetric eq (+WellDefined (*DistributesOver+) (*DistributesOver+)))
 
 _*C_ : CauchyCompletion → CauchyCompletion → CauchyCompletion
 CauchyCompletion.elts (record { elts = a ; converges = aConv } *C record { elts = b ; converges = bConv }) = apply _*_ a b

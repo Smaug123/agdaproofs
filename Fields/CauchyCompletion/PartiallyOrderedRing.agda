@@ -19,6 +19,8 @@ open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.Lemmas
 open import Semirings.Definition
+open import Groups.Homomorphisms.Definition
+open import Rings.Homomorphisms.Definition
 
 module Fields.CauchyCompletion.PartiallyOrderedRing {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
 
@@ -40,22 +42,20 @@ open import Fields.CauchyCompletion.Multiplication order F charNot2
 open import Fields.CauchyCompletion.Approximation order F charNot2
 open import Fields.CauchyCompletion.Ring order F charNot2
 open import Fields.CauchyCompletion.Comparison order F charNot2
+open import Fields.CauchyCompletion.Setoid order F charNot2
 
 productPositives : (a b : A) → (injection 0R) <Cr a → (injection 0R) <Cr b → (injection 0R) <Cr (a * b)
-productPositives a b (eA , (0<eA ,, (Na , prA))) (eB , (0<eB ,, (Nb , prB))) = (eA * eB) , (orderRespectsMultiplication 0<eA 0<eB ,, ((Na +N Nb) , ans))
+productPositives a b record { e = eA ; 0<e = 0<eA ; N = Na ; property = prA } record { e = eB ; 0<e = 0<eB ; N = Nb ; property = prB } = record { e = eA * eB ; 0<e = orderRespectsMultiplication 0<eA 0<eB ; N = Na +N Nb ; property = ans }
   where
     ans : (m : ℕ) → Na +N Nb <N m → ((eA * eB) + index (CauchyCompletion.elts (injection 0R)) m) < (a * b)
     ans m <m = <WellDefined (symmetric (transitive (+WellDefined reflexive (identityOfIndiscernablesRight _∼_ reflexive (indexAndConst 0R m))) identRight)) reflexive (ringMultiplyPositives 0<eA 0<eB (<WellDefined (transitive (+WellDefined reflexive (identityOfIndiscernablesRight _∼_ reflexive (indexAndConst 0R m))) identRight) reflexive (prA m (inequalityShrinkLeft <m))) (<WellDefined (transitive (+WellDefined reflexive (identityOfIndiscernablesRight _∼_ reflexive (indexAndConst 0R m))) identRight) reflexive (prB m (inequalityShrinkRight <m))))
 
 productPositives' : (a b : CauchyCompletion) (interA interB : A) → (0R < interA) → (0R < interB) → (interA r<C a) → (interB r<C b) → (interA * interB) r<C (a *C b)
-productPositives' a b interA interB 0<iA 0<iB (interA' , (0<interA' ,, (Na , prA))) (interB' , (0<interB' ,, (Nb , prB))) = (interA' * interB') , (orderRespectsMultiplication 0<interA' 0<interB' ,, ((Na +N Nb) , ans))
+productPositives' a b interA interB 0<iA 0<iB record { e = interA' ; 0<e = 0<interA' ; N = Na ; pr = prA } record { e = interB' ; 0<e = 0<interB' ; N = Nb ; pr = prB } = record { e = interA' * interB' ; 0<e = orderRespectsMultiplication 0<interA' 0<interB' ; N = Na +N Nb ; pr = ans }
   where
     ans : (m : ℕ) → (Na +N Nb <N m) → ((interA * interB) + (interA' * interB')) < index (CauchyCompletion.elts (a *C b)) m
     ans m <m rewrite indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts b) _*_ {m} = <Transitive (<WellDefined identRight (symmetric *DistributesOver+) (<WellDefined reflexive (+WellDefined *Commutative *Commutative) (<WellDefined reflexive (+WellDefined (symmetric *DistributesOver+) (symmetric *DistributesOver+)) (<WellDefined groupIsAbelian (transitive (transitive groupIsAbelian (transitive (symmetric +Associative) (+WellDefined *Commutative (transitive groupIsAbelian (transitive (+WellDefined reflexive *Commutative) (symmetric +Associative)))))) +Associative) (orderRespectsAddition (<WellDefined identRight reflexive (ringAddInequalities (orderRespectsMultiplication 0<iB 0<interA') (orderRespectsMultiplication 0<interB' 0<iA))) ((interA * interB) + (interA' * interB'))))))) (ringMultiplyPositives (<WellDefined identRight reflexive (ringAddInequalities 0<iA 0<interA')) (<WellDefined identRight reflexive (ringAddInequalities 0<iB 0<interB')) (prA m (inequalityShrinkLeft <m)) (prB m (inequalityShrinkRight <m)))
 
-orderInherited : {a : A} → (injection 0R) <Cr a → 0R < a
-orderInherited {a} (interA , (0<interA ,, (N , pr))) with pr (succ N) (le 0 refl)
-... | bl rewrite indexAndConst 0G N = <Transitive (<WellDefined reflexive (symmetric identRight) 0<interA) bl
 
 -- a  < a'
 -- b' < b
@@ -72,15 +72,20 @@ Have: a <Cr x r<C b
 Then a' + c' is an appropriate witness.
 -}
 
+cOrderRespectsAdditionLeft' : (a : CauchyCompletion) (b : A) (c : A) → (a <Cr b) → (a +C injection c) <C (injection b +C injection c)
+cOrderRespectsAdditionLeft' a b c record { e = e ; 0<e = 0<e ; N = N ; property = pr } = <CWellDefined {a +C injection c} {a +C injection c} {injection (b + c)} {(injection b) +C (injection c)} (Equivalence.reflexive (Setoid.eq cauchyCompletionSetoid) {a +C injection c}) (GroupHom.groupHom (RingHom.groupHom CInjectionRingHom)) (<CRelaxR (record { e = e ; 0<e = 0<e ; N = N ; property = λ m N<m → <WellDefined (transitive (symmetric +Associative) (+WellDefined reflexive (ans m))) reflexive (orderRespectsAddition (pr m N<m) c) }))
+  where
+    ans : (m : ℕ) → (index (CauchyCompletion.elts a) m + c) ∼ index (apply _+_ (CauchyCompletion.elts a) (constSequence c)) m
+    ans m rewrite indexAndApply (CauchyCompletion.elts a) (constSequence c) _+_ {m} | indexAndConst c m = reflexive
+
 cOrderRespectsAdditionLeft : (a : CauchyCompletion) (b : A) (c : CauchyCompletion) → (a <Cr b) → (a +C c) <C (injection b +C c)
-cOrderRespectsAdditionLeft a b a<b = {!!}
+cOrderRespectsAdditionLeft a b c a<b = {!!}
 
 cOrderRespectsAdditionRight : (a : A) (b : CauchyCompletion) (c : CauchyCompletion) → (a r<C b) → (injection a +C c) <C (b +C c)
 cOrderRespectsAdditionRight a b a<b = {!!}
 
 cOrderRespectsAddition : (a b : CauchyCompletion) → (a <C b) → (c : CauchyCompletion) → (a +C c) <C (b +C c)
-cOrderRespectsAddition a b (between , (a<between ,, between<b)) c with cOrderRespectsAdditionLeft a _ c a<between
-... | (betweenAC , ((ε , (0<ε ,, (N , isBiggerThanA))) ,, ((ε2 , (0<ε2 ,, (M , isLessThanC)))))) = between , ({!bl!} ,, {!bl!})
+cOrderRespectsAddition a b a<b c = {!!}
 
 {-
 cOrderRespectsAddition : (a b : CauchyCompletion) → (a <C b) → (c : CauchyCompletion) → (a +C c) <C (b +C c)
@@ -151,4 +156,4 @@ cOrderRespectsAddition a b (r , ((r1 , (0<r1 ,, (N1 , prN1))) ,, (r2 , (0<r2 ,, 
 
 CpOrderedRing : PartiallyOrderedRing CRing <COrder
 PartiallyOrderedRing.orderRespectsAddition CpOrderedRing {a} {b} = cOrderRespectsAddition a b
-PartiallyOrderedRing.orderRespectsMultiplication CpOrderedRing {a} {b} (interA , (0<interA ,, interA<a)) (interB , (0<interB ,, interB<b)) = (interA * interB) , (productPositives interA interB 0<interA 0<interB ,, productPositives' a b interA interB (orderInherited 0<interA) (orderInherited 0<interB) interA<a interB<b)
+PartiallyOrderedRing.orderRespectsMultiplication CpOrderedRing {a} {b} record { i = interA ; a<i = 0<interA ; i<b = interA<a } record { i = interB ; a<i = 0<interB ; i<b = interB<b } = record { i = interA * interB ; a<i = productPositives interA interB 0<interA 0<interB ; i<b = productPositives' a b interA interB (<CCollapsesL 0R _ 0<interA) (<CCollapsesL 0R _ 0<interB) interA<a interB<b }

@@ -14,6 +14,7 @@ open import Functions
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
+open import Rings.Homomorphisms.Definition
 
 module Fields.CauchyCompletion.Ring {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
 
@@ -59,3 +60,15 @@ Ring.*Associative CRing {a} {b} {c} = c*Assoc {a} {b} {c}
 Ring.*Commutative CRing {a} {b} = *CCommutative {a} {b}
 Ring.*DistributesOver+ CRing {a} {b} {c} = *CDistribute {a} {b} {c}
 Ring.identIsIdent CRing {a} = c*Ident {a}
+
+private
+  injectionIsRingHom : (a b : A) → Setoid._∼_ cauchyCompletionSetoid (injection (a * b)) (injection a *C injection b)
+  injectionIsRingHom a b ε 0<e = 0 , ans
+    where
+      ans : {m : ℕ} → 0 <N m → abs (index (apply _+_ (CauchyCompletion.elts (injection (a * b))) (map inverse (CauchyCompletion.elts (injection a *C injection b)))) m) < ε
+      ans {m} 0<m rewrite indexAndApply (constSequence (a * b)) (map inverse (apply _*_ (constSequence a) (constSequence b))) _+_ {m} | indexAndConst (a * b) m | equalityCommutative (mapAndIndex (apply _*_ (constSequence a) (constSequence b)) inverse m) | indexAndApply (constSequence a) (constSequence b) _*_ {m} | indexAndConst a m | indexAndConst b m = <WellDefined (symmetric (transitive (absWellDefined _ _ invRight) absZeroIsZero)) reflexive 0<e
+
+CInjectionRingHom : RingHom R CRing injection
+RingHom.preserves1 CInjectionRingHom = Equivalence.reflexive (Setoid.eq cauchyCompletionSetoid) {injection (Ring.1R R)}
+RingHom.ringHom CInjectionRingHom {a} {b} = injectionIsRingHom a b
+RingHom.groupHom CInjectionRingHom = CInjectionGroupHom
