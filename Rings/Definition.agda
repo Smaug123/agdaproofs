@@ -29,5 +29,7 @@ record Ring {n m} {A : Set n} (S : Setoid {n} {m} A) (_+_ : A → A → A) (_*_ 
     identIsIdent : {a : A} → 1R * a ∼ a
   timesZero : {a : A} → a * 0R ∼ 0R
   timesZero {a} = symmetric (transitive (transitive (symmetric invLeft) (+WellDefined reflexive (transitive (*WellDefined {a} {a} reflexive (symmetric identRight)) *DistributesOver+))) (transitive +Associative (transitive (+WellDefined invLeft reflexive) identLeft)))
+  timesZero' : {a : A} → 0R * a ∼ 0R
+  timesZero' {a} = transitive *Commutative timesZero
   *DistributesOver+' : {a b c : A} → (a + b) * c ∼ (a * c) + (b * c)
   *DistributesOver+' = transitive *Commutative (transitive *DistributesOver+ (+WellDefined *Commutative *Commutative))

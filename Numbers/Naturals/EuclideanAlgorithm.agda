@@ -2,6 +2,7 @@
 
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Definition
 open import Numbers.Naturals.Naturals
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.Lemmas
@@ -14,6 +15,7 @@ module Numbers.Naturals.EuclideanAlgorithm where
 
 open TotalOrder ℕTotalOrder
 open Semiring ℕSemiring
+open import Decidable.Lemmas ℕDecideEquality
 
 record divisionAlgResult (a : ℕ) (b : ℕ) : Set where
   field
@@ -22,6 +24,50 @@ record divisionAlgResult (a : ℕ) (b : ℕ) : Set where
     pr : a *N quot +N rem ≡ b
     remIsSmall : (rem <N a) || (a ≡ 0)
     quotSmall : (0 <N a) || ((0 ≡ a) && (quot ≡ 0))
+
+record divisionAlgResult' (a : ℕ) (b : ℕ) : Set where
+  field
+    quot : ℕ
+    rem : ℕ
+    .pr : a *N quot +N rem ≡ b
+    remIsSmall : (rem <N' a) || (a =N' 0)
+    quotSmall : (0 <N' a) || ((0 =N' a) && (quot =N' 0))
+
+collapseDivAlgResult : {a b : ℕ} → (divisionAlgResult a b) → divisionAlgResult' a b
+collapseDivAlgResult record { quot = q ; rem = r ; pr = pr ; remIsSmall = (inl x) ; quotSmall = (inl y) } = record { quot = q ; rem = r ; pr = pr ; remIsSmall = inl (<NTo<N' x) ; quotSmall = inl (<NTo<N' y) }
+collapseDivAlgResult record { quot = q ; rem = r ; pr = pr ; remIsSmall = (inl x) ; quotSmall = (inr y) } = record { quot = q ; rem = r ; pr = pr ; remIsSmall = inl (<NTo<N' x) ; quotSmall = inr (collapseN (_&&_.fst y) ,, collapseN (_&&_.snd y)) }
+collapseDivAlgResult record { quot = q ; rem = r ; pr = pr ; remIsSmall = (inr x) ; quotSmall = inl y } = record { quot = q ; rem = r ; pr = pr ; remIsSmall = inr (collapseN x) ; quotSmall = inl (<NTo<N' y) }
+collapseDivAlgResult record { quot = q ; rem = r ; pr = pr ; remIsSmall = (inr x) ; quotSmall = inr y } = record { quot = q ; rem = r ; pr = pr ; remIsSmall = inr (collapseN x) ; quotSmall = inr (collapseN (_&&_.fst y) ,, collapseN (_&&_.snd y)) }
+
+squashDivAlgResult : {a b : ℕ} → divisionAlgResult' a b → divisionAlgResult a b
+squashDivAlgResult record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inl x) ; quotSmall = (inl y) } = record { quot = quot ; rem = rem ; pr = squash pr ; remIsSmall = inl (<N'To<N x) ; quotSmall = inl (<N'To<N y) }
+squashDivAlgResult record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inl x) ; quotSmall = (inr y) } = record { quot = quot ; rem = rem ; pr = squash pr ; remIsSmall = inl (<N'To<N x) ; quotSmall = inr (squashN (_&&_.fst y) ,, squashN (_&&_.snd y)) }
+squashDivAlgResult record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inr x) ; quotSmall = (inl y) } = record { quot = quot ; rem = rem ; pr = squash pr ; remIsSmall = inr (squashN x) ; quotSmall = inl (<N'To<N y) }
+squashDivAlgResult record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inr x) ; quotSmall = (inr y) } = record { quot = quot ; rem = rem ; pr = squash pr ; remIsSmall = inr (squashN x) ; quotSmall = inr (squashN (_&&_.fst y) ,, squashN (_&&_.snd y)) }
+
+squashPreservesRem : {a b : ℕ} → (p : divisionAlgResult' a b) → divisionAlgResult.rem (squashDivAlgResult p) ≡ divisionAlgResult'.rem p
+squashPreservesRem record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inl x) ; quotSmall = (inl x₁) } = refl
+squashPreservesRem record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inl x) ; quotSmall = (inr x₁) } = refl
+squashPreservesRem record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inr x) ; quotSmall = (inl x₁) } = refl
+squashPreservesRem record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inr x) ; quotSmall = (inr x₁) } = refl
+
+squashPreservesQuot : {a b : ℕ} → (p : divisionAlgResult' a b) → divisionAlgResult.quot (squashDivAlgResult p) ≡ divisionAlgResult'.quot p
+squashPreservesQuot record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inl x) ; quotSmall = (inl x₁) } = refl
+squashPreservesQuot record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inl x) ; quotSmall = (inr x₁) } = refl
+squashPreservesQuot record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inr x) ; quotSmall = (inl x₁) } = refl
+squashPreservesQuot record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inr x) ; quotSmall = (inr x₁) } = refl
+
+collapsePreservesRem : {a b : ℕ} → (p : divisionAlgResult a b) → divisionAlgResult'.rem (collapseDivAlgResult p) ≡ divisionAlgResult.rem p
+collapsePreservesRem record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inl x) ; quotSmall = (inl x₁) } = refl
+collapsePreservesRem record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inl x) ; quotSmall = (inr x₁) } = refl
+collapsePreservesRem record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inr x) ; quotSmall = (inl x₁) } = refl
+collapsePreservesRem record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inr x) ; quotSmall = (inr x₁) } = refl
+
+collapsePreservesQuot : {a b : ℕ} → (p : divisionAlgResult a b) → divisionAlgResult'.quot (collapseDivAlgResult p) ≡ divisionAlgResult.quot p
+collapsePreservesQuot record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inl x) ; quotSmall = (inl x₁) } = refl
+collapsePreservesQuot record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inl x) ; quotSmall = (inr x₁) } = refl
+collapsePreservesQuot record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inr x) ; quotSmall = (inl x₁) } = refl
+collapsePreservesQuot record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inr x) ; quotSmall = (inr x₁) } = refl
 
 divAlgLessLemma : (a b : ℕ) → (0 <N a) → (r : divisionAlgResult a b) → (divisionAlgResult.quot r ≡ 0) || (divisionAlgResult.rem r <N b)
 divAlgLessLemma zero b pr _ = exFalso (TotalOrder.irreflexive ℕTotalOrder pr)
@@ -96,6 +142,15 @@ divisionAlg (succ a) = rec <NWellfounded (λ n → divisionAlgResult (succ a) n)
 
 data _∣_ : ℕ → ℕ → Set where
   divides : {a b : ℕ} → (res : divisionAlgResult a b) → divisionAlgResult.rem res ≡ zero → a ∣ b
+
+data _∣'_ : ℕ → ℕ → Set where
+  divides' : {a b : ℕ} → (res : divisionAlgResult' a b) → .(divisionAlgResult'.rem res ≡ zero) → a ∣' b
+
+divToDiv' : {a b : ℕ} → a ∣ b → a ∣' b
+divToDiv' (divides res x) = divides' (collapseDivAlgResult res) (transitivity (collapsePreservesRem res) x)
+
+div'ToDiv : {a b : ℕ} → a ∣' b → a ∣ b
+div'ToDiv (divides' res x) = divides (squashDivAlgResult res) (transitivity (squashPreservesRem res) (squashN record { eq = x }))
 
 zeroDividesNothing : (a : ℕ) → zero ∣ succ a → False
 zeroDividesNothing a (divides record { quot = quot ; rem = rem ; pr = pr } x) = naughtE p

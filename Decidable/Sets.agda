@@ -2,7 +2,7 @@
 
 open import LogicalFormulae
 
-module Decidable.Sets where
+module Decidable.Sets {a : _} (A : Set a) where
 
-DecidableSet : {a : _} (A : Set a) → Set a
-DecidableSet A = (a b : A) → ((a ≡ b) || ((a ≡ b) → False))
+DecidableSet : Set a
+DecidableSet = (a b : A) → ((a ≡ b) || ((a ≡ b) → False))

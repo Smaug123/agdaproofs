@@ -120,16 +120,7 @@ abstract
   IntegralDomain.intDom orderedFieldIsIntDom = decidedIntDom R orderedFieldIntDom
   IntegralDomain.nontrivial orderedFieldIsIntDom pr = Field.nontrivial F (Equivalence.symmetric (Setoid.eq S) pr)
 
-  fromNIncreasing : (n : ℕ) → (fromN n) < (fromN (succ n))
-  fromNIncreasing zero = <WellDefined reflexive (symmetric identRight) (0<1 nontrivial)
-  fromNIncreasing (succ n) = <WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition (fromNIncreasing n) 1R)
-
-  fromNPreservesOrder : {a b : ℕ} → (a <N b) → (fromN a) < (fromN b)
-  fromNPreservesOrder {zero} {succ zero} a<b = fromNIncreasing 0
-  fromNPreservesOrder {zero} {succ (succ b)} a<b = <Transitive (fromNPreservesOrder (succIsPositive b)) (fromNIncreasing (succ b))
-  fromNPreservesOrder {succ a} {succ b} a<b = <WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition (fromNPreservesOrder (canRemoveSuccFrom<N a<b)) 1R)
-
   charZero : (n : ℕ) → (0R ∼ (fromN (succ n))) → False
-  charZero n 0=sn = irreflexive (<WellDefined 0=sn reflexive (fromNPreservesOrder (succIsPositive n)))
+  charZero n 0=sn = irreflexive (<WellDefined 0=sn reflexive (fromNPreservesOrder nontrivial (succIsPositive n)))
   charZero' : (n : ℕ) → ((fromN (succ n)) ∼ 0R) → False
   charZero' n pr = charZero n (symmetric pr)

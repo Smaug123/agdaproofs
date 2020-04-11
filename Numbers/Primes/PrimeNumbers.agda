@@ -1,18 +1,17 @@
-{-# OPTIONS --warning=error --safe #-}
+{-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
+open import Numbers.Naturals.Definition
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Naturals
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.Lemmas
 open import Numbers.Naturals.Order.WellFounded
-open import Numbers.Naturals.WithK
 open import KeyValue.KeyValue
 open import Orders.Total.Definition
 open import Orders.Partial.Definition
 open import Vectors
 open import Maybe
-open import WithK
 open import Semirings.Definition
 open import Numbers.Naturals.EuclideanAlgorithm
 
@@ -20,41 +19,61 @@ module Numbers.Primes.PrimeNumbers where
 
 open TotalOrder ℕTotalOrder
 open Semiring ℕSemiring
+open import Decidable.Lemmas ℕDecideEquality
 
-dividesEqualityLemma'' : {a b : ℕ} → (quot1 quot2 : ℕ) → (quot1 ≡ quot2) → (rem : ℕ) → (pr1 : (quot1 +N a *N quot1) +N rem ≡ b) → (pr2 : (quot2 +N a *N quot2) +N rem ≡ b) → (y : rem <N succ a) → (x1 : zero <N succ a) → record { quot = quot1 ; rem = rem ; pr = pr1 ; remIsSmall = inl y ; quotSmall = inl x1 } ≡ record { quot = quot2 ; rem = rem ; pr = pr2 ; remIsSmall = inl y ; quotSmall = inl x1}
-dividesEqualityLemma'' {a} {b} q1 .q1 refl rem pr1 pr2 y x1 rewrite reflRefl pr1 pr2 = refl
+dividesEqualityLemma'' : {a b : ℕ} → (quot1 quot2 : ℕ) → .(quot1 ≡ quot2) → (rem : ℕ) → .(pr1 : (quot1 +N a *N quot1) +N rem ≡ b) → .(pr2 : (quot2 +N a *N quot2) +N rem ≡ b) → (y : rem <N' succ a) → (x1 : zero <N' succ a) → _≡_ {A = divisionAlgResult' _ _} record { quot = quot1 ; rem = rem ; pr = pr1 ; remIsSmall = inl y ; quotSmall = inl x1 } record { quot = quot2 ; rem = rem ; pr = pr2 ; remIsSmall = inl y ; quotSmall = inl x1}
+dividesEqualityLemma'' {a} {b} q1 q2 pr rem pr1 pr2 y x1 with squashN record { eq = pr }
+... | refl = refl
 
-dividesEqualityLemma' : {a b : ℕ} → (quot1 quot2 : ℕ) → (rem : ℕ) → (pr1 : (quot1 +N a *N quot1) +N rem ≡ b) → (pr2 : (quot2 +N a *N quot2) +N rem ≡ b) → (y : rem <N succ a) → (y2 : rem <N succ a) → (x1 : zero <N succ a) → record { quot = quot1 ; rem = rem ; pr = pr1 ; remIsSmall = inl y ; quotSmall = inl x1 } ≡ record { quot = quot2 ; rem = rem ; pr = pr2 ; remIsSmall = inl y2 ; quotSmall = inl x1}
-dividesEqualityLemma' {a} {b} quot1 quot2 rem pr1 pr2 y y2 x1 rewrite <NRefl y2 y = dividesEqualityLemma'' quot1 quot2 (equalityCommutative lemm'') rem pr1 pr2 y x1
+dividesEqualityLemma' : {a b : ℕ} → (quot1 quot2 : ℕ) → (rem : ℕ) → .(pr1 : (quot1 +N a *N quot1) +N rem ≡ b) → .(pr2 : (quot2 +N a *N quot2) +N rem ≡ b) → (y : rem <N' succ a) → (y2 : rem <N' succ a) → (x1 : zero <N' succ a) → _≡_ {A = divisionAlgResult' _ _} record { quot = quot1 ; rem = rem ; pr = pr1 ; remIsSmall = inl y ; quotSmall = inl x1 } record { quot = quot2 ; rem = rem ; pr = pr2 ; remIsSmall = inl y2 ; quotSmall = inl x1}
+dividesEqualityLemma' {a} {b} quot1 quot2 rem pr1 pr2 y y2 x1 with productCancelsLeft (succ a) quot2 quot1 (succIsPositive a) (canSubtractFromEqualityRight (transitivity (squashN record { eq = pr2 }) (equalityCommutative (squashN record { eq = pr1 }))))
+... | refl with <N'Refl y y2
+... | refl = refl
+
+dividesEqualityLemma : {a b : ℕ} → (quot1 quot2 : ℕ) → (rem1 rem2 : ℕ) → .(pr1 : (quot1 +N a *N quot1) +N rem1 ≡ b) → .(pr2 : (quot2 +N a *N quot2) +N rem2 ≡ b) → .(rem1 ≡ rem2) → (y : rem1 <N' succ a) → (y2 : rem2 <N' succ a) → (x1 : zero <N' succ a) → _≡_ {A = divisionAlgResult' _ _} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = inl y ; quotSmall = inl x1 } record { quot = quot2 ; rem = rem2 ; pr = pr2 ; remIsSmall = inl y2 ; quotSmall = inl x1}
+dividesEqualityLemma {a} {b} quot1 quot2 rem1 rem2 pr1 pr2 remEq y y2 x1 with squashN record { eq = remEq }
+... | refl = dividesEqualityLemma' quot1 quot2 rem1 pr1 pr2 y y2 x1
+
+dividesEqualityLemma1 : {a b : ℕ} → (quot1 quot2 : ℕ) → (rem1 rem2 : ℕ) → .(pr1 : (quot1 +N a *N quot1) +N rem1 ≡ b) → .(pr2 : (quot2 +N a *N quot2) +N rem2 ≡ b) → .(rem1 ≡ rem2) → (y : (rem1 <N' succ a) || (succ a =N' zero)) → (y2 : (rem2 <N' succ a) || (succ a =N' zero)) → (x1 : zero <N' succ a) → _≡_ {A = divisionAlgResult' _ _} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = y ; quotSmall = inl x1 } record { quot = quot2 ; rem = rem2 ; pr = pr2 ; remIsSmall = y2 ; quotSmall = inl x1}
+dividesEqualityLemma1 {a} {b} quot1 quot2 rem1 rem2 pr1 pr2 remEq (inl x) (inl y) x1 = dividesEqualityLemma quot1 quot2 rem1 rem2 pr1 pr2 remEq x y x1
+
+dividesEqualityLemma2 : {a b : ℕ} → (quot1 quot2 : ℕ) → (rem1 rem2 : ℕ) → .(pr1 : (quot1 +N a *N quot1) +N rem1 ≡ b) → .(pr2 : (quot2 +N a *N quot2) +N rem2 ≡ b) → .(rem1 ≡ rem2) → (y : (rem1 <N' succ a) || (succ a =N' zero)) → (y2 : (rem2 <N' succ a) || (succ a =N' zero)) → (x1 : zero <N' succ a) (x2 : zero <N' succ a) → _≡_ {A = divisionAlgResult' _ _} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = y ; quotSmall = inl x1 } record { quot = quot2 ; rem = rem2 ; pr = pr2 ; remIsSmall = y2 ; quotSmall = inl x2 }
+dividesEqualityLemma2 {a} {b} quot1 quot2 rem1 rem2 pr1 pr2 remEq x y x1 x2 with <N'Refl x1 x2
+... | refl = dividesEqualityLemma1 quot1 quot2 rem1 rem2 pr1 pr2 remEq x y x1
+
+dividesEqualityLemma3 : {a b : ℕ} → (quot1 quot2 : ℕ) → (rem1 rem2 : ℕ) → .(pr1 : (succ a *N quot1) +N rem1 ≡ b) → .(pr2 : (succ a *N quot2) +N rem2 ≡ b) → .(rem1 ≡ rem2) → (y : (rem1 <N' succ a) || (succ a =N' zero)) → (y2 : (rem2 <N' succ a) || (succ a =N' zero)) → (x1 : (zero <N' succ a) || (zero =N' succ a) && (quot1 =N' zero)) (x2 : (zero <N' succ a) || (zero =N' succ a) && (quot2 =N' zero)) → _≡_ {A = divisionAlgResult' _ _} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = y ; quotSmall = x1 } record { quot = quot2 ; rem = rem2 ; pr = pr2 ; remIsSmall = y2 ; quotSmall = x2 }
+dividesEqualityLemma3 {a} {b} quot1 quot2 rem1 rem2 pr1 pr2 remEq x y (inl x1) (inl x2) = dividesEqualityLemma2 quot1 quot2 rem1 rem2 pr1 pr2 remEq x y x1 x2
+
+dividesEqualityPr' : {a b : ℕ} → (res1 res2 : divisionAlgResult' a b) → res1 ≡ res2
+dividesEqualityPr' {zero} {zero} record { quot = quot₁ ; rem = rem₁ ; pr = pr1 ; remIsSmall = (inr f2) ; quotSmall = (inr (f4 ,, quot1=0)) } record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inr f1) ; quotSmall = (inr (f3 ,, quot=0)) } with squashN quot1=0
+... | refl with squashN quot=0
+... | refl with =N'Refl f1 f2
+... | refl with =N'Refl f3 f4
+... | refl with =N'Refl quot1=0 quot=0
+... | refl with transitivity (squashN record { eq = pr }) (equalityCommutative (squashN record { eq = pr1 }))
+... | refl = refl
+dividesEqualityPr' {zero} {succ b} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = (inr rSm) ; quotSmall = (inr (f ,, quot1=0)) } record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inr rSm2) ; quotSmall = (inr (f2 ,, quot=0)) } with squashN quot=0
+... | refl with squashN quot1=0
+... | refl with =N'Refl rSm rSm2
+... | refl with =N'Refl quot1=0 quot=0
+... | refl with =N'Refl f f2
+... | refl with transitivity (squashN record { eq = pr }) (equalityCommutative (squashN record { eq = pr1 }))
+... | refl = refl
+dividesEqualityPr' {succ a} {zero} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = (inl remSm) ; quotSmall = (inl qSm) } record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = (inl remSm2) ; quotSmall = (inl qSm2) } with sumZeroImpliesSummandsZero {quot +N a *N quot} {rem} (squashN record { eq = pr })
+... | fst ,, refl with sumZeroImpliesSummandsZero {quot} {_} fst
+... | refl ,, _ with sumZeroImpliesSummandsZero {_} {rem1} (squashN record { eq = pr1 })
+... | fst2 ,, refl with sumZeroImpliesSummandsZero {quot1} {_} fst2
+... | refl ,, _ with <N'Refl remSm remSm2
+... | refl with <N'Refl qSm qSm2
+... | refl = refl
+dividesEqualityPr' {succ a} {succ b} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = inl remIsSmall1 ; quotSmall = inl (quotSmall1) } record { quot = quot ; rem = rem ; pr = pr ; remIsSmall = inl remIsSmall ; quotSmall = (inl quotSmall) } = dividesEqualityLemma3 quot1 quot rem1 rem pr1 pr t (inl remIsSmall1) (inl remIsSmall) (inl quotSmall1) (inl quotSmall)
   where
-    lemm : (succ a) *N quot2 +N rem ≡ (succ a) *N quot1 +N rem
-    lemm rewrite equalityCommutative pr1 = pr2
-    lemm' : (succ a) *N quot2 ≡ (succ a) *N quot1
-    lemm' = canSubtractFromEqualityRight lemm
-    lemm'' : quot2 ≡ quot1
-    lemm'' = productCancelsLeft (succ a) quot2 quot1 (succIsPositive a) lemm'
+    t : rem1 ≡ rem
+    t = modIsUnique record { quot = quot1 ; rem = rem1 ; pr = squash pr1 ; remIsSmall = inl (<N'To<N remIsSmall1) ; quotSmall = inl (<N'To<N quotSmall) } record { quot = quot ; rem = rem ; pr = squash pr ; remIsSmall = inl (<N'To<N remIsSmall) ; quotSmall = inl (<N'To<N quotSmall1) }
 
-dividesEqualityLemma : {a b : ℕ} → (quot1 quot2 : ℕ) → (rem1 rem2 : ℕ) → (pr1 : (quot1 +N a *N quot1) +N rem1 ≡ b) → (pr2 : (quot2 +N a *N quot2) +N rem2 ≡ b) → (rem1 ≡ rem2) → (y : rem1 <N succ a) → (y2 : rem2 <N succ a) → (x1 : zero <N succ a) → record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = inl y ; quotSmall = inl x1 } ≡ record { quot = quot2 ; rem = rem2 ; pr = pr2 ; remIsSmall = inl y2 ; quotSmall = inl x1}
-dividesEqualityLemma {a} {b} quot1 quot2 rem1 rem2 pr1 pr2 remEq y y2 x1 rewrite remEq = dividesEqualityLemma' quot1 quot2 rem2 pr1 pr2 y y2 x1
-
-dividesEqualityPr : {a b : ℕ} → (res1 res2 : divisionAlgResult a b) → res1 ≡ res2
-dividesEqualityPr {zero} {b} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = remIsSmall1 ; quotSmall = (inl (le x ())) } record { quot = quot2 ; rem = rem2 ; pr = pr2 ; remIsSmall = remIsSmall2 ; quotSmall = quotSmall2 }
-dividesEqualityPr {zero} {b} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = remIsSmall1 ; quotSmall = (inr (fst ,, snd)) } record { quot = quot2 ; rem = rem2 ; pr = pr2 ; remIsSmall = remIsSmall2 ; quotSmall = (inl (le x ())) }
-dividesEqualityPr {zero} {b} record { quot = .0 ; rem = rem1 ; pr = pr1 ; remIsSmall = (inl (le x ())) ; quotSmall = (inr (refl ,, refl)) } record { quot = .0 ; rem = rem2 ; pr = pr2 ; remIsSmall = remIsSmall2 ; quotSmall = (inr (refl ,, refl)) }
-dividesEqualityPr {zero} {b} record { quot = .0 ; rem = rem1 ; pr = pr1 ; remIsSmall = (inr refl) ; quotSmall = (inr (refl ,, refl)) } record { quot = .0 ; rem = rem2 ; pr = pr2 ; remIsSmall = (inl (le x ())) ; quotSmall = (inr (refl ,, refl)) }
-dividesEqualityPr {zero} {.rem1} record { quot = .0 ; rem = rem1 ; pr = refl ; remIsSmall = (inr refl) ; quotSmall = (inr (refl ,, refl)) } record { quot = .0 ; rem = .rem1 ; pr = refl ; remIsSmall = (inr refl) ; quotSmall = (inr (refl ,, refl)) } = refl
-
-dividesEqualityPr {succ a} {b} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = (inl y) ; quotSmall = (inl x) } record { quot = quot2 ; rem = rem2 ; pr = pr2 ; remIsSmall = (inl y2) ; quotSmall = (inl x1) } rewrite <NRefl x x1 = dividesEqualityLemma quot1 quot2 rem1 rem2 pr1 pr2 remsEqual y y2 x1
-  where
-    remsEqual : rem1 ≡ rem2
-    remsEqual = modIsUnique (record { quot = quot1 ; rem = rem1 ; pr = pr1 ; quotSmall = (inl x) ; remIsSmall = (inl y) }) (record { quot = quot2 ; rem = rem2 ; pr = pr2 ; remIsSmall = (inl y2) ; quotSmall = (inl x1) })
-dividesEqualityPr {succ a} {b} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = (inl y) ; quotSmall = (inl x) } record { quot = quot2 ; rem = rem2 ; pr = pr2 ; remIsSmall = (inr ()) ; quotSmall = (inl x1) }
-dividesEqualityPr {succ a} {b} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = (inr ()) ; quotSmall = (inl x) } record { quot = quot2 ; rem = rem2 ; pr = pr2 ; remIsSmall = remIsSmall2 ; quotSmall = (inl x1) }
-dividesEqualityPr {succ a} {b} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = remIsSmall1 ; quotSmall = (inl x) } record { quot = quot2 ; rem = rem2 ; pr = pr2 ; remIsSmall = remIsSmall2 ; quotSmall = (inr (() ,, snd)) }
-dividesEqualityPr {succ a} {b} record { quot = quot1 ; rem = rem1 ; pr = pr1 ; remIsSmall = remIsSmall1 ; quotSmall = (inr (() ,, snd)) } record { quot = quot2 ; rem = rem2 ; pr = pr2 ; remIsSmall = remIsSmall2 ; quotSmall = quotSmall2 }
-
-dividesEquality : {a b : ℕ} → (res1 res2 : a ∣ b) → res1 ≡ res2
-dividesEquality (divides res1 x1) (divides res2 x2) rewrite dividesEqualityPr res1 res2 = applyEquality (λ i → divides res2 i) (reflRefl x1 x2)
+dividesEquality : {a b : ℕ} → (res1 res2 : a ∣' b) → res1 ≡ res2
+dividesEquality (divides' res1 x1) (divides' res2 x2) with dividesEqualityPr' res1 res2
+... | refl = refl
 
 data notDiv : ℕ → ℕ → Set where
   doesNotDivide : {a b : ℕ} → (res : divisionAlgResult a b) → 0 <N divisionAlgResult.rem res → notDiv a b
@@ -104,6 +123,14 @@ Prime.pr twoIsPrime {succ (succ (succ i))} i|2 i<2 0<i | inl (inl x) = exFalso (
 Prime.pr twoIsPrime {succ (succ (succ i))} i|2 i<2 0<i | inl (inr twoLessThree) = exFalso (TotalOrder.irreflexive ℕTotalOrder (TotalOrder.<Transitive ℕTotalOrder twoLessThree i<2))
 Prime.pr twoIsPrime {succ (succ (succ i))} i|2 i<2 0<i | inr ()
 
+threeIsPrime : Prime 3
+Prime.p>1 threeIsPrime = le 1 refl
+Prime.pr threeIsPrime {succ zero} i|3 i<3 _ = refl
+Prime.pr threeIsPrime {succ (succ zero)} (divides record { quot = (succ (succ (succ zero))) ; rem = zero ; pr = () ; remIsSmall = remIsSmall ; quotSmall = quotSmall } x) i<3 _
+Prime.pr threeIsPrime {succ (succ zero)} (divides record { quot = (succ (succ (succ (succ quot)))) ; rem = zero ; pr = () ; remIsSmall = remIsSmall ; quotSmall = quotSmall } x) i<3 _
+Prime.pr threeIsPrime {succ (succ (succ i))} i|3 (le (succ (succ zero)) ()) _
+Prime.pr threeIsPrime {succ (succ (succ i))} i|3 (le (succ (succ (succ x))) ()) _
+
 compositeImpliesNotPrime : (m p : ℕ) → (succ zero <N m) → (m <N p) → (m ∣ p) → Prime p → False
 compositeImpliesNotPrime zero p (le x ()) _ mDivP pPrime
 compositeImpliesNotPrime (succ zero) p mLarge _ mDivP pPrime = lessImpliesNotEqual {succ zero} {succ zero} mLarge refl
@@ -129,12 +156,12 @@ record Coprime (a : ℕ) (b : ℕ) : Set where
 record numberLessThan (n : ℕ) : Set where
   field
     a : ℕ
-    a<n : a <N n
+    a<n : a <N' n
   upper : ℕ
   upper = n
 
 numberLessThanEquality : {n : ℕ} → (a b : numberLessThan n) → (numberLessThan.a a ≡ numberLessThan.a b) → a ≡ b
-numberLessThanEquality record { a = a ; a<n = a<n } record { a = b ; a<n = b<n } pr rewrite pr | <NRefl b<n a<n = refl
+numberLessThanEquality record { a = a ; a<n = a<n } record { a = b ; a<n = b<n } pr rewrite pr | <N'Refl a<n b<n = refl
 
 numberLessThanOrder : (n : ℕ) → TotalOrder (numberLessThan n)
 PartialOrder._<_ (TotalOrder.order (numberLessThanOrder n)) = λ a b → (numberLessThan.a a) <N numberLessThan.a b
@@ -146,14 +173,14 @@ TotalOrder.totality (numberLessThanOrder n) a b | inl (inr x) = inl (inr x)
 TotalOrder.totality (numberLessThanOrder n) a b | inr x rewrite x = inr (numberLessThanEquality a b x)
 
 numberLessThanInject : {newMax : ℕ} → (max : ℕ) → (n : numberLessThan max) → (max <N newMax) → (numberLessThan newMax)
-numberLessThanInject max record { a = n ; a<n = n<max } max<newMax = record { a = n ; a<n = PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) n<max max<newMax }
+numberLessThanInject max record { a = n ; a<n = n<max } max<newMax = record { a = n ; a<n = <NTo<N' (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) (<N'To<N n<max) max<newMax) }
 
 numberLessThanInjectComp : {max : ℕ} (a b : ℕ) → (i : numberLessThan b) → (pr : b <N a) → (pr2 : a <N max) → numberLessThanInject {max} a (numberLessThanInject {a} b i pr) pr2 ≡ numberLessThanInject {max} b i (PartialOrder.<Transitive (TotalOrder.order ℕTotalOrder) pr pr2)
 numberLessThanInjectComp {max} a b record { a = i ; a<n = i<max } b<a a<max = numberLessThanEquality _ _ refl
 
 allNumbersLessThanDescending : (n : ℕ) → Vec (numberLessThan n) n
 allNumbersLessThanDescending zero = []
-allNumbersLessThanDescending (succ n) = record { a = n ; a<n = le zero refl } ,- vecMap (λ i → numberLessThanInject {succ n} (numberLessThan.upper i) i (le zero refl)) (allNumbersLessThanDescending n)
+allNumbersLessThanDescending (succ n) = record { a = n ; a<n = <NTo<N' (le zero refl) } ,- vecMap (λ i → numberLessThanInject {succ n} (numberLessThan.upper i) i (le zero refl)) (allNumbersLessThanDescending n)
 
 allNumbersLessThan : (n : ℕ) → Vec (numberLessThan n) n
 allNumbersLessThan n = vecRev (allNumbersLessThanDescending n)
@@ -337,8 +364,8 @@ primesAreBiggerThanZero : {p : ℕ} → Prime p → 0 <N p
 primesAreBiggerThanZero {p} pr = TotalOrder.<Transitive ℕTotalOrder (succIsPositive 0) (primesAreBiggerThanOne pr)
 
 record notDividedByLessThan (a : ℕ) (firstPossibleDivisor : ℕ) : Set where
-    field
-        previousDoNotDivide : ∀ x → 1 <N x → x <N firstPossibleDivisor → x ∣ a → False
+  field
+    previousDoNotDivide : ∀ x → 1 <N x → x <N firstPossibleDivisor → x ∣ a → False
 
 alternativePrime : {a : ℕ} → 1 <N a → notDividedByLessThan a a → Prime a
 alternativePrime {a} 1<a record { previousDoNotDivide = previousDoNotDivide } = record { pr = pr ; p>1 = 1<a}

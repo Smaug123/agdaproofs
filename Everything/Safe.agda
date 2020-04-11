@@ -7,6 +7,10 @@ open import Numbers.BinaryNaturals.Definition
 open import Numbers.BinaryNaturals.Multiplication
 open import Numbers.BinaryNaturals.Order
 open import Numbers.BinaryNaturals.Subtraction
+open import Numbers.Primes.PrimeNumbers
+open import Numbers.Primes.IntegerFactorisation
+open import Numbers.Rationals.Lemmas
+open import Numbers.Reals.Definition
 
 open import Numbers.Modulo.Group
 
@@ -42,6 +46,8 @@ open import Groups.Cyclic.DefinitionLemmas
 open import Groups.Polynomials.Examples
 open import Groups.Cosets
 open import Groups.Subgroups.Normal.Examples
+open import Groups.Examples.ExampleSheet1
+open import Groups.LectureNotes.Lecture1
 
 open import Fields.Fields
 open import Fields.Orders.Partial.Definition
@@ -86,6 +92,7 @@ open import Rings.Associates.Lemmas
 open import Rings.InitialRing
 open import Rings.Homomorphisms.Lemmas
 open import Rings.UniqueFactorisationDomains.Definition
+open import Rings.Examples.Examples
 
 open import Setoids.Setoids
 open import Setoids.DirectSum
@@ -141,6 +148,8 @@ open import Graphs.Complement
 open import Graphs.InducedSubgraph
 
 open import LectureNotes.MetAndTop.Chapter1
+open import LectureNotes.NumbersAndSets.Lecture1
+open import LectureNotes.Groups.Lecture1
 
 open import Modules.Examples
 open import Modules.PolynomialModule
@@ -149,5 +158,8 @@ open import Modules.DirectSum
 
 open import Fields.CauchyCompletion.Ring
 open import Fields.CauchyCompletion.Comparison
+open import Fields.Orders.Limits.Lemmas
+
+open import ProjectEuler.Problem1
 
 module Everything.Safe where

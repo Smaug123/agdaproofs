@@ -54,6 +54,19 @@ abstract
   halfHalves : {a : A} → (1/2 * (a + a)) ∼ a
   halfHalves {a} = transitive (*WellDefined reflexive (+WellDefined (symmetric identIsIdent) (symmetric identIsIdent))) (transitive (*WellDefined reflexive (symmetric *DistributesOver+')) (transitive *Associative (transitive (*WellDefined 1/2is1/2 reflexive) identIsIdent)))
 
+abstract
+  bothNearImpliesNear : {t r s : A} (e : A) .(0<e : 0R < e) → (abs (r + inverse t) < e) → (abs (s + inverse t) < e) → abs (r + inverse s) < (e + e)
+  bothNearImpliesNear {t} {r} {s} e 0<e rNearT sNearT = u
+    where
+      pr : ((abs (r + inverse t)) + (abs (s + inverse t))) < (e + e)
+      pr = ringAddInequalities rNearT sNearT
+      t' : (abs (r + inverse t) + abs (t + inverse s)) < (e + e)
+      t' = <WellDefined (+WellDefined reflexive (transitive (absNegation _) (absWellDefined _ _ (transitive invContravariant (+WellDefined (invTwice _) reflexive))))) reflexive pr
+      u : abs (r + inverse s) < (e + e)
+      u with triangleInequality (r + inverse t) (t + inverse s)
+      ... | inl t'' = <Transitive (<WellDefined (absWellDefined _ _ (transitive +Associative (+WellDefined (transitive (symmetric +Associative) (transitive (+WellDefined reflexive invLeft) identRight)) reflexive))) reflexive t'') t'
+      ... | inr eq = <WellDefined (transitive (symmetric eq) (absWellDefined _ _ (transitive +Associative (+WellDefined (transitive (symmetric +Associative) (transitive (+WellDefined reflexive invLeft) identRight)) reflexive)))) reflexive t'
+
 private
   limitsUniqueLemma : (x : Sequence A) {r s : A} (xr : x ~> r) (xs : x ~> s) (r<s : r < s) → False
   limitsUniqueLemma x {r} {s} xr xs r<s = irreflexive (<WellDefined reflexive (symmetric prE) u')
