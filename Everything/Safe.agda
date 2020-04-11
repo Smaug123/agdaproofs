@@ -93,6 +93,8 @@ open import Rings.InitialRing
 open import Rings.Homomorphisms.Lemmas
 open import Rings.UniqueFactorisationDomains.Definition
 open import Rings.Examples.Examples
+open import Rings.Orders.Total.Bounded
+open import Rings.Orders.Partial.Bounded
 
 open import Setoids.Setoids
 open import Setoids.DirectSum
