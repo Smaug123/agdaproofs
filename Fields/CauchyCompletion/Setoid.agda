@@ -18,7 +18,7 @@ open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Semirings.Definition
 
-module Fields.CauchyCompletion.Setoid {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
+module Fields.CauchyCompletion.Setoid {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) where
 
 open Setoid S
 open SetoidTotalOrder (TotallyOrderedRing.total order)
@@ -31,9 +31,11 @@ open Field F
 
 open import Fields.Lemmas F
 open import Fields.CauchyCompletion.Definition order F
-open import Fields.CauchyCompletion.Addition order F charNot2
+open import Fields.CauchyCompletion.Addition order F
 open import Rings.Orders.Partial.Lemmas pRing
 open import Rings.Orders.Total.Lemmas order
+open import Rings.InitialRing R
+open import Fields.Orders.Total.Lemmas {F = F} (record { oRing = order })
 
 isZero : CauchyCompletion → Set (m ⊔ o)
 isZero record { elts = elts ; converges = converges } = ∀ ε → 0R < ε → Sg ℕ (λ N → ∀ {m : ℕ} → (N <N m) → (abs (index elts m)) < ε)

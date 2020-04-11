@@ -34,11 +34,11 @@ open import Rings.Orders.Partial.Lemmas oR
 open import Rings.Lemmas R
 open import Groups.Lemmas additiveGroup
 
-1/nPositive : (n : ℕ) → (charNotN : (fromN (succ n) ∼ 0R) → False) → 0R < underlying (allInvertible _ charNotN)
-1/nPositive 0 nNot0 with allInvertible (fromN 1) nNot0
-... | 1/1 , pr1 = <WellDefined reflexive (transitive (symmetric pr1) (transitive (transitive (*WellDefined reflexive identRight) *Commutative) identIsIdent)) (0<1 λ i → nNot0 (transitive identRight (symmetric i)))
-1/nPositive (succ n) nNot0 with allInvertible (fromN (succ (succ n))) nNot0
-... | 1/n , pr1/n with totality 0R 1/n
-... | inr x = exFalso (nNot0 (oneZeroImpliesAllZero (transitive (symmetric (transitive (*WellDefined (symmetric x) reflexive) timesZero')) pr1/n)))
-... | inl (inl x) = x
-... | inl (inr x) = exFalso (1<0False (<WellDefined pr1/n timesZero' (ringCanMultiplyByPositive (fromNPreservesOrder (anyComparisonImpliesNontrivial x) (succIsPositive (succ n))) x)))
+charNotN : (n : ℕ) → fromN (succ n) ∼ 0R → False
+charNotN n pr = irreflexive (<WellDefined reflexive pr t)
+  where
+    t : 0R < fromN (succ n)
+    t = fromNPreservesOrder (Field.nontrivial F) (succIsPositive n)
+
+charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False
+charNot2 pr = charNotN 1 (transitive (transitive +Associative identRight) pr)

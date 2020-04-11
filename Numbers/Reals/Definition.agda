@@ -10,11 +10,11 @@ open import Functions
 module Numbers.Reals.Definition where
 
 open import Fields.CauchyCompletion.Definition ℚOrdered ℚField
-open import Fields.CauchyCompletion.Setoid ℚOrdered ℚField ℚcharNot2
-open import Fields.CauchyCompletion.Addition ℚOrdered ℚField ℚcharNot2
-open import Fields.CauchyCompletion.Multiplication ℚOrdered ℚField ℚcharNot2
-open import Fields.CauchyCompletion.Ring ℚOrdered ℚField ℚcharNot2
-open import Fields.CauchyCompletion.Comparison ℚOrdered ℚField ℚcharNot2
+open import Fields.CauchyCompletion.Setoid ℚOrdered ℚField
+open import Fields.CauchyCompletion.Addition ℚOrdered ℚField
+open import Fields.CauchyCompletion.Multiplication ℚOrdered ℚField
+open import Fields.CauchyCompletion.Ring ℚOrdered ℚField
+open import Fields.CauchyCompletion.Comparison ℚOrdered ℚField
 
 ℝ : Set
 ℝ = CauchyCompletion

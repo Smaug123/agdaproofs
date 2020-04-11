@@ -90,6 +90,3 @@ negateQWellDefined a b a=b = inverseWellDefined (Ring.additiveGroup ℚRing) {a}
 
 ℚOrdered : TotallyOrderedRing ℚPOrdered
 ℚOrdered = fieldOfFractionsOrderedRing
-
-ℚcharNot2 : ((Ring.1R ℚRing) +Q (Ring.1R ℚRing)) =Q (Ring.0R ℚRing) → False
-ℚcharNot2 ()

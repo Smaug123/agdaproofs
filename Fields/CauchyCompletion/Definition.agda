@@ -27,9 +27,12 @@ open Group additiveGroup
 open Field F
 
 open import Rings.Orders.Total.Lemmas order
+open import Rings.Orders.Total.Cauchy order
+open import Groups.Lemmas additiveGroup
 
-cauchy : Sequence A → Set (m ⊔ o)
-cauchy s = ∀ (ε : A) → (0R < ε) → Sg ℕ (λ N → ∀ {m n : ℕ} → (N <N m) → (N <N n) → abs ((index s m) -R (index s n)) < ε)
+cauchyWellDefined : {s1 s2 : Sequence A} → ((m : ℕ) → index s1 m ∼ index s2 m) → cauchy s1 → cauchy s2
+cauchyWellDefined {s1} {s2} prop c e 0<e with c e 0<e
+... | N , pr = N , λ {m} {n} N<m N<n → <WellDefined (absWellDefined _ _ (+WellDefined (prop m) (inverseWellDefined (prop n)))) reflexive (pr N<m N<n)
 
 record CauchyCompletion : Set (m ⊔ o) where
   field

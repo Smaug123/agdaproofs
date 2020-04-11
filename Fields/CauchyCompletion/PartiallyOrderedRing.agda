@@ -22,7 +22,7 @@ open import Semirings.Definition
 open import Groups.Homomorphisms.Definition
 open import Rings.Homomorphisms.Definition
 
-module Fields.CauchyCompletion.PartiallyOrderedRing {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
+module Fields.CauchyCompletion.PartiallyOrderedRing {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) where
 
 open Setoid S
 open SetoidTotalOrder (TotallyOrderedRing.total order)
@@ -36,13 +36,14 @@ open import Fields.Lemmas F
 open import Rings.Orders.Partial.Lemmas pRing
 open import Rings.Orders.Total.Lemmas order
 open import Fields.Orders.Lemmas {F = F} {pRing} (record { oRing = order })
+open import Fields.Orders.Total.Lemmas {F = F} (record { oRing = order })
 open import Fields.CauchyCompletion.Definition order F
-open import Fields.CauchyCompletion.Addition order F charNot2
-open import Fields.CauchyCompletion.Multiplication order F charNot2
-open import Fields.CauchyCompletion.Approximation order F charNot2
-open import Fields.CauchyCompletion.Ring order F charNot2
-open import Fields.CauchyCompletion.Comparison order F charNot2
-open import Fields.CauchyCompletion.Setoid order F charNot2
+open import Fields.CauchyCompletion.Addition order F
+open import Fields.CauchyCompletion.Multiplication order F
+open import Fields.CauchyCompletion.Approximation order F
+open import Fields.CauchyCompletion.Ring order F
+open import Fields.CauchyCompletion.Comparison order F
+open import Fields.CauchyCompletion.Setoid order F
 
 productPositives : (a b : A) → (injection 0R) <Cr a → (injection 0R) <Cr b → (injection 0R) <Cr (a * b)
 productPositives a b record { e = eA ; 0<e = 0<eA ; N = Na ; property = prA } record { e = eB ; 0<e = 0<eB ; N = Nb ; property = prB } = record { e = eA * eB ; 0<e = orderRespectsMultiplication 0<eA 0<eB ; N = Na +N Nb ; property = ans }
