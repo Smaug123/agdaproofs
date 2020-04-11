@@ -41,6 +41,7 @@ open import Fields.Lemmas F
 open import Fields.Orders.Total.Lemmas oF
 open import Rings.Characteristic R
 open import Rings.InitialRing R
+open import Rings.Orders.Total.Cauchy oRing
 
 private
   2!=3 : 2 ≡ 3 → False
