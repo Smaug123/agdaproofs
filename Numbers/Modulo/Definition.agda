@@ -13,4 +13,3 @@ record ℤn (n : ℕ) .(pr : 0 <N n) : Set where
 
 equalityZn : {n : ℕ} .{pr : 0 <N n} → {a b : ℤn n pr} → (ℤn.x a ≡ ℤn.x b) → a ≡ b
 equalityZn {a = record { x = a ; xLess = aLess }} {record { x = .a ; xLess = bLess }} refl = refl
-

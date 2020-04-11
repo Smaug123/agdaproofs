@@ -7,6 +7,9 @@ open import Groups.Lemmas
 open import Rings.Definition
 open import Setoids.Setoids
 open import Sets.EquivalenceRelations
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.EuclideanAlgorithm
+open import Numbers.Primes.PrimeNumbers
 
 module Rings.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} (R : Ring S _+_ _*_) where
 
@@ -55,3 +58,4 @@ abstract
 
 abelianUnderlyingGroup : AbelianGroup additiveGroup
 abelianUnderlyingGroup = record { commutative = groupIsAbelian }
+

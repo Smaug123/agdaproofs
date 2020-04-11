@@ -45,7 +45,7 @@ squarePositive a | inr 0=a = inr (symmetric 0=a)
 
 fraction<1 : (n m : ℕ) → n <N m → (0<m : fromN m ∼ 0G → False) → ((fromN n) * underlying (allInvertible (fromN m) 0<m)) < 1R
 fraction<1 n m n<m 0<m with allInvertible (fromN m) 0<m
-... | 1/m , prM = <WellDefined reflexive (transitive *Commutative prM) (ringCanMultiplyByPositive (inversePositiveIsPositive prM (fromNPreservesOrder {0} {m} (zeroLeast n<m))) (fromNPreservesOrder n<m))
+... | 1/m , prM = <WellDefined reflexive (transitive *Commutative prM) (ringCanMultiplyByPositive (inversePositiveIsPositive prM (fromNPreservesOrder nontrivial {0} {m} (zeroLeast n<m))) (fromNPreservesOrder nontrivial n<m))
 
 1/2 : A
 1/2 = underlying (allInvertible (1R + 1R) (orderedImpliesCharNot2 nontrivial))
@@ -64,13 +64,13 @@ pr1/2' = transitive (symmetric (transitive *DistributesOver+ (+WellDefined (tran
 3/2<2 = <WellDefined (transitive (+WellDefined reflexive (transitive (symmetric pr1/2) (transitive *Commutative (*WellDefined (+WellDefined reflexive (symmetric identRight)) reflexive)))) (symmetric *DistributesOver+')) reflexive (orderRespectsAddition (<WellDefined (symmetric identIsIdent) reflexive 1/2<1) 1R)
 
 2<9/4 : (1R + 1R) < ((fromN 3 * 1/2) * (fromN 3 * 1/2))
-2<9/4 = <WellDefined reflexive (symmetric *Associative) (halveInequality _ _ 1/2 pr1/2' (<WellDefined reflexive (transitive (symmetric *Associative) *Commutative) (halveInequality _ _ 1/2 pr1/2' (<WellDefined (transitive (fromNPreserves* 4 2) (transitive (*WellDefined (+WellDefined reflexive (+WellDefined reflexive (+WellDefined reflexive identRight))) (+WellDefined reflexive identRight)) (transitive *DistributesOver+ (+WellDefined (transitive *Commutative (transitive identIsIdent +Associative)) (transitive *Commutative (transitive identIsIdent +Associative)))))) (fromNPreserves* 3 3) (fromNPreservesOrder (le {8} 0 refl))))))
+2<9/4 = <WellDefined reflexive (symmetric *Associative) (halveInequality _ _ 1/2 pr1/2' (<WellDefined reflexive (transitive (symmetric *Associative) *Commutative) (halveInequality _ _ 1/2 pr1/2' (<WellDefined (transitive (fromNPreserves* 4 2) (transitive (*WellDefined (+WellDefined reflexive (+WellDefined reflexive (+WellDefined reflexive identRight))) (+WellDefined reflexive identRight)) (transitive *DistributesOver+ (+WellDefined (transitive *Commutative (transitive identIsIdent +Associative)) (transitive *Commutative (transitive identIsIdent +Associative)))))) (fromNPreserves* 3 3) (fromNPreservesOrder nontrivial (le {8} 0 refl))))))
 
 0<2 : 0R < (1R + 1R)
 0<2 = <WellDefined identLeft reflexive (ringAddInequalities (0<1 nontrivial) (0<1 nontrivial))
 
 0<3/2 : 0R < (fromN 3 * 1/2)
-0<3/2 = orderRespectsMultiplication (fromNPreservesOrder (le {0} {3} 2 refl)) (inversePositiveIsPositive pr1/2 0<2)
+0<3/2 = orderRespectsMultiplication (fromNPreservesOrder nontrivial (le {0} {3} 2 refl)) (inversePositiveIsPositive pr1/2 0<2)
 
 3/2ub : {r : A} → (r * r) < (1R + 1R) → (r < (fromN 3 * 1/2))
 3/2ub {r} r^2<2 with totality r (fromN 3 * 1/2)
@@ -80,10 +80,10 @@ pr1/2' = transitive (symmetric (transitive *DistributesOver+ (+WellDefined (tran
 
 2/6<1 : ((1R + 1R) * underlying (allInvertible (fromN 6) (charZero' 5))) < 1R
 2/6<1 with allInvertible (fromN 6) (charZero' 5)
-2/6<1 | 1/6 , pr1/6 = <WellDefined reflexive (transitive *Commutative pr1/6) (ringCanMultiplyByPositive (inversePositiveIsPositive pr1/6 (fromNPreservesOrder {0} {6} (le 5 refl))) (<WellDefined (+WellDefined reflexive identRight) reflexive (fromNPreservesOrder {2} {6} (le 3 refl))))
+2/6<1 | 1/6 , pr1/6 = <WellDefined reflexive (transitive *Commutative pr1/6) (ringCanMultiplyByPositive (inversePositiveIsPositive pr1/6 (fromNPreservesOrder nontrivial {0} {6} (le 5 refl))) (<WellDefined (+WellDefined reflexive identRight) reflexive (fromNPreservesOrder nontrivial {2} {6} (le 3 refl))))
 
 2<2*2 : (1R + 1R) < ((1R + 1R) * (1R + 1R))
-2<2*2 = (<WellDefined (+WellDefined reflexive identRight) (transitive (fromNPreserves* 2 2) (*WellDefined (+WellDefined reflexive identRight) (+WellDefined reflexive identRight))) (fromNPreservesOrder {2} {4} (le 1 refl)))
+2<2*2 = (<WellDefined (+WellDefined reflexive identRight) (transitive (fromNPreserves* 2 2) (*WellDefined (+WellDefined reflexive identRight) (+WellDefined reflexive identRight))) (fromNPreservesOrder nontrivial {2} {4} (le 1 refl)))
 
 square<2Means<2 : (u : A) → (u * u) < (1R + 1R) → u < (1R + 1R)
 square<2Means<2 u u^2<2 with totality u (1R + 1R)
@@ -137,7 +137,7 @@ sqrt2 = sqrt2' , sqrt2IsSqrt2
           crudeBound : isInInterval (sqrt2' * sqrt2') record { minBound = 0R ; maxBound = 1R + 1R }
           crudeBound with squarePositive sqrt2'
           crudeBound | inl (_ ,, snd) = snd ,, sup^2<2
-          crudeBound | inr sqrt2=0 with upperBound 1R (<WellDefined (transitive identRight (symmetric identIsIdent)) (+WellDefined reflexive identRight) (fromNPreservesOrder {1} {2} (le 0 refl)))
+          crudeBound | inr sqrt2=0 with upperBound 1R (<WellDefined (transitive identRight (symmetric identIsIdent)) (+WellDefined reflexive identRight) (fromNPreservesOrder nontrivial {1} {2} (le 0 refl)))
           crudeBound | inr sqrt2=0 | inl 1<sqrt2 = exFalso (irreflexive (<Transitive 1<sqrt2 (<WellDefined (symmetric sqrt2=0) reflexive (0<1 nontrivial))))
           crudeBound | inr sqrt2=0 | inr 1=sqrt2 = exFalso (nontrivial (transitive (symmetric sqrt2=0) (symmetric 1=sqrt2)))
           crudeBound' : isInInterval (inverse (sqrt2' * sqrt2')) record { minBound = inverse (1R + 1R) ; maxBound = inverse 0R }
@@ -147,7 +147,7 @@ sqrt2 = sqrt2' , sqrt2IsSqrt2
           numeratorBound' : isInInterval (fromN 2 + inverse (sqrt2' * sqrt2')) record { minBound = 0R ; maxBound = 1R + 1R }
           numeratorBound' = intervalWellDefined' groupIsAbelian numeratorBound
           tBound : isInInterval t record { minBound = 0R ; maxBound = (1R + 1R) * (underlying (allInvertible (fromN 6) (charZero' 5))) }
-          tBound = intervalWellDefined (transitive *Commutative timesZero ,, reflexive) (intervalConstantProductContains (inversePositiveIsPositive pr' (fromNPreservesOrder {0} {6} (le 5 refl))) numeratorBound')
+          tBound = intervalWellDefined (transitive *Commutative timesZero ,, reflexive) (intervalConstantProductContains (inversePositiveIsPositive pr' (fromNPreservesOrder nontrivial {0} {6} (le 5 refl))) numeratorBound')
           u : ((((fromN 5) * ((fromN 2) + inverse (sqrt2' * sqrt2'))) * underlying (allInvertible (fromN 6) (charZero' 5))) + (sqrt2' * sqrt2')) < ((fromN 2 + inverse (sqrt2' * sqrt2')) + (sqrt2' * sqrt2'))
           u = orderRespectsAddition (<WellDefined (transitive (symmetric *Associative) (transitive (*WellDefined reflexive *Commutative) *Associative)) identIsIdent (ringCanMultiplyByPositive {(fromN 5) * underlying (allInvertible (fromN 6) (charZero' 5))} {1R} {fromN 2 + inverse (sqrt2' * sqrt2')} (moveInequality (<WellDefined reflexive (transitive (symmetric identRight) (symmetric +Associative)) sup^2<2)) (fraction<1 5 6 (le zero refl) λ pr → charZero' 5 pr))) (sqrt2' * sqrt2')
           tBound' : (((fromN 5) * t) + (sqrt2' * sqrt2')) < (1R + 1R)
@@ -171,9 +171,9 @@ sqrt2 = sqrt2' , sqrt2IsSqrt2
       where
         abstract
           1<sqrt2 : 1R < sqrt2'
-          1<sqrt2 with upperBound 1R (<WellDefined (transitive identRight (symmetric identIsIdent)) (+WellDefined reflexive identRight) (fromNPreservesOrder {1} {2} (le zero refl)))
+          1<sqrt2 with upperBound 1R (<WellDefined (transitive identRight (symmetric identIsIdent)) (+WellDefined reflexive identRight) (fromNPreservesOrder nontrivial {1} {2} (le zero refl)))
           1<sqrt2 | inl x = x
-          1<sqrt2 | inr x = exFalso (irreflexive (<Transitive 2<sup^2 (<WellDefined (transitive identRight (transitive (symmetric identIsIdent) (*WellDefined x x))) (+WellDefined reflexive identRight) (fromNPreservesOrder {1} {2} (le 0 refl)))))
+          1<sqrt2 | inr x = exFalso (irreflexive (<Transitive 2<sup^2 (<WellDefined (transitive identRight (transitive (symmetric identIsIdent) (*WellDefined x x))) (+WellDefined reflexive identRight) (fromNPreservesOrder nontrivial {1} {2} (le 0 refl)))))
           0<sqrt2 : 0R < sqrt2'
           0<sqrt2 = <Transitive (0<1 nontrivial) 1<sqrt2
           sqrt2<2 : sqrt2' < (1R + 1R)
@@ -189,10 +189,10 @@ sqrt2 = sqrt2' , sqrt2IsSqrt2
           ... | 1/4 , pr1/4 = transitive (transitive (transitive (transitive (symmetric ringMinusExtracts) (transitive (transitive (*WellDefined reflexive (transitive (symmetric ringMinusExtracts') (transitive *Commutative (*WellDefined reflexive (transitive invContravariant (transitive groupIsAbelian (+WellDefined reflexive invInv))))))) *Associative) *Commutative)) (*WellDefined reflexive (transitive *Commutative pr1/4))) *Commutative) identIsIdent
           t<sqrt2 : t < sqrt2'
           t<sqrt2 with allInvertible (fromN 4) (charZero' 3)
-          ... | 1/4 , pr4 = <WellDefined reflexive (transitive (symmetric *Associative) (transitive (*WellDefined reflexive (transitive *Commutative pr4)) (transitive *Commutative identIsIdent))) (ringCanMultiplyByPositive (inversePositiveIsPositive pr4 (fromNPreservesOrder {0} {4} (le 3 refl))) (<Transitive (orderRespectsAddition (ringMultiplyPositives 0<sqrt2 0<sqrt2 sqrt2<2 sqrt2<2) (inverse (1R + (1R + 0G)))) (<WellDefined {fromN 2} 2=2*2-2 reflexive (<Transitive {fromN 2} {sqrt2' * fromN 2} (<WellDefined identIsIdent reflexive (ringCanMultiplyByPositive (fromNPreservesOrder {0} (le 1 refl)) 1<sqrt2)) (<WellDefined *Commutative *Commutative (ringCanMultiplyByPositive 0<sqrt2 (fromNPreservesOrder {2} (le 1 refl))))))))
+          ... | 1/4 , pr4 = <WellDefined reflexive (transitive (symmetric *Associative) (transitive (*WellDefined reflexive (transitive *Commutative pr4)) (transitive *Commutative identIsIdent))) (ringCanMultiplyByPositive (inversePositiveIsPositive pr4 (fromNPreservesOrder nontrivial {0} {4} (le 3 refl))) (<Transitive (orderRespectsAddition (ringMultiplyPositives 0<sqrt2 0<sqrt2 sqrt2<2 sqrt2<2) (inverse (1R + (1R + 0G)))) (<WellDefined {fromN 2} 2=2*2-2 reflexive (<Transitive {fromN 2} {sqrt2' * fromN 2} (<WellDefined identIsIdent reflexive (ringCanMultiplyByPositive (fromNPreservesOrder nontrivial {0} (le 1 refl)) 1<sqrt2)) (<WellDefined *Commutative *Commutative (ringCanMultiplyByPositive 0<sqrt2 (fromNPreservesOrder nontrivial {2} (le 1 refl))))))))
           0<t : 0R < t
           0<t with allInvertible (fromN 4) (charZero' 3)
-          ... | 1/4 , pr4 = orderRespectsMultiplication (<WellDefined reflexive (+WellDefined reflexive (inverseWellDefined (+WellDefined reflexive (symmetric identRight)))) (moveInequality 2<sup^2)) (inversePositiveIsPositive pr4 (fromNPreservesOrder {0} {4} (le 3 refl)))
+          ... | 1/4 , pr4 = orderRespectsMultiplication (<WellDefined reflexive (+WellDefined reflexive (inverseWellDefined (+WellDefined reflexive (symmetric identRight)))) (moveInequality 2<sup^2)) (inversePositiveIsPositive pr4 (fromNPreservesOrder nontrivial {0} {4} (le 3 refl)))
         anotherUpperBound : A
         anotherUpperBound = (sqrt2' + inverse t) * (sqrt2' + inverse t)
         abstract

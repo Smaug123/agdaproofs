@@ -9,7 +9,8 @@ open import Functions
 open import Sets.EquivalenceRelations
 open import Rings.Definition
 open import Rings.Orders.Partial.Definition
-
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
 
 module Rings.Orders.Partial.Lemmas {n m p : _} {A : Set n} {S : Setoid {n} {m} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {_} {p} A} {R : Ring S _+_ _*_} {pOrder : SetoidPartialOrder S _<_} (pRing : PartiallyOrderedRing R pOrder) where
 
@@ -78,3 +79,12 @@ abstract
 
   moveInequality' : {a b : A} → a < b → (a + inverse b) < 0R
   moveInequality' {a} {b} a<b = <WellDefined reflexive invRight (orderRespectsAddition a<b (inverse b))
+
+  greaterImpliesNotEqual : {a b : A} → a < b → (a ∼ b → False)
+  greaterImpliesNotEqual {a} {b} a<b a=b = irreflexive (<WellDefined a=b reflexive a<b)
+
+  greaterImpliesNotEqual' : {a b : A} → a < b → (b ∼ a → False)
+  greaterImpliesNotEqual' {a} {b} a<b a=b = irreflexive (<WellDefined reflexive a=b a<b)
+
+  negativeInequality : {a : A} → a < 0G → 0G < inverse a
+  negativeInequality {a} a<0 = <WellDefined invRight identLeft (orderRespectsAddition a<0 (inverse a))

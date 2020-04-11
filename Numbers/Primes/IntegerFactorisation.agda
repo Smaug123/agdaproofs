@@ -1,4 +1,4 @@
-{-# OPTIONS --warning=error --safe #-}
+{-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
@@ -29,11 +29,12 @@ record factorisationNonunit (minFactor : ℕ) (a : ℕ) : Set where
     otherFactorsNumber : ℕ
     otherFactors : ((divisionAlgResult.quot firstFactorDivision ≡ 1) && (otherFactorsNumber ≡ 0)) || (((1 <N divisionAlgResult.quot firstFactorDivision) && (factorisationNonunit firstFactor (divisionAlgResult.quot firstFactorDivision))))
 
-lemma : (p : ℕ) → p *N 1 +N 0 ≡ p
-lemma p rewrite Semiring.sumZeroRight ℕSemiring (p *N 1) | Semiring.productOneRight ℕSemiring p = refl
+private
+  lemma : (p : ℕ) → p *N 1 +N 0 ≡ p
+  lemma p rewrite Semiring.sumZeroRight ℕSemiring (p *N 1) | Semiring.productOneRight ℕSemiring p = refl
 
-lemma' : {a b : ℕ} → a *N zero +N 0 ≡ b → b ≡ zero
-lemma' {a} {b} pr rewrite Semiring.sumZeroRight ℕSemiring (a *N zero) | Semiring.productZeroRight ℕSemiring a = equalityCommutative pr
+  lemma' : {a b : ℕ} → a *N zero +N 0 ≡ b → b ≡ zero
+  lemma' {a} {b} pr rewrite Semiring.sumZeroRight ℕSemiring (a *N zero) | Semiring.productZeroRight ℕSemiring a = equalityCommutative pr
 
 primeFactorisation : {p : ℕ} → (pr : Prime p) → factorisationNonunit 1 p
 primeFactorisation {p} record { p>1 = p>1 ; pr = pr } = record {1<a = p>1 ; firstFactor = p ; firstFactorNontrivial = p>1 ; firstFactorBiggerMin = inl p>1 ; firstFactorDivision = record { quot = 1 ; rem = 0 ; pr = lemma p  ; remIsSmall = zeroIsValidRem p ; quotSmall = inl (TotalOrder.<Transitive ℕTotalOrder (le zero refl) p>1) } ; firstFactorDivides = refl ; firstFactorPrime = record { p>1 = p>1 ; pr = pr} ; otherFactors = inl record { fst = refl ; snd = refl } ; otherFactorsNumber = 0 }

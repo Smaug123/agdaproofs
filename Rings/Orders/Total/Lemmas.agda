@@ -10,7 +10,8 @@ open import Sets.EquivalenceRelations
 open import Rings.Definition
 open import Rings.Orders.Total.Definition
 open import Rings.Orders.Partial.Definition
-
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
 
 module Rings.Orders.Total.Lemmas {n m p : _} {A : Set n} {S : Setoid {n} {m} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {p} A} {pOrder : SetoidPartialOrder S _<_} {pOrderRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pOrderRing) where
 
@@ -350,3 +351,15 @@ abstract
 
   orderedImpliesCharNot2 : (0R ∼ 1R → False) → 1R + 1R ∼ 0R → False
   orderedImpliesCharNot2 0!=1 x = irreflexive (<WellDefined (identRight {0R}) x (ringAddInequalities (0<1 0!=1) (0<1 0!=1)))
+
+open import Rings.InitialRing R
+open Equivalence eq
+
+fromNIncreasing : (0R ∼ 1R → False) → (n : ℕ) → (fromN n) < (fromN (succ n))
+fromNIncreasing 0!=1 zero = <WellDefined reflexive (symmetric identRight) (0<1 0!=1)
+fromNIncreasing 0!=1 (succ n) = <WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition (fromNIncreasing 0!=1 n) 1R)
+
+fromNPreservesOrder : (0R ∼ 1R → False) → {a b : ℕ} → (a <N b) → (fromN a) < (fromN b)
+fromNPreservesOrder 0!=1 {zero} {succ zero} a<b = fromNIncreasing 0!=1 0
+fromNPreservesOrder 0!=1 {zero} {succ (succ b)} a<b = <Transitive (fromNPreservesOrder 0!=1 (succIsPositive b)) (fromNIncreasing 0!=1 (succ b))
+fromNPreservesOrder 0!=1 {succ a} {succ b} a<b = <WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition (fromNPreservesOrder 0!=1 (canRemoveSuccFrom<N a<b)) 1R)

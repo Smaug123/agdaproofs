@@ -2,12 +2,14 @@
 
 open import LogicalFormulae
 open import Semirings.Definition
+open import Numbers.Naturals.Definition
 open import Numbers.Naturals.Semiring
 open import Orders.Total.Definition
 open import Orders.Partial.Definition
 
 module Numbers.Naturals.Order where
 open Semiring ℕSemiring
+open import Decidable.Lemmas ℕDecideEquality
 
 private
   infix 5 _<NLogical_
@@ -23,6 +25,13 @@ record _<N_ (a : ℕ) (b : ℕ) : Set where
   field
     x : ℕ
     proof : (succ x) +N a ≡ b
+
+infix 5 _<N'_
+record _<N'_ (a : ℕ) (b : ℕ) : Set where
+  constructor le'
+  field
+    x : ℕ
+    .proof : (succ x) +N a ≡ b
 
 infix 5 _≤N_
 _≤N_ : ℕ → ℕ → Set
@@ -182,3 +191,13 @@ canFlipMultiplicationsInIneq {a} {b} {c} {d} pr = identityOfIndiscernablesRight 
 
 lessRespectsMultiplication : (a b c : ℕ) → (a <N b) → (zero <N c) → (a *N c <N b *N c)
 lessRespectsMultiplication a b c prAB cPos = canFlipMultiplicationsInIneq {c} {a} {c} {b} (lessRespectsMultiplicationLeft a b c prAB cPos)
+
+<NTo<N' : {a b : ℕ} → a <N b → a <N' b
+<NTo<N' (le x proof) = le' x proof
+
+<N'To<N : {a b : ℕ} → a <N' b → a <N b
+<N'To<N {a} {b} (le' x proof) = le x (squash proof)
+
+<N'Refl : {a b : ℕ} → (p1 p2 : a <N' b) → p1 ≡ p2
+<N'Refl p1 p2 with <NWellDefined (<N'To<N p1) (<N'To<N p2)
+... | refl = refl
