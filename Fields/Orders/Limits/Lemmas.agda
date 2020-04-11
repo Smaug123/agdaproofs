@@ -46,17 +46,8 @@ private
   2!=3 : 2 ≡ 3 → False
   2!=3 ()
 
-convergentSequenceCauchy : (nontrivial : 0R ∼ 1R → False) → {a : Sequence A} → {r : A} → a ~> r → (decidedCharacteristic : ((1R + 1R) ∼ 0R) || (((1R + 1R) ∼ 0R) → False)) → cauchy a
-convergentSequenceCauchy nontrivial {a} {r} a->r (inl 2=0) ε x with 1/nPositive 2 λ t → 2!=3 (characteristicWellDefined nontrivial {2} {3} twoIsPrime threeIsPrime (transitive (transitive +Associative identRight) 2=0) t)
-... | 0<1/3 with allInvertible (fromN 3) λ t → 2!=3 (characteristicWellDefined nontrivial {2} {3} twoIsPrime threeIsPrime (transitive (transitive +Associative identRight) 2=0) t)
-... | 1/3 , pr1/3 with a->r (1/3 * ε) (orderRespectsMultiplication 0<1/3 x)
-... | N , pr = N , λ {m} {n} → ans m n
-  where
-    2/3 : (1/3 + 1/3) < 1R
-    2/3 = <WellDefined reflexive (transitive (transitive (+WellDefined (transitive (symmetric identIsIdent) *Commutative) (transitive (+WellDefined (transitive (symmetric identIsIdent) *Commutative) (transitive (+WellDefined (symmetric (transitive *Commutative identIsIdent)) (symmetric timesZero)) (symmetric *DistributesOver+))) (symmetric *DistributesOver+))) (symmetric *DistributesOver+)) pr1/3) (<WellDefined reflexive (transitive (+WellDefined reflexive (symmetric identRight)) (symmetric +Associative)) (orderRespectsAddition (<WellDefined identLeft reflexive (orderRespectsAddition 0<1/3 1/3)) 1/3))
-    ans : (m n : ℕ) → N <N m → N <N n → abs (index a m + inverse (index a n)) < ε
-    ans m n N<m N<n = <Transitive (bothNearImpliesNear {r} (1/3 * ε) (orderRespectsMultiplication 0<1/3 x) (pr m N<m) (pr n N<n)) (<WellDefined *DistributesOver+' identIsIdent (ringCanMultiplyByPositive x 2/3))
-convergentSequenceCauchy _ {a} {r} a->r (inr 2!=0) e 0<e with halve 2!=0 e
+convergentSequenceCauchy : (nontrivial : 0R ∼ 1R → False) → {a : Sequence A} → {r : A} → a ~> r → cauchy a
+convergentSequenceCauchy _ {a} {r} a->r e 0<e with halve (λ i → charNotN 1 (transitive (transitive +Associative identRight) i)) e
 ... | e/2 , prE/2 with a->r e/2 (halvePositive' prE/2 0<e)
 ... | N , pr = N , λ {m} {n} → ans m n
   where

@@ -16,7 +16,7 @@ open import LogicalFormulae
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 
-module Fields.CauchyCompletion.Group {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
+module Fields.CauchyCompletion.Group {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) where
 
 open Setoid S
 open SetoidTotalOrder (TotallyOrderedRing.total order)
@@ -29,8 +29,8 @@ open Ring R
 
 open import Rings.Orders.Total.Lemmas order
 open import Fields.CauchyCompletion.Definition order F
-open import Fields.CauchyCompletion.Addition order F charNot2
-open import Fields.CauchyCompletion.Setoid order F charNot2
+open import Fields.CauchyCompletion.Addition order F
+open import Fields.CauchyCompletion.Setoid order F
 
 abstract
   +CCommutative : {a b : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid (a +C b) (b +C a)

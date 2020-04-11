@@ -363,3 +363,15 @@ fromNPreservesOrder : (0R ∼ 1R → False) → {a b : ℕ} → (a <N b) → (fr
 fromNPreservesOrder 0!=1 {zero} {succ zero} a<b = fromNIncreasing 0!=1 0
 fromNPreservesOrder 0!=1 {zero} {succ (succ b)} a<b = <Transitive (fromNPreservesOrder 0!=1 (succIsPositive b)) (fromNIncreasing 0!=1 (succ b))
 fromNPreservesOrder 0!=1 {succ a} {succ b} a<b = <WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition (fromNPreservesOrder 0!=1 (canRemoveSuccFrom<N a<b)) 1R)
+
+reciprocalPositive : (a b : A) → .(0<a : 0R < a) → (a * b ∼ 1R) → 0R < b
+reciprocalPositive a 1/a 0<a ab=1 with totality 0G 1/a
+... | inl (inl x) = x
+... | inl (inr x) = exFalso (1<0False (<WellDefined (transitive *Commutative ab=1) timesZero' (ringCanMultiplyByPositive 0<a x)))
+... | inr x = exFalso (anyComparisonImpliesNontrivial 0<a (transitive (transitive (symmetric timesZero) (*WellDefined reflexive x)) ab=1))
+
+reciprocal<1 : (a b : A) → .(1<a : 1R < a) → (a * b ∼ 1R) → b < 1R
+reciprocal<1 a b 0<a ab=1 with totality b 1R
+... | inl (inl x) = x
+... | inr b=1 = exFalso (irreflexive (<WellDefined (symmetric ab=1) (transitive (symmetric identIsIdent) (transitive *Commutative ((*WellDefined reflexive (symmetric b=1))))) 0<a))
+... | inl (inr x) = exFalso (irreflexive (<WellDefined identIsIdent ab=1 (ringMultiplyPositives (0<1 (anyComparisonImpliesNontrivial 0<a)) (0<1 (anyComparisonImpliesNontrivial 0<a)) 0<a x)))
