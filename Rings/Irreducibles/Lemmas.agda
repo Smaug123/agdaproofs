@@ -6,7 +6,6 @@ open import Sets.EquivalenceRelations
 open import Rings.IntegralDomains.Definition
 open import Rings.Definition
 
-
 module Rings.Irreducibles.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} (intDom : IntegralDomain R) where
 
 open import Rings.Irreducibles.Definition intDom

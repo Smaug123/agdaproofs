@@ -81,10 +81,11 @@ open import Rings.Subrings.Definition
 open import Rings.Ideals.Maximal.Lemmas
 open import Rings.Primes.Lemmas
 open import Rings.Irreducibles.Definition
-open import Rings.Divisible.Definition
+open import Rings.Divisible.Lemmas
 open import Rings.Associates.Lemmas
 open import Rings.InitialRing
 open import Rings.Homomorphisms.Lemmas
+open import Rings.UniqueFactorisationDomains.Definition
 
 open import Setoids.Setoids
 open import Setoids.DirectSum
@@ -125,9 +126,6 @@ open import Monoids.Definition
 open import Semirings.Definition
 open import Semirings.Solver
 
-open import Fields.CauchyCompletion.Group
-open import Fields.CauchyCompletion.Ring
-
 open import Categories.Definition
 open import Categories.Functor.Definition
 open import Categories.Functor.Lemmas
@@ -148,5 +146,8 @@ open import Modules.Examples
 open import Modules.PolynomialModule
 open import Modules.Lemmas
 open import Modules.DirectSum
+
+open import Fields.CauchyCompletion.Ring
+open import Fields.CauchyCompletion.Comparison
 
 module Everything.Safe where

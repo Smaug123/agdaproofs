@@ -1,4 +1,4 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
 open import Numbers.Naturals.Naturals
@@ -10,7 +10,6 @@ open import Rings.Definition
 open import Rings.Orders.Total.Definition
 open import Rings.Orders.Partial.Definition
 open import Fields.Fields
-open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
 open import Setoids.Orders
 open import Functions
@@ -28,6 +27,9 @@ open import Fields.FieldOfFractions.Order ℤIntDom ℤOrderedRing
 ℚ : Set
 ℚ = fieldOfFractionsSet
 
+ℚSetoid : Setoid ℚ
+ℚSetoid = fieldOfFractionsSetoid
+
 _+Q_ : ℚ → ℚ → ℚ
 a +Q b = fieldOfFractionsPlus a b
 
@@ -42,6 +44,9 @@ a *Q b = fieldOfFractionsTimes a b
 
 injectionQ : ℤ → ℚ
 injectionQ z = z ,, (nonneg 1 , λ ())
+
+injectionQInjective : Injection injectionQ
+injectionQInjective pr = equalityLeft pr
 
 ℚField : Field ℚRing
 ℚField = fieldOfFractions

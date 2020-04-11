@@ -39,8 +39,9 @@ open import Fields.CauchyCompletion.Approximation order F charNot2
 0!=1 : {e : A} → (0G < e) → 0R ∼ 1R → False
 0!=1 {e} 0<e 0=1 = irreflexive (<WellDefined (Equivalence.reflexive eq) (oneZeroImpliesAllZero R 0=1) 0<e)
 
-littleLemma : {a b c d : A} → ((a * b) + inverse (c * d)) ∼ ((a * (b + inverse d)) + (d * (a + inverse c)))
-littleLemma {a} {b} {c} {d} = Equivalence.transitive eq (Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq identLeft) (+WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (+WellDefined (Equivalence.transitive eq (ringMinusExtracts R) (inverseWellDefined additiveGroup *Commutative)) (Equivalence.reflexive eq)) (invLeft {d * a}))) (Equivalence.transitive eq (Equivalence.symmetric eq (ringMinusExtracts' R)) *Commutative))) (Equivalence.symmetric eq +Associative))) (+Associative)) (Equivalence.symmetric eq (+WellDefined (*DistributesOver+) (*DistributesOver+)))
+private
+  littleLemma : {a b c d : A} → ((a * b) + inverse (c * d)) ∼ ((a * (b + inverse d)) + (d * (a + inverse c)))
+  littleLemma {a} {b} {c} {d} = Equivalence.transitive eq (Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq identLeft) (+WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (+WellDefined (Equivalence.transitive eq (ringMinusExtracts R) (inverseWellDefined additiveGroup *Commutative)) (Equivalence.reflexive eq)) (invLeft {d * a}))) (Equivalence.transitive eq (Equivalence.symmetric eq (ringMinusExtracts' R)) *Commutative))) (Equivalence.symmetric eq +Associative))) (+Associative)) (Equivalence.symmetric eq (+WellDefined (*DistributesOver+) (*DistributesOver+)))
 
 _*C_ : CauchyCompletion → CauchyCompletion → CauchyCompletion
 CauchyCompletion.elts (record { elts = a ; converges = aConv } *C record { elts = b ; converges = bConv }) = apply _*_ a b
@@ -99,7 +100,7 @@ CauchyCompletion.converges (record { elts = a ; converges = aConv } *C record { 
     N : ℕ
     N = (Na +N (Nb +N (reallyNa +N reallyNb)))
     ans : {m : ℕ} {n : ℕ} → N <N m → N <N n → abs (index (apply _*_ a b) m + inverse (index (apply _*_ a b) n)) < e
-    ans {m} {n} N<m N<n rewrite indexAndApply a b _*_ {m} | indexAndApply a b _*_ {n} = ans'
+    ans {m} {n} N<m N<n rewrite indexAndApply a b _*_ {m} | indexAndApply a b _*_ {n} = ans'''
       where
         Na<m : Na <N m
         Na<m = inequalityShrinkLeft N<m
@@ -144,10 +145,10 @@ CauchyCompletion.converges (record { elts = a ; converges = aConv } *C record { 
             ans'' with foo
             ... | inl pr = SetoidPartialOrder.<Transitive pOrder (<WellDefined groupIsAbelian groupIsAbelian (<WellDefined (+WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq bar')) (+WellDefined (Equivalence.reflexive eq) (Equivalence.symmetric eq bar)) (orderRespectsAddition pr 0R))) q
             ... | inr pr = <WellDefined (Equivalence.transitive eq (Equivalence.symmetric eq identRight) (+WellDefined (Equivalence.symmetric eq bar') (Equivalence.symmetric eq (Equivalence.transitive eq (*WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (absWellDefined _ _ (Equivalence.symmetric eq pr)) absZeroIsZero)) timesZero)))) (Equivalence.reflexive eq) 0<e
-        ans' : abs ((index a m * index b m) + inverse (index a n * index b n)) < e
-        ans' with triangleInequality (index a m * (index b m + inverse (index b n))) (index b n * (index a m + inverse (index a n)))
+        ans''' : abs ((index a m * index b m) + inverse (index a n * index b n)) < e
+        ans''' with triangleInequality (index a m * (index b m + inverse (index b n))) (index b n * (index a m + inverse (index a n)))
         ... | inl less = <WellDefined (Equivalence.symmetric eq (absWellDefined ((index a m * index b m) + (inverse (index a n * index b n))) (((index a m) * (index b m + (inverse (index b n)))) + ((index b n) * (index a m + inverse (index a n)))) littleLemma)) (Equivalence.reflexive eq) (SetoidPartialOrder.<Transitive pOrder less (<WellDefined (+WellDefined (Equivalence.symmetric eq (absRespectsTimes (index a m) _)) (Equivalence.symmetric eq (absRespectsTimes (index b n) _))) (Equivalence.reflexive eq) p))
-        ... | inr equal rewrite indexAndApply a b _*_ {m} | indexAndApply a b _*_ {n} = <WellDefined (Equivalence.symmetric eq (absWellDefined ((index a m * index b m) + (inverse (index a n * index b n))) (((index a m) * (index b m + (inverse (index b n)))) + ((index b n) * (index a m + inverse (index a n)))) littleLemma)) (Equivalence.reflexive eq) (<WellDefined (Equivalence.symmetric eq equal) (Equivalence.reflexive eq) ((<WellDefined (+WellDefined (Equivalence.symmetric eq (absRespectsTimes (index a m) _)) (Equivalence.symmetric eq (absRespectsTimes (index b n) _))) (Equivalence.reflexive eq) p)))
+        ... | inr equal = <WellDefined {_ + _} {abs _} {e} {e} (symmetric (transitive (transitive (absWellDefined ((index a m * index b m) + (inverse (index a n * index b n))) (((index a m) * (index b m + (inverse (index b n)))) + ((index b n) * (index a m + inverse (index a n)))) littleLemma) equal) (+WellDefined (absRespectsTimes (index a m) _) (absRespectsTimes (index b n) _)))) reflexive p
 
 *CCommutative : {a b : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid (a *C b) (b *C a)
 *CCommutative {a} {b} ε 0<e = 0 , ans
@@ -162,17 +163,18 @@ abstract
   multiplicationWellDefinedLeft' : (0!=1 : 0R ∼ 1R → False) (a b c : CauchyCompletion) → Setoid._∼_ cauchyCompletionSetoid a b → Setoid._∼_ cauchyCompletionSetoid (a *C c) (b *C c)
   multiplicationWellDefinedLeft' 0!=1 a b c a=b ε 0<e = N , ans
     where
-      cBoundAndPr : Sg A (λ b → Sg ℕ (λ N → (m : ℕ) → (N <N m) → (abs (index (CauchyCompletion.elts c) m)) < b))
-      cBoundAndPr = boundModulus c
-      cBound : A
-      cBound with cBoundAndPr
-      ... | a , _ = a
-      cBoundN : ℕ
-      cBoundN with cBoundAndPr
-      ... | _ , (N , _) = N
-      cBoundPr : (m : ℕ) → (cBoundN <N m) → (abs (index (CauchyCompletion.elts c) m)) < cBound
-      cBoundPr with cBoundAndPr
-      ... | _ , (_ , pr) = pr
+      abstract
+        cBoundAndPr : Sg A (λ b → Sg ℕ (λ N → (m : ℕ) → (N <N m) → (abs (index (CauchyCompletion.elts c) m)) < b))
+        cBoundAndPr = boundModulus c
+        cBound : A
+        cBound with cBoundAndPr
+        ... | a , _ = a
+        cBoundN : ℕ
+        cBoundN with cBoundAndPr
+        ... | _ , (N , _) = N
+        cBoundPr : (m : ℕ) → (cBoundN <N m) → (abs (index (CauchyCompletion.elts c) m)) < cBound
+        cBoundPr with cBoundAndPr
+        ... | _ , (_ , pr) = pr
       0<cBound : 0G < cBound
       0<cBound with totality 0G cBound
       0<cBound | inl (inl 0<cBound) = 0<cBound
@@ -197,10 +199,9 @@ abstract
       cBounded : (m : ℕ) → (N <N m) → abs (index (CauchyCompletion.elts c) m) < cBound
       cBounded m N<m = cBoundPr m (inequalityShrinkRight N<m)
       a-bSmall : (m : ℕ) → N <N m → abs ((index (CauchyCompletion.elts a) m) + inverse (index (CauchyCompletion.elts b) m)) < e/c
-      a-bSmall m N<m with abPr {m} (inequalityShrinkLeft N<m)
-      ... | f rewrite indexAndApply (CauchyCompletion.elts a) (map inverse (CauchyCompletion.elts b)) _+_ {m} | equalityCommutative (mapAndIndex (CauchyCompletion.elts b) inverse m) = f
+      a-bSmall m N<m = <WellDefined (absWellDefined _ _ (transitive (identityOfIndiscernablesLeft _∼_ reflexive (equalityCommutative (indexAndApply (CauchyCompletion.elts a) (map inverse (CauchyCompletion.elts b)) _+_ {m}))) (+WellDefined reflexive (identityOfIndiscernablesLeft _∼_ reflexive (mapAndIndex (CauchyCompletion.elts b) inverse m))))) reflexive (abPr {m} (inequalityShrinkLeft N<m))
       ans : {m : ℕ} → N <N m → abs (index (apply _+_ (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts c)) (map inverse (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts c)))) m) < ε
-      ans {m} N<m rewrite indexAndApply (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts c)) (map inverse (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts c))) _+_ {m} | equalityCommutative (mapAndIndex (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts c)) inverse m) | indexAndApply (CauchyCompletion.elts b) (CauchyCompletion.elts c) _*_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts c) _*_ {m} = <WellDefined (absWellDefined _ _ (+WellDefined (Equivalence.reflexive eq) (ringMinusExtracts' R))) (Equivalence.reflexive eq) (<WellDefined (absWellDefined ((index (CauchyCompletion.elts a) m + inverse (index (CauchyCompletion.elts b) m)) * index (CauchyCompletion.elts c) m) _ (Equivalence.transitive eq (Equivalence.transitive eq *Commutative *DistributesOver+) (+WellDefined *Commutative *Commutative))) (Equivalence.reflexive eq) (<WellDefined (Equivalence.symmetric eq (absRespectsTimes _ _)) (Equivalence.reflexive eq) (<WellDefined (Equivalence.reflexive eq) e/cPr (ans' (index (CauchyCompletion.elts a) m) (index (CauchyCompletion.elts b) m) (index (CauchyCompletion.elts c) m) (a-bSmall m N<m) (cBounded m N<m)))))
+      ans {m} N<m = <WellDefined (absWellDefined _ _ (transitive (+WellDefined (identityOfIndiscernablesLeft _∼_ reflexive (indexAndApply _ _ _*_ {m})) (transitive (transitive (ringMinusExtracts' R) (inverseWellDefined additiveGroup (identityOfIndiscernablesRight _∼_ reflexive (equalityCommutative (indexAndApply _ _ _*_ {m}))))) (identityOfIndiscernablesLeft _∼_ reflexive (equalityCommutative (mapAndIndex _ inverse m))))) (identityOfIndiscernablesLeft _∼_ reflexive (indexAndApply _ _ _+_ {m})))) reflexive (<WellDefined (absWellDefined ((index (CauchyCompletion.elts a) m + inverse (index (CauchyCompletion.elts b) m)) * index (CauchyCompletion.elts c) m) _ (Equivalence.transitive eq (Equivalence.transitive eq *Commutative *DistributesOver+) (+WellDefined *Commutative *Commutative))) (Equivalence.reflexive eq) (<WellDefined (Equivalence.symmetric eq (absRespectsTimes _ _)) (Equivalence.reflexive eq) (<WellDefined (Equivalence.reflexive eq) e/cPr (ans' (index (CauchyCompletion.elts a) m) (index (CauchyCompletion.elts b) m) (index (CauchyCompletion.elts c) m) (a-bSmall m N<m) (cBounded m N<m)))))
         where
           ans' : (a b c : A) → abs (a + inverse b) < e/c → abs c < cBound → (abs (a + inverse b) * abs c) < (e/c * cBound)
           ans' a b c a-b<e/c c<bound with totality 0R c

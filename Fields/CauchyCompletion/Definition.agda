@@ -42,3 +42,11 @@ CauchyCompletion.converges (injection a) = λ ε 0<e → 0 , λ {m} {n} _ _ → 
   where
     t : (m n : ℕ) → index (constSequence a) m + inverse (index (constSequence a) n) ∼ 0R
     t m n = identityOfIndiscernablesLeft _∼_ (identityOfIndiscernablesLeft _∼_ invRight (equalityCommutative (applyEquality (λ i → a + inverse i) (indexAndConst a n)))) (applyEquality (_+ inverse (index (constSequence a) n)) (equalityCommutative (indexAndConst a m)))
+
+-- Some slightly odd things here relating to equality rather than equivalence. Ultimately this is here so we can say Q → R is a genuine injection, not just a setoid one.
+private
+  lemma : {x y : CauchyCompletion} → x ≡ y → CauchyCompletion.elts x ≡ CauchyCompletion.elts y
+  lemma {x} {.x} refl = refl
+
+CInjection' : Injection injection
+CInjection' pr = headInjective (lemma pr)

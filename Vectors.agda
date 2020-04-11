@@ -3,6 +3,7 @@
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
+open import Numbers.Naturals.Order.Lemmas
 open import Semirings.Definition
 open import Orders.Total.Definition
 open import Lists.Lists
@@ -133,6 +134,28 @@ vecMapAndIndex (x ,- v) f {succ a} a<n = vecMapAndIndex v f (canRemoveSuccFrom<N
 vecPure : {a : _} {X : Set a} → X → {n : ℕ} → Vec X n
 vecPure x {zero} = []
 vecPure x {succ n} = x ,- vecPure x {n}
+
+vecAllTrue : {a b : _} {X : Set a} (f : X → Set b) → {n : ℕ} (v : Vec X n) → Set b
+vecAllTrue f [] = True'
+vecAllTrue f (x ,- v) = f x && vecAllTrue f v
+
+vecFold : {a b : _} {X : Set a} {S : Set b} (f : X → S → S) (s : S) {n : ℕ} (v : Vec X n) → S
+vecFold f s [] = s
+vecFold f s (x ,- v) = vecFold f (f x s) v
+
+private
+  succLess1 : (i : ℕ) → .(succ i <N 1) → False
+  succLess1 zero pr with <NProp pr
+  ... | le zero ()
+  ... | le (succ x) ()
+  succLess1 (succ i) pr with <NProp pr
+  ... | le zero ()
+  ... | le (succ x) ()
+
+vecDelete : {a : _} {X : Set a} {n : ℕ} (index : ℕ) .(pr : index <N succ n) → Vec X (succ n) → Vec X n
+vecDelete zero _ (x ,- v) = v
+vecDelete (succ i) p (x ,- []) = exFalso (succLess1 i p)
+vecDelete (succ i) pr (x ,- (y ,- v)) = x ,- vecDelete i (canRemoveSuccFrom<N pr) (y ,- v)
 
 _$V_ : {a b : _} {X : Set a} {Y : Set b} {n : ℕ} → Vec (X → Y) n → Vec X n → Vec Y n
 [] $V [] = []
