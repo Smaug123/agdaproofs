@@ -12,6 +12,7 @@ open import Rings.Orders.Total.Definition
 open import Rings.Orders.Partial.Definition
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
+open import Orders.Total.Definition
 
 module Rings.Orders.Total.Lemmas {n m p : _} {A : Set n} {S : Setoid {n} {m} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {p} A} {pOrder : SetoidPartialOrder S _<_} {pOrderRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pOrderRing) where
 
@@ -363,6 +364,12 @@ fromNPreservesOrder : (0R ∼ 1R → False) → {a b : ℕ} → (a <N b) → (fr
 fromNPreservesOrder 0!=1 {zero} {succ zero} a<b = fromNIncreasing 0!=1 0
 fromNPreservesOrder 0!=1 {zero} {succ (succ b)} a<b = <Transitive (fromNPreservesOrder 0!=1 (succIsPositive b)) (fromNIncreasing 0!=1 (succ b))
 fromNPreservesOrder 0!=1 {succ a} {succ b} a<b = <WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition (fromNPreservesOrder 0!=1 (canRemoveSuccFrom<N a<b)) 1R)
+
+fromNPreservesOrder' : (0R ∼ 1R → False) → {a b : ℕ} → (fromN a) < (fromN b) → a <N b
+fromNPreservesOrder' nontrivial {a} {b} a<b with TotalOrder.totality ℕTotalOrder a b
+... | inl (inl x) = x
+... | inl (inr x) = exFalso (irreflexive (<Transitive a<b (fromNPreservesOrder nontrivial x)))
+... | inr x = exFalso (irreflexive (<WellDefined (fromNWellDefined x) reflexive a<b))
 
 reciprocalPositive : (a b : A) → .(0<a : 0R < a) → (a * b ∼ 1R) → 0R < b
 reciprocalPositive a 1/a 0<a ab=1 with totality 0G 1/a

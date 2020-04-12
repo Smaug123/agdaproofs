@@ -1,4 +1,3 @@
-
 {-# OPTIONS --safe --warning=error --without-K --guardedness #-}
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
@@ -52,9 +51,6 @@ StrictlyIncreasing x = (n : ℕ) → (index x n) < (index x (succ n))
 
 Increasing : Sequence A → Set (b ⊔ c)
 Increasing x = (n : ℕ) → ((index x n) < (index x (succ n))) || ((index x n) ∼ (index x (succ n)))
-
-Bounded : Sequence A → Set (a ⊔ c)
-Bounded x = Sg A (λ K → (n : ℕ) → index x n < K)
 
 sequencePredicate : (x : Sequence A) → A → Set b
 sequencePredicate x a = Sg ℕ (λ n → index x n ∼ a)
