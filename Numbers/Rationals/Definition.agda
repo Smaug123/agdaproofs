@@ -1,6 +1,7 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
+open import Numbers.Naturals.Definition
 open import Numbers.Naturals.Naturals
 open import Numbers.Integers.Integers
 open import Groups.Groups
@@ -22,6 +23,7 @@ open import Fields.FieldOfFractions.Addition ℤIntDom
 open import Fields.FieldOfFractions.Multiplication ℤIntDom
 open import Fields.FieldOfFractions.Ring ℤIntDom
 open import Fields.FieldOfFractions.Field ℤIntDom
+open import Fields.FieldOfFractions.Lemmas ℤIntDom
 open import Fields.FieldOfFractions.Order ℤIntDom ℤOrderedRing
 
 ℚ : Set
@@ -43,7 +45,10 @@ a *Q b = fieldOfFractionsTimes a b
 0Q = Ring.0R ℚRing
 
 injectionQ : ℤ → ℚ
-injectionQ z = z ,, (nonneg 1 , λ ())
+injectionQ = embedIntoFieldOfFractions
+
+injectionNQ : ℕ → ℚ
+injectionNQ n = injectionQ (nonneg n)
 
 injectionQInjective : Injection injectionQ
 injectionQInjective pr = equalityLeft pr
@@ -77,6 +82,9 @@ a-A a = Group.invRight (Ring.additiveGroup ℚRing) {a}
 
 ℚTotalOrder : SetoidTotalOrder fieldOfFractionsOrder
 ℚTotalOrder = fieldOfFractionsTotalOrder
+
+ℚOrderInherited : (a b : ℤ) → a <Z b → injectionQ a <Q injectionQ b
+ℚOrderInherited a b a<b = fieldOfFractionsOrderInherited a<b
 
 open SetoidTotalOrder fieldOfFractionsTotalOrder
 open SetoidPartialOrder partial

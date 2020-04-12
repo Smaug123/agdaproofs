@@ -42,6 +42,9 @@ abstract
       q' : (x * c) < ((y * c) + 0R)
       q' = SetoidPartialOrder.<WellDefined pOrder (Group.identLeft additiveGroup) (transitive (symmetric (Group.+Associative additiveGroup)) (Group.+WellDefined additiveGroup reflexive (Group.invLeft additiveGroup))) q
 
+  ringCanMultiplyByPositive' : {x y c : A} → (Ring.0R R) < c → x < y → (c * x) < (c * y)
+  ringCanMultiplyByPositive' {x} {y} {c} 0<c x<y = SetoidPartialOrder.<WellDefined pOrder *Commutative *Commutative (ringCanMultiplyByPositive 0<c x<y)
+
   ringMultiplyPositives : {x y a b : A} → 0R < x → 0R < a → (x < y) → (a < b) → (x * a) < (y * b)
   ringMultiplyPositives {x} {y} {a} {b} 0<x 0<a x<y a<b = SetoidPartialOrder.<Transitive pOrder (ringCanMultiplyByPositive 0<a x<y) (<WellDefined *Commutative *Commutative (ringCanMultiplyByPositive (SetoidPartialOrder.<Transitive pOrder 0<x x<y) a<b))
 

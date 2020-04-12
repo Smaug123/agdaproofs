@@ -46,6 +46,7 @@ open import Fields.CauchyCompletion.Approximation order F
 open import Rings.InitialRing R
 open import Rings.Orders.Partial.Bounded pRing
 open import Rings.Orders.Total.Bounded order
+open import Rings.Orders.Total.Cauchy order
 
 cauchyTimesBoundedIsCauchy : {s : Sequence A} → cauchy s → {t : Sequence A} → Bounded t → cauchy (apply _*_ s t)
 cauchyTimesBoundedIsCauchy {s} cau {t} (K , bounded) e 0<e with allInvertible K (boundNonzero (K , bounded))
@@ -119,8 +120,10 @@ private
 ofBaseExpansion : {n : ℕ} → .(1<n : 1 <N n) → (fromN n ∼ 0R → False) → Sequence (ℤn n (0<n 1<n)) → CauchyCompletion
 ofBaseExpansion {succ n} 1<n charNotN seq = record { elts = ofBaseExpansionSeq (0<n 1<n) seq ; converges = boundedTimesCauchyIsCauchy (powerSeqConverges _ (1/nPositive n) (1/n<1 n (canRemoveSuccFrom<N (squash<N 1<n))) (1/nPositive n)) (digitExpansionBounded (0<n 1<n) seq)}
 
-toBaseExpansion : {n : ℕ} → .(1<n : 1 <N n) → (fromN n ∼ 0R → False) → CauchyCompletion → Sequence (ℤn n (0<n 1<n))
-toBaseExpansion {n} 1<n charNotN c = {!!}
+toBaseExpansion : {n : ℕ} → .(1<n : 1 <N n) → (fromN n ∼ 0R → False) → (a : CauchyCompletion) → 0R r<C a → a <Cr 1R → Sequence (ℤn n (0<n 1<n))
+Sequence.head (toBaseExpansion {n} 1<n charNotN c 0<c c<1) = {!!}
+ -- TOOD: approximate c to within 1/n^2, extract the first decimal of the result.
+Sequence.tail (toBaseExpansion {n} 1<n charNotN c 0<c c<1) = toBaseExpansion 1<n charNotN {!!} {!!} {!!}
 
-baseExpansionProof : {n : ℕ} → .{1<n : 1 <N n} → {charNotN : fromN n ∼ 0R → False} → (as : CauchyCompletion) → Setoid._∼_ cauchyCompletionSetoid (ofBaseExpansion 1<n charNotN (toBaseExpansion 1<n charNotN as)) as
+baseExpansionProof : {n : ℕ} → .{1<n : 1 <N n} → {charNotN : fromN n ∼ 0R → False} → (as : CauchyCompletion) → (0<a : 0R r<C as) → (a<1 : as <Cr 1R) → Setoid._∼_ cauchyCompletionSetoid (ofBaseExpansion 1<n charNotN (toBaseExpansion 1<n charNotN as 0<a a<1)) as
 baseExpansionProof = {!!}

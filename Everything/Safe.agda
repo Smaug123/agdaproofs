@@ -95,6 +95,7 @@ open import Rings.UniqueFactorisationDomains.Definition
 open import Rings.Examples.Examples
 open import Rings.Orders.Total.Bounded
 open import Rings.Orders.Partial.Bounded
+open import Rings.Orders.Total.BaseExpansion
 
 open import Setoids.Setoids
 open import Setoids.DirectSum

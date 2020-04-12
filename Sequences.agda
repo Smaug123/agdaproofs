@@ -4,6 +4,7 @@ open import LogicalFormulae
 open import Numbers.Naturals.Definition
 open import Setoids.Setoids
 open import Numbers.Naturals.Order
+open import Vectors
 
 module Sequences where
 
@@ -78,3 +79,7 @@ tailFrom (succ n) s = tailFrom n (Sequence.tail s)
 subsequence : {a : _} {A : Set a} (x : Sequence A) → (indices : Sequence ℕ) → ((n : ℕ) → index indices n <N index indices (succ n)) → Sequence A
 Sequence.head (subsequence x selector increasing) = index x (Sequence.head selector)
 Sequence.tail (subsequence x selector increasing) = subsequence (tailFrom (succ (Sequence.head selector)) x) (Sequence.tail selector) λ n → increasing (succ n)
+
+take : {a : _} {A : Set a} (n : ℕ) (s : Sequence A) → Vec A n
+take zero s = []
+take (succ n) s = Sequence.head s ,- take n (Sequence.tail s)

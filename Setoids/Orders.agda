@@ -16,6 +16,8 @@ record SetoidPartialOrder {a b c : _} {A : Set a} (S : Setoid {a} {b} A) (_<_ : 
     <WellDefined : {a b c d : A} → (a ∼ b) → (c ∼ d) → a < c → b < d
     irreflexive : {x : A} → (x < x) → False
     <Transitive : {a b c : A} → (a < b) → (b < c) → (a < c)
+  _<=_ : Rel {a} {b ⊔ c} A
+  a <= b = (a < b) || (a ∼ b)
 
 record SetoidTotalOrder {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_<_ : Rel {a} {c} A} (P : SetoidPartialOrder S _<_) : Set (a ⊔ b ⊔ c) where
   open Setoid S
