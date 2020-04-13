@@ -13,6 +13,7 @@ open import Rings.Orders.Partial.Definition
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Orders.Total.Definition
+open import Rings.IntegralDomains.Definition
 
 module Rings.Orders.Total.Lemmas {n m p : _} {A : Set n} {S : Setoid {n} {m} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {p} A} {pOrder : SetoidPartialOrder S _<_} {pOrderRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pOrderRing) where
 
@@ -382,3 +383,16 @@ reciprocal<1 a b 0<a ab=1 with totality b 1R
 ... | inl (inl x) = x
 ... | inr b=1 = exFalso (irreflexive (<WellDefined (symmetric ab=1) (transitive (symmetric identIsIdent) (transitive *Commutative ((*WellDefined reflexive (symmetric b=1))))) 0<a))
 ... | inl (inr x) = exFalso (irreflexive (<WellDefined identIsIdent ab=1 (ringMultiplyPositives (0<1 (anyComparisonImpliesNontrivial 0<a)) (0<1 (anyComparisonImpliesNontrivial 0<a)) 0<a x)))
+
+isIntDom : (nonempty : 1R ∼ 0R → False) → IntegralDomain R
+IntegralDomain.intDom (isIntDom n) {a} {b} ab=0 a!=0 with totality 0R b
+... | inr 0=b = symmetric 0=b
+IntegralDomain.intDom (isIntDom n) {a} {b} ab=0 a!=0 | inl (inl 0<b) with totality 0R a
+... | inl (inl x) = exFalso (irreflexive (<WellDefined reflexive ab=0 (orderRespectsMultiplication x 0<b)))
+... | inl (inr x) = exFalso (irreflexive (<WellDefined ab=0 timesZero' (ringCanMultiplyByPositive 0<b x)))
+... | inr x = exFalso (a!=0 (symmetric x))
+IntegralDomain.intDom (isIntDom n) {a} {b} ab=0 a!=0 | inl (inr b<0) with totality 0R a
+... | inl (inl x) = exFalso (irreflexive (<WellDefined (transitive *Commutative ab=0) timesZero' (ringCanMultiplyByPositive x b<0)))
+... | inl (inr x) = exFalso (irreflexive (<WellDefined reflexive (transitive twoNegativesTimes ab=0) (orderRespectsMultiplication (lemm2 a x) (lemm2 b b<0))))
+... | inr x = exFalso (a!=0 (symmetric x))
+IntegralDomain.nontrivial (isIntDom n) = n
