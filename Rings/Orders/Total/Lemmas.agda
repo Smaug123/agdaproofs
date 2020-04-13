@@ -357,19 +357,10 @@ abstract
 open import Rings.InitialRing R
 open Equivalence eq
 
-fromNIncreasing : (0R ∼ 1R → False) → (n : ℕ) → (fromN n) < (fromN (succ n))
-fromNIncreasing 0!=1 zero = <WellDefined reflexive (symmetric identRight) (0<1 0!=1)
-fromNIncreasing 0!=1 (succ n) = <WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition (fromNIncreasing 0!=1 n) 1R)
-
-fromNPreservesOrder : (0R ∼ 1R → False) → {a b : ℕ} → (a <N b) → (fromN a) < (fromN b)
-fromNPreservesOrder 0!=1 {zero} {succ zero} a<b = fromNIncreasing 0!=1 0
-fromNPreservesOrder 0!=1 {zero} {succ (succ b)} a<b = <Transitive (fromNPreservesOrder 0!=1 (succIsPositive b)) (fromNIncreasing 0!=1 (succ b))
-fromNPreservesOrder 0!=1 {succ a} {succ b} a<b = <WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition (fromNPreservesOrder 0!=1 (canRemoveSuccFrom<N a<b)) 1R)
-
 fromNPreservesOrder' : (0R ∼ 1R → False) → {a b : ℕ} → (fromN a) < (fromN b) → a <N b
 fromNPreservesOrder' nontrivial {a} {b} a<b with TotalOrder.totality ℕTotalOrder a b
 ... | inl (inl x) = x
-... | inl (inr x) = exFalso (irreflexive (<Transitive a<b (fromNPreservesOrder nontrivial x)))
+... | inl (inr x) = exFalso (irreflexive (<Transitive a<b (fromNPreservesOrder (0<1 nontrivial) x)))
 ... | inr x = exFalso (irreflexive (<WellDefined (fromNWellDefined x) reflexive a<b))
 
 reciprocalPositive : (a b : A) → .(0<a : 0R < a) → (a * b ∼ 1R) → 0R < b

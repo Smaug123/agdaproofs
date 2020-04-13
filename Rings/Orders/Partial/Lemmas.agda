@@ -91,3 +91,17 @@ abstract
 
   negativeInequality : {a : A} → a < 0G → 0G < inverse a
   negativeInequality {a} a<0 = <WellDefined invRight identLeft (orderRespectsAddition a<0 (inverse a))
+
+  negativeInequality' : {a : A} → 0G < a → inverse a < 0G
+  negativeInequality' {a} 0<a = <WellDefined identLeft invRight (orderRespectsAddition 0<a (inverse a))
+
+open import Rings.InitialRing R
+
+fromNIncreasing : (0R < 1R) → (n : ℕ) → (fromN n) < (fromN (succ n))
+fromNIncreasing 0<1 zero = <WellDefined reflexive (symmetric identRight) 0<1
+fromNIncreasing 0<1 (succ n) = <WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition (fromNIncreasing 0<1 n) 1R)
+
+fromNPreservesOrder : (0R < 1R) → {a b : ℕ} → (a <N b) → (fromN a) < (fromN b)
+fromNPreservesOrder 0<1 {zero} {succ zero} a<b = fromNIncreasing 0<1 0
+fromNPreservesOrder 0<1 {zero} {succ (succ b)} a<b = <Transitive (fromNPreservesOrder 0<1 (succIsPositive b)) (fromNIncreasing 0<1 (succ b))
+fromNPreservesOrder 0<1 {succ a} {succ b} a<b = <WellDefined groupIsAbelian groupIsAbelian (orderRespectsAddition (fromNPreservesOrder 0<1 (canRemoveSuccFrom<N a<b)) 1R)
