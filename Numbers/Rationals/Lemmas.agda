@@ -114,7 +114,7 @@ absNegsucc : (x : ℕ) → abs (negSucc x) ≡ nonneg (succ x)
 absNegsucc x with totality (nonneg 0) (negSucc x)
 absNegsucc x | inl (inr _) = refl
 
-toNats : (numerator denominator : ℤ) → (denominator ≡ nonneg 0 → False) → (abs numerator) *Z (abs numerator) ≡ ((abs denominator) *Z (abs denominator)) *Z nonneg 2 → Sg (ℕ && ℕ) (λ nats → ((_&&_.fst nats *N _&&_.fst nats) ≡ (_&&_.snd nats *N _&&_.snd nats) *N 2) && (_&&_.snd nats ≡ 0 → False))
+toNats : (numerator denominator : ℤ) → .(denominator ≡ nonneg 0 → False) → (abs numerator) *Z (abs numerator) ≡ ((abs denominator) *Z (abs denominator)) *Z nonneg 2 → Sg (ℕ && ℕ) (λ nats → ((_&&_.fst nats *N _&&_.fst nats) ≡ (_&&_.snd nats *N _&&_.snd nats) *N 2) && (_&&_.snd nats ≡ 0 → False))
 toNats (nonneg num) (nonneg 0) pr _ = exFalso (pr refl)
 toNats (nonneg num) (nonneg (succ denom)) _ pr = (num ,, (succ denom)) , (nonnegInjective (transitivity (transitivity (equalityCommutative (absNonneg (num *N num))) (absRespectsTimes (nonneg num) (nonneg num))) pr) ,, λ ())
 toNats (nonneg num) (negSucc denom) _ pr = (num ,, succ denom) , (nonnegInjective (transitivity (transitivity (equalityCommutative (absNonneg (num *N num))) (absRespectsTimes (nonneg num) (nonneg num))) pr) ,, λ ())
@@ -122,7 +122,7 @@ toNats (negSucc num) (nonneg (succ denom)) _ pr = (succ num ,, succ denom) , (no
 toNats (negSucc num) (negSucc denom) _ pr = (succ num ,, succ denom) , (nonnegInjective pr ,, λ ())
 
 sqrt2Irrational : (a : ℚ) → (a *Q a) =Q (injectionQ (nonneg 2)) → False
-sqrt2Irrational (numerator ,, (denominator , denom!=0)) pr = bad
+sqrt2Irrational (record { num = numerator ; denom = denominator ; denomNonzero = denom!=0 }) pr = bad
   where
     -- We have in hand `pr`, which is the following (almost by definition):
     pr' : (numerator *Z numerator) ≡ (denominator *Z denominator) *Z nonneg 2
