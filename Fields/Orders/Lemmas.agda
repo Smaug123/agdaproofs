@@ -121,6 +121,6 @@ abstract
   IntegralDomain.nontrivial orderedFieldIsIntDom pr = Field.nontrivial F (Equivalence.symmetric (Setoid.eq S) pr)
 
   charZero : (n : ℕ) → (0R ∼ (fromN (succ n))) → False
-  charZero n 0=sn = irreflexive (<WellDefined 0=sn reflexive (fromNPreservesOrder nontrivial (succIsPositive n)))
+  charZero n 0=sn = irreflexive (<WellDefined 0=sn reflexive (fromNPreservesOrder (0<1 (Field.nontrivial F)) (succIsPositive n)))
   charZero' : (n : ℕ) → ((fromN (succ n)) ∼ 0R) → False
   charZero' n pr = charZero n (symmetric pr)
