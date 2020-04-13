@@ -13,7 +13,7 @@ module Fields.FieldOfFractions.Field {a b : _} {A : Set a} {S : Setoid {a} {b} A
 open import Fields.FieldOfFractions.Ring I
 
 fieldOfFractions : Field fieldOfFractionsRing
-Field.allInvertible fieldOfFractions (fst ,, (b , _)) prA = (b ,, (fst , ans)) , need
+Field.allInvertible fieldOfFractions (record { num = fst ; denom = b }) prA = (record { num = b ; denom = fst ; denomNonzero = ans }) , need
   where
     abstract
       open Setoid S

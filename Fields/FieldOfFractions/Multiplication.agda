@@ -12,7 +12,7 @@ module Fields.FieldOfFractions.Multiplication {a b : _} {A : Set a} {S : Setoid 
 open import Fields.FieldOfFractions.Setoid I
 
 fieldOfFractionsTimes : fieldOfFractionsSet → fieldOfFractionsSet → fieldOfFractionsSet
-fieldOfFractionsTimes (a ,, (b , b!=0)) (c ,, (d , d!=0)) = (a * c) ,, ((b * d) , ans)
+fieldOfFractionsTimes (record { num = a ; denom = b ; denomNonzero = b!=0 }) (record { num = c ; denom = d ; denomNonzero = d!=0 }) = record { num = a * c ; denom = b * d ; denomNonzero = ans }
   where
     open Setoid S
     open Ring R
@@ -21,7 +21,7 @@ fieldOfFractionsTimes (a ,, (b , b!=0)) (c ,, (d , d!=0)) = (a * c) ,, ((b * d) 
     ans pr | f = exFalso (d!=0 (f b!=0))
 
 fieldOfFractionsTimesWellDefined : {a b c d : fieldOfFractionsSet} → (Setoid._∼_ fieldOfFractionsSetoid a c) → (Setoid._∼_ fieldOfFractionsSetoid b d) → (Setoid._∼_ fieldOfFractionsSetoid (fieldOfFractionsTimes a b) (fieldOfFractionsTimes c d))
-fieldOfFractionsTimesWellDefined {a ,, (b , _)} {c ,, (d , _)} {e ,, (f , _)} {g ,, (h , _)} af=be ch=dg = need
+fieldOfFractionsTimesWellDefined {record { num = a ; denom = b }} {record { num = c ; denom = d }} {record { num = e ; denom = f }} {record { num = g ; denom = h }} af=be ch=dg = need
   where
     open Setoid S
     open Equivalence eq

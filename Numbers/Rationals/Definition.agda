@@ -51,7 +51,8 @@ injectionNQ : ℕ → ℚ
 injectionNQ n = injectionQ (nonneg n)
 
 injectionQInjective : Injection injectionQ
-injectionQInjective pr = equalityLeft pr
+injectionQInjective {nonneg x} {nonneg .x} refl = refl
+injectionQInjective {negSucc x} {negSucc .x} refl = refl
 
 ℚField : Field ℚRing
 ℚField = fieldOfFractions

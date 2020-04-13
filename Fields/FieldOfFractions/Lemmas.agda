@@ -15,7 +15,7 @@ open import Fields.FieldOfFractions.Setoid I
 open import Fields.FieldOfFractions.Ring I
 
 embedIntoFieldOfFractions : A → fieldOfFractionsSet
-embedIntoFieldOfFractions a = a ,, (Ring.1R R , IntegralDomain.nontrivial I)
+embedIntoFieldOfFractions a = record { num = a ; denom = Ring.1R R ; denomNonzero = IntegralDomain.nontrivial I }
 
 homIntoFieldOfFractions : RingHom R fieldOfFractionsRing embedIntoFieldOfFractions
 RingHom.preserves1 homIntoFieldOfFractions = Equivalence.reflexive (Setoid.eq S)
