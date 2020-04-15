@@ -1,6 +1,6 @@
 {-# OPTIONS --warning=error --safe --guardedness --without-K #-}
 
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
 open import Setoids.Setoids
 open import LogicalFormulae
 open import Rings.Definition

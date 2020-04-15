@@ -16,6 +16,7 @@ open import Numbers.Modulo.Group
 
 open import Numbers.Integers.Integers
 open import Numbers.Integers.RingStructure.EuclideanDomain
+open import Numbers.Integers.RingStructure.Archimedean
 
 open import Numbers.ClassicalReals.Examples
 open import Numbers.ClassicalReals.RealField.Lemmas
@@ -52,12 +53,15 @@ open import Groups.LectureNotes.Lecture1
 open import Fields.Fields
 open import Fields.Orders.Partial.Definition
 open import Fields.Orders.Total.Definition
+open import Fields.Orders.Total.Archimedean
 open import Fields.Orders.LeastUpperBounds.Examples
 open import Fields.Orders.Lemmas
 open import Fields.Orders.Limits.Definition
 open import Fields.FieldOfFractions.Field
 open import Fields.FieldOfFractions.Lemmas
 open import Fields.FieldOfFractions.Order
+open import Fields.FieldOfFractions.Order
+--open import Fields.FieldOfFractions.Archimedean
 
 open import Rings.Definition
 open import Rings.Lemmas
@@ -100,7 +104,7 @@ open import Rings.Orders.Total.BaseExpansion
 open import Setoids.Setoids
 open import Setoids.DirectSum
 open import Setoids.Lists
-open import Setoids.Orders
+open import Setoids.Orders.Total.Lemmas
 open import Setoids.Functions.Definition
 open import Setoids.Functions.Extension
 open import Setoids.Algebra.Lemmas
@@ -159,8 +163,7 @@ open import Modules.PolynomialModule
 open import Modules.Lemmas
 open import Modules.DirectSum
 
-open import Fields.CauchyCompletion.Ring
-open import Fields.CauchyCompletion.Comparison
+open import Fields.CauchyCompletion.Archimedean
 open import Fields.Orders.Limits.Lemmas
 
 open import ProjectEuler.Problem1

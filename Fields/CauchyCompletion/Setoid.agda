@@ -11,7 +11,8 @@ open import Groups.Lemmas
 open import Fields.Fields
 open import Sets.EquivalenceRelations
 open import Sequences
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Functions
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
@@ -34,16 +35,18 @@ open import Fields.CauchyCompletion.Definition order F
 open import Fields.CauchyCompletion.Addition order F
 open import Rings.Orders.Partial.Lemmas pRing
 open import Rings.Orders.Total.Lemmas order
+open import Rings.Orders.Total.AbsoluteValue order
 open import Rings.InitialRing R
 open import Fields.Orders.Total.Lemmas {F = F} (record { oRing = order })
 
 isZero : CauchyCompletion → Set (m ⊔ o)
 isZero record { elts = elts ; converges = converges } = ∀ ε → 0R < ε → Sg ℕ (λ N → ∀ {m : ℕ} → (N <N m) → (abs (index elts m)) < ε)
 
-transitiveLemma : {a b c e/2 : A} → abs (a + inverse b) < e/2 → abs (b + inverse c) < e/2 → (abs (a + inverse c)) < (e/2 + e/2)
-transitiveLemma {a} {b} {c} {e/2} a-b<e/2 b-c<e/2 with triangleInequality (a + inverse b) (b + inverse c)
-transitiveLemma {a} {b} {c} {e/2} a-b<e/2 b-c<e/2 | inl x = SetoidPartialOrder.<Transitive pOrder (<WellDefined (absWellDefined _ _ (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq +Associative (Equivalence.transitive eq (+WellDefined invLeft (Equivalence.reflexive eq)) identLeft))))) (Equivalence.reflexive eq) x) (ringAddInequalities a-b<e/2 b-c<e/2)
-transitiveLemma {a} {b} {c} {e/2} a-b<e/2 b-c<e/2 | inr x = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ (Equivalence.symmetric eq ((Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq +Associative (Equivalence.transitive eq (+WellDefined invLeft (Equivalence.reflexive eq)) identLeft))))))) x)) (Equivalence.reflexive eq) (ringAddInequalities a-b<e/2 b-c<e/2)
+private
+  transitiveLemma : {a b c e/2 : A} → abs (a + inverse b) < e/2 → abs (b + inverse c) < e/2 → (abs (a + inverse c)) < (e/2 + e/2)
+  transitiveLemma {a} {b} {c} {e/2} a-b<e/2 b-c<e/2 with triangleInequality (a + inverse b) (b + inverse c)
+  transitiveLemma {a} {b} {c} {e/2} a-b<e/2 b-c<e/2 | inl x = SetoidPartialOrder.<Transitive pOrder (<WellDefined (absWellDefined _ _ (Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq +Associative (Equivalence.transitive eq (+WellDefined invLeft (Equivalence.reflexive eq)) identLeft))))) (Equivalence.reflexive eq) x) (ringAddInequalities a-b<e/2 b-c<e/2)
+  transitiveLemma {a} {b} {c} {e/2} a-b<e/2 b-c<e/2 | inr x = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ (Equivalence.symmetric eq ((Equivalence.transitive eq (Equivalence.symmetric eq +Associative) (+WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq +Associative (Equivalence.transitive eq (+WellDefined invLeft (Equivalence.reflexive eq)) identLeft))))))) x)) (Equivalence.reflexive eq) (ringAddInequalities a-b<e/2 b-c<e/2)
 
 cauchyCompletionSetoid : Setoid CauchyCompletion
 (cauchyCompletionSetoid Setoid.∼ a) b = isZero (a +C (-C b))

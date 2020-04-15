@@ -1,4 +1,4 @@
-{-# OPTIONS --safe --warning=error --without-K --guardedness #-}
+{-# OPTIONS --allow-unsolved-metas --warning=error --without-K --guardedness #-}
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Setoids.Setoids
@@ -11,13 +11,14 @@ open import Groups.Groups
 open import Fields.Fields
 open import Sets.EquivalenceRelations
 open import Sequences
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Functions
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 
-module Fields.CauchyCompletion.Field {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) (charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False) where
+module Fields.CauchyCompletion.Field {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) where
 
 open Setoid S
 open PartiallyOrderedRing pRing
@@ -27,17 +28,18 @@ open SetoidTotalOrder (TotallyOrderedRing.total order)
 open Field F
 open Group (Ring.additiveGroup R)
 
+open import Rings.Orders.Total.Cauchy order
 open import Rings.Orders.Total.Lemmas order
 open import Fields.CauchyCompletion.Definition order F
-open import Fields.CauchyCompletion.Multiplication order F charNot2
-open import Fields.CauchyCompletion.Addition order F charNot2
-open import Fields.CauchyCompletion.Setoid order F charNot2
-open import Fields.CauchyCompletion.Group order F charNot2
-open import Fields.CauchyCompletion.Ring order F charNot2
-open import Fields.CauchyCompletion.Comparison order F charNot2
+open import Fields.CauchyCompletion.Multiplication order F
+open import Fields.CauchyCompletion.Addition order F
+open import Fields.CauchyCompletion.Setoid order F
+open import Fields.CauchyCompletion.Group order F
+open import Fields.CauchyCompletion.Ring order F
+open import Fields.CauchyCompletion.Comparison order F
 
 Cnontrivial : (pr : Setoid._∼_ cauchyCompletionSetoid (injection (Ring.0R R)) (injection (Ring.1R R))) → False
-Cnontrivial pr with pr (Ring.1R R) (0<1 (charNot2ImpliesNontrivial R charNot2))
+Cnontrivial pr with pr (Ring.1R R) (0<1 nontrivial)
 Cnontrivial pr | N , b with b {succ N} (le 0 refl)
 ... | bl rewrite indexAndApply (constSequence 0G) (map inverse (constSequence (Ring.1R R))) _+_ {N} | indexAndConst 0G N | equalityCommutative (mapAndIndex (constSequence (Ring.1R R)) inverse N) | indexAndConst (Ring.1R R) N = irreflexive {Ring.1R R} (<WellDefined (Equivalence.transitive eq (absWellDefined _ _ identLeft) (Equivalence.transitive eq (Equivalence.symmetric eq (absNegation (Ring.1R R))) abs1Is1)) (Equivalence.reflexive eq) bl)
 

@@ -9,7 +9,8 @@ open import Rings.Orders.Total.Lemmas
 open import Rings.IntegralDomains.Definition
 open import Functions
 open import Setoids.Setoids
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Sets.EquivalenceRelations
 
 module Fields.FieldOfFractions.Order {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} {_<_ : Rel {_} {c} A} {pOrder : SetoidPartialOrder S _<_} {pRing : PartiallyOrderedRing R pOrder} (I : IntegralDomain R) (order : TotallyOrderedRing pRing) where

@@ -4,7 +4,6 @@ open import Numbers.ClassicalReals.RealField
 open import LogicalFormulae
 open import Setoids.Subset
 open import Setoids.Setoids
-open import Setoids.Orders
 open import Sets.EquivalenceRelations
 open import Rings.Orders.Total.Definition
 open import Rings.Orders.Partial.Definition
@@ -14,6 +13,8 @@ open import Groups.Definition
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.Lemmas
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 
 module Numbers.ClassicalReals.Examples (ℝ : RealField) where
 

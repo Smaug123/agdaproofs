@@ -3,7 +3,8 @@
 open import LogicalFormulae
 open import Setoids.Subset
 open import Setoids.Setoids
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Sets.EquivalenceRelations
 open import Rings.Orders.Total.Definition
 open import Rings.Orders.Partial.Definition

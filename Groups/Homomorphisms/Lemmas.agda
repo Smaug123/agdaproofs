@@ -42,3 +42,9 @@ zeroImpliesInverseZero {x} fx=0 = transitive homRespectsInverse (transitive (inv
   where
     open Setoid T
     open Equivalence eq
+
+homRespectsInverse' : {a b : A} → Setoid._∼_ T (f (Group.inverse G a) +B f (Group.inverse G b)) (Group.inverse H (f (b +A a)))
+homRespectsInverse' {a} {b} = transitive (symmetric (GroupHom.groupHom hom)) (transitive (GroupHom.wellDefined hom (Equivalence.symmetric (Setoid.eq S) (invContravariant G))) (homRespectsInverse))
+  where
+    open Setoid T
+    open Equivalence eq

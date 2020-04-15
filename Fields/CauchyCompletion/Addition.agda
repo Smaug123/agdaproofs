@@ -9,7 +9,8 @@ open import Groups.Lemmas
 open import Fields.Fields
 open import Sets.EquivalenceRelations
 open import Sequences
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Functions
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
@@ -31,6 +32,7 @@ open import Fields.Lemmas F
 open import Fields.CauchyCompletion.Definition order F
 open import Rings.Orders.Partial.Lemmas pRing
 open import Fields.Orders.Total.Lemmas {F = F} (record { oRing = order })
+open import Rings.Orders.Total.AbsoluteValue order
 open import Rings.Orders.Total.Lemmas order
 open import Rings.InitialRing R
 

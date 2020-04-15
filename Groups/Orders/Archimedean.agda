@@ -4,7 +4,7 @@ open import Numbers.Naturals.Definition
 open import LogicalFormulae
 open import Groups.Definition
 open import Groups.Orders.Partial.Definition
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
 open import Setoids.Setoids
 open import Functions
 
@@ -14,6 +14,7 @@ module Groups.Orders.Archimedean {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_
 
 open Setoid S
 open import Groups.Cyclic.Definition G
+open Group G
 
 Archimedean : Set (a ⊔ c)
-Archimedean = (x y : A) → Sg ℕ (λ n → y < (positiveEltPower x n))
+Archimedean = (x y : A) → (0G < x) → (0G < y) → Sg ℕ (λ n → y < (positiveEltPower x n))

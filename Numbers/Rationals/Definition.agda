@@ -12,7 +12,8 @@ open import Rings.Orders.Total.Definition
 open import Rings.Orders.Partial.Definition
 open import Fields.Fields
 open import Setoids.Setoids
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Functions
 open import Sets.EquivalenceRelations
 

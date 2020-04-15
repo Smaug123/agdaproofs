@@ -10,7 +10,8 @@ open import Groups.Lemmas
 open import Fields.Fields
 open import Sets.EquivalenceRelations
 open import Sequences
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Functions
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
@@ -33,6 +34,7 @@ open import Fields.Orders.Total.Lemmas {F = F} record { oRing = order }
 open import Fields.Lemmas F
 open import Rings.Orders.Partial.Lemmas pRing
 open import Rings.Orders.Total.Lemmas order
+open import Rings.Orders.Total.AbsoluteValue order
 open import Fields.CauchyCompletion.Definition order F
 open import Fields.CauchyCompletion.Setoid order F
 open import Fields.CauchyCompletion.Approximation order F
@@ -159,7 +161,7 @@ CauchyCompletion.converges (record { elts = a ; converges = aConv } *C record { 
     ans : {m : ℕ} → 0 <N m → abs (index (apply _+_ (CauchyCompletion.elts (a *C b)) (map inverse (CauchyCompletion.elts (b *C a)))) m) < ε
     ans {m} 0<m rewrite indexAndApply (apply _*_ (CauchyCompletion.elts a) (CauchyCompletion.elts b)) (map inverse (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts a))) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (CauchyCompletion.elts b) _*_ {m} | equalityCommutative (mapAndIndex (apply _*_ (CauchyCompletion.elts b) (CauchyCompletion.elts a)) inverse m) | indexAndApply (CauchyCompletion.elts b) (CauchyCompletion.elts a) _*_ {m} = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ foo) (identityOfIndiscernablesRight _∼_ (Equivalence.reflexive eq) absZero))) (Equivalence.reflexive eq) 0<e
 
-abstract
+private
 
   multiplicationWellDefinedLeft' : (0!=1 : 0R ∼ 1R → False) (a b c : CauchyCompletion) → Setoid._∼_ cauchyCompletionSetoid a b → Setoid._∼_ cauchyCompletionSetoid (a *C c) (b *C c)
   multiplicationWellDefinedLeft' 0!=1 a b c a=b ε 0<e = N , ans
@@ -229,11 +231,12 @@ abstract
   multiplicationPreservedRight : {a b : A} {c : CauchyCompletion} → (a ∼ b) → Setoid._∼_ cauchyCompletionSetoid (c *C injection a) (c *C injection b)
   multiplicationPreservedRight {a} {b} {c} a=b = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {c *C injection a} {injection a *C c} {c *C injection b} (*CCommutative {c} {injection a}) (Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {injection a *C c} {injection b *C c} {c *C injection b} (multiplicationPreservedLeft {a} {b} {c} a=b) (*CCommutative {injection b} {c}))
 
-  multiplicationPreserved : {a b c d : A} → (a ∼ b) → (c ∼ d) → Setoid._∼_ cauchyCompletionSetoid (injection a *C injection c) (injection b *C injection d)
-  multiplicationPreserved {a} {b} {c} {d} a=b c=d = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {injection a *C injection c} {injection a *C injection d} {injection b *C injection d} (multiplicationPreservedRight {c} {d} {injection a} c=d) (multiplicationPreservedLeft {a} {b} {injection d} a=b)
+multiplicationPreserved : {a b c d : A} → (a ∼ b) → (c ∼ d) → Setoid._∼_ cauchyCompletionSetoid (injection a *C injection c) (injection b *C injection d)
+multiplicationPreserved {a} {b} {c} {d} a=b c=d = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {injection a *C injection c} {injection a *C injection d} {injection b *C injection d} (multiplicationPreservedRight {c} {d} {injection a} c=d) (multiplicationPreservedLeft {a} {b} {injection d} a=b)
 
+private
   multiplicationWellDefinedRight : (a b c : CauchyCompletion) → Setoid._∼_ cauchyCompletionSetoid b c → Setoid._∼_ cauchyCompletionSetoid (a *C b) (a *C c)
   multiplicationWellDefinedRight a b c b=c = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {a *C b} {b *C a} {a *C c} (*CCommutative {a} {b}) (Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {b *C a} {c *C a} {a *C c} (multiplicationWellDefinedLeft b c a b=c) (*CCommutative {c} {a}))
 
-  multiplicationWellDefined : {a b c d : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid a b → Setoid._∼_ cauchyCompletionSetoid c d → Setoid._∼_ cauchyCompletionSetoid (a *C c) (b *C d)
-  multiplicationWellDefined {a} {b} {c} {d} a=b c=d = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {a *C c} {a *C d} {b *C d} (multiplicationWellDefinedRight a c d c=d) (multiplicationWellDefinedLeft a b d a=b)
+multiplicationWellDefined : {a b c d : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid a b → Setoid._∼_ cauchyCompletionSetoid c d → Setoid._∼_ cauchyCompletionSetoid (a *C c) (b *C d)
+multiplicationWellDefined {a} {b} {c} {d} a=b c=d = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {a *C c} {a *C d} {b *C d} (multiplicationWellDefinedRight a c d c=d) (multiplicationWellDefinedLeft a b d a=b)

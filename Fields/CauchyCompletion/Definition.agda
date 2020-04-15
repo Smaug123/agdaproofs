@@ -9,11 +9,12 @@ open import Groups.Definition
 open import Fields.Fields
 open import Sets.EquivalenceRelations
 open import Sequences
-open import Setoids.Orders
 open import Functions
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 
 module Fields.CauchyCompletion.Definition {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) where
 
@@ -27,6 +28,7 @@ open Group additiveGroup
 open Field F
 
 open import Rings.Orders.Total.Lemmas order
+open import Rings.Orders.Total.AbsoluteValue order
 open import Rings.Orders.Total.Cauchy order
 open import Groups.Lemmas additiveGroup
 

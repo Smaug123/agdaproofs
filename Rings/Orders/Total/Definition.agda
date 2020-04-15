@@ -1,7 +1,8 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import Groups.Definition
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Setoids.Setoids
 open import Functions
 open import Rings.Definition

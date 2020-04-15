@@ -52,8 +52,9 @@ simplePlus (times a b) (succ c) = succ (plus (times a b) c)
 simplePlus (times a b) (plus c d) = plus (times a b) (plus c d)
 simplePlus (times a b) (times c d) = plus (times a b) (times c d)
 
-lemma : (a b c : A) → a + (b + c) ≡ b + (a + c)
-lemma a b c rewrite commutative a (b + c) | equalityCommutative (+Associative b c a) = applyEquality (b +_) (commutative _ _)
+private
+  lemma : (a b c : A) → a + (b + c) ≡ b + (a + c)
+  lemma a b c rewrite commutative a (b + c) | equalityCommutative (+Associative b c a) = applyEquality (b +_) (commutative _ _)
 
 simplePlusIsPlus : (a b : Expr) → eval (simplePlus a b) ≡ eval (plus a b)
 simplePlusIsPlus (const x) (const x₁) = refl
