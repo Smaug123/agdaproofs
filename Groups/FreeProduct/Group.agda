@@ -82,11 +82,11 @@ private
 
   abstract
     invLeft' : {i : I} (x : ReducedSequenceBeginningWith i) → (inv (nonempty i x) +RP (nonempty i x)) =RP empty
-    invLeft' {i} (ofEmpty .i g nonZero) = ?
-    --invLeft' {i} (ofEmpty .i g nonZero) | inl refl with decidableGroups i ((i + Group.inverse (G i) g) g) (Group.0G (G i))
-    --... | inl good = record {}
-    --... | inr bad = exFalso (bad (Group.invLeft (G i) {g}))
-    --invLeft' {i} (ofEmpty .i g nonZero) | inr x = exFalso (x refl)
+    invLeft' {i} (ofEmpty .i g nonZero) with decidableIndex i i
+    invLeft' {i} (ofEmpty .i g nonZero) | inl refl with decidableGroups i ((i + Group.inverse (G i) g) g) (Group.0G (G i))
+    ... | inl good = record {}
+    ... | inr bad = exFalso (bad (Group.invLeft (G i) {g}))
+    invLeft' {i} (ofEmpty .i g nonZero) | inr x = exFalso (x refl)
     invLeft' {i} (prependLetter .i g nonZero {.j} (ofEmpty j g₁ nonZero₁) i!=j) with decidableIndex j i
     ... | inl pr = exFalso (i!=j (equalityCommutative pr))
     invLeft' {i} (prependLetter .i g nonZero {.j} (ofEmpty j g₁ nonZero₁) i!=j) | inr pr with decidableIndex i i
