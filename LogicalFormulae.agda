@@ -14,6 +14,7 @@ data False : Set where
 data False' {a : _} : Set a where
 
 record True : Set where
+{-# BUILTIN UNIT True #-}
 record True' {a : _} : Set a where
 
 infix 10 _||_
@@ -24,6 +25,9 @@ data _||_ {a b} (A : Set a) (B : Set b) : Set (a ⊔ b) where
 data Bool : Set where
   BoolTrue : Bool
   BoolFalse : Bool
+{-# BUILTIN BOOL  Bool  #-}
+{-# BUILTIN TRUE  BoolTrue  #-}
+{-# BUILTIN FALSE BoolFalse #-}
 
 infix 15 _&&_
 record _&&_ {a b} (A : Set a) (B : Set b) : Set (a ⊔ b) where

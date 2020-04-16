@@ -15,15 +15,18 @@ module Groups.FreeProduct.Addition {i : _} {I : Set i} (decidableIndex : (x y : 
 open import Groups.FreeProduct.Definition decidableIndex decidableGroups G
 open import Groups.FreeProduct.Setoid decidableIndex decidableGroups G
 
+prependEqual : (i : I) (g : A i) .(nonZero : (Setoid._∼_ (S i) g (Group.0G (G i))) → False) → (j : I) → i ≡ j → (w : ReducedSequenceBeginningWith j) → ReducedSequence
+prependEqual i g nonzero .i refl (ofEmpty .i h nonZero) with decidableGroups i (_+_ i g h) (Group.0G (G i))
+prependEqual i g nonzero .i refl (ofEmpty .i h nonZero) | inl sumZero = empty
+prependEqual i g nonzero .i refl (ofEmpty .i h nonZero) | inr sumNotZero = nonempty i (ofEmpty i (_+_ i g h) sumNotZero)
+prependEqual i g nonzero .i refl (prependLetter .i h nonZero x x₁) with decidableGroups i (_+_ i g h) (Group.0G (G i))
+prependEqual i g nonzero .i refl (prependLetter .i h nonZero {j} x x₁) | inl sumZero = nonempty j x
+prependEqual i g nonzero .i refl (prependLetter .i h nonZero x pr) | inr sumNotZero = nonempty i (prependLetter i (_+_ i g h) sumNotZero x pr)
+
 prepend : (i : I) → (g : A i) → .(nonZero : (Setoid._∼_ (S i) g (Group.0G (G i))) → False) → ReducedSequence → ReducedSequence
 prepend i g nonzero empty = nonempty i (ofEmpty i g nonzero)
 prepend i g nonzero (nonempty j x) with decidableIndex i j
-prepend i g nonzero (nonempty .i (ofEmpty .i h nonZero)) | inl refl with decidableGroups i (_+_ i g h) (Group.0G (G i))
-prepend i g nonzero (nonempty .i (ofEmpty .i h nonZero)) | inl refl | inl sumZero = empty
-prepend i g nonzero (nonempty .i (ofEmpty .i h nonZero)) | inl refl | inr sumNotZero = nonempty i (ofEmpty i (_+_ i g h) sumNotZero)
-prepend i g nonzero (nonempty .i (prependLetter .i h nonZero x x₁)) | inl refl with decidableGroups i (_+_ i g h) (Group.0G (G i))
-prepend i g nonzero (nonempty .i (prependLetter .i h nonZero {j} x x₁)) | inl refl | inl sumZero = nonempty j x
-prepend i g nonzero (nonempty .i (prependLetter .i h nonZero x pr)) | inl refl | inr sumNotZero = nonempty i (prependLetter i (_+_ i g h) sumNotZero x pr)
+prepend i g nonzero (nonempty j w) | inl i=j = prependEqual i g nonzero j i=j w
 prepend i g nonzero (nonempty j x) | inr i!=j = nonempty i (prependLetter i g nonzero x i!=j)
 
 plus' : {j : _} → (ReducedSequenceBeginningWith j) → ReducedSequence → ReducedSequence

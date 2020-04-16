@@ -39,11 +39,11 @@ cauchyWellDefined {s1} {s2} prop c e 0<e with c e 0<e
 record CauchyCompletion : Set (m ⊔ o) where
   field
     elts : Sequence A
-    converges : cauchy elts
+    converges : (cauchy elts)
 
 injection : A → CauchyCompletion
 CauchyCompletion.elts (injection a) = constSequence a
-CauchyCompletion.converges (injection a) = λ ε 0<e → 0 , λ {m} {n} _ _ → <WellDefined (symmetric (identityOfIndiscernablesRight _∼_ (absWellDefined (index (constSequence a) m + inverse (index (constSequence a) n)) 0R (t m n)) absZero)) reflexive 0<e
+CauchyCompletion.converges (injection a) = (λ ε 0<e → 0 , λ {m} {n} _ _ → <WellDefined (symmetric (identityOfIndiscernablesRight _∼_ (absWellDefined (index (constSequence a) m + inverse (index (constSequence a) n)) 0R (t m n)) absZero)) reflexive 0<e)
   where
     t : (m n : ℕ) → index (constSequence a) m + inverse (index (constSequence a) n) ∼ 0R
     t m n = identityOfIndiscernablesLeft _∼_ (identityOfIndiscernablesLeft _∼_ invRight (equalityCommutative (applyEquality (λ i → a + inverse i) (indexAndConst a n)))) (applyEquality (_+ inverse (index (constSequence a) n)) (equalityCommutative (indexAndConst a m)))

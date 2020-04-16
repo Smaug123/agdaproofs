@@ -9,6 +9,7 @@ infix 15 _+N_
 _+N_ : ℕ → ℕ → ℕ
 zero +N y = y
 succ x +N y = succ (x +N y)
+{-# BUILTIN NATPLUS _+N_ #-}
 
 addZeroRight : (x : ℕ) → (x +N zero) ≡ x
 addZeroRight zero = refl
