@@ -22,7 +22,7 @@ module Fields.CauchyCompletion.Archimedean {m n o : _} {A : Set m} {S : Setoid {
 open import Fields.CauchyCompletion.Group order F
 open import Fields.CauchyCompletion.Ring order F
 open import Fields.CauchyCompletion.Comparison order F
-open import Fields.CauchyCompletion.PartiallyOrderedRing order F
+--open import Fields.CauchyCompletion.PartiallyOrderedRing order F
 
-CArchimedean : Archimedean (toGroup CRing CpOrderedRing)
-CArchimedean = ?
+--CArchimedean : Archimedean (toGroup CRing CpOrderedRing)
+--CArchimedean = ?
