@@ -7,7 +7,7 @@ open import Rings.Definition
 open import Rings.Orders.Partial.Definition
 open import Sets.EquivalenceRelations
 open import Sequences
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
 open import Functions
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring

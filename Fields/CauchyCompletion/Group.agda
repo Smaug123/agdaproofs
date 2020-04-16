@@ -10,7 +10,8 @@ open import Groups.Homomorphisms.Definition
 open import Fields.Fields
 open import Sets.EquivalenceRelations
 open import Sequences
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Functions
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
@@ -28,13 +29,14 @@ open Group (Ring.additiveGroup R)
 open Ring R
 
 open import Rings.Orders.Total.Lemmas order
+open import Rings.Orders.Total.AbsoluteValue order
 open import Fields.CauchyCompletion.Definition order F
 open import Fields.CauchyCompletion.Addition order F
 open import Fields.CauchyCompletion.Setoid order F
 
 abstract
-  +CCommutative : {a b : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid (a +C b) (b +C a)
-  +CCommutative {a} {b} ε 0<e = 0 , ans
+  +CCommutative : (a b : CauchyCompletion) → Setoid._∼_ cauchyCompletionSetoid (a +C b) (b +C a)
+  +CCommutative a b ε 0<e = 0 , ans
     where
       foo : {x y : A} → (x + y) + inverse (y + x) ∼ 0G
       foo = Equivalence.transitive eq (+WellDefined (Equivalence.reflexive eq) (inverseWellDefined additiveGroup groupIsAbelian)) invRight
@@ -58,13 +60,13 @@ private
     additionPreservedLeft {a} {b} {c} a=b = additionWellDefinedLeft (injection a) (injection b) c (injectionPreservesSetoid a b a=b)
 
     additionPreservedRight : {a b : A} {c : CauchyCompletion} → (a ∼ b) → Setoid._∼_ cauchyCompletionSetoid (c +C injection a) (c +C injection b)
-    additionPreservedRight {a} {b} {c} a=b = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {c +C injection a} {injection a +C c} {c +C injection b} (+CCommutative {c} {injection a}) (Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {injection a +C c} {injection b +C c} {c +C injection b} (additionPreservedLeft {a} {b} {c} a=b) (+CCommutative {injection b} {c}))
+    additionPreservedRight {a} {b} {c} a=b = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {c +C injection a} {injection a +C c} {c +C injection b} (+CCommutative c (injection a)) (Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {injection a +C c} {injection b +C c} {c +C injection b} (additionPreservedLeft {a} {b} {c} a=b) (+CCommutative (injection b) c))
 
     additionPreserved : {a b c d : A} → (a ∼ b) → (c ∼ d) → Setoid._∼_ cauchyCompletionSetoid (injection a +C injection c) (injection b +C injection d)
     additionPreserved {a} {b} {c} {d} a=b c=d = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {injection a +C injection c} {injection a +C injection d} {injection b +C injection d} (additionPreservedRight {c} {d} {injection a} c=d) (additionPreservedLeft {a} {b} {injection d} a=b)
 
     additionWellDefinedRight : (a b c : CauchyCompletion) → Setoid._∼_ cauchyCompletionSetoid b c → Setoid._∼_ cauchyCompletionSetoid (a +C b) (a +C c)
-    additionWellDefinedRight a b c b=c = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {a +C b} {b +C a} {a +C c} (+CCommutative {a} {b}) (Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {b +C a} {c +C a} {a +C c} (additionWellDefinedLeft b c a b=c) (+CCommutative {c} {a}))
+    additionWellDefinedRight a b c b=c = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {a +C b} {b +C a} {a +C c} (+CCommutative a b) (Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {b +C a} {c +C a} {a +C c} (additionWellDefinedLeft b c a b=c) (+CCommutative c a))
 
     additionWellDefined : {a b c d : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid a b → Setoid._∼_ cauchyCompletionSetoid c d → Setoid._∼_ cauchyCompletionSetoid (a +C c) (b +C d)
     additionWellDefined {a} {b} {c} {d} a=b c=d = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {a +C c} {a +C d} {b +C d} (additionWellDefinedRight a c d c=d) (additionWellDefinedLeft a b d a=b)
@@ -88,7 +90,7 @@ private
         ans {m} 0<m rewrite indexAndApply (CauchyCompletion.elts (a +C injection 0G)) (map inverse (CauchyCompletion.elts a)) _+_ {m} | indexAndApply (CauchyCompletion.elts a) (constSequence 0G) _+_ {m} | equalityCommutative (mapAndIndex (CauchyCompletion.elts a) inverse m) | indexAndConst 0G m = <WellDefined (Equivalence.symmetric eq (Equivalence.transitive eq (absWellDefined _ _ (Equivalence.transitive eq (+WellDefined (identRight) (Equivalence.reflexive eq)) (invRight))) (identityOfIndiscernablesRight _∼_ (Equivalence.reflexive eq) absZero))) (Equivalence.reflexive eq) 0<e
 
     CidentLeft : {a : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid (injection 0G +C a) a
-    CidentLeft {a} = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {injection 0G +C a} {a +C injection 0G} {a} (+CCommutative {injection 0G} {a}) (CidentRight {a})
+    CidentLeft {a} = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {injection 0G +C a} {a +C injection 0G} {a} (+CCommutative (injection 0G) a) (CidentRight {a})
 
     CinvRight : {a : CauchyCompletion} → Setoid._∼_ cauchyCompletionSetoid (a +C (-C a)) (injection 0G)
     CinvRight {a} ε 0<e = 0 , ans
@@ -103,7 +105,7 @@ Group.inverse CGroup = -C_
 Group.+Associative CGroup {a} {b} {c} = Cassoc {a} {b} {c}
 Group.identRight CGroup {a} = CidentRight {a}
 Group.identLeft CGroup {a} = CidentLeft {a}
-Group.invLeft CGroup {a} = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {(-C a) +C a} {a +C (-C a)} {injection 0G} (+CCommutative { -C a} {a}) (CinvRight {a})
+Group.invLeft CGroup {a} = Equivalence.transitive (Setoid.eq cauchyCompletionSetoid) {(-C a) +C a} {a +C (-C a)} {injection 0G} (+CCommutative (-C a) a) (CinvRight {a})
 Group.invRight CGroup {a} = CinvRight {a}
 
 CInjectionGroupHom : GroupHom (Ring.additiveGroup R) CGroup injection

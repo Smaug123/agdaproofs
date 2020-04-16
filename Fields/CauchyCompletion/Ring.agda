@@ -9,7 +9,8 @@ open import Groups.Lemmas
 open import Fields.Fields
 open import Sets.EquivalenceRelations
 open import Sequences
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Functions
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
@@ -27,6 +28,7 @@ open Field F
 open Group (Ring.additiveGroup R)
 
 open import Rings.Orders.Total.Lemmas order
+open import Rings.Orders.Total.AbsoluteValue order
 open import Fields.CauchyCompletion.Definition order F
 open import Fields.CauchyCompletion.Multiplication order F
 open import Fields.CauchyCompletion.Addition order F
@@ -57,7 +59,7 @@ CRing : Ring cauchyCompletionSetoid _+C_ _*C_
 Ring.additiveGroup CRing = CGroup
 Ring.*WellDefined CRing {a} {b} {c} {d} r=t s=u = multiplicationWellDefined {a} {c} {b} {d} r=t s=u
 Ring.1R CRing = injection (Ring.1R R)
-Ring.groupIsAbelian CRing {a} {b} = +CCommutative {a} {b}
+Ring.groupIsAbelian CRing {a} {b} = +CCommutative a b
 Ring.*Associative CRing {a} {b} {c} = c*Assoc {a} {b} {c}
 Ring.*Commutative CRing {a} {b} = *CCommutative {a} {b}
 Ring.*DistributesOver+ CRing {a} {b} {c} = *CDistribute {a} {b} {c}

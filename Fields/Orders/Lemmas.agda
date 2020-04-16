@@ -8,7 +8,8 @@ open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
 open import Rings.Lemmas
 open import Setoids.Setoids
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Rings.IntegralDomains.Definition
 open import Functions
 open import Sets.EquivalenceRelations
@@ -121,6 +122,6 @@ abstract
   IntegralDomain.nontrivial orderedFieldIsIntDom pr = Field.nontrivial F (Equivalence.symmetric (Setoid.eq S) pr)
 
   charZero : (n : ℕ) → (0R ∼ (fromN (succ n))) → False
-  charZero n 0=sn = irreflexive (<WellDefined 0=sn reflexive (fromNPreservesOrder nontrivial (succIsPositive n)))
+  charZero n 0=sn = irreflexive (<WellDefined 0=sn reflexive (fromNPreservesOrder (0<1 (Field.nontrivial F)) (succIsPositive n)))
   charZero' : (n : ℕ) → ((fromN (succ n)) ∼ 0R) → False
   charZero' n pr = charZero n (symmetric pr)

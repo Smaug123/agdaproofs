@@ -4,7 +4,7 @@ open import Rings.Definition
 open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
 open import Setoids.Setoids
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
 open import Functions
 open import Fields.Fields
 

@@ -4,7 +4,8 @@ open import Rings.Definition
 open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
 open import Setoids.Setoids
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Functions
 open import Fields.Fields
 open import Fields.Orders.Total.Definition
@@ -38,7 +39,7 @@ charNotN : (n : ℕ) → fromN (succ n) ∼ 0R → False
 charNotN n pr = irreflexive (<WellDefined reflexive pr t)
   where
     t : 0R < fromN (succ n)
-    t = fromNPreservesOrder (Field.nontrivial F) (succIsPositive n)
+    t = fromNPreservesOrder (0<1 (Field.nontrivial F)) (succIsPositive n)
 
 charNot2 : Setoid._∼_ S ((Ring.1R R) + (Ring.1R R)) (Ring.0R R) → False
 charNot2 pr = charNotN 1 (transitive (transitive +Associative identRight) pr)

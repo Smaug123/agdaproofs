@@ -16,13 +16,13 @@ open import Rings.Orders.Total.Definition
 open import Fields.Fields
 open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
-open import Setoids.Orders
 open import Functions
 open import Sets.EquivalenceRelations
 open import Numbers.Rationals.Definition
 open import Semirings.Definition
 open import Orders.Total.Definition
 open import Orders.WellFounded.Induction
+open import Setoids.Orders.Total.Definition
 
 module Numbers.Rationals.Lemmas where
 
@@ -30,6 +30,7 @@ open import Semirings.Lemmas ℕSemiring
 
 open PartiallyOrderedRing ℤPOrderedRing
 open import Rings.Orders.Total.Lemmas ℤOrderedRing
+open import Rings.Orders.Total.AbsoluteValue ℤOrderedRing
 open SetoidTotalOrder (totalOrderToSetoidTotalOrder ℤOrder)
 
 evenOrOdd : (a : ℕ) → (Sg ℕ (λ i → i *N 2 ≡ a)) || (Sg ℕ (λ i → succ (i *N 2) ≡ a))

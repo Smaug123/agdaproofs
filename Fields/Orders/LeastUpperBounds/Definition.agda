@@ -5,7 +5,7 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
 open import Setoids.Subset
 open import Setoids.Setoids
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
 open import Fields.Fields
 open import Rings.Orders.Total.Definition
 open import Rings.Orders.Total.Lemmas

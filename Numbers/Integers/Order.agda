@@ -7,9 +7,9 @@ open import Numbers.Integers.RingStructure.Ring
 open import Semirings.Definition
 open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
-open import Setoids.Orders
 open import Orders.Total.Definition
 open import Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 
 module Numbers.Integers.Order where
 

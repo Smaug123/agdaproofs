@@ -25,10 +25,10 @@ open Setoid S
 open Equivalence eq
 open import Rings.Lemmas R
 open import Groups.Lemmas additiveGroup
+open import Groups.Cyclic.Definition additiveGroup
 
 fromN : ℕ → A
-fromN zero = 0R
-fromN (succ n) = 1R + fromN n
+fromN = positiveEltPower 1R
 
 fromNPreserves+ : (a b : ℕ) → fromN (a +N b) ∼ (fromN a) + (fromN b)
 fromNPreserves+ zero b = symmetric identLeft

@@ -5,7 +5,8 @@ open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
 open import Setoids.Subset
 open import Setoids.Setoids
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Sets.EquivalenceRelations
 open import Rings.Orders.Total.Definition
 open import Rings.Orders.Partial.Definition
@@ -27,6 +28,7 @@ open TotallyOrderedField oF
 open TotallyOrderedRing oRing
 open PartiallyOrderedRing pRing
 open import Rings.Orders.Total.Lemmas oRing
+open import Rings.Orders.Total.AbsoluteValue oRing
 open import Rings.Orders.Partial.Lemmas pRing
 open SetoidTotalOrder total
 open SetoidPartialOrder pOrder

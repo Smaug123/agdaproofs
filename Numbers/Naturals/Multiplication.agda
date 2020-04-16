@@ -10,6 +10,7 @@ infix 25 _*N_
 _*N_ : ℕ → ℕ → ℕ
 zero *N y = zero
 (succ x) *N y = y +N (x *N y)
+{-# BUILTIN NATTIMES _*N_ #-}
 
 productZeroIsZeroLeft : (a : ℕ) → (zero *N a ≡ zero)
 productZeroIsZeroLeft a = refl

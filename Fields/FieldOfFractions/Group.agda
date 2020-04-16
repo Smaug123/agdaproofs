@@ -7,7 +7,6 @@ open import Rings.IntegralDomains.Definition
 open import Setoids.Setoids
 open import Sets.EquivalenceRelations
 
-
 module Fields.FieldOfFractions.Group {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} (I : IntegralDomain R) where
 
 open import Fields.FieldOfFractions.Setoid I
