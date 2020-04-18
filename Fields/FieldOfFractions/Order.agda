@@ -18,6 +18,7 @@ module Fields.FieldOfFractions.Order {a b c : _} {A : Set a} {S : Setoid {a} {b}
 open import Fields.FieldOfFractions.Setoid I
 open import Fields.FieldOfFractions.Ring I
 open import Fields.FieldOfFractions.Addition I
+open import Fields.FieldOfFractions.Multiplication I
 open import Fields.FieldOfFractions.Lemmas I
 
 open Ring R
@@ -36,31 +37,6 @@ fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero 
 fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) ,, inl (inr denomB<0) = (numA * denomB) < (numB * denomA)
 fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) ,, inr 0=denomB = exFalso (denomB!=0 (symmetric 0=denomB))
 fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inr 0=denomA ,, _ = exFalso (denomA!=0 (symmetric 0=denomA))
-
-{-
-fieldOfFractionsComparison : Rel fieldOfFractionsSet
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) with totality (Ring.0R R) denomA
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) with totality (Ring.0R R) denomB
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) | inl (inl 0<denomB) = (numA * denomB) < (numB * denomA)
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) | inl (inr denomB<0) = (numB * denomA) < (numA * denomB)
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) | inr 0=denomB = exFalso (denomB!=0 (symmetric 0=denomB))
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) with totality (Ring.0R R) denomB
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) | inl (inl 0<denomB) = (numB * denomA) < (numA * denomB)
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) | inl (inr denomB<0) = (numA * denomB) < (numB * denomA)
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) | inr 0=denomB = exFalso (denomB!=0 (symmetric 0=denomB))
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inr 0=denomA = exFalso (denomA!=0 (symmetric 0=denomA))
-fieldOfFractionsComparison : Rel fieldOfFractionsSet
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) with totality (Ring.0R R) denomA
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) with totality (Ring.0R R) denomB
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) | inl (inl 0<denomB) = (numA * denomB) < (numB * denomA)
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) | inl (inr denomB<0) = (numB * denomA) < (numA * denomB)
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) | inr 0=denomB = exFalso (denomB!=0 (symmetric 0=denomB))
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) with totality (Ring.0R R) denomB
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) | inl (inl 0<denomB) = (numB * denomA) < (numA * denomB)
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) | inl (inr denomB<0) = (numA * denomB) < (numB * denomA)
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) | inr 0=denomB = exFalso (denomB!=0 (symmetric 0=denomB))
-fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inr 0=denomA = exFalso (denomA!=0 (symmetric 0=denomA))
--}
 
 private
   abstract
@@ -328,29 +304,23 @@ private
   <orderRespectsAddition (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) a<b (record { num = numC ; denom = denomC ; denomNonzero = denomC!=0 }) | inl (inl 0<dAdC) with totality (Ring.0R R) (denomB * denomC)
   <orderRespectsAddition (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) a<b (record { num = numC ; denom = denomC ; denomNonzero = denomC!=0 }) | inl (inl 0<dAdC) | inl (inl 0<dBdC) with totality (Ring.0R R) denomA
   <orderRespectsAddition (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) a<b (record { num = numC ; denom = denomC ; denomNonzero = denomC!=0 }) | inl (inl 0<dAdC) | inl (inl 0<dBdC) | inl (inl 0<dA) with totality (Ring.0R R) denomB
-  <orderRespectsAddition (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) a<b (record { num = numC ; denom = denomC ; denomNonzero = denomC!=0 }) | inl (inl 0<dAdC) | inl (inl 0<dBdC) | inl (inl 0<dA) | inl (inl 0<dB) = SetoidPartialOrder.<WellDefined pOrder (symmetric *Associative) (symmetric *Associative) (ringCanMultiplyByPositive pRing 0<dC (SetoidPartialOrder.<WellDefined pOrder (transitive (Group.+WellDefined additiveGroup *Commutative *Commutative) (transitive (symmetric *DistributesOver+) *Commutative)) (transitive (Group.+WellDefined additiveGroup *Commutative *Commutative) (transitive (symmetric *DistributesOver+) *Commutative)) ans))
+  <orderRespectsAddition (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) a<b (record { num = numC ; denom = denomC ; denomNonzero = denomC!=0 }) | inl (inl 0<dAdC) | inl (inl 0<dBdC) | inl (inl 0<dA) | inl (inl 0<dB) = SetoidPartialOrder.<WellDefined pOrder (symmetric *Associative) (symmetric *Associative) (ringCanMultiplyByPositive pRing 0<dC (SetoidPartialOrder.<WellDefined pOrder (transitive (Group.+WellDefined additiveGroup *Commutative *Commutative) (transitive (symmetric *DistributesOver+) *Commutative)) (transitive (Group.+WellDefined additiveGroup *Commutative *Commutative) (transitive (symmetric *DistributesOver+) *Commutative)) (SetoidPartialOrder.<WellDefined pOrder reflexive (Group.+WellDefined additiveGroup reflexive (transitive (*WellDefined *Commutative reflexive) (transitive (transitive (symmetric *Associative) (transitive (*WellDefined reflexive *Commutative) *Associative)) (*WellDefined *Commutative reflexive)))) (PartiallyOrderedRing.orderRespectsAddition pRing (SetoidPartialOrder.<WellDefined pOrder (swapLemma) (swapLemma) (ringCanMultiplyByPositive pRing 0<dC a<b)) ((denomA * numC) * denomB)))))
       where
         0<dC : 0R < denomC
         0<dC with totality 0R denomC
         0<dC | inl (inl x) = x
         0<dC | inl (inr dC<0) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder 0<dBdC (SetoidPartialOrder.<WellDefined pOrder reflexive (transitive *Commutative (Ring.timesZero R)) (ringCanMultiplyByNegative pRing dC<0 0<dB))))
         0<dC | inr x = exFalso (denomC!=0 (Equivalence.symmetric (Setoid.eq S) x))
-        p : ((numA * denomC) * denomB) < ((numB * denomC) * denomA)
-        p = SetoidPartialOrder.<WellDefined pOrder (swapLemma) (swapLemma) (ringCanMultiplyByPositive pRing 0<dC a<b)
-        ans : ((((numA * denomC) * denomB) + ((denomA * numC) * denomB))) < ((((numB * denomC) * denomA) + ((denomB * numC) * denomA)))
-        ans = SetoidPartialOrder.<WellDefined pOrder reflexive (Group.+WellDefined additiveGroup reflexive (transitive (*WellDefined *Commutative reflexive) (transitive (transitive (symmetric *Associative) (transitive (*WellDefined reflexive *Commutative) *Associative)) (*WellDefined *Commutative reflexive)))) (PartiallyOrderedRing.orderRespectsAddition pRing p ((denomA * numC) * denomB))
-  <orderRespectsAddition (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) a<b (record { num = numC ; denom = denomC ; denomNonzero = denomC!=0 }) | inl (inl 0<dAdC) | inl (inl 0<dBdC) | inl (inl 0<dA) | inl (inr dB<0) = exFalso bad
+  <orderRespectsAddition (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) a<b (record { num = numC ; denom = denomC ; denomNonzero = denomC!=0 }) | inl (inl 0<dAdC) | inl (inl 0<dBdC) | inl (inl 0<dA) | inl (inr dB<0) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder 0<dAdC (SetoidPartialOrder.<WellDefined pOrder reflexive (transitive *Commutative (Ring.timesZero R)) (ringCanMultiplyByNegative pRing dC<0 0<dA))))
       where
         dC<0 : denomC < 0R
         dC<0 with totality 0R denomC
         ... | inl (inl x) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder 0<dBdC (SetoidPartialOrder.<WellDefined pOrder reflexive (transitive *Commutative (Ring.timesZero R)) (ringCanMultiplyByPositive pRing x dB<0))))
         ... | inl (inr x) = x
         ... | inr x = exFalso (denomC!=0 (Equivalence.symmetric (Setoid.eq S) x))
-        bad : False
-        bad = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder 0<dAdC (SetoidPartialOrder.<WellDefined pOrder reflexive (transitive *Commutative (Ring.timesZero R)) (ringCanMultiplyByNegative pRing dC<0 0<dA)))
   <orderRespectsAddition (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) a<b (record { num = numC ; denom = denomC ; denomNonzero = denomC!=0 }) | inl (inl 0<dAdC) | inl (inl 0<dBdC) | inl (inl 0<dA) | inr x = exFalso (denomB!=0 (Equivalence.symmetric (Setoid.eq S) x))
   <orderRespectsAddition (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) a<b (record { num = numC ; denom = denomC ; denomNonzero = denomC!=0 }) | inl (inl 0<dAdC) | inl (inl 0<dBdC) | inl (inr dA<0) with totality (Ring.0R R) denomB
-  <orderRespectsAddition (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) a<b (record { num = numC ; denom = denomC ; denomNonzero = denomC!=0 }) | inl (inl 0<dAdC) | inl (inl 0<dBdC) | inl (inr dA<0) | inl (inl 0<dB) = exFalso bad
+  <orderRespectsAddition (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) a<b (record { num = numC ; denom = denomC ; denomNonzero = denomC!=0 }) | inl (inl 0<dAdC) | inl (inl 0<dBdC) | inl (inr dA<0) | inl (inl 0<dB) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder 0<dC dC<0))
         where
           0<dC : 0R < denomC
           0<dC with totality 0R denomC
@@ -362,14 +332,13 @@ private
           dC<0 | inl (inl 0<dC) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder 0<dAdC (SetoidPartialOrder.<WellDefined pOrder *Commutative (transitive *Commutative (Ring.timesZero R)) (ringCanMultiplyByNegative pRing dA<0 0<dC))))
           dC<0 | inl (inr x) = x
           dC<0 | inr x = exFalso (denomC!=0 (Equivalence.symmetric (Setoid.eq S) x))
-          bad : False
-          bad = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder 0<dC dC<0)
   <orderRespectsAddition (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) a<b (record { num = numC ; denom = denomC ; denomNonzero = denomC!=0 }) | inl (inl 0<dAdC) | inl (inl 0<dBdC) | inl (inr dA<0) | inl (inr dB<0) = SetoidPartialOrder.<WellDefined pOrder (symmetric *Associative) (symmetric *Associative) (ringCanMultiplyByNegative pRing dC<0 (SetoidPartialOrder.<WellDefined pOrder (transitive (symmetric *DistributesOver+) *Commutative) (transitive (symmetric *DistributesOver+) *Commutative) have''))
       where
         dC<0 : denomC < 0R
         dC<0 = ineqLemma' 0<dAdC dA<0
         have : ((numB * denomA) * denomC) < ((numA * denomB) * denomC)
         have = ringCanMultiplyByNegative pRing dC<0 a<b
+
         have' : (denomA * (numB * denomC)) < (denomB * (numA * denomC))
         have' = SetoidPartialOrder.<WellDefined pOrder (transitive (*WellDefined *Commutative reflexive) (symmetric *Associative)) (transitive (*WellDefined *Commutative reflexive) (symmetric *Associative)) have
         have'' : ((denomA * (numB * denomC)) + (denomA * (denomB * numC))) < ((denomB * (numA * denomC)) + (denomB * (denomA * numC)))
@@ -482,71 +451,37 @@ private
   <orderRespectsAddition (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) a<b (record { num = numC ; denom = denomC ; denomNonzero = denomC!=0 }) | inr (0=dAdC) with IntegralDomain.intDom I (Equivalence.symmetric (Setoid.eq S) 0=dAdC)
   <orderRespectsAddition (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) a<b (record { num = numC ; denom = denomC ; denomNonzero = denomC!=0 }) | inr 0=dAdC | f = exFalso (denomC!=0 (f denomA!=0))
 
+private
+  <RespectsMultiplication : {a b : fieldOfFractionsSet} → fieldOfFractionsComparison (Ring.0R fieldOfFractionsRing) a → fieldOfFractionsComparison (Ring.0R fieldOfFractionsRing) b → fieldOfFractionsComparison (Ring.0R fieldOfFractionsRing) (fieldOfFractionsTimes a b)
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} t u with totality (Ring.0R R) (Ring.1R R)
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) with totality (Ring.0R R) (denomA * denomB)
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) with totality (Ring.0R R) denomB
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inl 0<dB) with totality (Ring.0R R) denomA
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inl 0<dB) | inl (inl 0<dA) = SetoidPartialOrder.<WellDefined pOrder (symmetric (transitive *Commutative (Ring.timesZero R))) (symmetric (transitive *Commutative identIsIdent)) (SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) reflexive (ringCanMultiplyByPositive pRing (SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) (transitive *Commutative identIsIdent) 0<b) (SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) (transitive *Commutative identIsIdent) 0<a)))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inl 0<dB) | inl (inr dA<0) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder 0<dAdB (SetoidPartialOrder.<WellDefined pOrder *Commutative (transitive *Commutative (Ring.timesZero R)) (ringCanMultiplyByNegative pRing dA<0 0<dB))))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inl 0<dB) | inr x = exFalso (denomA!=0 (Equivalence.symmetric (Setoid.eq S) x))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inr dB<0) with totality (Ring.0R R) denomA
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inr dB<0) | inl (inl 0<dA) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder 0<dAdB (SetoidPartialOrder.<WellDefined pOrder reflexive (transitive *Commutative (Ring.timesZero R)) (ringCanMultiplyByNegative pRing dB<0 0<dA))))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inr dB<0) | inl (inr dA<0) = SetoidPartialOrder.<WellDefined pOrder (symmetric (transitive *Commutative (Ring.timesZero R))) (symmetric (transitive *Commutative identIsIdent)) (SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) *Commutative (ringCanMultiplyByNegative pRing (SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative identIsIdent) (transitive *Commutative (Ring.timesZero R)) 0<a) (SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative identIsIdent) (transitive *Commutative (Ring.timesZero R)) 0<b)))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inr dB<0) | inr x = exFalso (denomA!=0 (Equivalence.symmetric (Setoid.eq S) x))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inr x = exFalso (denomB!=0 (Equivalence.symmetric (Setoid.eq S) x))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) with totality (Ring.0R R) denomB
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inl 0<denomB) with totality (Ring.0R R) denomA
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inl 0<denomB) | inl (inl 0<denomA) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder (PartiallyOrderedRing.orderRespectsMultiplication pRing 0<denomA 0<denomB) dAdB<0))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inl 0<denomB) | inl (inr denomA<0) = SetoidPartialOrder.<WellDefined pOrder (symmetric (transitive *Commutative identIsIdent)) (symmetric (transitive *Commutative (Ring.timesZero R))) (SetoidPartialOrder.<WellDefined pOrder *Commutative (transitive *Commutative (Ring.timesZero R)) (ringCanMultiplyByNegative pRing (SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative identIsIdent) (transitive *Commutative (Ring.timesZero R)) 0<a) (SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) (transitive *Commutative identIsIdent) 0<b)))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inl 0<denomB) | inr x = exFalso (denomA!=0 (Equivalence.symmetric (Setoid.eq S) x))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inr denomB<0) with totality (Ring.0R R) denomA
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inr denomB<0) | inl (inl 0<denomA) = SetoidPartialOrder.<WellDefined pOrder (symmetric (transitive *Commutative identIsIdent)) (symmetric (transitive *Commutative (Ring.timesZero R))) (SetoidPartialOrder.<WellDefined pOrder reflexive (transitive *Commutative (Ring.timesZero R)) (ringCanMultiplyByNegative pRing (SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative identIsIdent) (transitive *Commutative (Ring.timesZero R)) 0<b) (SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) (transitive *Commutative identIsIdent) 0<a)))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inr denomB<0) | inl (inr denomA<0) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder dAdB<0 (SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) reflexive (ringCanMultiplyByNegative pRing denomB<0 denomA<0))))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inr denomB<0) | inr x = exFalso (denomA!=0 (Equivalence.symmetric (Setoid.eq S) x))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inr x = exFalso (denomB!=0 (Equivalence.symmetric (Setoid.eq S) x))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inr 0=dAdB = exFalso (denomB!=0 (IntegralDomain.intDom I (Equivalence.symmetric (Setoid.eq S) 0=dAdB) denomA!=0))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inr 1<0) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder 1<0 (SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) identIsIdent (ringCanMultiplyByNegative pRing 1<0 1<0))))
+  <RespectsMultiplication {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inr x = exFalso (IntegralDomain.nontrivial I (Equivalence.symmetric (Setoid.eq S) x))
+
 fieldOfFractionsPOrderedRing : PartiallyOrderedRing fieldOfFractionsRing (SetoidTotalOrder.partial fieldOfFractionsTotalOrder)
 PartiallyOrderedRing.orderRespectsAddition fieldOfFractionsPOrderedRing {a} {b} a<b c = <orderRespectsAddition a b a<b c
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} t u with totality (Ring.0R R) (Ring.1R R)
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) with totality (Ring.0R R) (denomA * denomB)
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) with totality (Ring.0R R) denomB
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inl 0<dB) with totality (Ring.0R R) denomA
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inl 0<dB) | inl (inl 0<dA) = SetoidPartialOrder.<WellDefined pOrder (symmetric (transitive *Commutative (Ring.timesZero R))) (symmetric (transitive *Commutative identIsIdent)) 0<nAnB
-  where
-    0<nA : 0R < numA
-    0<nA = SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) (transitive *Commutative identIsIdent) 0<a
-    0<nB : 0R < numB
-    0<nB = SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) (transitive *Commutative identIsIdent) 0<b
-    0<nAnB : 0R < (numA * numB)
-    0<nAnB = SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) reflexive (ringCanMultiplyByPositive pRing 0<nB 0<nA)
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inl 0<dB) | inl (inr dA<0) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder 0<dAdB (SetoidPartialOrder.<WellDefined pOrder *Commutative (transitive *Commutative (Ring.timesZero R)) (ringCanMultiplyByNegative pRing dA<0 0<dB))))
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inl 0<dB) | inr x = exFalso (denomA!=0 (Equivalence.symmetric (Setoid.eq S) x))
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inr dB<0) with totality (Ring.0R R) denomA
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inr dB<0) | inl (inl 0<dA) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder 0<dAdB (SetoidPartialOrder.<WellDefined pOrder reflexive (transitive *Commutative (Ring.timesZero R)) (ringCanMultiplyByNegative pRing dB<0 0<dA))))
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inr dB<0) | inl (inr dA<0) = SetoidPartialOrder.<WellDefined pOrder (symmetric (transitive *Commutative (Ring.timesZero R))) (symmetric (transitive *Commutative identIsIdent)) 0<nAnB
-  where
-    nB<0 : numB < 0R
-    nB<0 = SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative identIsIdent) (transitive *Commutative (Ring.timesZero R)) 0<b
-    nA<0 : numA < 0R
-    nA<0 = SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative identIsIdent) (transitive *Commutative (Ring.timesZero R)) 0<a
-    0<nAnB : 0R < (numA * numB)
-    0<nAnB = SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) *Commutative (ringCanMultiplyByNegative pRing nA<0 nB<0)
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inl (inr dB<0) | inr x = exFalso (denomA!=0 (Equivalence.symmetric (Setoid.eq S) x))
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inl 0<dAdB) | inr x = exFalso (denomB!=0 (Equivalence.symmetric (Setoid.eq S) x))
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) with totality (Ring.0R R) denomB
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inl 0<denomB) with totality (Ring.0R R) denomA
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inl 0<denomB) | inl (inl 0<denomA) = exFalso f
-  where
-    f : False
-    f with PartiallyOrderedRing.orderRespectsMultiplication pRing 0<denomA 0<denomB
-    ... | bl = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder bl dAdB<0)
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inl 0<denomB) | inl (inr denomA<0) = SetoidPartialOrder.<WellDefined pOrder (symmetric (transitive *Commutative identIsIdent)) (symmetric (transitive *Commutative (Ring.timesZero R))) ans
-  where
-    0<nB : 0R < numB
-    0<nB = SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) (transitive *Commutative identIsIdent) 0<b
-    nA<0 : numA < 0R
-    nA<0 = SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative identIsIdent) (transitive *Commutative (Ring.timesZero R)) 0<a
-    ans : (numA * numB) < 0R
-    ans = SetoidPartialOrder.<WellDefined pOrder *Commutative (transitive *Commutative (Ring.timesZero R)) (ringCanMultiplyByNegative pRing nA<0 0<nB)
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inl 0<denomB) | inr x = exFalso (denomA!=0 (Equivalence.symmetric (Setoid.eq S) x))
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inr denomB<0) with totality (Ring.0R R) denomA
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inr denomB<0) | inl (inl 0<denomA) = SetoidPartialOrder.<WellDefined pOrder (symmetric (transitive *Commutative identIsIdent)) (symmetric (transitive *Commutative (Ring.timesZero R))) nAnB<0
-  where
-    nB<0 : numB < 0R
-    nB<0 = SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative identIsIdent) (transitive *Commutative (Ring.timesZero R)) 0<b
-    0<nA : 0R < numA
-    0<nA = SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) (transitive *Commutative identIsIdent) 0<a
-    nAnB<0 : (numA * numB) < 0R
-    nAnB<0 = SetoidPartialOrder.<WellDefined pOrder reflexive (transitive *Commutative (Ring.timesZero R)) (ringCanMultiplyByNegative pRing nB<0 0<nA)
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inr denomB<0) | inl (inr denomA<0) = exFalso f
-  where
-    h : 0R < (denomA * denomB)
-    h = SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) reflexive (ringCanMultiplyByNegative pRing denomB<0 denomA<0)
-    f : False
-    f = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder dAdB<0 h)
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inl (inr denomB<0) | inr x = exFalso (denomA!=0 (Equivalence.symmetric (Setoid.eq S) x))
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inl (inr dAdB<0) | inr x = exFalso (denomB!=0 (Equivalence.symmetric (Setoid.eq S) x))
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inl 0<1) | inr 0=dAdB with IntegralDomain.intDom I (Equivalence.symmetric (Setoid.eq S) 0=dAdB)
-... | f = exFalso (denomB!=0 (f denomA!=0))
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inl (inr 1<0) = exFalso (SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<Transitive pOrder 1<0 (SetoidPartialOrder.<WellDefined pOrder (transitive *Commutative (Ring.timesZero R)) identIsIdent (ringCanMultiplyByNegative pRing 1<0 1<0))))
-PartiallyOrderedRing.orderRespectsMultiplication (fieldOfFractionsPOrderedRing) {record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }} {record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }} 0<a 0<b | inr x = exFalso (IntegralDomain.nontrivial I (Equivalence.symmetric (Setoid.eq S) x))
+PartiallyOrderedRing.orderRespectsMultiplication fieldOfFractionsPOrderedRing {a} {b} 0<a 0<b = <RespectsMultiplication {a} {b} 0<a 0<b
 
 fieldOfFractionsOrderedRing : TotallyOrderedRing fieldOfFractionsPOrderedRing
 TotallyOrderedRing.total fieldOfFractionsOrderedRing = fieldOfFractionsTotalOrder
