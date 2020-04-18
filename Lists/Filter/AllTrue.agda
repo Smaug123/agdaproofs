@@ -4,6 +4,7 @@ open import LogicalFormulae
 open import Functions
 open import Lists.Definition
 open import Lists.Monad
+open import Boolean.Definition
 
 module Lists.Filter.AllTrue where
 

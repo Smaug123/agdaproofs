@@ -1,5 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
+open import Boolean.Definition
 open import Sets.FinSet.Definition
 open import LogicalFormulae
 open import Groups.Abelian.Definition

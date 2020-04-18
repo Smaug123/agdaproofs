@@ -2,6 +2,7 @@
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_; Setω)
 
+open import Boolean.Definition
 open import Setoids.Setoids
 open import Setoids.Subset
 open import Setoids.Functions.Definition

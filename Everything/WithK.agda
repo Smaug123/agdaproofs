@@ -1,4 +1,4 @@
-{-# OPTIONS --warning=error --safe --guardedness #-}
+{-# OPTIONS --warning=error --safe #-}
 
 open import Everything.Safe
 

@@ -13,13 +13,11 @@ module Fields.FieldOfFractions.Addition {a b : _} {A : Set a} {S : Setoid {a} {b
 open import Fields.FieldOfFractions.Setoid I
 
 fieldOfFractionsPlus : fieldOfFractionsSet → fieldOfFractionsSet → fieldOfFractionsSet
-fieldOfFractionsPlus (record { num = a ; denom = b ; denomNonzero = b!=0 }) (record { num = c ; denom = d ; denomNonzero = d!=0 }) = record { num = ((a * d) + (b * c)) ; denom = b * d ; denomNonzero = ans }
-  where
-    open Setoid S
-    open Ring R
-    ans : ((b * d) ∼ Ring.0R R) → False
-    ans pr with IntegralDomain.intDom I pr
-    ans pr | f = exFalso (d!=0 (f b!=0))
+fieldOfFractionsSet.num (fieldOfFractionsPlus (record { num = a ; denom = b ; denomNonzero = b!=0 }) (record { num = c ; denom = d ; denomNonzero = d!=0 })) = (a * d) + (b * c)
+fieldOfFractionsSet.denom (fieldOfFractionsPlus (record { num = a ; denom = b ; denomNonzero = b!=0 }) (record { num = c ; denom = d ; denomNonzero = d!=0 })) = b * d
+fieldOfFractionsSet.denomNonzero (fieldOfFractionsPlus (record { num = a ; denom = b ; denomNonzero = b!=0 }) (record { num = c ; denom = d ; denomNonzero = d!=0 })) = λ pr → exFalso (d!=0 (IntegralDomain.intDom I pr b!=0))
+
+--record { num = ((a * d) + (b * c)) ; denom = b * d ; denomNonzero = λ pr → exFalso (d!=0 (IntegralDomain.intDom I pr b!=0)) }
 
 plusWellDefined : {a b c d : fieldOfFractionsSet} → (Setoid._∼_ fieldOfFractionsSetoid a c) → (Setoid._∼_ fieldOfFractionsSetoid b d) → Setoid._∼_ fieldOfFractionsSetoid (fieldOfFractionsPlus a b) (fieldOfFractionsPlus c d)
 plusWellDefined {record { num = a ; denom = b ; denomNonzero = b!=0 }} {record { num = c ; denom = d ; denomNonzero = d!=0 }} {record { num = e ; denom = f ; denomNonzero = f!=0 }} {record { num = g ; denom = h ; denomNonzero = h!=0 }} af=be ch=dg = need

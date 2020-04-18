@@ -17,7 +17,7 @@ open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Fields.Orders.Total.Archimedean
 
-module Fields.CauchyCompletion.Archimedean {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) (arch : ArchimedeanField {F = F} record { oRing = order }) where
+module Fields.CauchyCompletion.Archimedean {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {m} {o} A} {pOrder : SetoidPartialOrder S _<_} {R : Ring S _+_ _*_} {pRing : PartiallyOrderedRing R pOrder} (order : TotallyOrderedRing pRing) (F : Field R) (arch : ArchimedeanField {F = F} (record { oRing = pRing })) where
 
 open import Fields.CauchyCompletion.Group order F
 open import Fields.CauchyCompletion.Ring order F

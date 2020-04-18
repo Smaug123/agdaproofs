@@ -6,6 +6,7 @@ open import Logic.PropositionalLogic
 open import Functions
 open import Numbers.Naturals.Naturals
 open import Vectors
+open import Boolean.Definition
 
 module Logic.PropositionalAxiomsTautology where
 

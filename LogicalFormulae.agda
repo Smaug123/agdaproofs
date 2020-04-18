@@ -22,13 +22,6 @@ data _||_ {a b} (A : Set a) (B : Set b) : Set (a ⊔ b) where
   inl : A → A || B
   inr : B → A || B
 
-data Bool : Set where
-  BoolTrue : Bool
-  BoolFalse : Bool
-{-# BUILTIN BOOL  Bool  #-}
-{-# BUILTIN TRUE  BoolTrue  #-}
-{-# BUILTIN FALSE BoolFalse #-}
-
 infix 15 _&&_
 record _&&_ {a b} (A : Set a) (B : Set b) : Set (a ⊔ b) where
   constructor _,,_
@@ -93,22 +86,6 @@ lemConstructive (inr notP) = λ negnegP → exFalso (negnegP notP)
 
 lemConverse : {n : _} → {p : Set n} → p → ((p → False) → False)
 lemConverse p = λ notP → notP p
-
-if_then_else_ : {a : _} → {A : Set a} → Bool → A → A → A
-if BoolTrue then tr else fls = tr
-if BoolFalse then tr else fls = fls
-
-not : Bool → Bool
-not BoolTrue = BoolFalse
-not BoolFalse = BoolTrue
-
-boolAnd : Bool → Bool → Bool
-boolAnd BoolTrue y = y
-boolAnd BoolFalse y = BoolFalse
-
-boolOr : Bool → Bool → Bool
-boolOr BoolTrue y = BoolTrue
-boolOr BoolFalse y = y
 
 typeCast : {a : _} {A : Set a} {B : Set a} (el : A) (pr : A ≡ B) → B
 typeCast {a} {A} {.A} elt refl = elt

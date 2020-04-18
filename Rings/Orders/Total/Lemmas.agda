@@ -185,6 +185,9 @@ reciprocalPositive a 1/a 0<a ab=1 with totality 0G 1/a
 ... | inl (inr x) = exFalso (1<0False (<WellDefined (transitive *Commutative ab=1) timesZero' (ringCanMultiplyByPositive 0<a x)))
 ... | inr x = exFalso (anyComparisonImpliesNontrivial 0<a (transitive (transitive (symmetric timesZero) (*WellDefined reflexive x)) ab=1))
 
+reciprocalPositive' : (a b : A) → .(0<a : 0R < a) → (b * a ∼ 1R) → 0R < b
+reciprocalPositive' a 1/a 0<a ab=1 = reciprocalPositive a 1/a 0<a (transitive *Commutative ab=1)
+
 reciprocal<1 : (a b : A) → .(1<a : 1R < a) → (a * b ∼ 1R) → b < 1R
 reciprocal<1 a b 0<a ab=1 with totality b 1R
 ... | inl (inl x) = x

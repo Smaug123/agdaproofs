@@ -10,6 +10,7 @@ open import Sets.FinSet.Definition
 open import Groups.Definition
 open import Groups.SymmetricGroups.Definition
 open import Decidable.Sets
+open import Boolean.Definition
 
 module Groups.FreeGroup.Definition where
 
