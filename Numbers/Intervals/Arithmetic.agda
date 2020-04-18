@@ -12,7 +12,7 @@ open import Fields.Fields
 open import Groups.Definition
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
-open import Functions
+open import Functions.Definition
 
 module Numbers.Intervals.Arithmetic {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} {_<_ : Rel {_} {c} A} {R : Ring S _+_ _*_} {pOrder : SetoidPartialOrder S _<_} (pRing : PartiallyOrderedRing R pOrder) where
 

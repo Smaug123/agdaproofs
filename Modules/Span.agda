@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Functions
+open import Functions.Definition
 open import Groups.Definition
 open import Groups.Abelian.Definition
 open import Setoids.Setoids

@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import Sets.EquivalenceRelations
-open import Functions
+open import Functions.Definition
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_; Setω)
 open import Setoids.Setoids
 open import Groups.Definition

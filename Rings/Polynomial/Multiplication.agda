@@ -3,11 +3,10 @@
 open import LogicalFormulae
 open import Groups.Definition
 open import Setoids.Setoids
-open import Functions
+open import Functions.Definition
 open import Sets.EquivalenceRelations
 open import Rings.Definition
 open import Lists.Lists
-
 
 module Rings.Polynomial.Multiplication {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} (R : Ring S _+_ _*_) where
 

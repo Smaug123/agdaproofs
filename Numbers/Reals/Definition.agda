@@ -5,7 +5,7 @@ open import Setoids.Setoids
 open import LogicalFormulae
 open import Rings.Definition
 open import Numbers.Rationals.Definition
-open import Functions
+open import Functions.Definition
 
 module Numbers.Reals.Definition where
 

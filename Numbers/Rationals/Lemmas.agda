@@ -16,7 +16,7 @@ open import Rings.Orders.Total.Definition
 open import Fields.Fields
 open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
-open import Functions
+open import Functions.Definition
 open import Sets.EquivalenceRelations
 open import Numbers.Rationals.Definition
 open import Semirings.Definition

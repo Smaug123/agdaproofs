@@ -10,7 +10,8 @@ open import Numbers.Naturals.Order.Lemmas
 open import Setoids.Setoids
 open import Sets.FinSet.Definition
 open import Sets.FinSet.Lemmas
-open import Functions
+open import Functions.Definition
+open import Functions.Lemmas
 open import Semirings.Definition
 open import Numbers.Modulo.Definition
 open import Numbers.Modulo.Addition

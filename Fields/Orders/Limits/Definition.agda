@@ -17,7 +17,7 @@ open import Sequences
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Semirings.Definition
-open import Functions
+open import Functions.Definition
 open import Fields.Orders.Total.Definition
 
 module Fields.Orders.Limits.Definition {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {_} {c} A} {R : Ring S _+_ _*_} {pOrder : SetoidPartialOrder S _<_} {F : Field R} {pRing : PartiallyOrderedRing R pOrder} (oF : TotallyOrderedField F pRing) where

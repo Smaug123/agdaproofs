@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Functions
+open import Functions.Definition
 
 module Orders.WellFounded.Definition {a b : _} {A : Set a} (_<_ : Rel {a} {b} A) where
 

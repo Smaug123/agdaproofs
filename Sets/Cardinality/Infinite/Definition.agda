@@ -1,6 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import Functions
+open import Functions.Definition
 open import LogicalFormulae
 open import Numbers.Naturals.Definition
 open import Sets.FinSet.Definition

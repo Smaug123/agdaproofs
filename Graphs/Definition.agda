@@ -2,7 +2,7 @@
 
 open import LogicalFormulae
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Functions
+open import Functions.Definition
 open import Setoids.Setoids
 open import Setoids.Subset
 

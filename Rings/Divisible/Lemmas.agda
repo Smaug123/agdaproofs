@@ -2,7 +2,7 @@
 
 open import LogicalFormulae
 open import Setoids.Setoids
-open import Functions
+open import Functions.Definition
 open import Sets.EquivalenceRelations
 open import Rings.Definition
 

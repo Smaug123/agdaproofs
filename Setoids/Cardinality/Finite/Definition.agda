@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Functions
+open import Functions.Definition
 open import Numbers.Naturals.Definition
 open import Sets.FinSet.Definition
 open import Setoids.Setoids

@@ -11,7 +11,7 @@ open import Setoids.Setoids
 open import Setoids.Orders.Partial.Definition
 open import Setoids.Orders.Total.Definition
 open import Rings.IntegralDomains.Definition
-open import Functions
+open import Functions.Definition
 open import Sets.EquivalenceRelations
 open import Fields.Fields
 open import Fields.Orders.Total.Definition

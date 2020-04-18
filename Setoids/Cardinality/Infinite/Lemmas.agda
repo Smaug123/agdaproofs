@@ -2,7 +2,7 @@
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
-open import Functions
+open import Functions.Definition
 open import Numbers.Naturals.Definition
 open import Numbers.Naturals.Order
 open import Sets.FinSet.Definition

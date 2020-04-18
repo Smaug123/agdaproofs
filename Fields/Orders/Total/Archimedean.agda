@@ -11,7 +11,7 @@ open import Rings.Orders.Total.Definition
 open import Setoids.Orders.Partial.Definition
 open import Setoids.Orders.Total.Definition
 open import Setoids.Setoids
-open import Functions
+open import Functions.Definition
 open import Rings.Definition
 open import Fields.Fields
 open import Fields.Orders.Partial.Definition

@@ -1,6 +1,6 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
-open import Functions
+open import Functions.Definition
 open import Groups.Definition
 open import Groups.Homomorphisms.Definition
 open import Setoids.Setoids
@@ -24,7 +24,6 @@ quotientGroupLemma' {S = S} {T = T} G {H = H} f fx=fy = transferToRight H (trans
     open Group G
     open Setoid T
     open Equivalence eq
-
 
 projectionMapIsGroupHom : GroupHom G (quotientGroupByHom G fHom) id
 GroupHom.groupHom projectionMapIsGroupHom {x} {y} = quotientGroupLemma G fHom (Equivalence.reflexive (Setoid.eq T))

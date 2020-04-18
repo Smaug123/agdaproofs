@@ -11,7 +11,8 @@ open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import LogicalFormulae
 open import Semirings.Definition
-open import Functions
+open import Functions.Definition
+open import Functions.Lemmas
 open import Groups.Isomorphisms.Definition
 open import Groups.FreeGroup.Word
 open import Groups.FreeGroup.Group

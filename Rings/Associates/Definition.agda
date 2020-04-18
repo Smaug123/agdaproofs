@@ -2,11 +2,10 @@
 
 open import LogicalFormulae
 open import Setoids.Setoids
-open import Functions
+open import Functions.Definition
 open import Sets.EquivalenceRelations
 open import Rings.Definition
 open import Rings.IntegralDomains.Definition
-
 
 module Rings.Associates.Definition {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} (intDom : IntegralDomain R) where
 

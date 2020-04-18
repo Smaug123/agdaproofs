@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Functions
+open import Functions.Definition
 open import Lists.Definition
 open import Lists.Fold.Fold
 open import Lists.Length
