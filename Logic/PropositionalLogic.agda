@@ -177,8 +177,14 @@ vecIndexRefl : {a : _} {A : Set a} {n : ℕ} {v1 v2 : Vec A n} → {pos : ℕ} �
 vecIndexRefl {v1 = v1} {.v1} {pos} {pos<N1} {pos<N2} refl = refl
 
 
+{-
 proofRemainsValidOnAddingGivens : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} → {Q : Propositions A} → Proof axiomsSubset givensSubset n → Proof axiomsSubset (adjoinGiven givensSubset Q) n
 pr' : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} → {Q : Propositions A} → (pr : Proof axiomsSubset givensSubset n) → toSteps pr ≡ toSteps (proofRemainsValidOnAddingGivens {Q = Q} pr)
+
+pr' empty = refl
+pr' (nextStep n pr (axiom x)) rewrite pr' pr = refl
+pr' (nextStep n pr (given x)) rewrite pr' pr = refl
+pr' (nextStep n pr (modusPonens implication argument conclusion x)) rewrite pr' pr = refl
 
 proofRemainsValidOnAddingGivens {Q = Q} empty = empty
 proofRemainsValidOnAddingGivens {Q = Q} (nextStep n pr (axiom x)) = nextStep n (proofRemainsValidOnAddingGivens pr) (axiom x)
@@ -188,11 +194,7 @@ proofRemainsValidOnAddingGivens {A = A} {axiomsSubset = axiomsSubset} {givensSub
     lemma : (sel : Selection (toSteps pr)) → vecIndex (toSteps (proofRemainsValidOnAddingGivens pr)) (Selection.position sel) (Selection.pos<N sel) ≡ Selection.element sel
     lemma sel with proofRemainsValidOnAddingGivens {Q = Q} pr
     ... | nextStep n bl x = {!!}
-
-pr' empty = refl
-pr' (nextStep n pr (axiom x)) rewrite pr' pr = refl
-pr' (nextStep n pr (given x)) rewrite pr' pr = refl
-pr' (nextStep n pr (modusPonens implication argument conclusion x)) rewrite pr' pr = refl
+-}
 
 {-
 
