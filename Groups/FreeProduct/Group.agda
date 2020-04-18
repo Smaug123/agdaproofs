@@ -17,6 +17,56 @@ open import Groups.FreeProduct.Setoid decidableIndex decidableGroups G
 open import Groups.FreeProduct.Addition decidableIndex decidableGroups G
 
 private
+  plus'WDlemm : {i : I} (x1 x2 : ReducedSequenceBeginningWith i) (y : ReducedSequence) → (=RP' x1 x2) → plus' x1 y =RP plus' x2 y
+  plus'WDlemm (ofEmpty i g nonZero) (ofEmpty .i g₁ nonZero₁) y x1=x2 with decidableIndex i i
+  plus'WDlemm (ofEmpty i g nonZero) (ofEmpty .i h nonZero2) y x1=x2 | inl refl = prependWD g h nonZero nonZero2 y x1=x2
+  plus'WDlemm (prependLetter i g nonZero {j} x1 x) (prependLetter .i h nonZero2 {j2} x2 pr) y x1=x2 with decidableIndex i i
+  ... | inl refl with decidableIndex j j2
+  plus'WDlemm (prependLetter i g nonZero {j} x1 x) (prependLetter .i h nonZero2 {.j} x2 pr) y x1=x2 | inl refl | inl refl = Equivalence.transitive (Setoid.eq freeProductSetoid) {prepend i g nonZero (plus' x1 y)} {prepend i h nonZero2 (plus' x1 y)} {plus' (prependLetter i h nonZero2 x2 pr) y} (prependWD g h nonZero nonZero2 (plus' x1 y) (_&&_.fst x1=x2)) (prependWD' h nonZero2 (plus' x1 y) (plus' x2 y) (plus'WDlemm x1 x2 y (_&&_.snd x1=x2)))
+  ... | inr j!=j2 = exFalso (notEqualIfStartDifferent j!=j2 x1 x2 (_&&_.snd x1=x2))
+  plus'WDlemm _ _ _ _ | inr bad = exFalso (bad refl)
+
+  plus'WD : {i j : I} (x1 : ReducedSequenceBeginningWith i) (x2 : ReducedSequenceBeginningWith j) (y : ReducedSequence) → (=RP' x1 x2) → plus' x1 y =RP plus' x2 y
+  plus'WD {i} {j} x1 x2 y x1=x2 with decidableIndex i j
+  plus'WD {i} {.i} x1 x2 y x1=x2 | inl refl = plus'WDlemm x1 x2 y x1=x2
+  plus'WD {i} {j} x1 x2 y x1=x2 | inr x = exFalso (notEqualIfStartDifferent x x1 x2 x1=x2)
+  plusWD : (m n o p : ReducedSequence) → (m =RP o) → (n =RP p) → (m +RP n) =RP (o +RP p)
+  plusWD empty empty empty empty m=o n=p = record {}
+  plusWD empty (nonempty i x) empty (nonempty i₁ x₁) m=o n=p = n=p
+  plusWD (nonempty i x) empty (nonempty j y) empty m=o record {} = Equivalence.transitive (Setoid.eq freeProductSetoid) {plus' x empty} {nonempty i x} {plus' y empty} (plusEmptyRight x) (Equivalence.transitive (Setoid.eq freeProductSetoid) {nonempty i x} {nonempty j y} {plus' y empty} m=o (Equivalence.symmetric (Setoid.eq freeProductSetoid) {plus' y empty} {nonempty j y} (plusEmptyRight y)))
+  plusWD (nonempty i1 x1) (nonempty i2 x2) (nonempty i3 x3) (nonempty i4 x4) m=o n=p = (Equivalence.transitive (Setoid.eq freeProductSetoid)) {plus' x1 (nonempty i2 x2)} {plus' x3 (nonempty i2 x2)} {plus' x3 (nonempty i4 x4)} (plus'WD x1 x3 (nonempty i2 x2) m=o) (plus'WD' x3 (nonempty i2 x2) (nonempty i4 x4) n=p)
+
+  prependAssocLemma' : {i : I} {g : A i} .(nz : Setoid._∼_ (S i) g (Group.0G (G i)) → False) (b c : ReducedSequence) → (prepend i g nz b +RP c) =RP prepend i g nz (b +RP c)
+  prependAssocLemma' {i} {g} nz empty c = Equivalence.reflexive (Setoid.eq freeProductSetoid) {prepend i g _ c}
+  prependAssocLemma' {i} nz (nonempty k x) c with decidableIndex i k
+  prependAssocLemma' {.k} {g1} nz (nonempty k (ofEmpty .k g nonZero)) c | inl refl with decidableGroups k ((k + g1) g) (Group.0G (G k))
+  prependAssocLemma' {.k} {g1} nz (nonempty k (ofEmpty .k g nonZero)) c | inl refl | inl eq1 = Equivalence.symmetric (Setoid.eq freeProductSetoid) {prepend k g1 _ (prepend k g _ c)} {c} (prependFrom' g1 g eq1 c nz nonZero)
+  prependAssocLemma' {.k} {g1} nz (nonempty k (ofEmpty .k g nonZero)) c | inl refl | inr neq1 = (prependFrom g1 g neq1 c nz nonZero)
+  prependAssocLemma' {.k} {g1} nz (nonempty k (prependLetter .k g nonZero x x₁)) c | inl refl with decidableGroups k ((k + g1) g) (Group.0G (G k))
+  prependAssocLemma' {.k} {g1} nz (nonempty k (prependLetter .k g nonZero x x₁)) c | inl refl | inl eq1 = Equivalence.symmetric (Setoid.eq freeProductSetoid) {prepend k g1 _ (prepend k g _ (plus' x c))} {plus' x c} (prependFrom' g1 g eq1 (plus' x c) nz nonZero)
+  prependAssocLemma' {.k} {g1} nz (nonempty k (prependLetter .k g nonZero x x₁)) c | inl refl | inr neq1 = prependFrom g1 g neq1 (plus' x c) nz nonZero
+  prependAssocLemma' {i} {g} nz (nonempty k x) c | inr i!=k = Equivalence.reflexive (Setoid.eq freeProductSetoid) {prepend i g _ (plus' x c)}
+
+  plusAssocLemma : {i : I} (x : ReducedSequenceBeginningWith i) (b c : ReducedSequence) → (plus' x b +RP c) =RP plus' x (b +RP c)
+  plusAssocLemma (ofEmpty i g nonZero) empty c = Equivalence.reflexive (Setoid.eq freeProductSetoid) {prepend i g _ c}
+  plusAssocLemma (ofEmpty i g nonZero) (nonempty j b) c with decidableIndex i j
+  plusAssocLemma (ofEmpty i g nonZero) (nonempty .i (ofEmpty .i g₁ nonZero₁)) c | inl refl with decidableIndex i i
+  plusAssocLemma (ofEmpty i g nonZero) (nonempty .i (ofEmpty .i h nonZero₁)) c | inl refl | inl refl with decidableGroups i ((i + g) h) (Group.0G (G i))
+  plusAssocLemma (ofEmpty i g nonZero) (nonempty .i (ofEmpty .i h nonZero₁)) c | inl refl | inl refl | inl t = Equivalence.symmetric (Setoid.eq freeProductSetoid) {prepend i g _ (prepend i h _ c)} {c} (prependFrom' g h t c _ _)
+  plusAssocLemma (ofEmpty i g nonZero) (nonempty .i (ofEmpty .i h nonZero₁)) c | inl refl | inl refl | inr t = prependFrom g h t c _ _
+  plusAssocLemma (ofEmpty i g nonZero) (nonempty .i (ofEmpty .i g₁ nonZero₁)) c | inl refl | inr bad = exFalso (bad refl)
+  plusAssocLemma (ofEmpty i g nonZero) (nonempty .i (prependLetter .i h nonZero₁ b x)) c | inl refl with decidableGroups i ((i + g) h) (Group.0G (G i))
+  plusAssocLemma (ofEmpty i g nonZero) (nonempty .i (prependLetter .i h nonZero₁ b x)) c | inl refl | inl eq1 = Equivalence.symmetric (Setoid.eq freeProductSetoid) {prepend i g _ (prepend i h _ (plus' b c))} {plus' b c} (prependFrom' g h eq1 (plus' b c) _ _)
+  plusAssocLemma (ofEmpty i g nonZero) (nonempty .i (prependLetter .i h nonZero₁ b x)) c | inl refl | inr neq1 = prependFrom g h neq1 (plus' b c) nonZero _
+  plusAssocLemma (ofEmpty i g nonZero) (nonempty j b) c | inr i!=j = Equivalence.reflexive (Setoid.eq freeProductSetoid) {prepend i g _ (plus' b c)}
+  plusAssocLemma (prependLetter i g nonZero {j} w i!=j) b c = Equivalence.transitive (Setoid.eq freeProductSetoid) {prepend i g _ (plus' w b) +RP c} {prepend i g _ (plus' w b +RP c)} {prepend i g _ (plus' w (b +RP c))} (prependAssocLemma' nonZero (plus' w b) c) (prependWD' g nonZero (plus' w b +RP c) (plus' w (b +RP c)) (plusAssocLemma w b c))
+
+  plusAssoc : (a b c : ReducedSequence) → ((a +RP b) +RP c) =RP (a +RP (b +RP c))
+  plusAssoc empty b c = Equivalence.reflexive (Setoid.eq freeProductSetoid) {b +RP c}
+  plusAssoc (nonempty i x) b c = plusAssocLemma x b c
+
+
+private
   inv' : {i : I} (x : ReducedSequenceBeginningWith i) → ReducedSequence
   inv' (ofEmpty i g nonZero) = nonempty i (ofEmpty i (Group.inverse (G i) g) (λ pr → nonZero (Equivalence.transitive (Setoid.eq (S i)) (swapInv (G i) pr) (invIdent (G i)))))
   inv' (prependLetter i g nonZero {j} w i!=j) = (inv' w) +RP injection (Group.inverse (G i) g) (λ pr → nonZero (Equivalence.transitive (Setoid.eq (S i)) (swapInv (G i) pr) (invIdent (G i))))
