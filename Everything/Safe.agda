@@ -1,4 +1,4 @@
-{-# OPTIONS --warning=error --safe --without-K --guardedness #-}
+{-# OPTIONS --warning=error --safe --without-K #-}
 
 -- This file contains everything that can be compiled in --safe mode.
 
@@ -10,7 +10,6 @@ open import Numbers.BinaryNaturals.Subtraction
 open import Numbers.Primes.PrimeNumbers
 open import Numbers.Primes.IntegerFactorisation
 open import Numbers.Rationals.Lemmas
-open import Numbers.Reals.Definition
 
 open import Numbers.Modulo.Group
 
@@ -53,10 +52,9 @@ open import Groups.LectureNotes.Lecture1
 open import Fields.Fields
 open import Fields.Orders.Partial.Definition
 open import Fields.Orders.Total.Definition
-open import Fields.Orders.Total.Archimedean
+open import Fields.Orders.Partial.Archimedean
 open import Fields.Orders.LeastUpperBounds.Examples
 open import Fields.Orders.Lemmas
-open import Fields.Orders.Limits.Definition
 open import Fields.FieldOfFractions.Field
 open import Fields.FieldOfFractions.Lemmas
 open import Fields.FieldOfFractions.Order
@@ -97,9 +95,6 @@ open import Rings.InitialRing
 open import Rings.Homomorphisms.Lemmas
 open import Rings.UniqueFactorisationDomains.Definition
 open import Rings.Examples.Examples
-open import Rings.Orders.Total.Bounded
-open import Rings.Orders.Partial.Bounded
-open import Rings.Orders.Total.BaseExpansion
 
 open import Setoids.Setoids
 open import Setoids.DirectSum
@@ -113,7 +108,6 @@ open import Setoids.Union.Lemmas
 open import Setoids.Cardinality.Infinite.Lemmas
 open import Setoids.Cardinality.Finite.Definition
 
-open import Sets.Cardinality.Infinite.Examples
 open import Sets.Cardinality.Infinite.Lemmas
 open import Sets.Cardinality.Countable.Lemmas
 open import Sets.Cardinality.Finite.Lemmas
@@ -121,6 +115,7 @@ open import Sets.Cardinality
 open import Sets.FinSet.Lemmas
 
 open import Decidable.Sets
+open import Decidable.Reduction
 open import Decidable.Relations
 
 open import Vectors
@@ -162,9 +157,6 @@ open import Modules.Examples
 open import Modules.PolynomialModule
 open import Modules.Lemmas
 open import Modules.DirectSum
-
-open import Fields.CauchyCompletion.Archimedean
-open import Fields.Orders.Limits.Lemmas
 
 open import ProjectEuler.Problem1
 

@@ -1,5 +1,6 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
+open import Boolean.Definition
 open import LogicalFormulae
 open import Decidable.Lemmas
 

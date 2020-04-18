@@ -7,9 +7,7 @@ open import Numbers.Naturals.Order
 open import LogicalFormulae
 open import Groups.Definition
 open import Rings.Orders.Partial.Definition
-open import Rings.Orders.Total.Definition
 open import Setoids.Orders.Partial.Definition
-open import Setoids.Orders.Total.Definition
 open import Setoids.Setoids
 open import Functions
 open import Rings.Definition
@@ -18,7 +16,7 @@ open import Fields.Orders.Partial.Definition
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-module Fields.Orders.Total.Archimedean {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} {c : _} {_<_ : A → A → Set c} {pOrder : SetoidPartialOrder S _<_} {F : Field R} (p : PartiallyOrderedField F pOrder) where
+module Fields.Orders.Partial.Archimedean {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} {c : _} {_<_ : A → A → Set c} {pOrder : SetoidPartialOrder S _<_} {F : Field R} (p : PartiallyOrderedField F pOrder) where
 
 open Setoid S
 open Equivalence eq
@@ -46,7 +44,7 @@ private
   findBound _ r s zero 1<r s<N = s<N
   findBound 0<1 r s (succ N) 1<r s<N = <Transitive s<N (<WellDefined (transitive *Commutative identIsIdent) (lemma r (succ N)) (ringCanMultiplyByPositive' (fromNPreservesOrder 0<1 (succIsPositive N)) 1<r))
 
-archFieldToGrp : ((x y : A) → 0R < x → (x * y) ∼ 1R → 0R < y) → ArchimedeanField → Archimedean
+archFieldToGrp : ((x y : A) → .(0R < x) → (x * y) ∼ 1R → 0R < y) → ArchimedeanField → Archimedean
 archFieldToGrp reciprocalPositive a r s 0<r 0<s with allInvertible r (λ r=0 → irreflexive (<WellDefined reflexive r=0 0<r))
 ... | inv , prInv with a inv (reciprocalPositive r inv 0<r (transitive *Commutative prInv))
 ... | N , invBound with a s 0<s

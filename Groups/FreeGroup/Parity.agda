@@ -11,6 +11,7 @@ open import LogicalFormulae
 open import Semirings.Definition
 open import Functions
 open import Groups.Isomorphisms.Definition
+open import Boolean.Definition
 
 module Groups.FreeGroup.Parity {a : _} {A : Set a} (decA : DecidableSet A) where
 

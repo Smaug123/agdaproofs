@@ -28,6 +28,17 @@ open import Rings.Orders.Partial.Lemmas
 open PartiallyOrderedRing pRing
 
 fieldOfFractionsComparison : Rel fieldOfFractionsSet
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) with (totality (Ring.0R R) denomA ,, totality (Ring.0R R) denomB)
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) ,, inl (inl 0<denomB) = (numA * denomB) < (numB * denomA)
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) ,, inl (inr denomB<0) = (numB * denomA) < (numA * denomB)
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) ,, inr 0=denomB = exFalso (denomB!=0 (symmetric 0=denomB))
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) ,, inl (inl 0<denomB) = (numB * denomA) < (numA * denomB)
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) ,, inl (inr denomB<0) = (numA * denomB) < (numB * denomA)
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) ,, inr 0=denomB = exFalso (denomB!=0 (symmetric 0=denomB))
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inr 0=denomA ,, _ = exFalso (denomA!=0 (symmetric 0=denomA))
+
+{-
+fieldOfFractionsComparison : Rel fieldOfFractionsSet
 fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) with totality (Ring.0R R) denomA
 fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) with totality (Ring.0R R) denomB
 fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) | inl (inl 0<denomB) = (numA * denomB) < (numB * denomA)
@@ -38,6 +49,18 @@ fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero 
 fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) | inl (inr denomB<0) = (numA * denomB) < (numB * denomA)
 fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) | inr 0=denomB = exFalso (denomB!=0 (symmetric 0=denomB))
 fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inr 0=denomA = exFalso (denomA!=0 (symmetric 0=denomA))
+fieldOfFractionsComparison : Rel fieldOfFractionsSet
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) with totality (Ring.0R R) denomA
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) with totality (Ring.0R R) denomB
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) | inl (inl 0<denomB) = (numA * denomB) < (numB * denomA)
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) | inl (inr denomB<0) = (numB * denomA) < (numA * denomB)
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inl 0<denomA) | inr 0=denomB = exFalso (denomB!=0 (symmetric 0=denomB))
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) with totality (Ring.0R R) denomB
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) | inl (inl 0<denomB) = (numB * denomA) < (numA * denomB)
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) | inl (inr denomB<0) = (numA * denomB) < (numB * denomA)
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inl (inr denomA<0) | inr 0=denomB = exFalso (denomB!=0 (symmetric 0=denomB))
+fieldOfFractionsComparison (record { num = numA ; denom = denomA ; denomNonzero = denomA!=0 }) (record { num = numB ; denom = denomB ; denomNonzero = denomB!=0 }) | inr 0=denomA = exFalso (denomA!=0 (symmetric 0=denomA))
+-}
 
 private
   abstract

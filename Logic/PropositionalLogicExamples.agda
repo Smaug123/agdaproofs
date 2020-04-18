@@ -1,5 +1,6 @@
 {-# OPTIONS --safe --warning=error #-}
 
+open import Boolean.Definition
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
 open import Logic.PropositionalLogic

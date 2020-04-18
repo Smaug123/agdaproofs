@@ -98,14 +98,6 @@ lessImpliesNotEqual {a} {.a} prAB refl = TotalOrder.irreflexive ℕTotalOrder pr
 -NIsDecreasing {a} {b} prAB with (-N (inl prAB))
 -NIsDecreasing {a} {b} (le x proof) | record { result = result ; pr = pr } = record { x = a ; proof = pr }
 
-equalityN : (a b : ℕ) → Sg Bool (λ truth → if truth then a ≡ b else True)
-equalityN zero zero = ( BoolTrue , refl )
-equalityN zero (succ b) = ( BoolFalse , record {} )
-equalityN (succ a) zero = ( BoolFalse , record {} )
-equalityN (succ a) (succ b) with equalityN a b
-equalityN (succ a) (succ b) | BoolTrue , val = (BoolTrue , applyEquality succ val)
-equalityN (succ a) (succ b) | BoolFalse , val = (BoolFalse , record {})
-
 sumZeroImpliesSummandsZero : {a b : ℕ} → (a +N b ≡ zero) → ((a ≡ zero) && (b ≡ zero))
 sumZeroImpliesSummandsZero {zero} {zero} pr = record { fst = refl ; snd = refl }
 sumZeroImpliesSummandsZero {zero} {(succ b)} pr = record { fst = refl ; snd = pr }

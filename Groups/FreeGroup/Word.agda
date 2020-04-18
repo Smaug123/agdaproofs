@@ -7,6 +7,7 @@ open import Decidable.Sets
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import LogicalFormulae
+open import Boolean.Definition
 
 module Groups.FreeGroup.Word {a : _} {A : Set a} (decA : DecidableSet A) where
 

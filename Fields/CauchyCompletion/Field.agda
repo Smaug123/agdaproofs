@@ -30,6 +30,7 @@ open Group (Ring.additiveGroup R)
 
 open import Rings.Orders.Total.Cauchy order
 open import Rings.Orders.Total.Lemmas order
+open import Rings.Orders.Total.AbsoluteValue order
 open import Fields.CauchyCompletion.Definition order F
 open import Fields.CauchyCompletion.Multiplication order F
 open import Fields.CauchyCompletion.Addition order F
