@@ -11,7 +11,7 @@ open import Rings.Orders.Partial.Definition
 open import Rings.Definition
 open import Fields.Fields
 open import Groups.Definition
-open import Functions
+open import Functions.Definition
 
 module Fields.Orders.LeastUpperBounds.Examples {a b c : _} {A : Set a} {S : Setoid {a} {b} A} {_<_ : Rel {_} {c} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} {pOrder : SetoidPartialOrder S _<_} {pOrderedRing : PartiallyOrderedRing R pOrder} (orderedRing : TotallyOrderedRing pOrderedRing) (F : Field R) (isNontrivial : Setoid._∼_ S (Ring.0R R) (Ring.1R R) → False) where
 

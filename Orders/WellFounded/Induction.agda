@@ -1,6 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import Functions
+open import Functions.Definition
 open import Orders.WellFounded.Definition
 
 module Orders.WellFounded.Induction {a b : _} {A : Set a} {_<_ : Rel {a} {b} A} (wf : WellFounded _<_) where

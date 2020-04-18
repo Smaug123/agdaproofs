@@ -3,7 +3,7 @@
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 open import LogicalFormulae
-open import Functions
+open import Functions.Definition
 
 module Orders.Total.Definition {a : _} (carrier : Set a) where
 

@@ -2,7 +2,7 @@
 
 
 open import LogicalFormulae
-open import Functions
+open import Functions.Definition
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Order.WellFounded

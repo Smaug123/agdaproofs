@@ -3,7 +3,7 @@
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
 open import Logic.PropositionalLogic
-open import Functions
+open import Functions.Definition
 open import Numbers.Naturals.Naturals
 open import Vectors
 open import Boolean.Definition

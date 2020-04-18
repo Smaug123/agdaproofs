@@ -17,7 +17,7 @@ open import Sequences
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Semirings.Definition
-open import Functions
+open import Functions.Definition
 open import Fields.Orders.Total.Definition
 open import Numbers.Primes.PrimeNumbers
 

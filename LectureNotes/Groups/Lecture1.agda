@@ -1,6 +1,7 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
-open import Functions
+open import Functions.Definition
+open import Functions.Lemmas
 open import Sets.FinSet.Definition
 open import Sets.FinSet.Lemmas
 open import Sets.Cardinality.Finite.Definition

@@ -7,7 +7,7 @@ open import Setoids.Setoids
 open import Setoids.Subset
 open import Setoids.Functions.Definition
 open import LogicalFormulae
-open import Functions
+open import Functions.Definition
 open import Lists.Lists
 
 module LectureNotes.MetAndTop.Chapter1 where

@@ -3,31 +3,9 @@
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 open import LogicalFormulae
+open import Functions.Definition
 
-module Functions where
-
-Rel : {a b : _} → Set a → Set (a ⊔ lsuc b)
-Rel {a} {b} A = A → A → Set b
-
-_∘_ : {a b c : _} {A : Set a} {B : Set b} {C : Set c} → (f : B → C) → (g : A → B) → (A → C)
-g ∘ f = λ a → g (f a)
-
-Injection : {a b : _} {A : Set a} {B : Set b} (f : A → B) → Set (a ⊔ b)
-Injection {A = A} f = {x y : A} → (f x ≡ f y) → x ≡ y
-
-Surjection : {a b : _} {A : Set a} {B : Set b} (f : A → B) → Set (a ⊔ b)
-Surjection {A = A} {B = B} f = (b : B) → Sg A (λ a → f a ≡ b)
-
-record Bijection {a b : _} {A : Set a} {B : Set b} (f : A → B) : Set (a ⊔ b) where
-  field
-    inj : Injection f
-    surj : Surjection f
-
-record Invertible {a b : _} {A : Set a} {B : Set b} (f : A → B) : Set (a ⊔ b) where
-  field
-    inverse : B → A
-    isLeft : (b : B) → f (inverse b) ≡ b
-    isRight : (a : A) → inverse (f a) ≡ a
+module Functions.Lemmas where
 
 invertibleImpliesBijection : {a b : _} {A : Set a} {B : Set b} {f : A → B} → Invertible f → Bijection f
 Bijection.inj (invertibleImpliesBijection {a} {b} {A} {B} {f} record { inverse = inverse ; isLeft = isLeft ; isRight = isRight }) {x} {y} fx=fy = ans
@@ -83,18 +61,9 @@ Invertible.inverse (inverseIsInvertible {f = f} inv) = f
 Invertible.isLeft (inverseIsInvertible {f = f} inv) b = Invertible.isRight inv b
 Invertible.isRight (inverseIsInvertible {f = f} inv) a = Invertible.isLeft inv a
 
-id : {a : _} {A : Set a} → (A → A)
-id a = a
-
 idIsBijective : {a : _} {A : Set a} → Bijection (id {a} {A})
 Bijection.inj idIsBijective pr = pr
 Bijection.surj idIsBijective b = b , refl
 
 functionCompositionExtensionallyAssociative : {a b c d : _} {A : Set a} {B : Set b} {C : Set c} {D : Set d} → (f : A → B) → (g : B → C) → (h : C → D) → (x : A) → (h ∘ (g ∘ f)) x ≡ ((h ∘ g) ∘ f) x
 functionCompositionExtensionallyAssociative f g h x = refl
-
-dom : {a b : _} {A : Set a} {B : Set b} (f : A → B) → Set a
-dom {A = A} f = A
-
-codom : {a b : _} {A : Set a} {B : Set b} (f : A → B) → Set b
-codom {B = B} f = B

@@ -9,7 +9,7 @@ open import Decidable.Sets
 open import Numbers.Naturals.Order
 open import LogicalFormulae
 open import Semirings.Definition
-open import Functions
+open import Functions.Definition
 open import Groups.Isomorphisms.Definition
 open import Boolean.Definition
 

@@ -1,6 +1,7 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import Functions
+open import Functions.Definition
+open import Functions.Lemmas
 open import LogicalFormulae
 open import Numbers.Naturals.Definition
 open import Numbers.Naturals.Order

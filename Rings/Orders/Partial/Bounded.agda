@@ -8,7 +8,7 @@ open import Rings.Orders.Partial.Definition
 open import Sets.EquivalenceRelations
 open import Sequences
 open import Setoids.Orders.Partial.Definition
-open import Functions
+open import Functions.Definition
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
 open import Groups.Definition

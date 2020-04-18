@@ -3,7 +3,7 @@
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring -- for length
 open import Lists.Lists
-open import Functions
+open import Functions.Definition
 --open import Groups.Actions
 
 module Groups.FinitePermutations where

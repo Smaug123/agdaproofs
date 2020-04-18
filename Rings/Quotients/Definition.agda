@@ -1,6 +1,6 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
-open import Functions
+open import Functions.Definition
 open import Rings.Homomorphisms.Definition
 open import Groups.Homomorphisms.Definition
 open import Setoids.Setoids

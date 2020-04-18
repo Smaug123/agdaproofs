@@ -4,10 +4,9 @@ open import LogicalFormulae
 open import Groups.Abelian.Definition
 open import Groups.Definition
 open import Setoids.Setoids
-open import Functions
+open import Functions.Definition
 open import Sets.EquivalenceRelations
 open import Lists.Lists
-
 
 module Groups.Polynomials.Addition {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} (G : Group S _+_) where
 

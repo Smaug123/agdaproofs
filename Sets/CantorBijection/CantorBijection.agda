@@ -1,7 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-
-open import Functions
+open import Functions.Definition
 open import Sets.CantorBijection.Proofs
 
 module Sets.CantorBijection.CantorBijection where

@@ -2,7 +2,7 @@
 
 open import Sets.EquivalenceRelations
 open import Setoids.Setoids
-open import Functions
+open import Functions.Definition
 open import Groups.Definition
 open import Groups.Homomorphisms.Definition
 open import Groups.Subgroups.Definition

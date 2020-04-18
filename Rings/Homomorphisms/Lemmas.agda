@@ -6,7 +6,7 @@ open import Groups.Homomorphisms.Definition
 open import Groups.Definition
 open import Numbers.Naturals.Naturals
 open import Setoids.Setoids
-open import Functions
+open import Functions.Definition
 open import Sets.EquivalenceRelations
 open import Rings.Definition
 open import Rings.Homomorphisms.Definition
