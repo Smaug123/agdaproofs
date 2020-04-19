@@ -32,28 +32,29 @@ _+B_ : BinNat → BinNat → BinNat
 +BCommutative (one :: as) (zero :: bs) rewrite +BCommutative as bs = refl
 +BCommutative (one :: as) (one :: bs) rewrite +BCommutative as bs = refl
 
-+BIsInherited[] : (b : BinNat) (prB : b ≡ canonical b) → [] +Binherit b ≡ [] +B b
-+BIsInherited[] [] prB = refl
-+BIsInherited[] (zero :: b) prB = t
-  where
-    refine : (b : BinNat) → zero :: b ≡ canonical (zero :: b) → b ≡ canonical b
-    refine b pr with canonical b
-    refine b pr | x :: bl = ::Inj pr
-    t : NToBinNat (0 +N binNatToN (zero :: b)) ≡ zero :: b
-    t with TotalOrder.totality ℕTotalOrder 0 (binNatToN b)
-    t | inl (inl pos) = transitivity (doubleIsBitShift (binNatToN b) pos) (applyEquality (zero ::_) (transitivity (binToBin b) (equalityCommutative (refine b prB))))
-    t | inl (inr ())
-    ... | inr eq with binNatToNZero b (equalityCommutative eq)
-    ... | u with canonical b
-    t | inr eq | u | [] = exFalso (bad b prB)
-      where
-        bad : (c : BinNat) → zero :: c ≡ [] → False
-        bad c ()
-    t | inr eq | () | x :: bl
-+BIsInherited[] (one :: b) prB = ans
-  where
-    ans : NToBinNat (binNatToN (one :: b)) ≡ one :: b
-    ans = transitivity (binToBin (one :: b)) (equalityCommutative prB)
+private
+  +BIsInherited[] : (b : BinNat) (prB : b ≡ canonical b) → [] +Binherit b ≡ [] +B b
+  +BIsInherited[] [] prB = refl
+  +BIsInherited[] (zero :: b) prB = t
+    where
+      refine : (b : BinNat) → zero :: b ≡ canonical (zero :: b) → b ≡ canonical b
+      refine b pr with canonical b
+      refine b pr | x :: bl = ::Inj pr
+      t : NToBinNat (0 +N binNatToN (zero :: b)) ≡ zero :: b
+      t with TotalOrder.totality ℕTotalOrder 0 (binNatToN b)
+      t | inl (inl pos) = transitivity (doubleIsBitShift (binNatToN b) pos) (applyEquality (zero ::_) (transitivity (binToBin b) (equalityCommutative (refine b prB))))
+      t | inl (inr ())
+      ... | inr eq with binNatToNZero b (equalityCommutative eq)
+      ... | u with canonical b
+      t | inr eq | u | [] = exFalso (bad b prB)
+        where
+          bad : (c : BinNat) → zero :: c ≡ [] → False
+          bad c ()
+      t | inr eq | () | x :: bl
+  +BIsInherited[] (one :: b) prB = ans
+    where
+      ans : NToBinNat (binNatToN (one :: b)) ≡ one :: b
+      ans = transitivity (binToBin (one :: b)) (equalityCommutative prB)
 
 -- Show that the monoid structure of ℕ is the same as that of BinNat
 
@@ -198,3 +199,9 @@ _+B_ : BinNat → BinNat → BinNat
       where
         ans2 : zero :: incr (as +Binherit bs) ≡ canonical (zero :: incr (as +B bs))
         ans2 rewrite +BIsInherited' as bs | equalityCommutative (incrPreservesCanonical' (as +B bs)) | canonicalAscends' {zero} (incr (as +B bs)) (incrNonzero (as +B bs)) = refl
+
++BIsHom : (a b : BinNat) → binNatToN (a +B b) ≡ (binNatToN a) +N (binNatToN b)
++BIsHom a b = transitivity (equalityCommutative (binNatToNIsCanonical (a +B b))) (transitivity (equalityCommutative (applyEquality binNatToN (+BIsInherited' a b))) (nToN _))
+
+sumCanonical : (a b : BinNat) → canonical a ≡ a → canonical b ≡ b → canonical (a +B b) ≡ a +B b
+sumCanonical a b a=a b=b = transitivity (equalityCommutative (+BIsInherited' a b)) (+BIsInherited a b (equalityCommutative a=a) (equalityCommutative b=b))

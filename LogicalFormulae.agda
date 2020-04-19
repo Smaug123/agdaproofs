@@ -60,6 +60,9 @@ liftEquality f .f x .x refl refl = refl
 applyEquality : {a : _} {b : _} {A : Set a} {B : Set b} (f : A → B) → {x y : A} → (x ≡ y) → ((f x) ≡ (f y))
 applyEquality {A} {B} f {x} {.x} refl = refl
 
+applyEquality2 : {a b c : _} {A : Set a} {B : Set b} {C : Set c} (f : A → B → C) → {x y : A} → (x ≡ y) → {m n : B} → (m ≡ n) → f x m ≡ f y n
+applyEquality2 f x=y m=n rewrite x=y | m=n = refl
+
 identityOfIndiscernablesLeft : {m n o : _} {A : Set m} {B : Set n} {a : A} {b : B} {c : A} → (prop : A → B → Set o) → (prop a b) → (a ≡ c) → (prop c b)
 identityOfIndiscernablesLeft {a = a} {b} {.a} prop pAB refl = pAB
 

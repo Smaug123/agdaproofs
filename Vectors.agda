@@ -14,6 +14,8 @@ data Vec {a : _} (X : Set a) : ℕ -> Set a where
   [] : Vec X zero
   _,-_ : {n : ℕ} -> X -> Vec X n -> Vec X (succ n)
 
+infixr 10 _,-_
+
 vecLen : {a : _} {X : Set a} {n : ℕ} → Vec X n → ℕ
 vecLen {a} {X} {n} v = n
 

@@ -77,3 +77,9 @@ containsDecidable decide (x :: l) needle | inr x!=n | inr notIn = inr t
     t : ((x ≡ needle) || contains l needle) → False
     t (inl x) = x!=n x
     t (inr x) = notIn x
+
+filter' : {a b : _} {A : Set a} {pred : A → Set b} → (dec : (a : A) → pred a || (pred a → False)) → List A → List A
+filter' dec [] = []
+filter' dec (x :: l) with dec x
+... | inl _ = x :: filter' dec l
+... | inr _ = filter' dec l

@@ -12,4 +12,6 @@ open import Fields.CauchyCompletion.Archimedean
 
 open import Sets.Cardinality.Infinite.Examples
 
+open import ProjectEuler.Problem2
+
 module Everything.Guardedness where

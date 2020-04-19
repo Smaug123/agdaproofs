@@ -83,3 +83,11 @@ Sequence.tail (subsequence x selector increasing) = subsequence (tailFrom (succ 
 take : {a : _} {A : Set a} (n : ℕ) (s : Sequence A) → Vec A n
 take zero s = []
 take (succ n) s = Sequence.head s ,- take n (Sequence.tail s)
+
+unfold : {a : _} {A : Set a} → (A → A) → A → Sequence A
+Sequence.head (unfold f a) = a
+Sequence.tail (unfold f a) = unfold f (f a)
+
+indexAndUnfold : {a : _} {A : Set a} (f : A → A) (start : A) (n : ℕ) → index (unfold f start) (succ n) ≡ f (index (unfold f start) n)
+indexAndUnfold f s zero = refl
+indexAndUnfold f s (succ n) = indexAndUnfold f (f s) n

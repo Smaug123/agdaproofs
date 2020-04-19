@@ -6,7 +6,7 @@ open import LogicalFormulae
 open import Orders.Total.Definition
 open import Orders.Partial.Definition
 open import Setoids.Setoids
-open import Functions
+open import Functions.Definition
 open import Sequences
 open import Setoids.Orders.Partial.Definition
 
