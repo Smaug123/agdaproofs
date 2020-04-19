@@ -80,12 +80,7 @@ MaximalIdeal.isMaximal (quotientFieldImpliesIdealMaximal f) {bigger} biggerIdeal
     v = Ideal.isSubset biggerIdeal (invTwice additiveGroup 1R) (Ideal.closedUnderInverse biggerIdeal (Ideal.isSubset biggerIdeal (transitive (symmetric +Associative) (transitive (+WellDefined reflexive invRight) identRight)) (Ideal.closedUnderPlus biggerIdeal t u)))
 
 idealMaximalImpliesIdealPrime : ({d : _} → MaximalIdeal i {d}) → PrimeIdeal i
-idealMaximalImpliesIdealPrime max = quotientIntDomImpliesIdealPrime i f'
-  where
-    f : Field (cosetRing R i)
-    f = idealMaximalImpliesQuotientField max
-    f' : IntegralDomain (cosetRing R i)
-    f' = fieldIsIntDom f (λ p → Field.nontrivial f (Equivalence.symmetric (Setoid.eq (cosetSetoid additiveGroup (Ideal.isSubgroup i))) p))
+idealMaximalImpliesIdealPrime max = quotientIntDomImpliesIdealPrime i (fieldIsIntDom (idealMaximalImpliesQuotientField max))
 
 maximalIdealWellDefined : {d : _} {pred2 : A → Set d} (i2 : Ideal R pred2) → ({x : A} → pred x → pred2 x) → ({x : A} → pred2 x → pred x) → {e : _} → MaximalIdeal i {e} → MaximalIdeal i2 {e}
 MaximalIdeal.notContained (maximalIdealWellDefined i2 pToP2 p2ToP record { notContained = notContained ; notContainedIsNotContained = notContainedIsNotContained ; isMaximal = isMaximal }) = notContained

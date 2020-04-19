@@ -1,5 +1,6 @@
-{-# OPTIONS --warning=error --safe --without-K #-}
+{-# OPTIONS --warning=error --safe --without-K --guardedness #-}
 
+open import Sets.EquivalenceRelations
 open import Functions.Definition
 open import Functions.Lemmas
 open import Sets.FinSet.Definition
@@ -15,11 +16,17 @@ open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Numbers.Integers.Integers
 open import Numbers.Rationals.Definition
+open import Numbers.Reals.Definition
 open import Rings.Definition
 open import Fields.FieldOfFractions.Setoid
 open import Semirings.Definition
 open import Numbers.Modulo.Definition
 open import Numbers.Modulo.Group
+open import Fields.Fields
+open import Setoids.Subset
+open import Rings.IntegralDomains.Definition
+open import Fields.Lemmas
+open import Rings.Examples.Examples
 
 module LectureNotes.Groups.Lecture1 where
 
@@ -28,8 +35,11 @@ module LectureNotes.Groups.Lecture1 where
 groupExample1 : Group (reflSetoid ℤ) (_+Z_)
 groupExample1 = ℤGroup
 
-groupExample2 : Group (fieldOfFractionsSetoid ℤIntDom) (_+Q_)
+groupExample2 : Group ℚSetoid (_+Q_)
 groupExample2 = Ring.additiveGroup ℚRing
+
+groupExample2' : Group ℝSetoid (_+R_)
+groupExample2' = Ring.additiveGroup ℝRing
 
 groupExample3 : Group (reflSetoid ℤ) (_-Z_) → False
 groupExample3 record { +Associative = multAssoc } with multAssoc {nonneg 3} {nonneg 2} {nonneg 1}
@@ -42,20 +52,14 @@ nonnegInjective : {a b : ℕ} → (nonneg a ≡ nonneg b) → a ≡ b
 nonnegInjective {a} {.a} refl = refl
 
 integersTimesNotGroup : Group (reflSetoid ℤ) (_*Z_) → False
-integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (nonneg zero) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with multIdentLeft {negSucc 1}
-... | ()
-integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (nonneg (succ zero)) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with invLeft {nonneg zero}
-... | bl with inverse (nonneg zero)
-integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (nonneg (succ zero)) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | () | nonneg zero
-integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (nonneg (succ zero)) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | p | nonneg (succ x) = naughtE (nonnegInjective (transitivity (applyEquality nonneg (equalityCommutative (Semiring.productZeroRight ℕSemiring x))) p))
-integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (nonneg (succ zero)) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | () | negSucc x
-integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (nonneg (succ (succ x))) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with succInjective (negSuccInjective (multIdentLeft {negSucc 1}))
-... | ()
-integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (negSucc x) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } with multIdentLeft {nonneg 2}
-integersTimesNotGroup record { +WellDefined = wellDefined ; 0G = (negSucc x) ; inverse = inverse ; +Associative = multAssoc ; identRight = multIdentRight ; identLeft = multIdentLeft ; invLeft = invLeft ; invRight = invRight } | ()
+integersTimesNotGroup = multiplicationNotGroup ℤRing λ ()
 
--- TODO: Q is not a group with *Q
--- TODO: Q without 0 is a group with *Q
+rationalsTimesNotGroup : Group ℚSetoid (_*Q_) → False
+rationalsTimesNotGroup = multiplicationNotGroup ℚRing λ ()
+
+QNonzeroGroup : Group _ _
+QNonzeroGroup = fieldMultiplicativeGroup ℚField
+
 -- TODO: {1, -1} is a group with *
 
 ℤnIsGroup : (n : ℕ) → (0<n : 0 <N n) → _

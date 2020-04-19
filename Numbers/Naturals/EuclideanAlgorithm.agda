@@ -250,7 +250,6 @@ reverseHCF : {a b : ℕ} → (ab : extendedHcf a b) → extendedHcf b a
 reverseHCF {a} {b} record { hcf = record { c = c ; c|a = c|a ; c|b = c|b ; hcf = hcf } ; extended1 = extended1 ; extended2 = extended2 ; extendedProof = (inl x) } = record { hcf = record { c = c ; c|a = c|b ; c|b = c|a ; hcf = λ x z z₁ → hcf x z₁ z } ; extended1 = extended2 ; extended2 = extended1 ; extendedProof = inr (equalityCommutative x) }
 reverseHCF {a} {b} record { hcf = record { c = c ; c|a = c|a ; c|b = c|b ; hcf = hcf } ; extended1 = extended1 ; extended2 = extended2 ; extendedProof = (inr x) } = record { hcf = record { c = c ; c|a = c|b ; c|b = c|a ; hcf = λ x z z₁ → hcf x z₁ z } ; extended1 = extended2 ; extended2 = extended1 ; extendedProof = inl (equalityCommutative x) }
 
-
 oneDivN : (a : ℕ) → 1 ∣ a
 oneDivN a = divides (record { quot = a ; rem = zero ; pr = pr ; remIsSmall = inl (succIsPositive zero) ; quotSmall = inl (le zero refl) }) refl
   where
