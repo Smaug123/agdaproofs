@@ -10,17 +10,28 @@ open import Numbers.Modulo.Group
 open import Numbers.Modulo.Definition
 open import Rings.Examples.Proofs
 open import Numbers.Primes.PrimeNumbers
+open import Setoids.Setoids
+open import Rings.Definition
+open import Groups.Definition
+open import Groups.Lemmas
+open import Sets.EquivalenceRelations
 
 module Rings.Examples.Examples where
 
-  nToZn : (n : ℕ) (pr : 0 <N n) (x : ℕ) → ℤn n pr
-  nToZn n pr x = nToZn' n pr x
+multiplicationNotGroup : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} (R : Ring S _+_ _*_) → (nontrivial : Setoid._∼_ S (Ring.1R R) (Ring.0R R) → False) → Group S _*_ → False
+multiplicationNotGroup {S = S} R 1!=0 gr = exFalso (1!=0 (groupsHaveLeftCancellation gr (Ring.0R R) (Ring.1R R) (Ring.0R R) (transitive (Ring.timesZero' R) (symmetric (Ring.timesZero' R)))))
+  where
+    open Setoid S
+    open Equivalence eq
 
-  mod : (n : ℕ) → (pr : 0 <N n) → ℤ → ℤn n pr
-  mod n pr a = mod' n pr a
+nToZn : (n : ℕ) (pr : 0 <N n) (x : ℕ) → ℤn n pr
+nToZn n pr x = nToZn' n pr x
 
-  modNExampleSurjective : (n : ℕ) → (pr : 0 <N n) → Surjection (mod n pr)
-  modNExampleSurjective n pr = modNExampleSurjective' n pr
+mod : (n : ℕ) → (pr : 0 <N n) → ℤ → ℤn n pr
+mod n pr a = mod' n pr a
+
+modNExampleSurjective : (n : ℕ) → (pr : 0 <N n) → Surjection (mod n pr)
+modNExampleSurjective n pr = modNExampleSurjective' n pr
 
 {-
   modNExampleGroupHom : (n : ℕ) → (pr : 0 <N n) → GroupHom ℤGroup (ℤnGroup n pr) (mod n pr)

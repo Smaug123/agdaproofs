@@ -58,4 +58,3 @@ abstract
 
 abelianUnderlyingGroup : AbelianGroup additiveGroup
 abelianUnderlyingGroup = record { commutative = groupIsAbelian }
-

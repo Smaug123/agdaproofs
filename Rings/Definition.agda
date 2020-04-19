@@ -35,3 +35,5 @@ record Ring {n m} {A : Set n} (S : Setoid {n} {m} A) (_+_ : A → A → A) (_*_ 
   *DistributesOver+' = transitive *Commutative (transitive *DistributesOver+ (+WellDefined *Commutative *Commutative))
   *Associative' : {a b c : A} → ((a * b) * c) ∼ (a * (b * c))
   *Associative' = symmetric *Associative
+  identIsIdent' : {a : A} → a * 1R ∼ a
+  identIsIdent' = transitive *Commutative identIsIdent

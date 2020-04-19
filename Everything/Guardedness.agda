@@ -14,4 +14,7 @@ open import Sets.Cardinality.Infinite.Examples
 
 open import ProjectEuler.Problem2
 
+open import LectureNotes.NumbersAndSets.Examples1
+open import LectureNotes.Groups.Lecture1
+
 module Everything.Guardedness where

@@ -150,7 +150,6 @@ open import Graphs.InducedSubgraph
 
 open import LectureNotes.MetAndTop.Chapter1
 open import LectureNotes.NumbersAndSets.Lecture1
-open import LectureNotes.Groups.Lecture1
 
 open import Modules.Examples
 open import Modules.PolynomialModule

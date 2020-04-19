@@ -14,7 +14,7 @@ open import Fields.Lemmas
 module Rings.EuclideanDomains.Examples where
 
 polynomialField : {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} (F : Field R) → (Setoid._∼_ S (Ring.1R R) (Ring.0R R) → False) → EuclideanDomain R
-EuclideanDomain.isIntegralDomain (polynomialField F 1!=0) = fieldIsIntDom F 1!=0
+EuclideanDomain.isIntegralDomain (polynomialField F 1!=0) = fieldIsIntDom F
 EuclideanDomain.norm (polynomialField F _) a!=0 = zero
 EuclideanDomain.normSize (polynomialField F _) a!=0 b!=0 c b=ac = inr refl
 DivisionAlgorithmResult.quotient (EuclideanDomain.divisionAlg (polynomialField {_*_ = _*_} F _) {a = a} {b} a!=0 b!=0) with Field.allInvertible F b b!=0
