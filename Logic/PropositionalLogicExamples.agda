@@ -14,10 +14,10 @@ emptySubset : {a : _} (A : Set a) → IsSubset False A
 emptySubset A = record { ofElt = λ () }
 
 emptyEntailment : {a b : _} {A : Set a} {P : Propositions A} → Entails (emptySubset (Propositions A)) P → Tautology P
-emptyEntailment {a} {b} {A} {P} record { entails = entails } v = entails {v} λ {s} → exFalso s
+emptyEntailment {a} {b} {A} {P} entails v = entails {v} λ {s} → exFalso s
 
 emptyEntailment' : {a b : _} {A : Set a} {P : Propositions A} → Tautology P → Entails (emptySubset (Propositions A)) P
-Entails.entails (emptyEntailment' isTaut) {v} _ = isTaut v
+emptyEntailment' isTaut {v} _ = isTaut v
 
 data TwoElements : Set where
   One : TwoElements
@@ -39,13 +39,13 @@ badBool : BoolFalse ≡ BoolTrue → False
 badBool ()
 
 semanticEntailmentTransitive : {a : _} {A : Set a} {P Q R : Propositions A} → (p!=q : P ≡ Q → False) → Entails record { ofElt = twoElementSubset } (implies P R)
-Entails.entails (semanticEntailmentTransitive {P = P} {Q} {R} p!=q) {v} pr with inspect (Valuation.v v P)
-Entails.entails (semanticEntailmentTransitive {P = P} {Q} {R} p!=q) {v} pr | BoolTrue with≡ pT with inspect (Valuation.v v Q)
-Entails.entails (semanticEntailmentTransitive {P = P} {Q} {R} p!=q) {v} pr | BoolTrue with≡ pT | BoolTrue with≡ qT with inspect (Valuation.v v R)
-Entails.entails (semanticEntailmentTransitive {P = P} {Q} {R} p!=q) {v} pr | BoolTrue with≡ pT | BoolTrue with≡ qT | BoolTrue with≡ rT = Valuation.vImplicationT v rT
-Entails.entails (semanticEntailmentTransitive {P = P} {Q} {R} p!=q) {v} pr | BoolTrue with≡ pT | BoolTrue with≡ qT | BoolFalse with≡ rF = exFalso (badBool (transitivity (equalityCommutative (Valuation.vImplicationF v qT rF)) (pr {Two})))
-Entails.entails (semanticEntailmentTransitive {P = P} {Q} {R} p!=q) {v} pr | BoolTrue with≡ pT | BoolFalse with≡ qF = exFalso (badBool (transitivity (equalityCommutative (Valuation.vImplicationF v pT qF)) (pr {One})))
-Entails.entails (semanticEntailmentTransitive {P = P} {Q} {R} p!=q) {v} pr | BoolFalse with≡ pF = Valuation.vImplicationVacuous v pF
+semanticEntailmentTransitive {P = P} {Q} {R} p!=q {v} pr with inspect (Valuation.v v P)
+semanticEntailmentTransitive {P = P} {Q} {R} p!=q {v} pr | BoolTrue with≡ pT with inspect (Valuation.v v Q)
+semanticEntailmentTransitive {P = P} {Q} {R} p!=q {v} pr | BoolTrue with≡ pT | BoolTrue with≡ qT with inspect (Valuation.v v R)
+semanticEntailmentTransitive {P = P} {Q} {R} p!=q {v} pr | BoolTrue with≡ pT | BoolTrue with≡ qT | BoolTrue with≡ rT = Valuation.vImplicationT v rT
+semanticEntailmentTransitive {P = P} {Q} {R} p!=q {v} pr | BoolTrue with≡ pT | BoolTrue with≡ qT | BoolFalse with≡ rF = exFalso (badBool (transitivity (equalityCommutative (Valuation.vImplicationF v qT rF)) (pr {Two})))
+semanticEntailmentTransitive {P = P} {Q} {R} p!=q {v} pr | BoolTrue with≡ pT | BoolFalse with≡ qF = exFalso (badBool (transitivity (equalityCommutative (Valuation.vImplicationF v pT qF)) (pr {One})))
+semanticEntailmentTransitive {P = P} {Q} {R} p!=q {v} pr | BoolFalse with≡ pF = Valuation.vImplicationVacuous v pF
 
 -- Subset {p -> q, q -> r}
 pQQR : {a : _} {A : Set a} {P Q R : Propositions A} → TwoElements → Propositions A
