@@ -160,8 +160,8 @@ isEvenDecidable (one :: x₁) = inr (λ x → x)
 increasing : StrictlyIncreasing (partialOrderToSetoidPartialOrder BinNatOrder) (Sequence.tail fib)
 increasing m = SetoidPartialOrder.<WellDefined (partialOrderToSetoidPartialOrder BinNatOrder) (fibsMatch' (succ m)) (fibsMatch' (succ (succ m))) (translate' (fibUnary (succ m)) (fibUnary (succ (succ m))) (fibUnaryIncreasing m))
 
-increasingNaturalsBound : Sequence ℕ → ℕ → List ℕ
-increasingNaturalsBound s n = ?
+increasingNaturalsBound : (s : Sequence ℕ) → StrictlyIncreasing S → (bound : ℕ) → List ℕ
+increasingNaturalsBound s n = {!!}
 
 {-
 fibsLessThan4Mil : List BinNat

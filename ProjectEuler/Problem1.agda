@@ -25,5 +25,5 @@ ans n = binNatToN (fold _+B_ (NToBinNat 0) (map NToBinNat (filtered n)))
 t : ans 10 ≡ 23
 t = refl
 
---q : ans 1000 ≡ 0 -- takes about 15secs for me to reduce the term that fills this hole
+--q : ans 1000 ≡ {!233168!} -- takes about 15secs for me to reduce the term that fills this hole
 --q = refl
