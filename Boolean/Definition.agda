@@ -26,3 +26,8 @@ boolAnd BoolFalse y = BoolFalse
 boolOr : Bool → Bool → Bool
 boolOr BoolTrue y = BoolTrue
 boolOr BoolFalse y = y
+
+xor : Bool → Bool → Bool
+xor BoolTrue BoolTrue = BoolFalse
+xor BoolTrue BoolFalse = BoolTrue
+xor BoolFalse b = b

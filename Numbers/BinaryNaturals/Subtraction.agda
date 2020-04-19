@@ -15,6 +15,7 @@ open import Maybe
 
 module Numbers.BinaryNaturals.Subtraction where
 
+private
   aMinusAGo : (a : BinNat) → mapMaybe canonical (go zero a a) ≡ yes []
   aMinusAGo [] = refl
   aMinusAGo (zero :: a) with aMinusAGo a
@@ -397,13 +398,14 @@ module Numbers.BinaryNaturals.Subtraction where
       bad' : one :: a :: as ≡ one :: [] → False
       bad' ()
 
-  doublingLemma : (y : BinNat) → NToBinNat (2 *N binNatToN y) ≡ canonical (zero :: y)
-  doublingLemma y with inspect (canonical y)
-  doublingLemma y | [] with≡ pr rewrite binNatToNZero' y pr | pr = refl
-  doublingLemma y | (a :: as) with≡ pr with inspect (binNatToN y)
-  doublingLemma y | (a :: as) with≡ pr | zero with≡ pr2 rewrite binNatToNZero y pr2 = exFalso (nonEmptyNotEmpty (equalityCommutative pr))
-  doublingLemma y | (a :: as) with≡ pr | succ bl with≡ pr2 rewrite pr | pr2 | doubleIsBitShift' bl | equalityCommutative pr = applyEquality (zero ::_) (equalityCommutative (transitivity (equalityCommutative (binToBin y)) (applyEquality NToBinNat pr2)))
+doublingLemma : (y : BinNat) → NToBinNat (2 *N binNatToN y) ≡ canonical (zero :: y)
+doublingLemma y with inspect (canonical y)
+doublingLemma y | [] with≡ pr rewrite binNatToNZero' y pr | pr = refl
+doublingLemma y | (a :: as) with≡ pr with inspect (binNatToN y)
+doublingLemma y | (a :: as) with≡ pr | zero with≡ pr2 rewrite binNatToNZero y pr2 = exFalso (nonEmptyNotEmpty (equalityCommutative pr))
+doublingLemma y | (a :: as) with≡ pr | succ bl with≡ pr2 rewrite pr | pr2 | doubleIsBitShift' bl | equalityCommutative pr = applyEquality (zero ::_) (equalityCommutative (transitivity (equalityCommutative (binToBin y)) (applyEquality NToBinNat pr2)))
 
+private
   doubling : (a : ℕ) {y : BinNat} → (NToBinNat a ≡ zero :: y) → binNatToN y +N (binNatToN y +N 0) ≡ a
   doubling a {y} pr = NToBinNatInj (binNatToN y +N (binNatToN y +N zero)) a (transitivity (transitivity (equalityCommutative (NToBinNatIsCanonical (binNatToN y +N (binNatToN y +N zero)))) (doublingLemma y)) (applyEquality canonical (equalityCommutative pr)))
 
