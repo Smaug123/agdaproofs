@@ -1,10 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import LogicalFormulae
 open import Setoids.Setoids
-open import Functions
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals.Naturals
 open import Groups.Definition
 open import Sets.EquivalenceRelations
 
@@ -48,8 +44,8 @@ groupsHaveRightCancellation x y z pr = transitive m identRight
   m : y ∼ z · 0G
   m = transitive l (+WellDefined ~refl invRight)
 
-rightInversesAreUnique : (x : A) → (y : A) → (y · x) ∼ 0G → y ∼ (inverse x)
-rightInversesAreUnique x y f = transitive i (transitive j (transitive k (transitive l m)))
+rightInversesAreUnique : {x : A} → {y : A} → (y · x) ∼ 0G → y ∼ (inverse x)
+rightInversesAreUnique {x} {y} f = transitive i (transitive j (transitive k (transitive l m)))
   where
   _^-1 = inverse
   i : y ∼ y · 0G
@@ -64,7 +60,7 @@ rightInversesAreUnique x y f = transitive i (transitive j (transitive k (transit
   m = identLeft
 
 leftInversesAreUnique : {x : A} → {y : A} → (x · y) ∼ 0G → y ∼ (inverse x)
-leftInversesAreUnique {x} {y} f = rightInversesAreUnique x y l
+leftInversesAreUnique {x} {y} f = rightInversesAreUnique {x} {y} l
   where
     _^-1 = inverse
     i : y · (x · y) ∼ y · 0G
@@ -80,7 +76,7 @@ leftInversesAreUnique {x} {y} f = rightInversesAreUnique x y l
 
 
 invTwice : (x : A) → (inverse (inverse x)) ∼ x
-invTwice x = symmetric (rightInversesAreUnique (x ^-1) x invRight)
+invTwice x = symmetric (rightInversesAreUnique {x ^-1} {x} invRight)
   where
   _^-1 = inverse
 
@@ -143,3 +139,6 @@ invContravariant {x} {y} = ans
 
 equalsDoubleImpliesZero : {x : A} → (x · x) ∼ x → x ∼ 0G
 equalsDoubleImpliesZero 2x=x = transitive (symmetric identLeft) (transitive (+WellDefined (symmetric invLeft) reflexive) (transitive (symmetric +Associative) (transitive (+WellDefined reflexive 2x=x) invLeft)))
+
+invZeroImpliesZero : {x : A} → (inverse x) ∼ 0G → x ∼ 0G
+invZeroImpliesZero {x} pr = transitive (symmetric (invTwice x)) (transitive (inverseWellDefined pr) invIdent)

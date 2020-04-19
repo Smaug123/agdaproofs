@@ -8,6 +8,9 @@ module Numbers.Integers.Definition where
 data ℤ : Set where
   nonneg : ℕ → ℤ
   negSucc : ℕ → ℤ
+{-# BUILTIN INTEGER       ℤ       #-}
+{-# BUILTIN INTEGERPOS    nonneg  #-}
+{-# BUILTIN INTEGERNEGSUC negSucc #-}
 
 nonnegInjective : {a b : ℕ} → nonneg a ≡ nonneg b → a ≡ b
 nonnegInjective refl = refl

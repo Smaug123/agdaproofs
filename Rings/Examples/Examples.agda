@@ -1,8 +1,8 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
 open import Groups.Groups
-open import Functions
+open import Functions.Definition
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
 open import Numbers.Integers.Integers

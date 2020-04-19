@@ -3,24 +3,17 @@
 open import LogicalFormulae
 open import Setoids.Setoids
 open import Sets.EquivalenceRelations
-open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals.Semiring
 open import Numbers.Integers.Integers
-open import Numbers.Integers.Addition
-open import Sets.FinSet
-open import Groups.Homomorphisms.Definition
-open import Groups.Groups
-open import Groups.Subgroups.Definition
-open import Groups.Abelian.Definition
 open import Groups.Definition
-open import Groups.Lemmas
 
 module Groups.Cyclic.Definition {m n : _} {A : Set m} {S : Setoid {m} {n} A} {_·_ : A → A → A} (G : Group S _·_) where
 
 open Setoid S
 open Group G
 open Equivalence eq
+open import Groups.Lemmas G
 
 positiveEltPower : (x : A) (i : ℕ) → A
 positiveEltPower x 0 = Group.0G G
@@ -47,9 +40,10 @@ elementPowerWellDefinedZ' i j i=j {g} = identityOfIndiscernablesRight _∼_ refl
 
 elementPowerWellDefinedG : (g h : A) → (g ∼ h) → {n : ℤ} → (elementPower g n) ∼ (elementPower h n)
 elementPowerWellDefinedG g h g=h {nonneg n} = positiveEltPowerWellDefinedG g h g=h n
-elementPowerWellDefinedG g h g=h {negSucc x} = inverseWellDefined G (+WellDefined g=h (positiveEltPowerWellDefinedG g h g=h x))
+elementPowerWellDefinedG g h g=h {negSucc x} = inverseWellDefined (+WellDefined g=h (positiveEltPowerWellDefinedG g h g=h x))
 
 record CyclicGroup : Set (m ⊔ n) where
   field
     generator : A
     cyclic : {a : A} → (Sg ℤ (λ i → Setoid._∼_ S (elementPower generator i) a))
+

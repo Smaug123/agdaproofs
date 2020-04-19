@@ -1,6 +1,5 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import Functions
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
 open import Sets.EquivalenceRelations
@@ -8,14 +7,14 @@ open import Setoids.Setoids
 
 module Setoids.DirectSum {m n o p : _} {A : Set m} {B : Set n} (R : Setoid {m} {o} A) (S : Setoid {n} {p} B) where
 
-open Setoid
-
-directSumSetoid : Setoid (A && B)
-_∼_ (directSumSetoid) (a ,, b) (c ,, d) = (Setoid._∼_ R a c) && (Setoid._∼_ S b d)
-Equivalence.reflexive (eq (directSumSetoid)) {(a ,, b)} = Equivalence.reflexive (Setoid.eq R) ,, Equivalence.reflexive (Setoid.eq S)
-Equivalence.symmetric (eq (directSumSetoid)) {(a ,, b)} {(c ,, d)} (fst ,, snd) = Equivalence.symmetric (Setoid.eq R) fst ,, Equivalence.symmetric (Setoid.eq S) snd
-Equivalence.transitive (eq (directSumSetoid)) {a ,, b} {c ,, d} {e ,, f} (fst1 ,, snd1) (fst2 ,, snd2) = Equivalence.transitive (Setoid.eq R) fst1 fst2 ,, Equivalence.transitive (Setoid.eq S) snd1 snd2
-
-directSumLift : {r s : A} {t u : B} → (Setoid._∼_ R r s) → (Setoid._∼_ S t u) → Setoid._∼_ directSumSetoid (r ,, t) (s ,, u)
-_&&_.fst (directSumLift r=s t=u) = r=s
-_&&_.snd (directSumLift r=s t=u) = t=u
+directSumSetoid : Setoid {m ⊔ n} (A || B)
+Setoid._∼_ directSumSetoid (inl x) (inl y) = embedLevel {o} {p} (Setoid._∼_ R x y)
+Setoid._∼_ directSumSetoid (inl x) (inr y) = False'
+Setoid._∼_ directSumSetoid (inr x) (inl y) = False'
+Setoid._∼_ directSumSetoid (inr x) (inr y) = embedLevel {p} {o} (Setoid._∼_ S x y)
+Equivalence.reflexive (Setoid.eq directSumSetoid) {inl x} = Equivalence.reflexive (Setoid.eq R) {x} ,, record {}
+Equivalence.reflexive (Setoid.eq directSumSetoid) {inr x} = Equivalence.reflexive (Setoid.eq S) {x} ,, record {}
+Equivalence.symmetric (Setoid.eq directSumSetoid) {inl x} {inl y} (x=y ,, _) = (Equivalence.symmetric (Setoid.eq R) x=y) ,, record {}
+Equivalence.symmetric (Setoid.eq directSumSetoid) {inr x} {inr y} (x=y ,, _) = (Equivalence.symmetric (Setoid.eq S) x=y) ,, record {}
+Equivalence.transitive (Setoid.eq directSumSetoid) {inl x} {inl y} {inl z} (x=y ,, _) (y=z ,, _) = Equivalence.transitive (Setoid.eq R) x=y y=z ,, record {}
+Equivalence.transitive (Setoid.eq directSumSetoid) {inr x} {inr y} {inr z} (x=y ,, _) (y=z ,, _) = Equivalence.transitive (Setoid.eq S) x=y y=z ,, record {}

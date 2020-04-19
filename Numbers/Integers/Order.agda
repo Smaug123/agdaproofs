@@ -3,17 +3,13 @@
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
-open import Numbers.Integers.Definition
 open import Numbers.Integers.RingStructure.Ring
-open import Numbers.Integers.Addition
-open import Numbers.Integers.Multiplication
 open import Semirings.Definition
-open import Rings.Definition
 open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
-open import Setoids.Setoids
-open import Setoids.Orders
-open import Orders
+open import Orders.Total.Definition
+open import Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 
 module Numbers.Integers.Order where
 

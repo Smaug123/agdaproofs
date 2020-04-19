@@ -1,11 +1,7 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import LogicalFormulae
 open import Setoids.Setoids
-open import Functions
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
-open import Numbers.Naturals.Naturals
-open import Sets.FinSet
+open import Functions.Definition
 open import Groups.Definition
 open import Sets.EquivalenceRelations
 open import Groups.Homomorphisms.Definition
@@ -36,13 +32,19 @@ GroupHom.groupHom (groupHomsCompose {U = U} {_+C_ = _·C_} {I} {g} gHom) {x} {y}
     answer = (Equivalence.transitive (Setoid.eq U)) (GroupHom.wellDefined gHom (GroupHom.groupHom hom {x} {y}) ) (GroupHom.groupHom gHom {f x} {f y})
 
 homRespectsInverse : {x : A} → Setoid._∼_ T (f (Group.inverse G x)) (Group.inverse H (f x))
-homRespectsInverse {x} = rightInversesAreUnique H (f x) (f (Group.inverse G x)) (transitive (symmetric (GroupHom.groupHom hom)) (transitive (GroupHom.wellDefined hom (Group.invLeft G)) imageOfIdentityIsIdentity))
+homRespectsInverse {x} = rightInversesAreUnique H {f x} {f (Group.inverse G x)} (transitive (symmetric (GroupHom.groupHom hom)) (transitive (GroupHom.wellDefined hom (Group.invLeft G)) imageOfIdentityIsIdentity))
   where
     open Setoid T
     open Equivalence eq
 
 zeroImpliesInverseZero : {x : A} → Setoid._∼_ T (f x) (Group.0G H) → Setoid._∼_ T (f (Group.inverse G x)) (Group.0G H)
 zeroImpliesInverseZero {x} fx=0 = transitive homRespectsInverse (transitive (inverseWellDefined H fx=0) (invIdent H))
+  where
+    open Setoid T
+    open Equivalence eq
+
+homRespectsInverse' : {a b : A} → Setoid._∼_ T (f (Group.inverse G a) +B f (Group.inverse G b)) (Group.inverse H (f (b +A a)))
+homRespectsInverse' {a} {b} = transitive (symmetric (GroupHom.groupHom hom)) (transitive (GroupHom.wellDefined hom (Equivalence.symmetric (Setoid.eq S) (invContravariant G))) (homRespectsInverse))
   where
     open Setoid T
     open Equivalence eq

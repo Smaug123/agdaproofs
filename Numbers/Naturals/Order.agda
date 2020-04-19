@@ -4,10 +4,12 @@ open import LogicalFormulae
 open import Semirings.Definition
 open import Numbers.Naturals.Definition
 open import Numbers.Naturals.Semiring
-open import Orders
+open import Orders.Total.Definition
+open import Orders.Partial.Definition
 
 module Numbers.Naturals.Order where
 open Semiring ℕSemiring
+open import Decidable.Lemmas ℕDecideEquality
 
 private
   infix 5 _<NLogical_
@@ -23,6 +25,13 @@ record _<N_ (a : ℕ) (b : ℕ) : Set where
   field
     x : ℕ
     proof : (succ x) +N a ≡ b
+
+infix 5 _<N'_
+record _<N'_ (a : ℕ) (b : ℕ) : Set where
+  constructor le'
+  field
+    x : ℕ
+    .proof : (succ x) +N a ≡ b
 
 infix 5 _≤N_
 _≤N_ : ℕ → ℕ → Set
@@ -83,8 +92,22 @@ canRemoveSuccFrom<N {a} {b} (le x proof) rewrite commutative x (succ a) | commut
 a<SuccA : (a : ℕ) → a <N succ a
 a<SuccA a = le zero refl
 
+<NWellDefined : {a b : ℕ} → (p1 : a <N b) → (p2 : a <N b) → _<N_.x p1 ≡ _<N_.x p2
+<NWellDefined {a} {b} (le x proof) (le y proof1) = equalityCommutative r
+  where
+    q : y +N a ≡ x +N a
+    q = succInjective {y +N a} {x +N a} (transitivity proof1 (equalityCommutative proof))
+    r : y ≡ x
+    r = canSubtractFromEqualityRight q
+
 canAddToOneSideOfInequality : {a b : ℕ} (c : ℕ) → a <N b → a <N (b +N c)
 canAddToOneSideOfInequality {a} {b} c (le x proof) = le (x +N c) (transitivity (applyEquality succ (equalityCommutative (+Associative x c a))) (transitivity (applyEquality (λ i → (succ x) +N i) (commutative c a)) (transitivity (applyEquality succ (+Associative x a c)) (applyEquality (_+N c) proof))))
+
+canAddToOneSideOfInequality' : {a b : ℕ} (c : ℕ) → a <N b → a <N (c +N b)
+canAddToOneSideOfInequality' {a} {b} c (le x proof) = le (x +N c) ans
+  where
+    ans : succ ((x +N c) +N a) ≡ c +N b
+    ans rewrite (equalityCommutative (+Associative x c a)) | commutative c a | (+Associative x a c) = transitivity (applyEquality (_+N c) proof) (commutative b c)
 
 addingIncreases : (a b : ℕ) → a <N a +N succ b
 addingIncreases zero b = succIsPositive b
@@ -97,14 +120,6 @@ noIntegersBetweenXAndSuccX : {a : ℕ} (x : ℕ) → (x <N a) → (a <N succ x) 
 noIntegersBetweenXAndSuccX {zero} x x<a a<sx = zeroNeverGreater x<a
 noIntegersBetweenXAndSuccX {succ a} x (le y proof) (le z proof1) with succInjective proof1
 ... | ah rewrite (equalityCommutative proof) | (succExtracts z (y +N x)) | +Associative (succ z) y x | commutative (succ (z +N y)) x = lessIrreflexive {x} (le (z +N y) (transitivity (commutative _ x) ah))
-
-<NWellDefined : {a b : ℕ} → (p1 : a <N b) → (p2 : a <N b) → _<N_.x p1 ≡ _<N_.x p2
-<NWellDefined {a} {b} (le x proof) (le y proof1) = equalityCommutative r
-  where
-    q : y +N a ≡ x +N a
-    q = succInjective {y +N a} {x +N a} (transitivity proof1 (equalityCommutative proof))
-    r : y ≡ x
-    r = canSubtractFromEqualityRight q
 
 private
   orderIsTotal : (a b : ℕ) → ((a <N b) || (b <N a)) || (a ≡ b)
@@ -182,3 +197,19 @@ canFlipMultiplicationsInIneq {a} {b} {c} {d} pr = identityOfIndiscernablesRight 
 
 lessRespectsMultiplication : (a b c : ℕ) → (a <N b) → (zero <N c) → (a *N c <N b *N c)
 lessRespectsMultiplication a b c prAB cPos = canFlipMultiplicationsInIneq {c} {a} {c} {b} (lessRespectsMultiplicationLeft a b c prAB cPos)
+
+squash<N : {a b : ℕ} → .(a <N b) → a <N b
+squash<N {a} {b} a<b with orderIsTotal a b
+... | inl (inl x) = x
+... | inl (inr x) = exFalso (lessIrreflexive (orderIsTransitive x a<b))
+squash<N {a} {b} a<b | inr refl = exFalso (lessIrreflexive a<b)
+
+<NTo<N' : {a b : ℕ} → a <N b → a <N' b
+<NTo<N' (le x proof) = le' x proof
+
+<N'To<N : {a b : ℕ} → a <N' b → a <N b
+<N'To<N {a} {b} (le' x proof) = le x (squash proof)
+
+<N'Refl : {a b : ℕ} → (p1 p2 : a <N' b) → p1 ≡ p2
+<N'Refl p1 p2 with <NWellDefined (<N'To<N p1) (<N'To<N p2)
+... | refl = refl

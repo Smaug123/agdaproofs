@@ -4,7 +4,6 @@ open import LogicalFormulae
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Multiplication
 open import Semirings.Definition
-open import Groups.Definition
 open import Rings.Definition
 open import Setoids.Setoids
 

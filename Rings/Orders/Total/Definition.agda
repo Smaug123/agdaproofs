@@ -1,13 +1,10 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import LogicalFormulae
-open import Groups.Groups
 open import Groups.Definition
-open import Numbers.Naturals.Naturals
-open import Setoids.Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Setoids.Setoids
-open import Functions
-open import Sets.EquivalenceRelations
+open import Functions.Definition
 open import Rings.Definition
 open import Rings.Orders.Partial.Definition
 

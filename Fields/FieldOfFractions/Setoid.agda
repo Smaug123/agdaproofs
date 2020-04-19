@@ -1,32 +1,29 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Groups.Groups
-open import Groups.Definition
-open import Groups.Lemmas
 open import Rings.Definition
-open import Rings.Lemmas
-open import Fields.Fields
-open import Functions
 open import Setoids.Setoids
 open import Sets.EquivalenceRelations
 open import Rings.IntegralDomains.Definition
+open import Rings.IntegralDomains.Lemmas
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Fields.FieldOfFractions.Setoid {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} {R : Ring S _+_ _*_} (I : IntegralDomain R) where
 
-
-fieldOfFractionsSet : Set (a ⊔ b)
-fieldOfFractionsSet = (A && (Sg A (λ a → (Setoid._∼_ S a (Ring.0R R) → False))))
+record fieldOfFractionsSet : Set (a ⊔ b) where
+  field
+    num : A
+    denom : A
+    .denomNonzero : (Setoid._∼_ S denom (Ring.0R R) → False)
 
 fieldOfFractionsSetoid : Setoid fieldOfFractionsSet
-Setoid._∼_ fieldOfFractionsSetoid (a ,, (b , b!=0)) (c ,, (d , d!=0)) = Setoid._∼_ S (a * d) (b * c)
-Equivalence.reflexive (Setoid.eq fieldOfFractionsSetoid) {a ,, (b , b!=0)} = Ring.*Commutative R
-Equivalence.symmetric (Setoid.eq fieldOfFractionsSetoid) {a ,, (b , b!=0)} {c ,, (d , d!=0)} ad=bc = transitive (Ring.*Commutative R) (transitive (symmetric ad=bc) (Ring.*Commutative R))
+Setoid._∼_ fieldOfFractionsSetoid (record { num = a ; denom = b ; denomNonzero = b!=0 }) (record { num = c ; denom = d ; denomNonzero = d!=0 }) = Setoid._∼_ S (a * d) (b * c)
+Equivalence.reflexive (Setoid.eq fieldOfFractionsSetoid) {record { num = a ; denom = b ; denomNonzero = b!=0 }} = Ring.*Commutative R
+Equivalence.symmetric (Setoid.eq fieldOfFractionsSetoid) {record { num = a ; denom = b ; denomNonzero = b!=0 }} {record { num = c ; denom = d ; denomNonzero = d!=0 }} ad=bc = transitive (Ring.*Commutative R) (transitive (symmetric ad=bc) (Ring.*Commutative R))
   where
     open Equivalence (Setoid.eq S)
-Equivalence.transitive (Setoid.eq fieldOfFractionsSetoid) {a ,, (b , b!=0)} {c ,, (d , d!=0)} {e ,, (f , f!=0)} ad=bc cf=de = p5
+Equivalence.transitive (Setoid.eq fieldOfFractionsSetoid) {record { num = a ; denom = b ; denomNonzero = b!=0 }} {record { num = c ; denom = d ; denomNonzero = d!=0 }} {record { num = e ; denom = f ; denomNonzero = f!=0 }} ad=bc cf=de = p5
   where
     open Setoid S
     open Ring R
@@ -38,6 +35,6 @@ Equivalence.transitive (Setoid.eq fieldOfFractionsSetoid) {a ,, (b , b!=0)} {c ,
     p3 : (a * f) * d ∼ (b * e) * d
     p3 = transitive p2 (transitive (*WellDefined reflexive *Commutative) *Associative)
     p4 : ((d ∼ 0R) → False) → ((a * f) ∼ (b * e))
-    p4 = cancelIntDom R I (transitive *Commutative (transitive p3 *Commutative))
+    p4 = cancelIntDom I (transitive *Commutative (transitive p3 *Commutative))
     p5 : (a * f) ∼ (b * e)
-    p5 = p4 d!=0
+    p5 = p4 λ t → exFalso (d!=0 t)

@@ -1,15 +1,10 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Groups.Groups
-open import Groups.Homomorphisms.Definition
 open import Groups.Definition
 open import Numbers.Naturals.Definition
-open import Setoids.Orders
 open import Setoids.Setoids
-open import Functions
 open import Sets.EquivalenceRelations
-open import Vectors
 open import Lists.Lists
 open import Maybe
 

@@ -2,10 +2,7 @@
 
 open import LogicalFormulae
 open import Lists.Lists
-open import Numbers.Naturals.Naturals
 open import Numbers.BinaryNaturals.Definition
-open import Orders
-open import Semirings.Definition
 open import Maybe
 
 module Numbers.BinaryNaturals.SubtractionGo where

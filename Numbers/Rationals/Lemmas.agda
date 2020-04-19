@@ -1,6 +1,5 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 
-open import WellFoundedInduction
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
@@ -17,12 +16,13 @@ open import Rings.Orders.Total.Definition
 open import Fields.Fields
 open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
-open import Setoids.Orders
-open import Functions
+open import Functions.Definition
 open import Sets.EquivalenceRelations
 open import Numbers.Rationals.Definition
 open import Semirings.Definition
-open import Orders
+open import Orders.Total.Definition
+open import Orders.WellFounded.Induction
+open import Setoids.Orders.Total.Definition
 
 module Numbers.Rationals.Lemmas where
 
@@ -30,6 +30,7 @@ open import Semirings.Lemmas ℕSemiring
 
 open PartiallyOrderedRing ℤPOrderedRing
 open import Rings.Orders.Total.Lemmas ℤOrderedRing
+open import Rings.Orders.Total.AbsoluteValue ℤOrderedRing
 open SetoidTotalOrder (totalOrderToSetoidTotalOrder ℤOrder)
 
 evenOrOdd : (a : ℕ) → (Sg ℕ (λ i → i *N 2 ≡ a)) || (Sg ℕ (λ i → succ (i *N 2) ≡ a))
@@ -86,7 +87,7 @@ evil' = rec <NWellfounded (λ z → (x x₁ : ℕ) (pr' : 0 <N x) (x₂ : z ≡ 
 
         halveDecreased : underlying aEven <N a
         halveDecreased with aEven
-        halveDecreased | zero , even rewrite equalityCommutative even = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) 0<a)
+        halveDecreased | zero , even rewrite equalityCommutative even = exFalso (TotalOrder.irreflexive ℕTotalOrder 0<a)
         halveDecreased | succ a/2 , even = le a/2 (transitivity (applyEquality succ (transitivity (Semiring.commutative ℕSemiring a/2 _) (applyEquality succ (transitivity (doubleIsAddTwo a/2) (multiplicationNIsCommutative 2 a/2))))) even)
 
         reduced : b +N underlying aEven <N k
@@ -97,7 +98,7 @@ evil' = rec <NWellfounded (λ z → (x x₁ : ℕ) (pr' : 0 <N x) (x₂ : z ≡ 
         0<b with TotalOrder.totality ℕTotalOrder 0 b
         0<b | inl (inl 0<b) = 0<b
         0<b | inl (inr ())
-        0<b | inr 0=b rewrite equalityCommutative 0=b = exFalso (PartialOrder.irreflexive (TotalOrder.order ℕTotalOrder) {0} (identityOfIndiscernablesRight _<N_ 0<a (sqrt0 a pr)))
+        0<b | inr 0=b rewrite equalityCommutative 0=b = exFalso (TotalOrder.irreflexive ℕTotalOrder {0} (identityOfIndiscernablesRight _<N_ 0<a (sqrt0 a pr)))
 
         contr : False
         contr = indHyp (b +N underlying aEven) reduced b (underlying aEven) 0<b refl next3
@@ -114,7 +115,7 @@ absNegsucc : (x : ℕ) → abs (negSucc x) ≡ nonneg (succ x)
 absNegsucc x with totality (nonneg 0) (negSucc x)
 absNegsucc x | inl (inr _) = refl
 
-toNats : (numerator denominator : ℤ) → (denominator ≡ nonneg 0 → False) → (abs numerator) *Z (abs numerator) ≡ ((abs denominator) *Z (abs denominator)) *Z nonneg 2 → Sg (ℕ && ℕ) (λ nats → ((_&&_.fst nats *N _&&_.fst nats) ≡ (_&&_.snd nats *N _&&_.snd nats) *N 2) && (_&&_.snd nats ≡ 0 → False))
+toNats : (numerator denominator : ℤ) → .(denominator ≡ nonneg 0 → False) → (abs numerator) *Z (abs numerator) ≡ ((abs denominator) *Z (abs denominator)) *Z nonneg 2 → Sg (ℕ && ℕ) (λ nats → ((_&&_.fst nats *N _&&_.fst nats) ≡ (_&&_.snd nats *N _&&_.snd nats) *N 2) && (_&&_.snd nats ≡ 0 → False))
 toNats (nonneg num) (nonneg 0) pr _ = exFalso (pr refl)
 toNats (nonneg num) (nonneg (succ denom)) _ pr = (num ,, (succ denom)) , (nonnegInjective (transitivity (transitivity (equalityCommutative (absNonneg (num *N num))) (absRespectsTimes (nonneg num) (nonneg num))) pr) ,, λ ())
 toNats (nonneg num) (negSucc denom) _ pr = (num ,, succ denom) , (nonnegInjective (transitivity (transitivity (equalityCommutative (absNonneg (num *N num))) (absRespectsTimes (nonneg num) (nonneg num))) pr) ,, λ ())
@@ -122,7 +123,7 @@ toNats (negSucc num) (nonneg (succ denom)) _ pr = (succ num ,, succ denom) , (no
 toNats (negSucc num) (negSucc denom) _ pr = (succ num ,, succ denom) , (nonnegInjective pr ,, λ ())
 
 sqrt2Irrational : (a : ℚ) → (a *Q a) =Q (injectionQ (nonneg 2)) → False
-sqrt2Irrational (numerator ,, (denominator , denom!=0)) pr = bad
+sqrt2Irrational (record { num = numerator ; denom = denominator ; denomNonzero = denom!=0 }) pr = bad
   where
     -- We have in hand `pr`, which is the following (almost by definition):
     pr' : (numerator *Z numerator) ≡ (denominator *Z denominator) *Z nonneg 2

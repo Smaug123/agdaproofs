@@ -14,17 +14,13 @@ data False : Set where
 data False' {a : _} : Set a where
 
 record True : Set where
+{-# BUILTIN UNIT True #-}
 record True' {a : _} : Set a where
-record Unit : Set where
 
 infix 10 _||_
 data _||_ {a b} (A : Set a) (B : Set b) : Set (a ⊔ b) where
   inl : A → A || B
   inr : B → A || B
-
-data Bool : Set where
-  BoolTrue : Bool
-  BoolFalse : Bool
 
 infix 15 _&&_
 record _&&_ {a b} (A : Set a) (B : Set b) : Set (a ⊔ b) where
@@ -32,6 +28,12 @@ record _&&_ {a b} (A : Set a) (B : Set b) : Set (a ⊔ b) where
   field
     fst : A
     snd : B
+
+equalityLeft : {a b : _} {A : Set a} {B : Set b} {x1 x2 : A && B} → (x1 ≡ x2) → _&&_.fst x1 ≡ _&&_.fst x2
+equalityLeft {x1 = a ,, _} {.a ,, _} refl = refl
+
+equalityRight : {a b : _} {A : Set a} {B : Set b} {x1 x2 : A && B} → (x1 ≡ x2) → _&&_.snd x1 ≡ _&&_.snd x2
+equalityRight {x1 = _ ,, a} {_ ,, .a} refl = refl
 
 infix 15 _&_&_
 record _&_&_ {a b c} (A : Set a) (B : Set b) (C : Set c) : Set (a ⊔ b ⊔ c) where
@@ -70,36 +72,23 @@ identityOfIndiscernablesRight {a = a} {b} {.b} prop prAB refl = prAB
 equalityCommutative : {a : _} {A : Set a} {x y : A} → (x ≡ y) → (y ≡ x)
 equalityCommutative refl = refl
 
-exFalso : {n : _} {A : Set n} → False → A
+exFalso : {n : _} {A : Set n} → .(x : False) → A
 exFalso {a} = λ ()
+
+exFalso' : {r n : _} {A : Set n} → .(x : False' {r}) → A
+exFalso' ()
 
 orIsAssociative : {n : _} {a b c : Set n} → ((a || b) || c) → (a || (b || c))
 orIsAssociative (inl (inl x)) = inl x
 orIsAssociative (inl (inr x)) = inr (inl x)
 orIsAssociative (inr x) = inr (inr x)
 
-leqConstructive : {n : _} → {p : Set n} → (p || (p → False)) → (((p → False) → False) → p)
-leqConstructive (inl p) = λ _ → p
-leqConstructive (inr notP) = λ negnegP → exFalso (negnegP notP)
+lemConstructive : {n : _} → {p : Set n} → (p || (p → False)) → (((p → False) → False) → p)
+lemConstructive (inl p) = λ _ → p
+lemConstructive (inr notP) = λ negnegP → exFalso (negnegP notP)
 
 lemConverse : {n : _} → {p : Set n} → p → ((p → False) → False)
 lemConverse p = λ notP → notP p
-
-if_then_else_ : {a : _} → {A : Set a} → Bool → A → A → A
-if BoolTrue then tr else fls = tr
-if BoolFalse then tr else fls = fls
-
-not : Bool → Bool
-not BoolTrue = BoolFalse
-not BoolFalse = BoolTrue
-
-boolAnd : Bool → Bool → Bool
-boolAnd BoolTrue y = y
-boolAnd BoolFalse y = BoolFalse
-
-boolOr : Bool → Bool → Bool
-boolOr BoolTrue y = BoolTrue
-boolOr BoolFalse y = y
 
 typeCast : {a : _} {A : Set a} {B : Set a} (el : A) (pr : A ≡ B) → B
 typeCast {a} {A} {.A} elt refl = elt
@@ -120,3 +109,6 @@ decidableOr : {a b : _} → (A : Set a) → (B : Set b) → (A || (A → False))
 decidableOr {a} {b} A B decidable (inl x) = inl x
 decidableOr {a} {b} A B (inl y) (inr x) = inl y
 decidableOr {a} {b} A B (inr y) (inr x) = inr (record { fst = y ; snd = x})
+
+embedLevel : {a b : _} → Set a → Set (a ⊔ b)
+embedLevel {a} {b} A = A && (True' {b})

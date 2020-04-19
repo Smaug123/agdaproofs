@@ -1,4 +1,4 @@
-{-# OPTIONS --warning=error --safe --guardedness #-}
+{-# OPTIONS --warning=error --safe --guardedness --without-K #-}
 
 open import LogicalFormulae
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
@@ -13,10 +13,10 @@ open import Numbers.BinaryNaturals.Addition
 open import Numbers.BinaryNaturals.Order
 open import Sequences
 open import Vectors
-open import Orders
-open import Setoids.Orders
+open import Orders.Total.Definition
+open import Setoids.Orders.Total.Definition
 open import Setoids.Setoids
-open import Functions
+open import Functions.Definition
 open import Semirings.Definition
 
 module ProjectEuler.Problem2 where

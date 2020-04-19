@@ -1,7 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Groups.Groups
 open import Groups.Lemmas
 open import Groups.Definition
 open import Rings.Definition
@@ -9,20 +8,21 @@ open import Rings.Orders.Partial.Definition
 open import Rings.Orders.Total.Definition
 open import Rings.Lemmas
 open import Setoids.Setoids
-open import Setoids.Orders
-open import Orders
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
 open import Rings.IntegralDomains.Definition
-open import Functions
+open import Functions.Definition
 open import Sets.EquivalenceRelations
 open import Fields.Fields
 open import Fields.Orders.Total.Definition
-
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.Order
 
 module Fields.Orders.Lemmas {m n o : _} {A : Set m} {S : Setoid {m} {n} A} {_+_ : A → A → A} {_*_ : A → A → A} {_<_ : Rel {_} {o} A} {R : Ring S _+_ _*_} {pOrder : SetoidPartialOrder S _<_} {F : Field R} {pRing : PartiallyOrderedRing R pOrder} (oF : TotallyOrderedField F pRing) where
 
 abstract
 
+  open import Rings.InitialRing R
   open Ring R
   open PartiallyOrderedRing pRing
   open Group additiveGroup
@@ -33,6 +33,8 @@ abstract
   open import Fields.Lemmas F
   open Setoid S
   open SetoidPartialOrder pOrder
+  open Equivalence eq
+  open Field F
 
   clearDenominatorHalf : (x y 1/2 : A) → (1/2 + 1/2 ∼ 1R) → x < (y * 1/2) → (x + x) < y
   clearDenominatorHalf x y 1/2 pr1/2 x<1/2y = <WellDefined (Equivalence.reflexive eq) (Equivalence.transitive eq (Equivalence.transitive eq (Equivalence.symmetric eq *DistributesOver+) (Equivalence.transitive eq *Commutative (*WellDefined pr1/2 (Equivalence.reflexive eq)))) identIsIdent) (ringAddInequalities x<1/2y x<1/2y)
@@ -89,7 +91,6 @@ abstract
     orderedFieldIntDom {a} {b} ab=0 with totality 0R a
     ... | inl (inl x) = inr (Equivalence.transitive eq (Equivalence.transitive eq (symmetric identIsIdent) (*WellDefined q reflexive)) p')
       where
-        open Equivalence eq
         a!=0 : (a ∼ Group.0G additiveGroup) → False
         a!=0 pr = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<WellDefined pOrder (symmetric pr) reflexive x)
         invA : A
@@ -103,7 +104,6 @@ abstract
         p' = Equivalence.transitive eq (symmetric *Associative) (Equivalence.transitive eq p (Ring.timesZero R))
     orderedFieldIntDom {a} {b} ab=0 | inl (inr x) = inr (Equivalence.transitive eq (Equivalence.transitive eq (symmetric identIsIdent) (*WellDefined q reflexive)) p')
       where
-        open Equivalence eq
         a!=0 : (a ∼ Group.0G additiveGroup) → False
         a!=0 pr = SetoidPartialOrder.irreflexive pOrder (SetoidPartialOrder.<WellDefined pOrder reflexive (symmetric pr) x)
         invA : A
@@ -120,3 +120,8 @@ abstract
   orderedFieldIsIntDom :  IntegralDomain R
   IntegralDomain.intDom orderedFieldIsIntDom = decidedIntDom R orderedFieldIntDom
   IntegralDomain.nontrivial orderedFieldIsIntDom pr = Field.nontrivial F (Equivalence.symmetric (Setoid.eq S) pr)
+
+  charZero : (n : ℕ) → (0R ∼ (fromN (succ n))) → False
+  charZero n 0=sn = irreflexive (<WellDefined 0=sn reflexive (fromNPreservesOrder (0<1 (Field.nontrivial F)) (succIsPositive n)))
+  charZero' : (n : ℕ) → ((fromN (succ n)) ∼ 0R) → False
+  charZero' n pr = charZero n (symmetric pr)

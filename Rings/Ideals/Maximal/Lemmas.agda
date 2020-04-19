@@ -1,28 +1,29 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Groups.Groups
 open import Groups.Cosets
 open import Groups.Homomorphisms.Definition
 open import Rings.Homomorphisms.Definition
 open import Groups.Lemmas
 open import Groups.Definition
 open import Setoids.Setoids
-open import Setoids.Subset
-open import Setoids.Functions.Definition
 open import Setoids.Functions.Lemmas
 open import Rings.Definition
-open import Rings.Lemmas
 open import Sets.EquivalenceRelations
 open import Rings.Ideals.Definition
 open import Fields.Fields
+open import Fields.Lemmas
 open import Rings.Cosets
 open import Rings.Ideals.Maximal.Definition
 open import Rings.Ideals.Lemmas
+open import Rings.Ideals.Prime.Definition
+open import Rings.IntegralDomains.Definition
+open import Rings.Ideals.Prime.Lemmas
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
-module Rings.Ideals.Maximal.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} {c : _} {pred : A → Set c} (i : Ideal R pred) (proper : A) (isProper : pred proper → False) where
+module Rings.Ideals.Maximal.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} {R : Ring S _+_ _*_} {c : _} {pred : A → Set c} (i : Ideal R pred)  where
+
 
 open Ring R
 open Group additiveGroup
@@ -52,7 +53,7 @@ Field.allInvertible (idealMaximalImpliesQuotientField max) cosetA cosetA!=0 = an
     ans'' : pred (inverse (Ring.1R (cosetRing R i)) + (ans' * cosetA))
     ans'' with ans {1R}
     ans'' | a , ((b , predCAb-a) ,, pred1-a) = Ideal.isSubset i (transitive (+WellDefined (invContravariant additiveGroup) reflexive) (transitive +Associative (+WellDefined (transitive (symmetric +Associative) (transitive (+WellDefined reflexive invLeft) identRight)) *Commutative))) (Ideal.closedUnderPlus i (Ideal.closedUnderInverse i pred1-a) predCAb-a)
-Field.nontrivial (idealMaximalImpliesQuotientField max) 1=0 = isProper (Ideal.isSubset i (identIsIdent {proper}) (Ideal.accumulatesTimes i p))
+Field.nontrivial (idealMaximalImpliesQuotientField max) 1=0 = MaximalIdeal.notContainedIsNotContained max (Ideal.isSubset i (identIsIdent {MaximalIdeal.notContained (max {lzero})}) (Ideal.accumulatesTimes i p))
   where
     have : pred (inverse 1R)
     have = Ideal.isSubset i identRight 1=0
@@ -60,8 +61,8 @@ Field.nontrivial (idealMaximalImpliesQuotientField max) 1=0 = isProper (Ideal.is
     p = Ideal.isSubset i (invTwice additiveGroup 1R) (Ideal.closedUnderInverse i have)
 
 quotientFieldImpliesIdealMaximal : Field (cosetRing R i) → ({d : _} → MaximalIdeal i {d})
-MaximalIdeal.notContained (quotientFieldImpliesIdealMaximal f) = proper
-MaximalIdeal.notContainedIsNotContained (quotientFieldImpliesIdealMaximal f) = isProper
+MaximalIdeal.notContained (quotientFieldImpliesIdealMaximal f) = Ring.1R (cosetRing R i)
+MaximalIdeal.notContainedIsNotContained (quotientFieldImpliesIdealMaximal f) p1R = Field.nontrivial f (memberDividesImpliesMember R i p1R ((inverse 1R + 0R) , identIsIdent))
 MaximalIdeal.isMaximal (quotientFieldImpliesIdealMaximal f) {bigger} biggerIdeal contained (a , (biggerA ,, notPredA)) = Ideal.isSubset biggerIdeal identIsIdent (Ideal.accumulatesTimes biggerIdeal v)
   where
     inv : Sg A (λ t → pred (inverse 1R + (t * a)))
@@ -77,3 +78,16 @@ MaximalIdeal.isMaximal (quotientFieldImpliesIdealMaximal f) {bigger} biggerIdeal
     u = Ideal.closedUnderInverse biggerIdeal (Ideal.isSubset biggerIdeal *Commutative (Ideal.accumulatesTimes biggerIdeal biggerA))
     v : bigger 1R
     v = Ideal.isSubset biggerIdeal (invTwice additiveGroup 1R) (Ideal.closedUnderInverse biggerIdeal (Ideal.isSubset biggerIdeal (transitive (symmetric +Associative) (transitive (+WellDefined reflexive invRight) identRight)) (Ideal.closedUnderPlus biggerIdeal t u)))
+
+idealMaximalImpliesIdealPrime : ({d : _} → MaximalIdeal i {d}) → PrimeIdeal i
+idealMaximalImpliesIdealPrime max = quotientIntDomImpliesIdealPrime i f'
+  where
+    f : Field (cosetRing R i)
+    f = idealMaximalImpliesQuotientField max
+    f' : IntegralDomain (cosetRing R i)
+    f' = fieldIsIntDom f (λ p → Field.nontrivial f (Equivalence.symmetric (Setoid.eq (cosetSetoid additiveGroup (Ideal.isSubgroup i))) p))
+
+maximalIdealWellDefined : {d : _} {pred2 : A → Set d} (i2 : Ideal R pred2) → ({x : A} → pred x → pred2 x) → ({x : A} → pred2 x → pred x) → {e : _} → MaximalIdeal i {e} → MaximalIdeal i2 {e}
+MaximalIdeal.notContained (maximalIdealWellDefined i2 pToP2 p2ToP record { notContained = notContained ; notContainedIsNotContained = notContainedIsNotContained ; isMaximal = isMaximal }) = notContained
+MaximalIdeal.notContainedIsNotContained (maximalIdealWellDefined i2 pToP2 p2ToP record { notContained = notContained ; notContainedIsNotContained = notContainedIsNotContained ; isMaximal = isMaximal }) p2Not = notContainedIsNotContained (p2ToP p2Not)
+MaximalIdeal.isMaximal (maximalIdealWellDefined i2 pToP2 p2ToP record { notContained = notContained ; notContainedIsNotContained = notContainedIsNotContained ; isMaximal = isMaximal }) {biggerPred} bigger pred2InBigger (r , (biggerPredR ,, notP2r)) {x} = isMaximal bigger (λ p → pred2InBigger (pToP2 p)) (r , (biggerPredR ,, λ p → notP2r (pToP2 p)))

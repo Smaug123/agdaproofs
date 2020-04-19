@@ -1,20 +1,12 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Groups.Groups
 open import Groups.Abelian.Definition
-open import Groups.Homomorphisms.Definition
 open import Groups.Definition
-open import Numbers.Naturals.Definition
-open import Setoids.Orders
 open import Setoids.Setoids
-open import Functions
+open import Functions.Definition
 open import Sets.EquivalenceRelations
-open import Vectors
 open import Lists.Lists
-open import Maybe
-
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Groups.Polynomials.Addition {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} (G : Group S _+_) where
 

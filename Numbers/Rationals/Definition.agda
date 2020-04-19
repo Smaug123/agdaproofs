@@ -1,6 +1,7 @@
-{-# OPTIONS --safe --warning=error #-}
+{-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
+open import Numbers.Naturals.Definition
 open import Numbers.Naturals.Naturals
 open import Numbers.Integers.Integers
 open import Groups.Groups
@@ -10,10 +11,10 @@ open import Rings.Definition
 open import Rings.Orders.Total.Definition
 open import Rings.Orders.Partial.Definition
 open import Fields.Fields
-open import Numbers.Primes.PrimeNumbers
 open import Setoids.Setoids
-open import Setoids.Orders
-open import Functions
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
+open import Functions.Definition
 open import Sets.EquivalenceRelations
 
 module Numbers.Rationals.Definition where
@@ -23,10 +24,14 @@ open import Fields.FieldOfFractions.Addition ℤIntDom
 open import Fields.FieldOfFractions.Multiplication ℤIntDom
 open import Fields.FieldOfFractions.Ring ℤIntDom
 open import Fields.FieldOfFractions.Field ℤIntDom
+open import Fields.FieldOfFractions.Lemmas ℤIntDom
 open import Fields.FieldOfFractions.Order ℤIntDom ℤOrderedRing
 
 ℚ : Set
 ℚ = fieldOfFractionsSet
+
+ℚSetoid : Setoid ℚ
+ℚSetoid = fieldOfFractionsSetoid
 
 _+Q_ : ℚ → ℚ → ℚ
 a +Q b = fieldOfFractionsPlus a b
@@ -41,7 +46,14 @@ a *Q b = fieldOfFractionsTimes a b
 0Q = Ring.0R ℚRing
 
 injectionQ : ℤ → ℚ
-injectionQ z = z ,, (nonneg 1 , λ ())
+injectionQ = embedIntoFieldOfFractions
+
+injectionNQ : ℕ → ℚ
+injectionNQ n = injectionQ (nonneg n)
+
+injectionQInjective : Injection injectionQ
+injectionQInjective {nonneg x} {nonneg .x} refl = refl
+injectionQInjective {negSucc x} {negSucc .x} refl = refl
 
 ℚField : Field ℚRing
 ℚField = fieldOfFractions
@@ -73,6 +85,9 @@ a-A a = Group.invRight (Ring.additiveGroup ℚRing) {a}
 ℚTotalOrder : SetoidTotalOrder fieldOfFractionsOrder
 ℚTotalOrder = fieldOfFractionsTotalOrder
 
+ℚOrderInherited : (a b : ℤ) → a <Z b → injectionQ a <Q injectionQ b
+ℚOrderInherited a b a<b = fieldOfFractionsOrderInherited a<b
+
 open SetoidTotalOrder fieldOfFractionsTotalOrder
 open SetoidPartialOrder partial
 open Setoid fieldOfFractionsSetoid
@@ -85,6 +100,3 @@ negateQWellDefined a b a=b = inverseWellDefined (Ring.additiveGroup ℚRing) {a}
 
 ℚOrdered : TotallyOrderedRing ℚPOrdered
 ℚOrdered = fieldOfFractionsOrderedRing
-
-ℚcharNot2 : ((Ring.1R ℚRing) +Q (Ring.1R ℚRing)) =Q (Ring.0R ℚRing) → False
-ℚcharNot2 ()

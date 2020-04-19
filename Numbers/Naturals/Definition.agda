@@ -1,6 +1,8 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
+open import Boolean.Definition
 open import LogicalFormulae
+open import Decidable.Lemmas
 
 module Numbers.Naturals.Definition where
 
@@ -29,3 +31,21 @@ aIsNotSuccA (succ a) pr = aIsNotSuccA a (succInjective pr)
 ℕDecideEquality (succ a) (succ b) with ℕDecideEquality a b
 ℕDecideEquality (succ a) (succ b) | inl x = inl (applyEquality succ x)
 ℕDecideEquality (succ a) (succ b) | inr x = inr λ pr → x (succInjective pr)
+
+ℕDecideEquality' : (a b : ℕ) → Bool
+ℕDecideEquality' a b with ℕDecideEquality a b
+ℕDecideEquality' a b | inl x = BoolTrue
+ℕDecideEquality' a b | inr x = BoolFalse
+
+record _=N'_ (a b : ℕ) : Set where
+  field
+    .eq : a ≡ b
+
+squashN : {a b : ℕ} → a =N' b → a ≡ b
+squashN record { eq = eq } = squash ℕDecideEquality eq
+
+collapseN : {a b : ℕ} → a ≡ b → a =N' b
+collapseN refl = record { eq = refl }
+
+=N'Refl : {a b : ℕ} → (p1 p2 : a =N' b) → p1 ≡ p2
+=N'Refl p1 p2 = refl

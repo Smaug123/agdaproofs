@@ -2,7 +2,8 @@
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
-open import Functions
+open import Functions.Definition
+open import Boolean.Definition
 
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
@@ -50,14 +51,17 @@ valuationIsDetermined v1 v2 pr {implies x y} | eqX | eqY | BoolTrue with≡ p | 
 valuationIsDetermined v1 v2 pr {implies x y} | eqX | eqY | BoolTrue with≡ p | BoolFalse with≡ q rewrite p | q | Valuation.vImplicationF v1 p q | Valuation.vImplicationF v2 (equalityCommutative eqX) (equalityCommutative eqY) = refl
 valuationIsDetermined v1 v2 pr {implies x y} | eqX | eqY | BoolFalse with≡ p rewrite p | Valuation.vImplicationVacuous v1 {q = y} p | Valuation.vImplicationVacuous v2 {q = y} (equalityCommutative eqX) = refl
 
+extendValuationV : {a : _} {pr : Set a} → (w : pr → Bool) → Propositions pr → Bool
+extendValuationV w (ofPrimitive x) = w x
+extendValuationV w false = BoolFalse
+extendValuationV w (implies x y) with extendValuationV w x
+... | BoolTrue with extendValuationV w y
+extendValuationV w (implies x y) | BoolTrue | BoolTrue = BoolTrue
+... | BoolFalse = BoolFalse
+extendValuationV w (implies x y) | BoolFalse = BoolTrue
+
 extendValuation : {a : _} {pr : Set a} → (w : pr → Bool) → Valuation pr
-Valuation.v (extendValuation w) (ofPrimitive x) = w x
-Valuation.v (extendValuation w) false = BoolFalse
-Valuation.v (extendValuation w) (implies x y) with Valuation.v (extendValuation w) x
-Valuation.v (extendValuation w) (implies x y) | BoolTrue with Valuation.v (extendValuation w) y
-Valuation.v (extendValuation w) (implies x y) | BoolTrue | BoolTrue = BoolTrue
-Valuation.v (extendValuation w) (implies x y) | BoolTrue | BoolFalse = BoolFalse
-Valuation.v (extendValuation w) (implies x y) | BoolFalse = BoolTrue
+Valuation.v (extendValuation w) = extendValuationV w
 Valuation.vFalse (extendValuation w) = refl
 Valuation.vImplicationF (extendValuation w) {p} {q} pT qF with Valuation.v (extendValuation w) p
 Valuation.vImplicationF (extendValuation w) {p} {q} refl qF | BoolTrue with Valuation.v (extendValuation w) q
@@ -77,9 +81,8 @@ Valuation.vImplicationT (extendValuation w) {p} {q} qT | BoolFalse = refl
 valuationsAreFree : {a : _} {pr : Set a} → (w : pr → Bool) → {x : pr} → Valuation.v (extendValuation w) (ofPrimitive x) ≡ w x
 valuationsAreFree w = refl
 
-record Tautology {a : _} {pr : Set a} (prop : Propositions pr) : Set a where
-  field
-    isTaut : {v : Valuation pr} → Valuation.v v prop ≡ BoolTrue
+Tautology : {a : _} {pr : Set a} (prop : Propositions pr) → Set a
+Tautology {pr = pr} prop = (v : Valuation pr) → Valuation.v v prop ≡ BoolTrue
 
 record IsSubset {a b : _} (sub : Set a) (super : Set b) : Set (a ⊔ b) where
   field
@@ -100,9 +103,8 @@ Valuation.vImplicationT (inheritedValuation isSub v) qT = Valuation.vImplication
 inheritedValuation' : {a b : _} {sub : Set a} {super : Set b} → (IsSubset sub (Propositions super)) → Valuation super → (x : sub) → Bool
 inheritedValuation' subset v x = Valuation.v v (IsSubset.ofElt subset x)
 
-record Entails {a b : _} {sub : Set a} {super : Set b} (S : IsSubset sub (Propositions super)) (P : Propositions super) : Set (a ⊔ b) where
-  field
-    entails : {v : Valuation super} → ({s : sub} → inheritedValuation' S v s ≡ BoolTrue) → Valuation.v v P ≡ BoolTrue
+Entails : {a b : _} {sub : Set a} {super : Set b} (S : IsSubset sub (Propositions super)) (P : Propositions super) → Set (a ⊔ b)
+Entails {sub = sub} {super = super} S P = {v : Valuation super} → ({s : sub} → inheritedValuation' S v s ≡ BoolTrue) → Valuation.v v P ≡ BoolTrue
 
 data ThreeElements : Set where
   One : ThreeElements
@@ -171,9 +173,18 @@ adjoinGiven : {a b : _} {A : Set a} {givens : Set b} (givensSubset : IsSubset gi
 IsSubset.ofElt (adjoinGiven record { ofElt = ofElt } P) (inl x) = P
 IsSubset.ofElt (adjoinGiven record { ofElt = ofElt } _) (inr x) = ofElt x
 
+vecIndexRefl : {a : _} {A : Set a} {n : ℕ} {v1 v2 : Vec A n} → {pos : ℕ} → {pos<N1 pos<N2 : pos <N n} → v1 ≡ v2 → vecIndex v1 pos pos<N1 ≡ vecIndex v2 pos pos<N2
+vecIndexRefl {v1 = v1} {.v1} {pos} {pos<N1} {pos<N2} refl = refl
+
+
 {-
 proofRemainsValidOnAddingGivens : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} → {Q : Propositions A} → Proof axiomsSubset givensSubset n → Proof axiomsSubset (adjoinGiven givensSubset Q) n
 pr' : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} → {Q : Propositions A} → (pr : Proof axiomsSubset givensSubset n) → toSteps pr ≡ toSteps (proofRemainsValidOnAddingGivens {Q = Q} pr)
+
+pr' empty = refl
+pr' (nextStep n pr (axiom x)) rewrite pr' pr = refl
+pr' (nextStep n pr (given x)) rewrite pr' pr = refl
+pr' (nextStep n pr (modusPonens implication argument conclusion x)) rewrite pr' pr = refl
 
 proofRemainsValidOnAddingGivens {Q = Q} empty = empty
 proofRemainsValidOnAddingGivens {Q = Q} (nextStep n pr (axiom x)) = nextStep n (proofRemainsValidOnAddingGivens pr) (axiom x)
@@ -181,15 +192,11 @@ proofRemainsValidOnAddingGivens {Q = Q} (nextStep n pr (given x)) = nextStep n (
 proofRemainsValidOnAddingGivens {A = A} {axiomsSubset = axiomsSubset} {givensSubset = givensSubset} {Q = Q} (nextStep n pr (modusPonens implication argument conclusion x)) = nextStep n (proofRemainsValidOnAddingGivens pr) (modusPonens (record { element = Selection.element implication ; position = Selection.position implication ; pos<N = Selection.pos<N implication ; elementIsAt = lemma implication }) (record { element = Selection.element argument ; position = Selection.position argument ; pos<N = Selection.pos<N argument ; elementIsAt = lemma argument }) conclusion x)
   where
     lemma : (sel : Selection (toSteps pr)) → vecIndex (toSteps (proofRemainsValidOnAddingGivens pr)) (Selection.position sel) (Selection.pos<N sel) ≡ Selection.element sel
-    lemma sel = {!!}
+    lemma sel with proofRemainsValidOnAddingGivens {Q = Q} pr
+    ... | nextStep n bl x = {!!}
+-}
 
-pr' empty = refl
-pr' (nextStep n pr (axiom x)) rewrite pr' pr = refl
-pr' (nextStep n pr (given x)) rewrite pr' pr = refl
-pr' (nextStep n pr (modusPonens implication argument conclusion x)) rewrite pr' pr = refl
-
-vecIndexRefl : {a : _} {A : Set a} {n : ℕ} {v1 v2 : Vec A n} → {pos : ℕ} → {pos<N1 pos<N2 : pos <N n} → v1 ≡ v2 → vecIndex v1 pos pos<N1 ≡ vecIndex v2 pos pos<N2
-vecIndexRefl {v1 = v1} {.v1} {pos} {pos<N1} {pos<N2} refl rewrite <NRefl pos<N1 pos<N2 = refl
+{-
 
 proofImpliesProves : {a b c : _} {A : Set a} {axioms : Set b} {axiomsSubset : IsSubset axioms (Propositions A)} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} {n : ℕ} (0<n : 0 <N n) → (p : Proof axiomsSubset givensSubset n) → (pr : Propositions A) → vecIndex (toSteps p) 0 0<n ≡ pr → Proves axiomsSubset givensSubset pr
 proofImpliesProves {n = zero} () p pr x
@@ -214,38 +221,12 @@ deductionTheorem {P = P} {Q} record { n = n ; proof = (nextStep .n proof (modusP
 
 -}
 
-axiomKTaut : {a : _} {A : Set a} {P Q : Propositions A} → Tautology (implies P (implies Q P))
-Tautology.isTaut (axiomKTaut {P = P} {Q}) {v = v} with inspect (Valuation.v v P)
-Tautology.isTaut (axiomKTaut {P = P} {Q}) {v} | BoolTrue with≡ pT with inspect (Valuation.v v Q)
-Tautology.isTaut (axiomKTaut {P = P} {Q}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT = Valuation.vImplicationT v (Valuation.vImplicationT v pT)
-Tautology.isTaut (axiomKTaut {P = P} {Q}) {v} | BoolTrue with≡ pT | BoolFalse with≡ qF = Valuation.vImplicationT v (Valuation.vImplicationVacuous v qF)
-Tautology.isTaut (axiomKTaut {P = P} {Q}) {v} | BoolFalse with≡ pF = Valuation.vImplicationVacuous v pF
-
-excludedMiddleTaut : {a : _} {A : Set a} {P : Propositions A} → Tautology (implies (prNot (prNot P)) P)
-Tautology.isTaut (excludedMiddleTaut {P = P}) {v} with inspect (Valuation.v v P)
-Tautology.isTaut (excludedMiddleTaut {P = P}) {v} | BoolTrue with≡ pT = Valuation.vImplicationT v pT
-Tautology.isTaut (excludedMiddleTaut {P = P}) {v} | BoolFalse with≡ pF = Valuation.vImplicationVacuous v (Valuation.vImplicationF v (Valuation.vImplicationVacuous v pF) (Valuation.vFalse v))
-
-axiomSTaut : {a : _} {A : Set a} {P Q R : Propositions A} → Tautology (implies (implies P (implies Q R)) (implies (implies P Q) (implies P R)))
-Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} with inspect (Valuation.v v P)
-Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT with inspect (Valuation.v v Q)
-Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT with inspect (Valuation.v v R)
-Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT | BoolTrue with≡ rT = Valuation.vImplicationT v (Valuation.vImplicationT v (Valuation.vImplicationT v rT))
-Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolTrue with≡ qT | BoolFalse with≡ rF = Valuation.vImplicationVacuous v (Valuation.vImplicationF v pT (Valuation.vImplicationF v qT rF))
-Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolTrue with≡ pT | BoolFalse with≡ qF = Valuation.vImplicationT v (Valuation.vImplicationVacuous v (Valuation.vImplicationF v pT qF))
-Tautology.isTaut (axiomSTaut {P = P} {Q} {R}) {v} | BoolFalse with≡ pF = Valuation.vImplicationT v (Valuation.vImplicationT v (Valuation.vImplicationVacuous v pF))
-
-
-propositionalAxiomsTautology : {a : _} {A : Set a} (x : Sg ThreeElements (indexAxiom A)) → Tautology (IsSubset.ofElt propositionalAxioms x)
-propositionalAxiomsTautology (One , (fst ,, snd)) = axiomKTaut
-propositionalAxiomsTautology (Two , record { one = one ; two = two ; three = three }) = axiomSTaut
-propositionalAxiomsTautology (Three , b) = excludedMiddleTaut
-
 propositionalLogicSound : {a b c : _} {A : Set a} {givens : Set c} {givensSubset : IsSubset givens (Propositions A)} → {P : Propositions A} → Proves propositionalAxioms givensSubset P → Entails givensSubset P
-Entails.entails (propositionalLogicSound {P = .(IsSubset.ofElt propositionalAxioms x)} record { n = .0 ; proof = (nextStep .0 empty (axiom x)) ; ofStatement = refl }) {v} values = Tautology.isTaut (propositionalAxiomsTautology x) {v}
+Entails.entails (propositionalLogicSound {P = .(IsSubset.ofElt propositionalAxioms x)} record { n = .0 ; proof = (nextStep .0 empty (axiom x)) ; ofStatement = refl }) {v} values = propositionalAxiomsTautology x {v}
 Entails.entails (propositionalLogicSound {P = P} record { n = .0 ; proof = (nextStep .0 empty (given x)) ; ofStatement = ofStatement }) {v} values rewrite equalityCommutative ofStatement = values {x}
 Entails.entails (propositionalLogicSound {P = P} record { n = .0 ; proof = (nextStep .0 empty (modusPonens record { element = element ; position = zero ; pos<N = (le x₁ ()) ; elementIsAt = elementIsAt } argument conclusion x)) ; ofStatement = ofStatement }) {v} values
 Entails.entails (propositionalLogicSound {P = P} record { n = .0 ; proof = (nextStep .0 empty (modusPonens record { element = element ; position = (succ position) ; pos<N = (le x₁ ()) ; elementIsAt = elementIsAt } argument conclusion x)) ; ofStatement = ofStatement }) {v} values
 Entails.entails (propositionalLogicSound {P = P} record { n = .(succ n) ; proof = (nextStep .(succ n) (nextStep n proof y) x) ; ofStatement = ofStatement }) {v} values = {!!}
+
 
 -}

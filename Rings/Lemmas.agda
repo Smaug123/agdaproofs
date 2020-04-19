@@ -1,15 +1,15 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Functions
-open import Groups.Groups
 open import Groups.Abelian.Definition
 open import Groups.Definition
 open import Groups.Lemmas
 open import Rings.Definition
 open import Setoids.Setoids
-open import Setoids.Orders
 open import Sets.EquivalenceRelations
+open import Numbers.Naturals.Semiring
+open import Numbers.Naturals.EuclideanAlgorithm
+open import Numbers.Primes.PrimeNumbers
 
 module Rings.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ : A → A → A} {_*_ : A → A → A} (R : Ring S _+_ _*_) where
 
@@ -19,7 +19,7 @@ abstract
   open Ring R
   open Group additiveGroup
 
-  ringMinusExtracts : {x y : A} → Setoid._∼_ S (x * Group.inverse (Ring.additiveGroup R) y) (Group.inverse (Ring.additiveGroup R) (x * y))
+  ringMinusExtracts : {x y : A} → (x * Group.inverse (Ring.additiveGroup R) y) ∼ (Group.inverse (Ring.additiveGroup R) (x * y))
   ringMinusExtracts {x = x} {y} = transferToRight' additiveGroup (transitive (symmetric *DistributesOver+) (transitive (*WellDefined reflexive invLeft) (Ring.timesZero R)))
     where
       open Equivalence eq
@@ -58,3 +58,4 @@ abstract
 
 abelianUnderlyingGroup : AbelianGroup additiveGroup
 abelianUnderlyingGroup = record { commutative = groupIsAbelian }
+

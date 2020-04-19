@@ -3,6 +3,7 @@
 open import LogicalFormulae
 open import Numbers.Naturals.Definition
 open import Setoids.Setoids
+open import Numbers.Naturals.Order
 open import Vectors
 
 module Sequences where
@@ -12,6 +13,9 @@ record Sequence {a : _} (A : Set a) : Set a where
   field
     head : A
     tail : Sequence A
+
+headInjective : {a : _} {A : Set a} {s1 s2 : Sequence A} → s1 ≡ s2 → Sequence.head s1 ≡ Sequence.head s2
+headInjective {s1 = s1} {.s1} refl = refl
 
 constSequence : {a : _} {A : Set a} (k : A) → Sequence A
 Sequence.head (constSequence k) = k
@@ -65,14 +69,25 @@ assemble : {a : _} {A : Set a} → (x : A) → (s : Sequence A) → Sequence A
 Sequence.head (assemble x s) = x
 Sequence.tail (assemble x s) = s
 
+allTrue : {a : _} {A : Set a} {c : _} (pred : A → Set c) (s : Sequence A) → Set c
+allTrue pred s = (n : ℕ) → pred (index s n)
+
+tailFrom : {a : _} {A : Set a} (n : ℕ) → (s : Sequence A) → Sequence A
+tailFrom zero s = s
+tailFrom (succ n) s = tailFrom n (Sequence.tail s)
+
+subsequence : {a : _} {A : Set a} (x : Sequence A) → (indices : Sequence ℕ) → ((n : ℕ) → index indices n <N index indices (succ n)) → Sequence A
+Sequence.head (subsequence x selector increasing) = index x (Sequence.head selector)
+Sequence.tail (subsequence x selector increasing) = subsequence (tailFrom (succ (Sequence.head selector)) x) (Sequence.tail selector) λ n → increasing (succ n)
+
+take : {a : _} {A : Set a} (n : ℕ) (s : Sequence A) → Vec A n
+take zero s = []
+take (succ n) s = Sequence.head s ,- take n (Sequence.tail s)
+
 unfold : {a : _} {A : Set a} → (A → A) → A → Sequence A
 Sequence.head (unfold f a) = a
 Sequence.tail (unfold f a) = unfold f (f a)
 
 indexAndUnfold : {a : _} {A : Set a} (f : A → A) (start : A) (n : ℕ) → index (unfold f start) (succ n) ≡ f (index (unfold f start) n)
-indexAndUnfold f start zero = refl
-indexAndUnfold f start (succ n) rewrite indexAndUnfold f (f start) n = refl
-
-take : {a : _} {A : Set a} (s : Sequence A) (n : ℕ) → Vec A n
-take s zero = []
-take s (succ n) = Sequence.head s ,- take (Sequence.tail s) n
+indexAndUnfold f s zero = refl
+indexAndUnfold f s (succ n) = indexAndUnfold f (f s) n

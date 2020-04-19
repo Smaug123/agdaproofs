@@ -9,8 +9,7 @@ open import Numbers.BinaryNaturals.Definition
 open import Numbers.BinaryNaturals.Addition
 open import Numbers.BinaryNaturals.SubtractionGo
 open import Numbers.BinaryNaturals.SubtractionGoPreservesCanonicalRight
-open import Numbers.BinaryNaturals.SubtractionGoPreservesCanonicalLeft
-open import Orders
+open import Orders.Total.Definition
 open import Semirings.Definition
 open import Maybe
 

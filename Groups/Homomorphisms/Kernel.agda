@@ -1,27 +1,14 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import Groups.Groups
 open import Groups.Definition
-open import Orders
-open import Numbers.Integers.Integers
 open import Setoids.Setoids
-open import LogicalFormulae
-open import Sets.FinSet
-open import Functions
 open import Sets.EquivalenceRelations
-open import Numbers.Naturals.Naturals
 open import Groups.Homomorphisms.Definition
 open import Groups.Homomorphisms.Lemmas
-open import Groups.Isomorphisms.Definition
 open import Groups.Subgroups.Definition
 open import Groups.Subgroups.Normal.Definition
-open import Groups.Subgroups.Normal.Lemmas
 open import Groups.Lemmas
-open import Groups.Abelian.Definition
-open import Groups.QuotientGroup.Definition
-open import Groups.Cosets
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Groups.Homomorphisms.Kernel {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {_+G_ : A → A → A} {_+H_ : B → B → B} {G : Group S _+G_} {H : Group T _+H_} {f : A → B} (fHom : GroupHom G H f) where
 

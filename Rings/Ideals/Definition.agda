@@ -1,19 +1,12 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Groups.Groups
 open import Groups.Lemmas
-open import Groups.Homomorphisms.Definition
 open import Groups.Definition
 open import Groups.Subgroups.Definition
-open import Numbers.Naturals.Naturals
-open import Setoids.Orders
 open import Setoids.Setoids
-open import Functions
 open import Sets.EquivalenceRelations
 open import Rings.Definition
-open import Rings.Homomorphisms.Definition
-open import Groups.Homomorphisms.Lemmas
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
@@ -25,6 +18,7 @@ open Equivalence eq
 open Group additiveGroup
 
 open import Rings.Lemmas R
+open import Rings.Divisible.Definition R
 
 record Ideal {c : _} (pred : A → Set c) : Set (a ⊔ b ⊔ c) where
   field
@@ -37,7 +31,7 @@ record Ideal {c : _} (pred : A → Set c) : Set (a ⊔ b ⊔ c) where
   predicate = pred
 
 generatedIdealPred : A → A → Set (a ⊔ b)
-generatedIdealPred a b = Sg A (λ c → Setoid._∼_ S (a * c) b)
+generatedIdealPred a b = a ∣ b
 
 generatedIdeal : (a : A) → Ideal (generatedIdealPred a)
 Subgroup.isSubset (Ideal.isSubgroup (generatedIdeal a)) {x} {y} x=y (c , prC) = c , transitive prC x=y

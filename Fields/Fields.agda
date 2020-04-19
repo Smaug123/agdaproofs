@@ -1,16 +1,9 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Groups.Groups
 open import Groups.Definition
 open import Rings.Definition
-open import Rings.Lemmas
 open import Setoids.Setoids
-open import Setoids.Orders
-open import Orders
-open import Rings.IntegralDomains.Definition
-open import Functions
-open import Sets.EquivalenceRelations
 
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 

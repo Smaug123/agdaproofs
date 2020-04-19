@@ -1,11 +1,9 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
-open import Functions
 open import Lists.Lists
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Naturals
-open import Groups.Definition
 open import Numbers.BinaryNaturals.Definition
 open import Numbers.BinaryNaturals.Addition
 open import Semirings.Definition

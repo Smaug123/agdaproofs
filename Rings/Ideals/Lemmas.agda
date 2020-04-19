@@ -1,27 +1,23 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
-open import Groups.Groups
 open import Groups.Homomorphisms.Definition
 open import Groups.Definition
-open import Numbers.Naturals.Naturals
-open import Setoids.Orders
 open import Setoids.Setoids
-open import Functions
 open import Sets.EquivalenceRelations
 open import Rings.Definition
 open import Rings.Homomorphisms.Definition
 open import Groups.Homomorphisms.Lemmas
 open import Groups.Subgroups.Definition
-open import Rings.Homomorphisms.Kernel
 open import Rings.Cosets
 open import Groups.Lemmas
 open import Setoids.Functions.Lemmas
 open import Rings.Ideals.Definition
 
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 
 module Rings.Ideals.Lemmas {a b : _} {A : Set a} {S : Setoid {a} {b} A} {_+_ _*_ : A → A → A} (R : Ring S _+_ _*_) where
+
+open import Rings.Divisible.Definition R
 
 idealPredForKernel : {c d : _} {C : Set c} {T : Setoid {c} {d} C} {_+2_ _*2_ : C → C → C} (R2 : Ring T _+2_ _*2_) {f : A → C} (fHom : RingHom R R2 f) → A → Set d
 idealPredForKernel {T = T} R2 {f} fHom a = Setoid._∼_ T (f a) (Ring.0R R2)
@@ -65,3 +61,9 @@ Subgroup.closedUnderPlus (Ideal.isSubgroup (inverseImageIsIdeal fHom i)) {g} {h}
 Subgroup.containsIdentity (Ideal.isSubgroup (inverseImageIsIdeal fHom i)) = 0G , (Ideal.containsIdentity i ,, imageOfIdentityIsIdentity (RingHom.groupHom fHom))
 Subgroup.closedUnderInverse (Ideal.isSubgroup (inverseImageIsIdeal fHom i)) (a , (prA ,, fg=a)) = inverse a , (Ideal.closedUnderInverse i prA ,, transitive (homRespectsInverse (RingHom.groupHom fHom)) (inverseWellDefined additiveGroup fg=a))
 Ideal.accumulatesTimes (inverseImageIsIdeal {_*2_ = _*2_} {f = f} fHom i) {g} {h} (a , (prA ,, fg=a)) = (a * f h) , (Ideal.accumulatesTimes i prA ,, transitive (RingHom.ringHom fHom) (*WellDefined fg=a reflexive))
+
+memberDividesImpliesMember : {a b : A} → {c : _} → {pred : A → Set c} → (i : Ideal R pred) → pred a → a ∣ b → pred b
+memberDividesImpliesMember {a} {b} i pA (s , as=b) = Ideal.isSubset i as=b (Ideal.accumulatesTimes i pA)
+
+generatorZeroImpliesMembersZero : {x : A} → generatedIdealPred R 0R x → x ∼ 0R
+generatorZeroImpliesMembersZero {x} (a , b) = transitive (symmetric b) (transitive *Commutative timesZero)

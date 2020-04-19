@@ -1,6 +1,6 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
-open import Functions
+open import Functions.Definition
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import LogicalFormulae
 open import Sets.EquivalenceRelations
@@ -48,6 +48,9 @@ record SetoidInjection {a b c d : _} {A : Set a} {B : Set b} (S : Setoid {a} {c}
   field
     wellDefined : {x y : A} → x ∼A y → (f x) ∼B (f y)
     injective : {x y : A} → (f x) ∼B (f y) → x ∼A y
+
+reflSetoidWellDefined : {a b c : _} {A : Set a} (S : Setoid {a} {b} A) (C : Set c) (f : C → A) → {x y : C} → x ≡ y → Setoid._∼_ S (f x) (f y)
+reflSetoidWellDefined S C f refl = Equivalence.reflexive (Setoid.eq S)
 
 record SetoidSurjection {a b c d : _} {A : Set a} {B : Set b} (S : Setoid {a} {c} A) (T : Setoid {b} {d} B) (f : A → B) : Set (a ⊔ b ⊔ c ⊔ d) where
   open Setoid S renaming (_∼_ to _∼A_)
@@ -119,3 +122,10 @@ SetoidInjection.injective (SetoidBijection.inj (setoidInvertibleImpliesBijective
     open Setoid S
 SetoidSurjection.wellDefined (SetoidBijection.surj (setoidInvertibleImpliesBijective inv)) x~y = SetoidInvertible.fWellDefined inv x~y
 SetoidSurjection.surjective (SetoidBijection.surj (setoidInvertibleImpliesBijective inv)) {x} = SetoidInvertible.inverse inv x , SetoidInvertible.isLeft inv x
+
+inverseInvertible : {a b c d : _} {A : Set a} {B : Set b} {S : Setoid {a} {c} A} {T : Setoid {b} {d} B} {f : A → B} (inv1 : SetoidInvertible S T f) → SetoidInvertible T S (SetoidInvertible.inverse inv1)
+SetoidInvertible.fWellDefined (inverseInvertible record { fWellDefined = fWellDefined ; inverse = inverse ; inverseWellDefined = inverseWellDefined ; isLeft = isLeft ; isRight = isRight }) x=y = inverseWellDefined x=y
+SetoidInvertible.inverse (inverseInvertible {f = f} record { fWellDefined = fWellDefined ; inverse = inverse ; inverseWellDefined = inverseWellDefined ; isLeft = isLeft ; isRight = isRight }) = f
+SetoidInvertible.inverseWellDefined (inverseInvertible record { fWellDefined = fWellDefined ; inverse = inverse ; inverseWellDefined = inverseWellDefined ; isLeft = isLeft ; isRight = isRight }) = fWellDefined
+SetoidInvertible.isLeft (inverseInvertible record { fWellDefined = fWellDefined ; inverse = inverse ; inverseWellDefined = inverseWellDefined ; isLeft = isLeft ; isRight = isRight }) = isRight
+SetoidInvertible.isRight (inverseInvertible record { fWellDefined = fWellDefined ; inverse = inverse ; inverseWellDefined = inverseWellDefined ; isLeft = isLeft ; isRight = isRight }) = isLeft

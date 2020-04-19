@@ -1,15 +1,13 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
-open import Functions
 open import Lists.Lists
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Naturals
 open import Numbers.Naturals.Order
-open import Groups.Definition
 open import Numbers.BinaryNaturals.Definition
 open import Semirings.Definition
-open import Orders
+open import Orders.Total.Definition
 
 module Numbers.BinaryNaturals.Addition where
 

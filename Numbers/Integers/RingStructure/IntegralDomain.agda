@@ -2,12 +2,7 @@
 
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
-open import Numbers.Naturals.Multiplication
 open import Numbers.Integers.RingStructure.Ring
-open import Semirings.Definition
-open import Groups.Definition
-open import Rings.Definition
-open import Setoids.Setoids
 open import Rings.IntegralDomains.Definition
 
 module Numbers.Integers.RingStructure.IntegralDomain where

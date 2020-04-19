@@ -1,7 +1,10 @@
-{-# OPTIONS --warning=error --safe #-}
+{-# OPTIONS --warning=error --safe --without-K #-}
 
-open import Functions
-open import Sets.FinSet
+open import Functions.Definition
+open import Functions.Lemmas
+open import Sets.FinSet.Definition
+open import Sets.FinSet.Lemmas
+open import Sets.Cardinality.Finite.Definition
 open import LogicalFormulae
 open import Groups.Definition
 open import Groups.Groups
@@ -169,11 +172,11 @@ weirdProjection c = ofNat 2 (le 1 refl)
 weirdProjection e = ofNat 3 (le zero refl)
 
 weirdProjectionSurj : Surjection weirdProjection
-Surjection.property weirdProjectionSurj fzero = a , refl
-Surjection.property weirdProjectionSurj (fsucc fzero) = b , refl
-Surjection.property weirdProjectionSurj (fsucc (fsucc fzero)) = c , refl
-Surjection.property weirdProjectionSurj (fsucc (fsucc (fsucc fzero))) = e , refl
-Surjection.property weirdProjectionSurj (fsucc (fsucc (fsucc (fsucc ()))))
+weirdProjectionSurj fzero = a , refl
+weirdProjectionSurj (fsucc fzero) = b , refl
+weirdProjectionSurj (fsucc (fsucc fzero)) = c , refl
+weirdProjectionSurj (fsucc (fsucc (fsucc fzero))) = e , refl
+weirdProjectionSurj (fsucc (fsucc (fsucc (fsucc ()))))
 
 weirdProjectionInj : (x y : Weird) → weirdProjection x ≡ weirdProjection y → Setoid._∼_ (reflSetoid Weird) x y
 weirdProjectionInj e e fx=fy = refl

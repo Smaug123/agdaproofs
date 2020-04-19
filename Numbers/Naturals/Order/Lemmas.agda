@@ -4,7 +4,6 @@ open import LogicalFormulae
 open import Semirings.Definition
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Semiring
-open import Orders
 
 module Numbers.Naturals.Order.Lemmas where
 open Semiring ℕSemiring
@@ -81,3 +80,11 @@ cancelInequalityLeft {a} {succ b} {succ c} pr = succPreservesInequality q'
     q = canFlipMultiplicationsInIneq {b} {a} {c} {a} p
     q' : b <N c
     q' = cancelInequalityLeft {a} {b} {c} q
+
+<NProp : {a b : ℕ} → .(a <N b) → a <N b
+<NProp {zero} {succ b} a<b = succIsPositive _
+<NProp {succ a} {succ b} a<b = succPreservesInequality (<NProp (canRemoveSuccFrom<N a<b))
+
+zeroLeast : {m n : ℕ} → m <N n → 0 <N n
+zeroLeast {zero} m<n = m<n
+zeroLeast {succ m} {succ n} m<n = le n (applyEquality succ (Semiring.sumZeroRight ℕSemiring n))

@@ -1,16 +1,11 @@
 {-# OPTIONS --warning=error --safe --without-K #-}
 
 open import LogicalFormulae
-open import Functions
 open import Lists.Lists
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
-open import Numbers.Naturals.Definition
-open import Groups.Definition
 open import Semirings.Definition
-open import Orders
-open import Setoids.Setoids
-open import Sets.EquivalenceRelations
+open import Orders.Total.Definition
 
 module Numbers.BinaryNaturals.Definition where
 
@@ -40,12 +35,6 @@ canonical (one :: n) = one :: canonical n
 
 Canonicalised : Set
 Canonicalised = Sg BinNat (λ i → canonical i ≡ i)
-
-Canonical : Setoid BinNat
-Setoid._∼_ Canonical i j = canonical i ≡ canonical j
-Equivalence.reflexive (Setoid.eq Canonical) = refl
-Equivalence.symmetric (Setoid.eq Canonical) = equalityCommutative
-Equivalence.transitive (Setoid.eq Canonical) = transitivity
 
 binNatToN : BinNat → ℕ
 binNatToN [] = 0

@@ -3,17 +3,10 @@
 open import LogicalFormulae
 open import Setoids.Setoids
 open import Sets.EquivalenceRelations
-open import Functions
-open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals.Semiring
 open import Numbers.Integers.Integers
 open import Numbers.Integers.Addition
-open import Sets.FinSet
-open import Groups.Homomorphisms.Definition
-open import Groups.Groups
 open import Groups.Lemmas
-open import Groups.Subgroups.Definition
-open import Groups.Abelian.Definition
 open import Groups.Definition
 open import Groups.Cyclic.Definition
 open import Semirings.Definition
