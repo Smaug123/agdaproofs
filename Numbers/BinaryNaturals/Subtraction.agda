@@ -15,14 +15,15 @@ open import Maybe
 
 module Numbers.BinaryNaturals.Subtraction where
 
-aMinusAGo : (a : BinNat) → mapMaybe canonical (go zero a a) ≡ yes []
-aMinusAGo [] = refl
-aMinusAGo (zero :: a) with aMinusAGo a
-... | bl with go zero a a
-aMinusAGo (zero :: a) | bl | yes x rewrite yesInjective bl = refl
-aMinusAGo (one :: a) with aMinusAGo a
-... | bl with go zero a a
-aMinusAGo (one :: a) | bl | yes x rewrite yesInjective bl = refl
+private
+  aMinusAGo : (a : BinNat) → mapMaybe canonical (go zero a a) ≡ yes []
+  aMinusAGo [] = refl
+  aMinusAGo (zero :: a) with aMinusAGo a
+  ... | bl with go zero a a
+  aMinusAGo (zero :: a) | bl | yes x rewrite yesInjective bl = refl
+  aMinusAGo (one :: a) with aMinusAGo a
+  ... | bl with go zero a a
+  aMinusAGo (one :: a) | bl | yes x rewrite yesInjective bl = refl
 
 aMinusALemma : (a : BinNat) → mapMaybe canonical (mapMaybe (_::_ zero) (go zero a a)) ≡ yes []
 aMinusALemma a with inspect (go zero a a)
@@ -404,8 +405,9 @@ doublingLemma y | (a :: as) with≡ pr with inspect (binNatToN y)
 doublingLemma y | (a :: as) with≡ pr | zero with≡ pr2 rewrite binNatToNZero y pr2 = exFalso (nonEmptyNotEmpty (equalityCommutative pr))
 doublingLemma y | (a :: as) with≡ pr | succ bl with≡ pr2 rewrite pr | pr2 | doubleIsBitShift' bl | equalityCommutative pr = applyEquality (zero ::_) (equalityCommutative (transitivity (equalityCommutative (binToBin y)) (applyEquality NToBinNat pr2)))
 
-doubling : (a : ℕ) {y : BinNat} → (NToBinNat a ≡ zero :: y) → binNatToN y +N (binNatToN y +N 0) ≡ a
-doubling a {y} pr = NToBinNatInj (binNatToN y +N (binNatToN y +N zero)) a (transitivity (transitivity (equalityCommutative (NToBinNatIsCanonical (binNatToN y +N (binNatToN y +N zero)))) (doublingLemma y)) (applyEquality canonical (equalityCommutative pr)))
+private
+  doubling : (a : ℕ) {y : BinNat} → (NToBinNat a ≡ zero :: y) → binNatToN y +N (binNatToN y +N 0) ≡ a
+  doubling a {y} pr = NToBinNatInj (binNatToN y +N (binNatToN y +N zero)) a (transitivity (transitivity (equalityCommutative (NToBinNatIsCanonical (binNatToN y +N (binNatToN y +N zero)))) (doublingLemma y)) (applyEquality canonical (equalityCommutative pr)))
 
 subtraction2 : (a b : ℕ) {t : BinNat} → (NToBinNat a) -B (NToBinNat b) ≡ yes t → (binNatToN t) +N b ≡ a
 subtraction2 zero zero {t} pr rewrite yesInjective (equalityCommutative pr) = refl

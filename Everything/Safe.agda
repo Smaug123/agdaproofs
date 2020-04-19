@@ -58,7 +58,6 @@ open import Fields.Orders.Lemmas
 open import Fields.FieldOfFractions.Field
 open import Fields.FieldOfFractions.Lemmas
 open import Fields.FieldOfFractions.Order
-open import Fields.FieldOfFractions.Order
 --open import Fields.FieldOfFractions.Archimedean
 
 open import Rings.Definition

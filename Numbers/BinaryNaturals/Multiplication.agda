@@ -18,14 +18,15 @@ _*B_ : BinNat → BinNat → BinNat
 (zero :: a) *B b = zero :: (a *B b)
 (one :: a) *B b = (zero :: (a *B b)) +B b
 
-contr : {a : _} {A : Set a} {l1 l2 : List A} → {x : A} → l1 ≡ [] → l1 ≡ x :: l2 → False
-contr {l1 = []} p1 ()
-contr {l1 = x :: l1} () p2
+private
+  contr : {a : _} {A : Set a} {l1 l2 : List A} → {x : A} → l1 ≡ [] → l1 ≡ x :: l2 → False
+  contr {l1 = []} p1 ()
+  contr {l1 = x :: l1} () p2
 
-*BEmpty : (a : BinNat) → canonical (a *B []) ≡ []
-*BEmpty [] = refl
-*BEmpty (zero :: a) rewrite *BEmpty a = refl
-*BEmpty (one :: a) rewrite *BEmpty a = refl
+  *BEmpty : (a : BinNat) → canonical (a *B []) ≡ []
+  *BEmpty [] = refl
+  *BEmpty (zero :: a) rewrite *BEmpty a = refl
+  *BEmpty (one :: a) rewrite *BEmpty a = refl
 
 canonicalDistributesPlus : (a b : BinNat) → canonical (a +B b) ≡ canonical a +B canonical b
 canonicalDistributesPlus a b = transitivity ans (+BIsInherited (canonical a) (canonical b) (canonicalIdempotent a) (canonicalIdempotent b))
