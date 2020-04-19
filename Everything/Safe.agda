@@ -158,6 +158,5 @@ open import Modules.Lemmas
 open import Modules.DirectSum
 
 open import ProjectEuler.Problem1
-open import ProjectEuler.Problem2
 
 module Everything.Safe where
