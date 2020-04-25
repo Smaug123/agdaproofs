@@ -1,5 +1,6 @@
 {-# OPTIONS --warning=error --safe --guardedness --without-K #-}
 
+open import Sets.FinSet.Definition
 open import LogicalFormulae
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Numbers.Naturals.Semiring
@@ -55,6 +56,10 @@ fibUnaryArchimedean (succ zero) = 2 , le zero refl
 fibUnaryArchimedean (succ (succ zero)) = 3 , le zero refl
 fibUnaryArchimedean (succ (succ (succ zero))) = 4 , le 1 refl
 fibUnaryArchimedean (succ (succ (succ (succ a)))) = (succ (succ (succ (succ a)))) , fibUnaryBiggerThanN a
+
+everyThird : {a : _} {A : Set a} → Sequence A → Sequence A
+Sequence.head (everyThird S) = Sequence.head (tailFrom 2 S)
+Sequence.tail (everyThird S) = everyThird (tailFrom 3 S)
 
 record FibEntry : Set where
   field
@@ -160,8 +165,58 @@ isEvenDecidable (one :: x₁) = inr (λ x → x)
 increasing : StrictlyIncreasing (partialOrderToSetoidPartialOrder BinNatOrder) (Sequence.tail fib)
 increasing m = SetoidPartialOrder.<WellDefined (partialOrderToSetoidPartialOrder BinNatOrder) (fibsMatch' (succ m)) (fibsMatch' (succ (succ m))) (translate' (fibUnary (succ m)) (fibUnary (succ (succ m))) (fibUnaryIncreasing m))
 
--- increasingNaturalsBound : (S : Sequence ℕ) → StrictlyIncreasing S → (bound : ℕ) → List ℕ
--- increasingNaturalsBound s n = {!!}
+private
+  increasingNaturalsBoundLemma : (S : Sequence ℕ) → .(StrictlyIncreasing (partialOrderToSetoidPartialOrder (TotalOrder.order ℕTotalOrder)) S) → (fuel : ℕ) → (bound : ℕ) → List ℕ
+  increasingNaturalsBoundLemma s incr zero n with TotalOrder.totality ℕTotalOrder (Sequence.head s) n
+  ... | inl (inl x) = n :: []
+  ... | inl (inr x) = []
+  ... | inr x = n :: []
+  increasingNaturalsBoundLemma s incr (succ fuel) n with TotalOrder.totality ℕTotalOrder (Sequence.head s) n
+  ... | inl (inl x) = n :: increasingNaturalsBoundLemma (Sequence.tail s) (tailRespectsStrictlyIncreasing (partialOrderToSetoidPartialOrder (TotalOrder.order ℕTotalOrder)) s incr) fuel n
+  ... | inl (inr x) = []
+  ... | inr x = n :: []
+
+increasingNaturalsBound : (S : Sequence ℕ) → .(StrictlyIncreasing (partialOrderToSetoidPartialOrder (TotalOrder.order ℕTotalOrder)) S) → (bound : ℕ) → List ℕ
+increasingNaturalsBound S incr n = increasingNaturalsBoundLemma S incr (succ n) n
+
+boundedInIncreasingLemma : (S : Sequence ℕ) → (incr : StrictlyIncreasing (partialOrderToSetoidPartialOrder (TotalOrder.order ℕTotalOrder)) S) → (bound fuel : ℕ) → (i : ℕ) → (index S i ≤N bound) → .(i <N fuel) → contains (increasingNaturalsBoundLemma S incr fuel bound) (index S i)
+boundedInIncreasingLemma S incr bound zero i Si<b ()
+boundedInIncreasingLemma S incr bound (succ fuel) zero Si<b i<fu with TotalOrder.totality ℕTotalOrder (Sequence.head S) bound
+... | inl (inl x) = {!inr ?!}
+boundedInIncreasingLemma S incr bound (succ fuel) zero (inl y) i<fu | inl (inr x) = exFalso (lessIrreflexive (lessTransitive x y))
+boundedInIncreasingLemma S incr bound (succ fuel) zero (inr y) i<fu | inl (inr x) = exFalso (lessIrreflexive (identityOfIndiscernablesRight _<N_ x y))
+... | inr x = inl (equalityCommutative x)
+boundedInIncreasingLemma S incr bound (succ fuel) (succ i) Si<b i<fu with TotalOrder.totality ℕTotalOrder (Sequence.head S) bound
+boundedInIncreasingLemma S incr bound (succ fuel) (succ i) (inl proceed) i<fu | inl (inl x) = inr (boundedInIncreasingLemma (Sequence.tail S) (tailRespectsStrictlyIncreasing (partialOrderToSetoidPartialOrder (TotalOrder.order ℕTotalOrder)) S incr) bound fuel i (inl proceed) (canRemoveSuccFrom<N i<fu))
+boundedInIncreasingLemma S incr bound (succ fuel) (succ i) (inr found) i<fu | inl (inl x) = inl (equalityCommutative found)
+boundedInIncreasingLemma S incr bound (succ fuel) (succ i) (inl bad) i<fu | inl (inr x) with strictlyIncreasingImplies' (partialOrderToSetoidPartialOrder (TotalOrder.order ℕTotalOrder)) _ incr 0 (succ i) (succIsPositive i)
+... | r = exFalso (lessIrreflexive (lessTransitive x (lessTransitive r bad)))
+boundedInIncreasingLemma S incr bound (succ fuel) (succ i) (inr bad) i<fu | inl (inr x) with strictlyIncreasingImplies' (partialOrderToSetoidPartialOrder (TotalOrder.order ℕTotalOrder)) _ incr 0 (succ i) (succIsPositive i)
+... | r = exFalso (lessIrreflexive (lessTransitive x (identityOfIndiscernablesRight _<N_ r bad)))
+boundedInIncreasingLemma S incr bound (succ fuel) (succ i) (inl t<b) i<fu | inr h=b with strictlyIncreasingImplies' (partialOrderToSetoidPartialOrder (TotalOrder.order ℕTotalOrder)) _ incr 0 (succ i) (succIsPositive i)
+... | r rewrite h=b = exFalso (lessIrreflexive (lessTransitive r t<b))
+boundedInIncreasingLemma S incr bound (succ fuel) (succ i) (inr b=t) i<fu | inr h=b with strictlyIncreasingImplies' (partialOrderToSetoidPartialOrder (TotalOrder.order ℕTotalOrder)) _ incr 0 (succ i) (succIsPositive i)
+... | r rewrite h=b = exFalso (lessIrreflexive (identityOfIndiscernablesRight _<N_ r b=t))
+
+boundedInIncreasing : (S : Sequence ℕ) → (incr : StrictlyIncreasing (partialOrderToSetoidPartialOrder (TotalOrder.order ℕTotalOrder)) S) → (bound : ℕ) → (i : ℕ) → (index S i ≤N bound) → contains (increasingNaturalsBound S incr bound) (index S i)
+boundedInIncreasing S incr bound i = {!!}
+
+increasingNaturalsBoundBoundedLemma : (S : Sequence ℕ) → (incr : StrictlyIncreasing (partialOrderToSetoidPartialOrder (TotalOrder.order ℕTotalOrder)) S) → (bound fuel : ℕ) → Lists.Lists.allTrue (λ n → n ≤N bound) (increasingNaturalsBoundLemma S incr fuel bound)
+increasingNaturalsBoundBoundedLemma S incr bound zero with TotalOrder.totality ℕTotalOrder (Sequence.head S) bound
+... | inl (inl x) = inr refl ,, record {}
+... | inl (inr x) = record {}
+... | inr x = inr refl ,, record {}
+increasingNaturalsBoundBoundedLemma S incr bound (succ fuel) with TotalOrder.totality ℕTotalOrder (Sequence.head S) bound
+... | inl (inl x) = inr refl ,, increasingNaturalsBoundBoundedLemma (Sequence.tail S) (tailRespectsStrictlyIncreasing (partialOrderToSetoidPartialOrder (TotalOrder.order ℕTotalOrder)) S incr) bound fuel
+... | inl (inr x) = record {}
+... | inr x = inr refl ,, record {}
+
+increasingNaturalsBoundBounded : (S : Sequence ℕ) → (incr : StrictlyIncreasing (partialOrderToSetoidPartialOrder (TotalOrder.order ℕTotalOrder)) S) → (bound : ℕ) → Lists.Lists.allTrue (λ n → n ≤N bound) (increasingNaturalsBound S incr bound)
+increasingNaturalsBoundBounded S incr bound = increasingNaturalsBoundBoundedLemma S incr bound (succ bound)
+
+private
+  increasingBoundLemma : {a b : _} {A : Set a} {_<_ : A → A → Set b} (S : Sequence A) → {f : A → ℕ} → .(op : (x y : A) → x < y → (f x) <N (f y)) → .(StrictlyIncreasing (partialOrderToSetoidPartialOrder (TotalOrder.order ℕTotalOrder)) (Sequences.map f S)) → (fuel : ℕ) → (bound : A) → List A
+  increasingBoundLemma s incr fuel bound = {!!}
 
 {-
 fibsLessThan4Mil : List BinNat
