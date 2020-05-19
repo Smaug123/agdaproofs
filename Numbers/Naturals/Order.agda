@@ -213,3 +213,7 @@ squash<N {a} {b} a<b | inr refl = exFalso (lessIrreflexive a<b)
 <N'Refl : {a b : ℕ} → (p1 p2 : a <N' b) → p1 ≡ p2
 <N'Refl p1 p2 with <NWellDefined (<N'To<N p1) (<N'To<N p2)
 ... | refl = refl
+
+contractLessSucc : {a b : ℕ} → a <N succ b → a ≤N b
+contractLessSucc (le zero proof) = inr (succInjective proof)
+contractLessSucc (le (succ x) proof) = inl (le x (succInjective proof))

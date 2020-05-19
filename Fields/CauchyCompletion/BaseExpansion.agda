@@ -10,8 +10,9 @@ open import Groups.Lemmas
 open import Fields.Fields
 open import Sets.EquivalenceRelations
 open import Sequences
-open import Setoids.Orders
-open import Functions
+open import Setoids.Orders.Partial.Definition
+open import Setoids.Orders.Total.Definition
+open import Functions.Definition
 open import LogicalFormulae
 open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Order
@@ -34,6 +35,7 @@ open import Fields.Orders.Limits.Definition {F = F} (record { oRing = order })
 open import Fields.Orders.Total.Lemmas {F = F} (record { oRing = order })
 open import Fields.Orders.Limits.Lemmas {F = F} (record { oRing = order })
 
+open import Rings.Orders.Total.AbsoluteValue order
 open import Fields.Lemmas F
 open import Fields.Orders.Lemmas {F = F} record { oRing = order }
 open import Rings.Orders.Total.Lemmas order
@@ -97,11 +99,11 @@ private
 
   digitExpansionBoundedLemma : {n : ℕ} → .(0<n : 0 <N n) → (seq : Sequence (ℤn n 0<n)) → (m : ℕ) → index (digitExpansionSeq _ seq) m < fromN n
   digitExpansionBoundedLemma {n} 0<n seq zero with Sequence.head seq
-  ... | record { x = x ; xLess = xLess } = fromNPreservesOrder nontrivial {x} {n} ((squash<N xLess))
+  ... | record { x = x ; xLess = xLess } = fromNPreservesOrder (0<1 nontrivial) {x} {n} ((squash<N xLess))
   digitExpansionBoundedLemma 0<n seq (succ m) = digitExpansionBoundedLemma 0<n (Sequence.tail seq) m
 
   digitExpansionBoundedLemma2 : {n : ℕ} → .(0<n : 0 <N n) → (seq : Sequence (ℤn n 0<n)) → (m : ℕ) → inverse (fromN n) < index (digitExpansionSeq 0<n seq) m
-  digitExpansionBoundedLemma2 {n} 0<n seq zero = <WellDefined identLeft (transitive (symmetric +Associative) (transitive (+WellDefined reflexive invRight) identRight)) (orderRespectsAddition {_} {fromN (ℤn.x (Sequence.head seq)) + fromN n} (<WellDefined reflexive (fromNPreserves+ (ℤn.x (Sequence.head seq)) n) (fromNPreservesOrder nontrivial {0} {ℤn.x (Sequence.head seq) +N n} (canAddToOneSideOfInequality' _ (squash<N 0<n)))) (inverse (fromN n)))
+  digitExpansionBoundedLemma2 {n} 0<n seq zero = <WellDefined identLeft (transitive (symmetric +Associative) (transitive (+WellDefined reflexive invRight) identRight)) (orderRespectsAddition {_} {fromN (ℤn.x (Sequence.head seq)) + fromN n} (<WellDefined reflexive (fromNPreserves+ (ℤn.x (Sequence.head seq)) n) (fromNPreservesOrder (0<1 nontrivial) {0} {ℤn.x (Sequence.head seq) +N n} (canAddToOneSideOfInequality' _ (squash<N 0<n)))) (inverse (fromN n)))
   digitExpansionBoundedLemma2 0<n seq (succ m) = digitExpansionBoundedLemma2 0<n (Sequence.tail seq) m
 
   digitExpansionBounded : {n : ℕ} → .(0<n : 0 <N n) → (seq : Sequence (ℤn n 0<n)) → Bounded (digitExpansionSeq 0<n seq)
@@ -110,11 +112,11 @@ private
 private
   1/nPositive : (n : ℕ) → 0R < underlying (allInvertible (fromN (succ n)) (charNotN n))
   1/nPositive n with allInvertible (fromN (succ n)) (charNotN n)
-  ... | a , b = reciprocalPositive (fromN (succ n)) a (fromNPreservesOrder nontrivial (succIsPositive n)) (transitive *Commutative b)
+  ... | a , b = reciprocalPositive (fromN (succ n)) a (fromNPreservesOrder (0<1 nontrivial) (succIsPositive n)) (transitive *Commutative b)
 
   1/n<1 : (n : ℕ) → (0 <N n) → underlying (allInvertible (fromN (succ n)) (charNotN n)) < 1R
   1/n<1 n 1<n with allInvertible (fromN (succ n)) (charNotN n)
-  ... | a , b = reciprocal<1 (fromN (succ n)) a (<WellDefined identRight reflexive (fromNPreservesOrder nontrivial {1} {succ n} (succPreservesInequality 1<n))) (transitive *Commutative b)
+  ... | a , b = reciprocal<1 (fromN (succ n)) a (<WellDefined identRight reflexive (fromNPreservesOrder (0<1 nontrivial) {1} {succ n} (succPreservesInequality 1<n))) (transitive *Commutative b)
 
 -- Construct the real that is the given base-n expansion between 0 and 1.
 ofBaseExpansion : {n : ℕ} → .(1<n : 1 <N n) → (fromN n ∼ 0R → False) → Sequence (ℤn n (0<n 1<n)) → CauchyCompletion
