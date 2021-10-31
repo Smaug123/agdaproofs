@@ -24,5 +24,5 @@ open import Fields.CauchyCompletion.Ring order F
 open import Fields.CauchyCompletion.Comparison order F
 open import Fields.CauchyCompletion.PartiallyOrderedRing order F
 
---CArchimedean : Archimedean (toGroup CRing CpOrderedRing)
---CArchimedean = ?
+CArchimedean : Archimedean (toGroup CRing CpOrderedRing)
+CArchimedean x y xPos yPos = {!!}

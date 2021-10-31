@@ -1,31 +1,35 @@
 {-# OPTIONS --safe --warning=error --without-K #-}
 
 open import LogicalFormulae
+open import Numbers.Naturals.Definition
+open import Numbers.Naturals.Order
 open import Numbers.Naturals.Naturals -- for length
 open import Lists.Lists
-open import Orders
-open import Functions
+open import Orders.Partial.Definition
+open import Orders.Total.Definition
+open import Functions.Definition
 open import Agda.Primitive using (Level; lzero; lsuc; _⊔_)
 open import Groups.FinitePermutations
+open import Boolean.Definition
 
 module Lists.SortList where
-  isSorted : {a b : _} {A : Set a} (ord : TotalOrder {a} {b} A) (l : List A) → Set (a ⊔ b)
+  isSorted : {a b : _} {A : Set a} (ord : TotalOrder A) (l : List A) → Set (a ⊔ b)
   isSorted ord [] = True'
   isSorted ord (x :: []) = True'
   isSorted ord (x :: (y :: l)) = (TotalOrder._≤_ ord x y) && (isSorted ord (y :: l))
 
-  sortedTailIsSorted : {a b : _} {A : Set a} (ord : TotalOrder {a} {b} A) → (x : A) → (l : List A) → (isSorted ord (x :: l)) → isSorted ord l
+  sortedTailIsSorted : {a b : _} {A : Set a} (ord : TotalOrder A) → (x : A) → (l : List A) → (isSorted ord (x :: l)) → isSorted ord l
   sortedTailIsSorted ord x [] pr = record {}
   sortedTailIsSorted ord x (y :: l) (fst ,, snd) = snd
 
-  insert : {a b : _} {A : Set a} (ord : TotalOrder {a} {b} A) → (l : List A) → (isSorted ord l) → (x : A) → List A
+  insert : {a b : _} {A : Set a} (ord : TotalOrder A) → (l : List A) → (isSorted ord l) → (x : A) → List A
   insert ord [] pr x = [ x ]
   insert ord (y :: l) pr x with TotalOrder.totality ord x y
   insert ord (y :: l) pr x | inl (inl x<y) = x :: (y :: l)
   insert ord (y :: l) pr x | inl (inr y<x) = y :: insert ord l (sortedTailIsSorted ord y l pr) x
   insert ord (y :: l) pr x | inr x=y = x :: (y :: l)
 
-  insertionIncreasesLength : {a b : _} {A : Set a} (ord : TotalOrder {a} {b} A) → (l : List A) → (x : A) → (pr : isSorted ord l) → length (insert ord l pr x) ≡ succ (length l)
+  insertionIncreasesLength : {a b : _} {A : Set a} (ord : TotalOrder A) → (l : List A) → (x : A) → (pr : isSorted ord l) → length (insert ord l pr x) ≡ succ (length l)
   insertionIncreasesLength ord [] x pr = refl
   insertionIncreasesLength ord (y :: l) x pr with TotalOrder.totality ord x y
   insertionIncreasesLength ord (y :: l) x pr | inl (inl x<y) = refl
@@ -36,7 +40,7 @@ module Lists.SortList where
   isEmpty [] = BoolTrue
   isEmpty (x :: l) = BoolFalse
 
-  minList : {a b : _} {A : Set a} (ord : TotalOrder {a} {b} A) → (l : List A) → (isEmpty l ≡ BoolFalse) → A
+  minList : {a b : _} {A : Set a} (ord : TotalOrder A) → (l : List A) → (isEmpty l ≡ BoolFalse) → A
   minList ord [] ()
   minList ord (x :: []) pr = x
   minList ord (x :: (y :: l)) refl with minList ord (y :: l) refl
@@ -45,7 +49,7 @@ module Lists.SortList where
   minList ord (x :: (y :: l)) refl | minSoFar | inl (inr m<x) = minSoFar
   minList ord (x :: (y :: l)) refl | minSoFar | inr x=m = x
 
-  insertionSorts : {a b : _} {A : Set a} (ord : TotalOrder {a} {b} A) → (l : List A) → (pr : isSorted ord l) → (x : A) → isSorted ord (insert ord l pr x)
+  insertionSorts : {a b : _} {A : Set a} (ord : TotalOrder  A) → (l : List A) → (pr : isSorted ord l) → (x : A) → isSorted ord (insert ord l pr x)
   insertionSorts ord [] _ _ = record {}
   insertionSorts ord (y :: l) pr x with TotalOrder.totality ord x y
   insertionSorts ord (y :: l) pr x | inl (inl x<y) = inl x<y ,, pr
@@ -53,10 +57,10 @@ module Lists.SortList where
   ... | bl = {!!}
   insertionSorts ord (y :: l) pr x | inr x=y = inr x=y ,, pr
 
-  orderNotLessThanAndEqual : {a b : _} {A : Set a} (ord : TotalOrder {a} {b} A) → {x y : A} → (x ≡ y) → TotalOrder._<_ ord x y → False
+  orderNotLessThanAndEqual : {a b : _} {A : Set a} (ord : TotalOrder A) → {x y : A} → (x ≡ y) → TotalOrder._<_ ord x y → False
   orderNotLessThanAndEqual ord {x} {y} x=y x<y rewrite x=y = PartialOrder.irreflexive (TotalOrder.order ord) x<y
 
-  orderToDecidableEquality : {a b : _} {A : Set a} (ord : TotalOrder {a} {b} A) → {x y : A} → (x ≡ y) || ((x ≡ y) → False)
+  orderToDecidableEquality : {a b : _} {A : Set a} (ord : TotalOrder A) → {x y : A} → (x ≡ y) || ((x ≡ y) → False)
   orderToDecidableEquality ord {x} {y} with TotalOrder.totality ord x y
   orderToDecidableEquality ord {x} {y} | inl (inl x<y) = inr λ x=y → orderNotLessThanAndEqual ord x=y x<y
   orderToDecidableEquality ord {x} {y} | inl (inr y<x) = inr λ x=y → orderNotLessThanAndEqual ord (equalityCommutative x=y) y<x
@@ -65,19 +69,19 @@ module Lists.SortList where
   --SortingAlgorithm : {a b : _} → Set (lsuc a ⊔ lsuc b)
   --SortingAlgorithm {a} {b} = {A : Set a} → (ord : TotalOrder {a} {b} A) → (input : List A) → Sg (List A) (λ l → isSorted ord l && isPermutation (orderToDecidableEquality ord) l input)
 
-  insertionSort : {a b : _} {A : Set a} (ord : TotalOrder {a} {b} A) (l : List A) → List A
-  insertionSortIsSorted : {a b : _} {A : Set a} (ord : TotalOrder {a} {b} A) (l : List A) → isSorted ord (insertionSort ord l)
+  insertionSort : {a b : _} {A : Set a} (ord : TotalOrder A) (l : List A) → List A
+  insertionSortIsSorted : {a b : _} {A : Set a} (ord : TotalOrder A) (l : List A) → isSorted ord (insertionSort ord l)
 
   insertionSort ord [] = []
   insertionSort ord (x :: l) = insert ord (insertionSort ord l) (insertionSortIsSorted ord l) x
   insertionSortIsSorted ord [] = record {}
   insertionSortIsSorted ord (x :: l) = insertionSorts ord (insertionSort ord l) (insertionSortIsSorted ord l) x
 
-  insertionSortLength : {a b : _} {A : Set a} (ord : TotalOrder {a} {b} A) (l : List A) → length l ≡ length (insertionSort ord l)
+  insertionSortLength : {a b : _} {A : Set a} (ord : TotalOrder A) (l : List A) → length l ≡ length (insertionSort ord l)
   insertionSortLength ord [] = refl
-  insertionSortLength ord (x :: l) rewrite insertionIncreasesLength ord (insertionSort ord l) x (insertionSortIsSorted ord l) = applyEquality succ (insertionSortLength ord l)
+  insertionSortLength ord (x :: l) rewrite insertionIncreasesLength ord (insertionSort ord l) x (insertionSortIsSorted ord l) = {!!} --applyEquality succ (insertionSortLength ord l)
 
-  isPermutation : {a b : _} {A : Set a} (ord : TotalOrder {a} {b} A) → (l m : List A) → Set a
+  isPermutation : {a b : _} {A : Set a} (ord : TotalOrder A) → (l m : List A) → Set a
   isPermutation ord l m = insertionSort ord l ≡ insertionSort ord m
 
   --insertionSort : {a b : _} → SortingAlgorithm {a} {b}
@@ -89,18 +93,18 @@ module Lists.SortList where
   --InsertionSort : {a b : _} → SortingAlgorithm {a} {b}
   --InsertionSort ord l = insertionSort ord l
 
-  lexicographicOrderRel : {a b : _} {A : Set a} → (TotalOrder {a} {b} A) → Rel {a} {a ⊔ b} (List A)
+  lexicographicOrderRel : {a b : _} {A : Set a} → (TotalOrder A) → Rel {a} {a ⊔ b} (List A)
   lexicographicOrderRel _ [] [] = False'
   lexicographicOrderRel _ [] (x :: l2) = True'
   lexicographicOrderRel _ (x :: l1) [] = False'
   lexicographicOrderRel order (x :: l1) (y :: l2) = (TotalOrder._<_ order x y) || ((x ≡ y) && lexicographicOrderRel order l1 l2)
 
-  lexIrrefl : {a b : _} {A : Set a} (o : TotalOrder {a} {b} A) → {x : List A} → lexicographicOrderRel o x x → False
+  lexIrrefl : {a b : _} {A : Set a} (o : TotalOrder A) → {x : List A} → lexicographicOrderRel o x x → False
   lexIrrefl o {[]} ()
   lexIrrefl o {x :: l} (inl x<x) = PartialOrder.irreflexive (TotalOrder.order o) x<x
   lexIrrefl o {x :: l} (inr (pr ,, l=l)) = lexIrrefl o {l} l=l
 
-  lexTransitive : {a b : _} {A : Set a} (o : TotalOrder {a} {b} A) → {x y z : List A} → lexicographicOrderRel o x y → lexicographicOrderRel o y z → lexicographicOrderRel o x z
+  lexTransitive : {a b : _} {A : Set a} (o : TotalOrder A) → {x y z : List A} → lexicographicOrderRel o x y → lexicographicOrderRel o y z → lexicographicOrderRel o x z
   lexTransitive o {[]} {[]} {z} x<y y<z = y<z
   lexTransitive o {[]} {x :: y} {[]} record {} y<z = y<z
   lexTransitive o {[]} {x :: y} {x₁ :: z} record {} y<z = record {}
@@ -112,7 +116,7 @@ module Lists.SortList where
   lexTransitive o {x :: xs} {.x :: ys} {z :: zs} (inr (refl ,, xs<ys)) (inl y<z) = inl y<z
   lexTransitive o {x :: xs} {.x :: ys} {.x :: zs} (inr (refl ,, xs<ys)) (inr (refl ,, u)) = inr (refl ,, lexTransitive o xs<ys u)
 
-  lexTotal : {a b : _} {A : Set a} (o : TotalOrder {a} {b} A) → (x y : List A) → ((lexicographicOrderRel o x y) || (lexicographicOrderRel o y x)) || (x ≡ y)
+  lexTotal : {a b : _} {A : Set a} (o : TotalOrder A) → (x y : List A) → ((lexicographicOrderRel o x y) || (lexicographicOrderRel o y x)) || (x ≡ y)
   lexTotal o [] [] = inr refl
   lexTotal o [] (x :: y) = inl (inl (record {}))
   lexTotal o (x :: xs) [] = inl (inr (record {}))
@@ -124,15 +128,15 @@ module Lists.SortList where
   lexTotal o (x :: xs) (y :: ys) | inr x=y | inl (inr ys<xs) = inl (inr (inr (equalityCommutative x=y ,, ys<xs)))
   lexTotal o (x :: xs) (y :: ys) | inr x=y | inr xs=ys rewrite x=y | xs=ys = inr refl
 
-  lexicographicOrder : {a b : _} {A : Set a} → (TotalOrder {a} {b} A) → TotalOrder (List A)
+  lexicographicOrder : {a b : _} {A : Set a} → (TotalOrder A) → TotalOrder (List A)
   PartialOrder._<_ (TotalOrder.order (lexicographicOrder order)) = lexicographicOrderRel order
   PartialOrder.irreflexive (TotalOrder.order (lexicographicOrder order)) = lexIrrefl order
   PartialOrder.<Transitive (TotalOrder.order (lexicographicOrder order)) = lexTransitive order
   TotalOrder.totality (lexicographicOrder order) = lexTotal order
 
-  badSort : {a b : _} {A : Set a} (order : TotalOrder {a} {b} A) → ℕ → List A → List A
-  badSortLength : {a b : _} {A : Set a} (order : TotalOrder {a} {b} A) → (n : ℕ) → (l : List A) → length (badSort order n l) ≡ length l
-  allTrueRespectsBadsort : {a b c : _} {A : Set a} (order : TotalOrder {a} {b} A) → (n : ℕ) → (l : List A) → (pred : A → Set c) → allTrue pred l → allTrue pred (badSort order n l)
+  badSort : {a b : _} {A : Set a} (order : TotalOrder A) → ℕ → List A → List A
+  badSortLength : {a b : _} {A : Set a} (order : TotalOrder A) → (n : ℕ) → (l : List A) → length (badSort order n l) ≡ length l
+  allTrueRespectsBadsort : {a b c : _} {A : Set a} (order : TotalOrder A) → (n : ℕ) → (l : List A) → (pred : A → Set c) → allTrue pred l → allTrue pred (badSort order n l)
 
   badSort order zero = insertionSort order
   badSort order (succ n) [] = []

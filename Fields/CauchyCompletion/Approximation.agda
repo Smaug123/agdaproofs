@@ -123,7 +123,9 @@ abstract
       ans : (m : ℕ) → (N +N N8) <N m → (e/8 + index (apply _+_ (constSequence (index (CauchyCompletion.elts a) (succ N) + e/2)) (map inverse (CauchyCompletion.elts a))) m) < ((e/2 + e/4) + e/8)
       ans m N<m rewrite indexAndApply (constSequence (index (CauchyCompletion.elts a) (succ N) + e/2)) (map inverse (CauchyCompletion.elts a)) _+_ {m} | indexAndConst (index (CauchyCompletion.elts a) (succ N) + e/2) m | equalityCommutative (mapAndIndex (CauchyCompletion.elts a) inverse m) = <WellDefined groupIsAbelian (+WellDefined groupIsAbelian (Equivalence.reflexive eq)) (orderRespectsAddition (<WellDefined (Equivalence.transitive eq groupIsAbelian (Equivalence.reflexive eq)) (Equivalence.reflexive eq) q) e/8)
         where
+          am : A
           am = index (CauchyCompletion.elts a) m
+          aN : A
           aN = index (CauchyCompletion.elts a) (succ N)
           t : abs (am + inverse aN) < e/4
           t = cauchyBeyondN {m} {succ N} (inequalityShrinkLeft N<m) (le 0 refl)

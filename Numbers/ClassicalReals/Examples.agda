@@ -154,7 +154,7 @@ sqrt2 = sqrt2' , sqrt2IsSqrt2
           tBound' : (((fromN 5) * t) + (sqrt2' * sqrt2')) < (1R + 1R)
           tBound' = <WellDefined (+WellDefined (symmetric *Associative) reflexive) (transitive (symmetric +Associative) (transitive (+WellDefined reflexive invLeft) (transitive identRight (+WellDefined reflexive identRight)))) u
           sqrt2<2 : sqrt2' < (1R + 1R)
-          sqrt2<2 with leastUpperBound (fromN 3 * 1/2) λ r s → inl (3/2ub s)
+          sqrt2<2 with leastUpperBound (fromN 3 * 1/2) (λ r s → inl (3/2ub s))
           sqrt2<2 | inl x = <Transitive x 3/2<2
           sqrt2<2 | inr x = <WellDefined (symmetric x) reflexive 3/2<2
           2sqrt2<4 : (sqrt2' + sqrt2') < fromN 4
@@ -178,7 +178,7 @@ sqrt2 = sqrt2' , sqrt2IsSqrt2
           0<sqrt2 : 0R < sqrt2'
           0<sqrt2 = <Transitive (0<1 nontrivial) 1<sqrt2
           sqrt2<2 : sqrt2' < (1R + 1R)
-          sqrt2<2 with leastUpperBound (fromN 3 * 1/2) λ r s → inl (3/2ub s)
+          sqrt2<2 with leastUpperBound (fromN 3 * 1/2) (λ r s → inl (3/2ub s))
           sqrt2<2 | inl x = <Transitive x 3/2<2
           sqrt2<2 | inr x = <WellDefined (symmetric x) reflexive 3/2<2
           2sqrt2<4 : (sqrt2' + sqrt2') < fromN 4
