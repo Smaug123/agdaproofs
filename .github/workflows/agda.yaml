@@ -61,4 +61,8 @@ jobs:
 
       - name: Compile main library
         run: |
-          agda Everything/Everything.agda Safe.agda Unsafe.agda WithK.agda Guardedness.agda
+          agda Everything/Safe.agda
+          agda Everything/Unsafe.agda
+          agda Everything/WithK.agda
+          agda Everything/Guardedness.agda
+          agda Everything/Everything.agda
