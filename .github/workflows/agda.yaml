@@ -3,16 +3,15 @@ on:
     branches:
       master
 
-strategy:
-  matrix:
-    cubical-ref: ["v0.2"]
-    agda-ref: ["v2.6.1.1"]
-    ghc-ver: ["8.10.2"]
-    cabal-ver: ["3.4.0.0"]
-
-
 jobs:
   Compile:
+    strategy:
+      matrix:
+        cubical-ref: ["v0.2"]
+        agda-ref: ["v2.6.1.1"]
+        ghc-ver: ["8.10.2"]
+        cabal-ver: ["3.4.0.0"]
+
     runs-on: ubuntu-latest
 
     steps:
