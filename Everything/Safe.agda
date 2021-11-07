@@ -156,6 +156,8 @@ open import Modules.PolynomialModule
 open import Modules.Lemmas
 open import Modules.DirectSum
 
+open import Computability.LambdaCalculus.ChurchNumeral
+
 open import ProjectEuler.Problem1
 
 module Everything.Safe where
