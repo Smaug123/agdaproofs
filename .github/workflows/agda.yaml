@@ -60,4 +60,5 @@ jobs:
           path: master
 
       - name: Compile main library
-          agda Everything/Everything.agda Safe.agda Unsafe.agda WithK.agda Guardedness.agda
+          run: |
+            agda Everything/Everything.agda Safe.agda Unsafe.agda WithK.agda Guardedness.agda
