@@ -45,11 +45,14 @@ ans = refl ,, (refl ,, (refl ,, (refl ,, (refl ,, record {}))))
 open import Rings.InitialRing ℚRing
 
 a : Sequence ℚ
-a with allInvertible (fromN 10) λ ()
+a with allInvertible (fromN 10) (λ ())
 ... | 1/10 , pr1/10 = approximations 1/10 pr1/10 (baseNExpansion (underlying (allInvertible (injectionNQ 7) λ ())) (lessInherits (succIsPositive 0)) (lessInherits (le 5 refl)))
 
 expected : Vec ℚ _
-expected = record { num = nonneg 1 ; denom = nonneg 10 ; denomNonzero = {!λ ()!} } ,- {!!}
+expected = record { num = nonneg 1 ; denom = nonneg 10 ; denomNonzero = f } ,- record { num = nonneg 14 ; denom = nonneg 100 ; denomNonzero = λ () } ,- record { num = nonneg 142 ; denom = nonneg 1000 ; denomNonzero = λ () } ,- []
+  where
+    f : nonneg 10 ≡ nonneg 0 → False
+    f ()
 
 ans' : vecAllTrue (λ x → _&&_.fst x =Q _&&_.snd x) (vecZip (take _ a) expected)
 ans' = refl ,, (refl ,, (refl ,, record {}))
