@@ -5,7 +5,6 @@ open import Numbers.Naturals.Semiring
 open import Numbers.Naturals.Addition
 open import Numbers.Naturals.Order
 open import Numbers.Naturals.Multiplication
-open import Numbers.Naturals.Division
 open import Semirings.Definition
 open import Orders.Total.Definition
 
