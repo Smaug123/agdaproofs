@@ -63,4 +63,3 @@ jobs:
           agda Everything/Safe.agda
           agda Everything/WithK.agda
           agda Everything/Guardedness.agda
-          agda Everything/Everything.agda
