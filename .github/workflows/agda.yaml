@@ -56,13 +56,11 @@ jobs:
 
       - name: Checkout master
         uses: actions/checkout@v2
-        with:
-          path: master
 
       - name: Compile main library
         run: |
-          agda Everything/Safe.agda
           agda Everything/Unsafe.agda
+          agda Everything/Safe.agda
           agda Everything/WithK.agda
           agda Everything/Guardedness.agda
           agda Everything/Everything.agda
