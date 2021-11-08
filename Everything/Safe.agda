@@ -3,6 +3,7 @@
 -- This file contains everything that can be compiled in --safe mode.
 
 open import Numbers.Naturals.Naturals
+open import Numbers.Naturals.Division
 open import Numbers.BinaryNaturals.Definition
 open import Numbers.BinaryNaturals.Multiplication
 open import Numbers.BinaryNaturals.Order
